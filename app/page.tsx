@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -199,17 +200,28 @@ interface FormFields {
   tier: string
 }
 
-// ─── EvMark ───────────────────────────────────────────────────────────────────
+// ─── Brand logo (evolution strip asset + theme wordmark) ────────────────────────
 
-function EvMark() {
+function BrandLogoFigures({ size = 'md', header }: { size?: 'sm' | 'md'; header?: boolean }) {
+  const classes = [
+    'brand-logo-figures',
+    size === 'sm' ? 'brand-logo-figures--sm' : '',
+    header ? 'brand-logo-figures--header' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
   return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
-      <rect x="0.5" y="0.5" width="27" height="27" stroke="currentColor" strokeWidth="1" />
-      <path d="M6 20 L6 8 L14 8" stroke="currentColor" strokeWidth="1.6" fill="none" />
-      <path d="M6 14 L12 14" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M14 8 L22 20" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="22" cy="20" r="1.8" fill="var(--accent)" />
-    </svg>
+    <div className={classes} aria-hidden>
+      <Image
+        src="/brand-logo.jpg"
+        alt=""
+        width={1024}
+        height={528}
+        sizes={header ? '(max-width:767px) 132px, 168px' : size === 'sm' ? '104px' : '156px'}
+        priority={header || size === 'md'}
+        className="h-auto max-w-none"
+      />
+    </div>
   )
 }
 
@@ -239,45 +251,58 @@ function Header({ onCTA }: { onCTA: () => void }) {
   return (
     <header className="sticky top-0 z-50 border-b" style={{ borderColor: 'var(--rule)', background: 'rgba(250,247,240,0.88)', backdropFilter: 'blur(8px)' }}>
       <div className="relative">
-        <div className="relative z-[50] mx-auto flex items-center justify-between gap-3 md:gap-8" style={{ maxWidth: 1280, padding: '10px 24px' }}>
-          <a href="#top" onClick={closeMenu} className="flex min-w-0 shrink items-center gap-3" style={{ textDecoration: 'none', color: 'var(--ink)' }}>
-            <EvMark />
-            <span className="mono" style={{ fontSize: 12, letterSpacing: '0.18em', fontWeight: 600 }}>
-              EEVOLVV{' '}
-              <span className="header-brand-sub" style={{ color: 'var(--accent)' }}>
-                / AI BUSINESS TRANSFORMATION
+        <div
+          className="relative z-[50] mx-auto grid w-full max-w-[1280px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-5 md:py-2.5 lg:gap-x-8"
+        >
+          <a
+            href="#top"
+            onClick={closeMenu}
+            className="site-header-brand flex min-w-0"
+            style={{ textDecoration: 'none', color: 'var(--ink)' }}
+          >
+            <BrandLogoFigures header />
+            <div className="site-header-brand-text">
+              <span className="brand-wordmark">eevolvv</span>
+              <span
+                className="header-brand-sub mono hidden md:inline"
+                style={{ fontSize: 10, letterSpacing: '0.12em', fontWeight: 600, color: 'var(--accent)', whiteSpace: 'nowrap' }}
+              >
+                AI Transformation
               </span>
-            </span>
+            </div>
           </a>
-          <nav className="hidden shrink-0 items-center gap-6 lg:gap-8 mono md:flex" style={{ fontSize: 11, letterSpacing: '0.16em' }}>
+          <nav
+            className="site-header-nav mono flex max-md:hidden min-w-0 items-center justify-center justify-self-stretch gap-3 md:gap-4 lg:gap-6 xl:gap-8"
+            style={{ fontSize: 11, letterSpacing: '0.14em' }}
+          >
             {nav.map(([id, label]) => (
-              <a key={id} href={`#${id}`} className="link-rule" style={{ color: 'var(--ink)', opacity: 0.65, textDecoration: 'none', whiteSpace: 'nowrap' }}>{label}</a>
+              <a key={id} href={`#${id}`} className="link-rule shrink-0" style={{ color: 'var(--ink)', opacity: 0.65, textDecoration: 'none', whiteSpace: 'nowrap' }}>{label}</a>
             ))}
           </nav>
-          <div className="flex shrink-0 items-center gap-2 md:ml-2 lg:ml-6">
+          <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:justify-self-end md:gap-3">
             <a
               href="#how"
-              className="mono header-cta-secondary hidden md:inline-flex"
+              className="mono header-cta-secondary inline-flex max-md:hidden"
               style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none', alignItems: 'center' }}
             >
               SEE PROCESS
             </a>
             <button
               type="button"
-              className="header-menu-toggle md:hidden mono flex shrink-0 items-center justify-center"
+              className="header-menu-toggle flex md:hidden shrink-0 items-center justify-center mono"
               aria-expanded={menuOpen}
               aria-controls="site-mobile-nav"
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               onClick={() => setMenuOpen(o => !o)}
               style={{
-                width: 42,
-                height: 42,
+                width: 40,
+                height: 40,
                 padding: 0,
                 border: '1px solid var(--rule)',
                 background: 'var(--paper)',
                 color: 'var(--ink)',
                 cursor: 'pointer',
-                fontSize: 18,
+                fontSize: 17,
                 lineHeight: 1,
               }}
             >
@@ -289,8 +314,8 @@ function Header({ onCTA }: { onCTA: () => void }) {
                 closeMenu()
                 onCTA()
               }}
-              className="mono header-cta-gradient"
-              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px' }}
+              className="mono header-cta-gradient whitespace-nowrap"
+              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 12px' }}
             >
               EVOLVE NOW →
             </button>
@@ -1310,8 +1335,8 @@ function Footer() {
         <div className="grid" style={{ gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 48 }}>
           <div>
             <div className="flex items-center gap-3" style={{ marginBottom: 20 }}>
-              <EvMark />
-              <span className="mono" style={{ fontSize: 12, letterSpacing: '0.18em', fontWeight: 600 }}>EEVOLVV</span>
+              <BrandLogoFigures size="sm" />
+              <span className="brand-wordmark">eevolvv</span>
             </div>
             <p style={{ fontSize: 13, lineHeight: 1.55, opacity: 0.65, margin: 0, maxWidth: 320 }}>AI-native business transformation. Every business. Every size. Every industry.</p>
             <p className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.45, marginTop: 12 }}>eevolvv.com</p>

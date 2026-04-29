@@ -42,6 +42,60 @@ input:focus, textarea:focus, select:focus { outline: none; }
 }
 .serif { font-family: 'Newsreader', 'Instrument Serif', Georgia, serif; }
 
+/* Brand logo — raster evolution strip; bottom baked wordmark clipped off */
+.brand-logo-figures {
+  flex-shrink: 0;
+  line-height: 0;
+  clip-path: inset(0 0 27% 0);
+}
+.brand-logo-figures img {
+  display: block;
+  height: auto;
+  width: clamp(92px, 24vw, 156px);
+}
+.brand-logo-figures--sm img {
+  width: clamp(72px, 18vw, 104px);
+}
+
+/* Header strip — fixed visual height so toolbar stays one clean row */
+.brand-logo-figures--header img {
+  width: auto;
+  height: 30px;
+  max-width: min(132px, 46vw);
+}
+@media (min-width: 768px) {
+  .brand-logo-figures--header img {
+    height: 34px;
+    max-width: 168px;
+  }
+}
+
+.site-header-brand {
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+  padding-right: clamp(8px, 2vw, 20px);
+}
+.site-header-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+/* HTML wordmark — matches site theme (Space Grotesk / display) */
+.brand-wordmark {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(14px, 2.6vw, 17px);
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  text-transform: lowercase;
+}
+
 /* ── Keyframes ── */
 @keyframes fadeUp {
   0%   { opacity: 0; transform: translateY(14px); }
@@ -163,7 +217,7 @@ input:focus, textarea:focus, select:focus { outline: none; }
   gap: clamp(1.5rem, 4vw, 3rem);
   align-items: center;
   width: max-content;
-  animation: heroQuoteMarquee 180s linear infinite;
+  animation: heroQuoteMarquee 360s linear infinite;
 }
 .hero-quote-track.hero-quote-track--static {
   animation: none;
@@ -401,10 +455,6 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .chat-messages-panel {
     padding: 22px 18px 8px !important;
     max-height: min(420px, 52vh) !important;
-  }
-
-  .header-brand-sub {
-    display: none;
   }
 
   h1 { font-size: clamp(36px, 10vw, 72px) !important; }
