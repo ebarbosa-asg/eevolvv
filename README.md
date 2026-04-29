@@ -1,4 +1,4 @@
-# The Evolution — theevolution.ai
+# eevolvv — eevolvv.com
 
 > AI-native business transformation. Every business. Every size. Every industry.
 
@@ -6,7 +6,7 @@
 
 ## What This Is
 
-Full Next.js 14 landing page + AI diagnostic engine for The Evolution. Built to:
+Full Next.js 14 landing page + AI diagnostic engine for **eevolvv**. Built to:
 - Convert visitors into qualified leads
 - Run AI-powered business diagnostics in real-time (Claude API)
 - Handle all 4 service tiers (Seed → Enterprise) + Retainer
@@ -29,7 +29,7 @@ Full Next.js 14 landing page + AI diagnostic engine for The Evolution. Built to:
 
 ### 1. Install dependencies
 ```bash
-cd theevolution
+cd eevolvv
 npm install
 ```
 
@@ -64,11 +64,11 @@ Add environment variables in Vercel dashboard under Settings → Environment Var
 1. User fills 4-step intake form (10 questions total)
 2. On submit: POST to `/api/diagnostic`
 3. API formats business data into a structured prompt
-4. Claude (claude-opus-4-5) generates custom Evolution Report
+4. Claude (claude-opus-4-5) generates a custom **eevolvv Report**
 5. Report displays inline — formatted, actionable, specific
 6. CTA to book strategy call via email
 
-**The diagnostic prompt is in:** `app/api/diagnostic/route.ts`
+**System prompt:** `lib/diagnosticPrompts.ts` · **API route:** `app/api/diagnostic/route.ts`
 
 Customize the system prompt to tune report quality.
 
@@ -91,7 +91,7 @@ Edit the `TIERS` array in `app/page.tsx`
 Edit the `INDUSTRIES` array in `app/page.tsx`
 
 ### AI Prompt
-Edit `DIAGNOSTIC_PROMPT` in `app/api/diagnostic/route.ts`
+Edit `lib/diagnosticPrompts.ts`
 
 ---
 
@@ -100,7 +100,7 @@ Edit `DIAGNOSTIC_PROMPT` in `app/api/diagnostic/route.ts`
 - [ ] Stripe payment integration (Seed tier self-serve)
 - [ ] Cal.com embed for strategy call booking
 - [ ] Notion API — auto-create client workspace on form submit
-- [ ] Resend email — send Evolution Report copy to client email
+- [ ] Resend email — send eevolvv Report copy to client email
 - [ ] Make.com webhook — trigger internal Slack notification on new lead
 - [ ] Analytics dashboard (track conversion rates by tier)
 - [ ] Case studies section (add after first 3 clients)
@@ -111,31 +111,17 @@ Edit `DIAGNOSTIC_PROMPT` in `app/api/diagnostic/route.ts`
 ## File Structure
 
 ```
-theevolution/
+eevolvv/
 ├── app/
 │   ├── api/
 │   │   └── diagnostic/
 │   │       └── route.ts      ← AI engine (Claude API)
 │   ├── globals.css           ← Design system + animations
 │   ├── layout.tsx            ← Root layout + metadata
-│   └── page.tsx              ← Full landing page
-├── .env.example              ← Environment template
-├── next.config.js
-├── tailwind.config.js
-├── tsconfig.json
-└── package.json
+│   └── page.tsx              ← Landing + form + report UI
+├── emails/
+│   └── EvolutionReport.tsx   ← Transactional email template
+├── lib/
+│   └── diagnosticPrompts.ts ← System prompt + industry context
+└── supabase/migrations/       ← Submissions table
 ```
-
----
-
-## Revenue Tracking
-
-Once Stripe is added, track:
-- Seed tier conversions (self-serve $500–$1,500)
-- Discovery call bookings from diagnostic
-- Tier distribution of incoming leads
-- Report completion rate (step 1 → step 4)
-
----
-
-Built with Claude Code. Deployed on Vercel. Runs on AI.

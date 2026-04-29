@@ -1,4 +1,4 @@
--- Evolution Diagnostic Submissions
+-- eevolvv diagnostic submissions
 -- Run this in your Supabase SQL Editor (or via supabase db push)
 
 CREATE TABLE IF NOT EXISTS submissions (

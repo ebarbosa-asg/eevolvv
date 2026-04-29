@@ -151,6 +151,12 @@ input:focus, textarea:focus, select:focus { outline: none; }
   letter-spacing: 0;
 }
 
+/* Hero departure-board row: scale so longest phrase (~12 cells × 0.86em + gaps) fits content width */
+.hero-flap-stage.flap-stage {
+  font-size: clamp(12px, calc((min(100vw, 1440px) - 48px) / 10.76), 180px);
+  max-width: 100%;
+}
+
 /* Stats counters — terminal split-flaps: ink tiles + paper digits (inherits .flap-half), Space Grotesk */
 .counter-flap-stage.flap-stage {
   font-family: var(--font-display), system-ui, sans-serif;

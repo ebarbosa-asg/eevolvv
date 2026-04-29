@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'STARTUP', 'ENTERPRISE', 'LOGISTICS', 'REAL ESTATE', 'E-COMMERCE', 'AGENCY', 'FRANCHISE', 'RETAILER', 'MANUFACTURER'] as const
+const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'STARTUP', 'ENTERPRISE', 'CLINIC', 'REAL ESTATE', 'E-COMMERCE', 'AGENCY', 'FRANCHISE', 'RETAILER', 'MANUFACTURER'] as const
 
 const TIERS = [
   {
@@ -31,7 +31,7 @@ const TIERS = [
   {
     id: 'enterprise', code: 'T-04', name: 'Enterprise', label: 'AI Operations',
     price: '$50,000–$250,000+', who: 'Multi-location · $10M+',
-    tagline: 'Total organizational evolution.',
+    tagline: 'Total organizational transformation.',
     features: ['Dedicated pod assigned', 'Department-by-department rebuild', 'Custom platform integrations', 'Executive reporting layer', 'Ongoing governance', 'Priority SLA'],
     highlight: false,
   },
@@ -62,7 +62,7 @@ const STATS = [
 
 const PROCESS_STEPS = [
   { day: 'Day 01', title: 'Intake',     desc: 'You tell us how your business runs. Ten minutes, all questions.' },
-  { day: 'Day 07', title: 'Your Report',desc: 'AI-generated Evolution Report delivered. Every automation opportunity mapped.' },
+  { day: 'Day 07', title: 'Your Report',desc: 'AI-generated eevolvv Report delivered. Every automation opportunity mapped.' },
   { day: 'Day 14', title: 'First Win',  desc: 'First automation goes live. You feel the difference immediately.' },
   { day: 'Day 45', title: 'Transformed',desc: 'Full build complete. Your business runs differently.' },
   { day: 'Day 60', title: 'ROI Positive',desc: 'Guaranteed. Or we work free until you are.' },
@@ -104,7 +104,7 @@ const LOADING_NARRATIVE = [
   { label: 'MAPPING',   message: 'Mapping your workflow architecture…',    detail: 'Identifying process gaps and dependencies.' },
   { label: 'ANALYZING', message: 'Calculating automation opportunities…',  detail: 'Running ROI models against your revenue range.' },
   { label: 'BUILDING',  message: 'Generating your automation roadmap…',    detail: 'Sequencing by impact-to-effort ratio.' },
-  { label: 'WRITING',   message: 'Compiling your Evolution Report…',       detail: 'Formatting recommendations for your team.' },
+  { label: 'WRITING',   message: 'Compiling your eevolvv Report…',       detail: 'Formatting recommendations for your team.' },
 ]
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -328,7 +328,7 @@ function FlapCell({ from, to, delay = 0 }: { from: string; to: string; delay?: n
 
 // ─── SplitFlap ────────────────────────────────────────────────────────────────
 
-function SplitFlap({ word, length, fontSize }: { word: string; length: number; fontSize: string }) {
+function SplitFlap({ word, length, fontSize, className }: { word: string; length: number; fontSize?: string; className?: string }) {
   const [prev, setPrev] = useState(word)
   useEffect(() => {
     const t = setTimeout(() => setPrev(word), 720)
@@ -337,7 +337,7 @@ function SplitFlap({ word, length, fontSize }: { word: string; length: number; f
   const pad = (s: string) => s.padEnd(length, ' ').slice(0, length)
   const a = pad(prev), b = pad(word)
   return (
-    <span className="flap-stage" style={{ fontSize, color: 'var(--paper)' }}>
+    <span className={`flap-stage ${className ?? ''}`.trim()} style={{ ...(fontSize ? { fontSize } : {}), color: 'var(--paper)' }}>
       {Array.from({ length }).map((_, i) => <FlapCell key={i} from={a[i] || ' '} to={b[i] || ' '} delay={i * 55} />)}
     </span>
   )
@@ -374,9 +374,9 @@ function Hero({ onCTA }: { onCTA: () => void }) {
           <span style={{ flex: 1, height: 1, background: 'var(--ink)', opacity: 0.4, transform: 'translateY(-0.35em)' }} />
         </div>
 
-        {/* Split-flap word */}
-        <div className="anim-fade-up" style={{ animationDelay: '0.1s' }}>
-          <SplitFlap word={word} length={maxLen} fontSize="clamp(40px, 9.5vw, 180px)" />
+        {/* Split-flap word — font-size from .hero-flap-stage (viewport + longest phrase width) */}
+        <div className="anim-fade-up hero-flap-shell" style={{ animationDelay: '0.1s', width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+          <SplitFlap word={word} length={maxLen} className="hero-flap-stage" />
         </div>
 
         {/* Editorial supporting line */}
@@ -602,7 +602,7 @@ function Problem() {
                 <span style={{ opacity: 0.5 }}>→ total recoverable value: </span>
                 <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 18 }}>$87,400/yr</span>
               </div>
-              <div style={{ opacity: 0.72, marginTop: 10, fontSize: 13 }}>→ evolution readiness: CRITICAL ▓▓▓▓▓▓▓▓░░ 80%</div>
+              <div style={{ opacity: 0.72, marginTop: 10, fontSize: 13 }}>→ automation readiness: CRITICAL ▓▓▓▓▓▓▓▓░░ 80%</div>
             </div>
           </div>
         </div>
@@ -670,7 +670,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
       <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
         <SectionHeader number="04" eyebrow="PRICING" title="Every business has a starting point." note="FOUR TIERS" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24 }}>
-          All tiers include the Evolution Report. ROI guaranteed at 60 days post-deployment.
+          All tiers include the eevolvv Report. ROI guaranteed at 60 days post-deployment.
         </p>
         <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(4,1fr)', gap: 0, marginTop: 48, border: '1px solid var(--ink)' }}>
           {TIERS.map((tier, i) => (
@@ -836,8 +836,8 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <div style={{ width: 56, height: 56, border: '2px solid var(--ink)', background: 'var(--accent)', color: 'var(--paper)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 20 }}>✓</div>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>SHEET R-01 · EVOLUTION REPORT</div>
-          <div style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>Your Evolution Report</div>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>SHEET R-01 · EEVOLVV REPORT</div>
+          <div style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>Your eevolvv Report</div>
           <p style={{ fontSize: 14, opacity: 0.65, marginTop: 8 }}>AI-generated diagnostic for {form.businessName || form.businessType}</p>
         </div>
         <div className="report-content" style={{ border: '1px solid var(--ink)', background: 'rgba(255,255,255,0.5)', padding: 32 }} dangerouslySetInnerHTML={{ __html: formatReport(report) }} />
@@ -846,7 +846,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
             <div style={{ fontSize: 18, fontWeight: 500 }}>Ready to make this real?</div>
             <p style={{ fontSize: 13, opacity: 0.7, marginTop: 4 }}>Book your 30-min strategy call and let&apos;s build the roadmap together.</p>
           </div>
-          <a href="mailto:hello@eevolvv.com?subject=Evolution%20Strategy%20Call%20Request" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 22px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600 }}>BOOK STRATEGY CALL →</a>
+          <a href="mailto:hello@eevolvv.com?subject=eevolvv%20Strategy%20Call%20Request" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 22px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600 }}>BOOK STRATEGY CALL →</a>
         </div>
       </div>
     )
@@ -877,10 +877,11 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
           <div><label style={lbl}>Email Address</label><input style={inp} type="email" placeholder="you@business.com" value={form.email} onChange={e => update('email', e.target.value)} /></div>
           <div><label style={lbl}>Business Name</label><input style={inp} placeholder="Your Business Name" value={form.businessName} onChange={e => update('businessName', e.target.value)} /></div>
           <div>
-            <label style={lbl}>Evolution Tier</label>
+            <label style={lbl}>Service tier</label>
             <select style={inp} value={form.tier} onChange={e => update('tier', e.target.value)}>
               {TIERS.map(t => <option key={t.id} value={t.id}>{t.name} — {t.label} ({t.price})</option>)}
-              <option value="retainer">Evolve Retainer</option>
+              <option value="retainer">Evolve Retainer ($500–$25K/mo)</option>
+              <option value="unsure">Not sure yet</option>
             </select>
           </div>
           <button onClick={() => { if (form.name && form.email) setStep(1) }} disabled={!form.name || !form.email} className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '16px 0', border: 0, cursor: 'pointer', fontSize: 12, letterSpacing: '0.18em', fontWeight: 600, opacity: form.name && form.email ? 1 : 0.4 }}>CONTINUE →</button>
@@ -969,7 +970,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
           <div className="flex" style={{ gap: 12 }}>
             <button onClick={() => setStep(2)} className="mono" style={btnBack}>← BACK</button>
             <button onClick={handleSubmit} disabled={loading || !form.customerJourney} className="mono" style={{ flex: 1, padding: '16px 0', background: 'var(--accent)', color: 'var(--paper)', border: 0, cursor: 'pointer', fontSize: 12, letterSpacing: '0.18em', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', opacity: loading || !form.customerJourney ? 0.4 : 1 }}>
-              {loading ? 'ANALYZING…' : 'GENERATE MY EVOLUTION REPORT →'}
+              {loading ? 'ANALYZING…' : 'GENERATE MY REPORT →'}
             </button>
           </div>
           <p className="mono" style={{ textAlign: 'center', fontSize: 10, letterSpacing: '0.18em', opacity: 0.5 }}>↳ AI-GENERATED IN REAL-TIME · ~30 SECONDS</p>
@@ -986,7 +987,7 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
     <section id="diagnostic" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', position: 'relative', overflow: 'hidden' }}>
       <div className="absolute inset-0 blueprint-grid" style={{ opacity: 0.4, pointerEvents: 'none' }} />
       <div className="mx-auto relative" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="05" eyebrow="FREE AI AUDIT" title="Get your Evolution Report. Right now. Free." note="VALUED $2,500" />
+        <SectionHeader number="05" eyebrow="FREE AI AUDIT" title="Get your eevolvv Report. Right now. Free." note="VALUED $2,500" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24, marginBottom: 56 }}>
           Answer 10 questions about your business. Our AI analyzes your workflows and delivers a custom automation roadmap.
         </p>

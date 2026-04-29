@@ -94,10 +94,10 @@ ${errorPoints || 'Not specified'}
 IF THEY HAD 20 EXTRA HOURS/WEEK, THEY WOULD:
 ${hoursFreed || 'Not specified'}
 
-INTERESTED TIER: ${tier || 'grow'}
+INTERESTED TIER: ${tier === 'unsure' ? 'Not sure yet — infer best Seed / Grow / Scale / Enterprise fit from their profile' : tier === 'retainer' ? 'Evolve Retainer' : tier || 'grow'}
 Contact: ${name || 'Not provided'} — ${email}
 
-Generate their Evolution Report now.`
+Generate their eevolvv Report now.`
 
   let report: string
   try {
@@ -140,9 +140,9 @@ Generate their Evolution Report now.`
           EvolutionReportEmail({ name, businessName, businessType, industry, tier, report })
         )
         const { error: emailError } = await resend.emails.send({
-          from: process.env.FROM_EMAIL ?? 'hello@theevolution.ai',
+          from: process.env.FROM_EMAIL ?? 'hello@eevolvv.com',
           to: email,
-          subject: `Your Evolution Report is ready${businessName ? ` — ${businessName}` : ''}`,
+          subject: `Your eevolvv Report is ready${businessName ? ` — ${businessName}` : ''}`,
           html,
         })
         if (emailError) {

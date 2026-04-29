@@ -19,7 +19,7 @@ export default function GlobalError({
       <body style={{ background: '#080808', color: '#f5f5f5', fontFamily: 'monospace', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', margin: 0 }}>
         <div style={{ textAlign: 'center', maxWidth: '480px', padding: '40px' }}>
           <div style={{ color: '#00ff94', fontSize: '11px', letterSpacing: '0.2em', marginBottom: '16px' }}>
-            THE EVOLUTION
+            EEVOLVV
           </div>
           <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px' }}>Something went wrong</h2>
           <p style={{ color: '#888', fontSize: '14px', marginBottom: '24px', lineHeight: 1.6 }}>
