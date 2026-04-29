@@ -2,86 +2,73 @@
 
 import { useState, useEffect, useRef } from 'react'
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-interface FormData {
-  name: string
-  email: string
-  businessName: string
-  businessType: string
-  industry: string
-  revenue: string
-  teamSize: string
-  topPains: string
-  tools: string
-  customerJourney: string
-  errorPoints: string
-  hoursFreed: string
-  tier: string
-}
+// ─── Data ─────────────────────────────────────────────────────────────────────
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'STARTUP', 'ENTERPRISE', 'LOGISTICS', 'REAL ESTATE', 'E-COMMERCE', 'AGENCY', 'FRANCHISE', 'RETAILER', 'MANUFACTURER'] as const
+
 const TIERS = [
   {
-    id: 'seed',
-    name: 'Seed',
-    emoji: '🟢',
-    label: 'AI Starter',
-    price: '$500–$1,500',
-    who: 'Gyms, restaurants, solo operators',
-    tagline: 'Your first step into AI automation',
+    id: 'seed', code: 'T-01', name: 'Seed', label: 'AI Starter',
+    price: '$500–$1,500', who: 'Gyms, restaurants, solo operators',
+    tagline: 'Your first step into AI automation.',
     features: ['AI-powered business diagnostic', 'Custom automation roadmap', 'Top 3 quick-win automations', '30-min strategy call', 'DIY implementation guide'],
     highlight: false,
   },
   {
-    id: 'grow',
-    name: 'Grow',
-    emoji: '🔵',
-    label: 'AI Essentials',
-    price: '$3,500–$7,500',
-    who: 'Small business $500K–$5M revenue',
-    tagline: 'Core automations, real ROI',
+    id: 'grow', code: 'T-02', name: 'Grow', label: 'AI Essentials',
+    price: '$3,500–$7,500', who: 'Small business · $500K–$5M revenue',
+    tagline: 'Core automations, real ROI.',
     features: ['Full business diagnostic', 'Priority workflow automation', 'Tool integration setup', '3 core AI agents deployed', '60-day ROI guarantee'],
     highlight: false,
   },
   {
-    id: 'scale',
-    name: 'Scale',
-    emoji: '🟣',
-    label: 'AI Transformation',
-    price: '$15,000–$75,000',
-    who: 'SMB to mid-market',
-    tagline: 'Full operational rebuild',
+    id: 'scale', code: 'T-03', name: 'Scale', label: 'AI Transformation',
+    price: '$15,000–$75,000', who: 'SMB to mid-market',
+    tagline: 'Full operational rebuild.',
     features: ['Complete CORE framework', 'All workflows automated', 'Custom AI agent stack', 'Team training included', 'Dedicated build team', '60-day ROI guarantee'],
     highlight: true,
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
-    emoji: '⚫',
-    label: 'AI Operations',
-    price: '$50,000–$250,000+',
-    who: 'Multi-location, $10M+',
-    tagline: 'Total organizational evolution',
+    id: 'enterprise', code: 'T-04', name: 'Enterprise', label: 'AI Operations',
+    price: '$50,000–$250,000+', who: 'Multi-location · $10M+',
+    tagline: 'Total organizational evolution.',
     features: ['Dedicated pod assigned', 'Department-by-department rebuild', 'Custom platform integrations', 'Executive reporting layer', 'Ongoing governance', 'Priority SLA'],
     highlight: false,
   },
 ]
 
 const STATS = [
-  { value: 23, suffix: 'hrs', label: 'wasted per week on automatable tasks (avg)' },
-  { value: 270, suffix: '%', label: 'faster growth for AI-optimized businesses' },
-  { value: 80, suffix: '%', label: 'of manual workflows are automatable today' },
+  { value: 23, suffix: 'hrs', label: 'wasted per week on automatable tasks (avg).' },
+  { value: 270, suffix: '%', label: 'faster growth for AI-optimized businesses.' },
+  { value: 80, suffix: '%', label: 'of manual workflows are automatable today.' },
+  {
+    value: 72,
+    suffix: '%',
+    label:
+      'Organizations reporting AI use in at least one business function—McKinsey Global Survey on AI (early 2024; global respondents).',
+  },
+  {
+    value: 50,
+    suffix: '%',
+    label:
+      'Organizations reporting AI deployed across two or more business functions—same McKinsey survey cohort.',
+  },
+  {
+    value: 109,
+    suffix: 'B',
+    label: 'U.S. private AI funding in 2024 (~$109.1B)—Stanford Institute for Human-Centered AI, AI Index Report 2025.',
+  },
 ]
 
 const PROCESS_STEPS = [
-  { day: 'Day 1', title: 'Intake', desc: 'You tell us how your business runs. 10 minutes, all questions.' },
-  { day: 'Day 7', title: 'Your Report', desc: 'AI-generated Evolution Report delivered. Every automation opportunity mapped.' },
-  { day: 'Day 14', title: 'First Win', desc: 'First automation goes live. You feel the difference immediately.' },
-  { day: 'Day 45', title: 'Transformed', desc: 'Full build complete. Your business runs differently.' },
-  { day: 'Day 60', title: 'ROI Positive', desc: 'Guaranteed. Or we work free until you are.' },
+  { day: 'Day 01', title: 'Intake',     desc: 'You tell us how your business runs. Ten minutes, all questions.' },
+  { day: 'Day 07', title: 'Your Report',desc: 'AI-generated Evolution Report delivered. Every automation opportunity mapped.' },
+  { day: 'Day 14', title: 'First Win',  desc: 'First automation goes live. You feel the difference immediately.' },
+  { day: 'Day 45', title: 'Transformed',desc: 'Full build complete. Your business runs differently.' },
+  { day: 'Day 60', title: 'ROI Positive',desc: 'Guaranteed. Or we work free until you are.' },
 ]
 
-const INDUSTRIES = [
+const INDUSTRIES_LIST = [
   'Restaurant / Food & Beverage', 'Gym / Fitness / Wellness', 'Retail / E-commerce',
   'Legal / Law Firm', 'Medical / Healthcare', 'Real Estate',
   'Construction / Trades', 'Accounting / Finance', 'Marketing / Agency',
@@ -89,174 +76,327 @@ const INDUSTRIES = [
   'Hospitality / Hotel', 'Education', 'Non-Profit', 'Other',
 ]
 
-// ─── Utility: Intersection Observer Hook ─────────────────────────────────────
-function useInView(threshold = 0.1) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [inView, setInView] = useState(false)
+const EXAMPLES = [
+  { code: 'I-01', type: 'Gym / Fitness',    pain: 'Manual scheduling, member follow-ups, lost leads', win: 'Auto-booking, retention AI, revenue recovery' },
+  { code: 'I-02', type: 'Restaurant',        pain: 'Order errors, no-shows, manual inventory', win: 'Automated ops, smart reservations, waste reduction' },
+  { code: 'I-03', type: 'Law Firm',          pain: 'Admin overload, client intake, billing gaps', win: 'AI intake, automated billing, case tracking' },
+  { code: 'I-04', type: 'Construction',      pain: 'Scheduling chaos, quote delays, supplier chaos', win: 'Project AI, instant quotes, supplier automation' },
+  { code: 'I-05', type: 'Medical Practice',  pain: 'Patient admin, billing errors, no-show rate', win: 'AI scheduling, billing automation, reminders' },
+  { code: 'I-06', type: 'Enterprise',        pain: 'Siloed teams, manual reporting, process debt', win: 'Full ops rebuild, AI layer, unified intelligence' },
+  { code: 'I-07', type: 'Logistics / 3PL',   pain: 'Manual dispatch, route inefficiency, missed SLAs', win: 'AI routing, automated dispatch, real-time visibility' },
+  { code: 'I-08', type: 'Real Estate',        pain: 'Lead rot, manual follow-up, listing admin', win: 'AI lead nurture, automated CRM, smart listing sync' },
+  { code: 'I-09', type: 'E-Commerce',         pain: 'Cart abandonment, manual CS, inventory errors', win: 'Automated recovery, AI support, smart stock alerts' },
+  { code: 'I-10', type: 'Marketing Agency',   pain: 'Reporting drag, client updates, scope creep', win: 'Auto-reporting, AI account mgmt, budget alerts' },
+  { code: 'I-11', type: 'Franchise',          pain: 'Inconsistent ops, multi-location reporting gaps', win: 'Unified AI layer, location benchmarking, auto-QA' },
+  { code: 'I-12', type: 'Manufacturing',      pain: 'Production bottlenecks, quality control gaps', win: 'Predictive maintenance, AI QC, supply chain sync' },
+]
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true) },
-      { threshold }
-    )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [threshold])
+const PAIN_POINTS = [
+  'Manual data entry eating hours every week.',
+  'Customer follow-ups falling through the cracks.',
+  'Reports built by hand that should auto-generate.',
+  'Scheduling chaos that tools can solve in seconds.',
+  "Knowledge trapped in people's heads, not systems.",
+]
 
-  return { ref, inView }
+const LOADING_NARRATIVE = [
+  { label: 'SCANNING',  message: 'Reading your business intake…',          detail: 'Parsing operational data across all inputs.' },
+  { label: 'MAPPING',   message: 'Mapping your workflow architecture…',    detail: 'Identifying process gaps and dependencies.' },
+  { label: 'ANALYZING', message: 'Calculating automation opportunities…',  detail: 'Running ROI models against your revenue range.' },
+  { label: 'BUILDING',  message: 'Generating your automation roadmap…',    detail: 'Sequencing by impact-to-effort ratio.' },
+  { label: 'WRITING',   message: 'Compiling your Evolution Report…',       detail: 'Formatting recommendations for your team.' },
+]
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface FormFields {
+  name: string; email: string; businessName: string; businessType: string
+  industry: string; revenue: string; teamSize: string; topPains: string
+  tools: string; customerJourney: string; errorPoints: string; hoursFreed: string
+  tier: string
 }
 
-// ─── Animated Counter ─────────────────────────────────────────────────────────
-function AnimatedCounter({ target, suffix }: { target: number; suffix: string }) {
-  const [count, setCount] = useState(0)
-  const { ref, inView } = useInView()
+// ─── EvMark ───────────────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    if (!inView) return
-    const duration = 2000
-    const steps = 60
-    const increment = target / steps
-    let current = 0
-    const timer = setInterval(() => {
-      current += increment
-      if (current >= target) {
-        setCount(target)
-        clearInterval(timer)
-      } else {
-        setCount(Math.floor(current))
-      }
-    }, duration / steps)
-    return () => clearInterval(timer)
-  }, [inView, target])
-
+function EvMark() {
   return (
-    <div ref={ref} className="counter-num text-5xl md:text-7xl font-display font-800 text-signal glow-text">
-      {count}{suffix}
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
+      <rect x="0.5" y="0.5" width="27" height="27" stroke="currentColor" strokeWidth="1" />
+      <path d="M6 20 L6 8 L14 8" stroke="currentColor" strokeWidth="1.6" fill="none" />
+      <path d="M6 14 L12 14" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M14 8 L22 20" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="22" cy="20" r="1.8" fill="var(--accent)" />
+    </svg>
+  )
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+function Header({ onCTA }: { onCTA: () => void }) {
+  const nav: [string, string][] = [['how','PROCESS'],['who','INDUSTRIES'],['pricing','TIERS'],['diagnostic','GET REPORT']]
+  return (
+    <header className="sticky top-0 z-40 border-b" style={{ borderColor: 'var(--rule)', background: 'rgba(250,247,240,0.88)', backdropFilter: 'blur(8px)' }}>
+      <div className="mx-auto flex items-center justify-between gap-4 md:gap-8" style={{ maxWidth: 1280, padding: '10px 24px' }}>
+        <a href="#top" className="flex items-center gap-3" style={{ textDecoration: 'none', color: 'var(--ink)' }}>
+          <EvMark />
+          <span className="mono" style={{ fontSize: 12, letterSpacing: '0.18em', fontWeight: 600 }}>
+            EEVOLVV <span style={{ color: 'var(--accent)' }}>/ AI BUSINESS TRANSFORMATION</span>
+          </span>
+        </a>
+        <nav className="hidden md:flex shrink-0 items-center gap-6 lg:gap-8 mono" style={{ fontSize: 11, letterSpacing: '0.16em' }}>
+          {nav.map(([id, label]) => (
+            <a key={id} href={`#${id}`} className="link-rule" style={{ color: 'var(--ink)', opacity: 0.65, textDecoration: 'none', whiteSpace: 'nowrap' }}>{label}</a>
+          ))}
+        </nav>
+        <div className="flex shrink-0 items-center gap-2 md:ml-2 lg:ml-6">
+          <a href="#how" className="mono header-cta-secondary" style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}>SEE PROCESS</a>
+          <button onClick={onCTA} className="mono header-cta-gradient" style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px' }}>EVOLVE NOW →</button>
+        </div>
+      </div>
+    </header>
+  )
+}
+
+// ─── SectionHeader ────────────────────────────────────────────────────────────
+
+function SectionHeader({ number, eyebrow, title, note }: { number: string; eyebrow: string; title: string; note: string }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr auto', gap: 24, alignItems: 'baseline', borderTop: '1px solid var(--ink)', paddingTop: 24 }}>
+      <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 600 }}>§ {number}</div>
+      <div>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 12 }}>{eyebrow}</div>
+        <div style={{ fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 500, letterSpacing: '-0.025em', lineHeight: 1 }}>{title}</div>
+      </div>
+      <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, alignSelf: 'start' }}>{note}</div>
     </div>
   )
 }
 
-// ─── Nav ──────────────────────────────────────────────────────────────────────
-function Nav({ onCTA }: { onCTA: () => void }) {
-  const [scrolled, setScrolled] = useState(false)
+// ─── DimensionLine ────────────────────────────────────────────────────────────
+
+function DimensionLine({ label }: { label: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ width: 8, height: 8, transform: 'rotate(45deg)', background: 'var(--ink)' }} />
+      <div style={{ flex: 1, height: 1, background: 'var(--ink)', opacity: 0.85 }} className="anim-draw-line" />
+      <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.65, whiteSpace: 'nowrap' }}>{label}</div>
+      <div style={{ flex: 1, height: 1, background: 'var(--ink)', opacity: 0.85 }} className="anim-draw-line" />
+      <div style={{ width: 8, height: 8, transform: 'rotate(45deg)', background: 'var(--ink)' }} />
+    </div>
+  )
+}
+
+// ─── useInView ────────────────────────────────────────────────────────────────
+
+function useInView(threshold = 0.1) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [inView, setInView] = useState(false)
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true) }, { threshold })
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
+  }, [threshold])
+  return { ref, inView }
+}
+
+// ─── Counter ──────────────────────────────────────────────────────────────────
+
+function Counter({ target, suffix }: { target: number; suffix: string }) {
+  const slots = Math.max(String(target).length, 1)
+  const padN = (n: number) => n.toString().padStart(slots, ' ')
+  const prevRef = useRef(0)
+  const [curr, setCurr] = useState(0)
+  const { ref, inView } = useInView()
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', handler)
-    return () => window.removeEventListener('scroll', handler)
-  }, [])
+    if (!inView) return
+    let step = 0
+    const steps = Math.min(56, Math.max(20, Math.ceil(target / 3)))
+    let dur = Math.max(3200, Math.min(6200, 1100 + target * 15))
+    const tick = dur / steps
+    if (tick < 120) dur = steps * 120
+    const id = setInterval(() => {
+      step++
+      const next = Math.min(target, Math.round((step / steps) * target))
+      setCurr(c => {
+        prevRef.current = c
+        return next
+      })
+      if (next >= target) clearInterval(id)
+    }, dur / steps)
+    return () => clearInterval(id)
+  }, [inView, target])
+
+  const fromStr = padN(prevRef.current)
+  const toStr = padN(curr)
+  const fs = 'clamp(56px, 7vw, 96px)'
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-void/90 backdrop-blur-lg border-b border-white/5' : ''}`}>
-      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 bg-signal rounded-sm" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%)' }} />
-          <span className="font-display font-700 text-pure tracking-tight text-lg">THE EVOLUTION</span>
-        </div>
-        <div className="hidden md:flex items-center gap-8 text-sm text-mist font-mono">
-          <a href="#how-it-works" className="hover:text-signal transition-colors">Process</a>
-          <a href="#pricing" className="hover:text-signal transition-colors">Tiers</a>
-          <a href="#diagnostic" className="hover:text-signal transition-colors">Get Report</a>
-        </div>
-        <button onClick={onCTA} className="btn-primary px-5 py-2.5 rounded-sm text-sm font-700 tracking-wide">
-          Evolve Now →
-        </button>
+    <div
+      ref={ref}
+      aria-label={`${curr}${suffix}`}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        lineHeight: 1,
+      }}
+    >
+      <span className="sr-only" aria-live="polite">{curr}{suffix}</span>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'center',
+          gap: '0.42em',
+          flexWrap: 'nowrap',
+        }}
+      >
+        <span className="counter-flap-stage flap-stage" style={{ fontSize: fs, fontFamily: 'Space Grotesk, sans-serif', fontWeight: 500, letterSpacing: '-0.03em' }}>
+          {Array.from({ length: slots }, (_, i) => (
+            <FlapCell key={i} from={fromStr[i] ?? ' '} to={toStr[i] ?? ' '} delay={i * 38} />
+          ))}
+        </span>
+        <span style={{ fontSize: fs, fontFamily: 'Space Grotesk, sans-serif', fontWeight: 500, letterSpacing: '-0.03em', color: 'var(--accent)', flexShrink: 0 }}>
+          {suffix}
+        </span>
       </div>
-    </nav>
+    </div>
+  )
+}
+
+// ─── TypingStatLabel ──────────────────────────────────────────────────────────
+
+function TypingStatLabel({ text, reducedMotion }: { text: string; reducedMotion: boolean }) {
+  const [display, setDisplay] = useState('')
+  useEffect(() => {
+    if (reducedMotion) {
+      setDisplay(text)
+      return
+    }
+    setDisplay('')
+    let i = 0
+    const ms = Math.max(11, Math.floor(4600 / Math.max(text.length, 24)))
+    const id = setInterval(() => {
+      i++
+      setDisplay(text.slice(0, i))
+      if (i >= text.length) clearInterval(id)
+    }, ms)
+    return () => clearInterval(id)
+  }, [text, reducedMotion])
+  const typing = !reducedMotion && display.length < text.length
+  return (
+    <p style={{ marginTop: 26, fontSize: 14, lineHeight: 1.6, color: 'rgba(20,20,19,0.78)', minHeight: '4.8em' }}>
+      <span className="mono" style={{ opacity: 0.42, marginRight: 8 }}>{'> '}</span>
+      {display}
+      {typing ? (
+        <span className="mono anim-blink" style={{ marginLeft: 2, opacity: 0.85 }}>
+          ▍
+        </span>
+      ) : null}
+    </p>
+  )
+}
+
+// ─── FlapCell ─────────────────────────────────────────────────────────────────
+
+function FlapCell({ from, to, delay = 0 }: { from: string; to: string; delay?: number }) {
+  const [phase, setPhase] = useState<'idle' | 'flipping'>('idle')
+  const [shown, setShown] = useState(from)
+
+  useEffect(() => {
+    if (from === to) { setShown(to); setPhase('idle'); return }
+    const t1 = setTimeout(() => setPhase('flipping'), delay)
+    const t2 = setTimeout(() => { setShown(to); setPhase('idle') }, delay + 640)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [from, to, delay])
+
+  const G = ({ ch }: { ch: string }) => <i data-wide={/[MW]/.test(ch) ? '1' : '0'}>{ch}</i>
+
+  return (
+    <span className="flap-cell" aria-hidden>
+      <span className="flap-half top"><span><G ch={phase === 'flipping' ? to : shown} /></span></span>
+      <span className="flap-half bottom"><span><G ch={phase === 'flipping' ? from : shown} /></span></span>
+      {phase === 'flipping' && <>
+        <span className="flap-half top flip-top"><span><G ch={from} /></span></span>
+        <span className="flap-half bottom flip-bottom"><span><G ch={to} /></span></span>
+      </>}
+    </span>
+  )
+}
+
+// ─── SplitFlap ────────────────────────────────────────────────────────────────
+
+function SplitFlap({ word, length, fontSize }: { word: string; length: number; fontSize: string }) {
+  const [prev, setPrev] = useState(word)
+  useEffect(() => {
+    const t = setTimeout(() => setPrev(word), 720)
+    return () => clearTimeout(t)
+  }, [word])
+  const pad = (s: string) => s.padEnd(length, ' ').slice(0, length)
+  const a = pad(prev), b = pad(word)
+  return (
+    <span className="flap-stage" style={{ fontSize, color: 'var(--paper)' }}>
+      {Array.from({ length }).map((_, i) => <FlapCell key={i} from={a[i] || ' '} to={b[i] || ' '} delay={i * 55} />)}
+    </span>
   )
 }
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
-function Hero({ onCTA }: { onCTA: () => void }) {
-  const [typed, setTyped] = useState('')
-  const phrases = ['gym.', 'restaurant.', 'law firm.', 'startup.', 'enterprise.', 'business.']
-  const [phraseIndex, setPhraseIndex] = useState(0)
-  const [charIndex, setCharIndex] = useState(0)
-  const [deleting, setDeleting] = useState(false)
 
+function Hero({ onCTA }: { onCTA: () => void }) {
+  const [phraseIndex, setPhraseIndex] = useState(0)
   useEffect(() => {
-    const current = phrases[phraseIndex]
-    const timeout = setTimeout(() => {
-      if (!deleting) {
-        if (charIndex < current.length) {
-          setTyped(current.slice(0, charIndex + 1))
-          setCharIndex(c => c + 1)
-        } else {
-          setTimeout(() => setDeleting(true), 1800)
-        }
-      } else {
-        if (charIndex > 0) {
-          setTyped(current.slice(0, charIndex - 1))
-          setCharIndex(c => c - 1)
-        } else {
-          setDeleting(false)
-          setPhraseIndex(i => (i + 1) % phrases.length)
-        }
-      }
-    }, deleting ? 60 : 100)
-    return () => clearTimeout(timeout)
-  }, [charIndex, deleting, phraseIndex, phrases])
+    const t = setInterval(() => setPhraseIndex(i => (i + 1) % HERO_PHRASES.length), 2600)
+    return () => clearInterval(t)
+  }, [])
+  const word = HERO_PHRASES[phraseIndex]
+  const maxLen = HERO_PHRASES.reduce((m, w) => Math.max(m, w.length), 0)
 
   return (
-    <section className="relative min-h-screen grid-bg scan-container flex items-center justify-center overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-signal/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-electric/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-signal/5 rounded-full" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] border border-signal/3 rounded-full" />
-      </div>
+    <section id="top" className="relative" style={{ paddingTop: 56, paddingBottom: 96, overflow: 'hidden', minHeight: '92vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div className="absolute inset-0 grid-drift" style={{ opacity: 0.55, pointerEvents: 'none' }} />
+      <div className="absolute" style={{ inset: 0, background: 'radial-gradient(ellipse at 70% 30%, color-mix(in oklab, var(--accent) 14%, transparent) 0%, transparent 55%)', pointerEvents: 'none' }} />
 
-      <div className="relative z-10 text-center px-6 max-w-6xl mx-auto pt-24">
-        {/* Tag */}
-        <div className="inline-flex items-center gap-2 mb-8 tag bg-signal/10 text-signal border border-signal/20">
-          <span className="w-1.5 h-1.5 bg-signal rounded-full animate-pulse" />
-          AI BUSINESS TRANSFORMATION
+      <div className="mx-auto relative" style={{ maxWidth: 1440, padding: '0 40px', width: '100%' }}>
+        <div className="flex items-center justify-between mono anim-fade-in" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 56 }}>
+          <span>SHEET A-01 · AI BUSINESS TRANSFORMATION · REV 2026.04</span>
+          <span>—— DEPARTURES BOARD · NOW EVOLVING ——</span>
+          <span>60-DAY ROI GUARANTEE</span>
         </div>
 
-        {/* Headline */}
-        <h1 className="font-display font-800 leading-[0.92] tracking-tight mb-8">
-          <div className="text-5xl md:text-8xl lg:text-[7rem] text-pure">
+        {/* "We evolve every" + rule */}
+        <div className="anim-fade-up" style={{ marginBottom: 16, display: 'flex', alignItems: 'baseline', gap: 20 }}>
+          <span className="serif" style={{ fontFamily: 'var(--font-serif)', fontStyle: 'normal', fontWeight: 400, fontSize: 'clamp(48px, 7.5vw, 132px)', lineHeight: 0.95, letterSpacing: '-0.025em', whiteSpace: 'nowrap', transform: 'skewX(12deg)', transformOrigin: 'left bottom', display: 'inline-block' }}>
             We evolve every
-          </div>
-          <div className="text-5xl md:text-8xl lg:text-[7rem] text-signal glow-text">
-            <span className="cursor-blink">{typed || '\u00A0'}</span>
-          </div>
+          </span>
+          <span style={{ flex: 1, height: 1, background: 'var(--ink)', opacity: 0.4, transform: 'translateY(-0.35em)' }} />
+        </div>
+
+        {/* Split-flap word */}
+        <div className="anim-fade-up" style={{ animationDelay: '0.1s' }}>
+          <SplitFlap word={word} length={maxLen} fontSize="clamp(40px, 9.5vw, 180px)" />
+        </div>
+
+        {/* Editorial supporting line */}
+        <h1 className="anim-fade-up hero-gradient-word serif" style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, fontSize: 'clamp(28px, 3.6vw, 56px)', lineHeight: 1, letterSpacing: '-0.02em', margin: '28px 0 0 0', animationDelay: '0.25s' }}>
+          into the new era.
         </h1>
 
-        {/* Sub */}
-        <p className="text-mist text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed font-body">
-          From the corner gym to the Fortune 500 — we map your workflows, 
-          deploy AI automation, and permanently rebuild how your business operates.
-          <br />
-          <span className="text-ghost">No software to learn. No consultants with decks. Just results.</span>
-        </p>
-
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <button
-            onClick={onCTA}
-            className="btn-primary px-10 py-4 rounded-sm text-base font-700 tracking-wide w-full sm:w-auto"
-          >
-            Get Your Free AI Audit →
-          </button>
-          <a
-            href="#how-it-works"
-            className="px-10 py-4 border border-white/10 text-ghost hover:border-signal/30 hover:text-signal transition-all rounded-sm text-base font-600 tracking-wide w-full sm:w-auto text-center"
-          >
-            See How It Works
-          </a>
+        <div className="grid mt-10 anim-fade-up" style={{ gridTemplateColumns: '1.1fr 0.9fr', gap: 56, animationDelay: '0.4s', marginTop: 56, alignItems: 'end' }}>
+          <p style={{ fontSize: 18, lineHeight: 1.55, maxWidth: 560, color: 'color-mix(in oklab, var(--ink) 78%, transparent)', margin: 0 }}>
+            From the corner gym to the Fortune 500 — we map your workflows, deploy AI automation, and permanently rebuild how your business operates.
+            <span style={{ display: 'block', marginTop: 16, opacity: 0.6 }}>No software to learn. No consultants with decks. Just results.</span>
+          </p>
+          <div className="flex items-end gap-3" style={{ alignSelf: 'end', justifySelf: 'end', flexWrap: 'wrap' }}>
+            <button onClick={onCTA} className="btn-gradient" style={{ padding: '18px 30px', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>GET YOUR FREE AI AUDIT →</button>
+            <a href="#how" style={{ background: 'transparent', color: 'var(--ink)', padding: '18px 30px', border: '1px solid var(--ink)', cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em', textDecoration: 'none' }}>SEE HOW IT WORKS</a>
+          </div>
         </div>
 
-        {/* Trust line */}
-        <p className="mt-8 text-mist/60 font-mono text-xs tracking-widest uppercase">
-          60-Day ROI Guarantee &nbsp;·&nbsp; Any Industry &nbsp;·&nbsp; Any Size
-        </p>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
-          <span className="font-mono text-xs text-mist tracking-widest">SCROLL</span>
-          <div className="w-px h-12 bg-gradient-to-b from-mist to-transparent" />
+        <div className="anim-fade-in" style={{ animationDelay: '1.2s', marginTop: 80 }}>
+          <DimensionLine label="MEASURED TWICE · SHIPPED ONCE" />
         </div>
       </div>
     </section>
@@ -264,72 +404,205 @@ function Hero({ onCTA }: { onCTA: () => void }) {
 }
 
 // ─── Stats ────────────────────────────────────────────────────────────────────
+
 function Stats() {
+  const { ref, inView } = useInView(0.22)
+  const [idx, setIdx] = useState(0)
+  const [reducedMotion, setReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReducedMotion(mq.matches)
+    const fn = () => setReducedMotion(mq.matches)
+    mq.addEventListener('change', fn)
+    return () => mq.removeEventListener('change', fn)
+  }, [])
+
+  useEffect(() => {
+    if (!inView || reducedMotion) return
+    const t = setInterval(() => setIdx(i => (i + 1) % STATS.length), 6800)
+    return () => clearInterval(t)
+  }, [inView, reducedMotion])
+
+  const s = STATS[idx]
+
   return (
-    <section className="py-24 border-y border-white/5 bg-carbon">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-          {STATS.map((stat, i) => (
-            <div key={i} className="text-center">
-              <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-              <p className="mt-3 text-mist text-sm leading-relaxed max-w-xs mx-auto">{stat.label}</p>
+    <section
+      id="stats"
+      style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)', scrollMarginTop: 96 }}
+    >
+      <div ref={ref} className="mx-auto" style={{ maxWidth: 720, padding: '0 32px' }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 28, textAlign: 'center' }}>
+          SHEET A-02 · MARKET TELEMETRY
+        </div>
+
+        <div
+          style={{
+            border: '1px solid var(--ink)',
+            borderRadius: 12,
+            overflow: 'hidden',
+            background: 'rgba(250, 247, 240, 0.85)',
+            boxShadow: '0 28px 52px rgba(20, 20, 19, 0.09)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 16,
+              flexWrap: 'wrap',
+              padding: '12px 18px',
+              borderBottom: '1px solid var(--rule)',
+              background: 'rgba(20, 20, 19, 0.04)',
+            }}
+          >
+            <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.48 }}>
+              telemetry_rotation.json · FIG_SEQUENCE
+            </span>
+            <span className="mono" style={{ fontSize: 10, letterSpacing: '0.2em', opacity: 0.42 }}>
+              N={STATS.length} · LIVE
+            </span>
+          </div>
+
+          <div style={{ padding: '40px 36px 36px' }}>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 20 }}>
+              FIG · {String(idx + 1).padStart(2, '0')}
             </div>
-          ))}
+
+            <div style={{ minHeight: 92, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Counter key={`slide-${idx}-${s.value}-${s.suffix}`} target={s.value} suffix={s.suffix} />
+            </div>
+
+            <TypingStatLabel key={`lbl-${idx}`} text={s.label} reducedMotion={reducedMotion} />
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 8, flexWrap: 'wrap' }}>
+              {STATS.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Show statistic ${i + 1} of ${STATS.length}`}
+                  aria-current={i === idx ? 'step' : undefined}
+                  onClick={() => setIdx(i)}
+                  style={{
+                    width: i === idx ? 28 : 8,
+                    height: 8,
+                    borderRadius: 999,
+                    border: 'none',
+                    background: i === idx ? 'var(--ink)' : 'var(--rule)',
+                    cursor: 'pointer',
+                    transition: 'width 0.35s ease, background 0.25s ease',
+                    padding: 0,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
   )
 }
 
-// ─── Problem ─────────────────────────────────────────────────────────────────
-function Problem() {
-  const { ref, inView } = useInView()
+// ─── Problem ──────────────────────────────────────────────────────────────────
 
+function Problem() {
   return (
-    <section className="py-32 px-6">
-      <div className="max-w-6xl mx-auto" ref={ref}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <section style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
+      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
+        <SectionHeader number="01" eyebrow="THE PROBLEM" title="Your team is doing work AI should be doing." note="DIAGNOSIS" />
+        <div className="grid mt-12 problem-grid" style={{ gridTemplateColumns: 'minmax(0, 1fr) minmax(340px, 1.22fr)', gap: 72, marginTop: 56, alignItems: 'stretch' }}>
           <div>
-            <span className="tag bg-pulse/10 text-pulse border border-pulse/20 mb-6 inline-block">THE PROBLEM</span>
-            <h2 className={`font-display font-800 text-4xl md:text-6xl leading-tight text-pure mb-8 fade-up ${inView ? 'visible' : ''}`}>
-              Your team is doing work<br />
-              <span className="text-pulse glow-pulse-text">AI should be doing.</span>
-            </h2>
-            <div className="space-y-5">
-              {[
-                'Manual data entry eating hours every week',
-                'Customer follow-ups falling through the cracks',
-                'Reports built by hand that should auto-generate',
-                'Scheduling chaos that tools can solve in seconds',
-                'Knowledge trapped in people\'s heads, not systems',
-              ].map((pain, i) => (
-                <div key={i} className={`flex items-start gap-3 fade-up delay-${(i + 1) * 100} ${inView ? 'visible' : ''}`}>
-                  <span className="text-pulse mt-1 text-lg leading-none">×</span>
-                  <span className="text-ghost">{pain}</span>
+            <p style={{ fontSize: 18, lineHeight: 1.55, color: 'rgba(20,20,19,0.78)', marginBottom: 32 }}>
+              Most businesses lose <strong>23 hours a week</strong> to tasks that AI can do faster, cheaper, and without errors. The damage is invisible until you measure it.
+            </p>
+            <div style={{ borderTop: '1px solid var(--ink)' }}>
+              {PAIN_POINTS.map((p, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '60px 1fr', gap: 20, padding: '20px 0', borderBottom: '1px solid var(--rule)' }}>
+                  <div className="mono" style={{ fontSize: 11, letterSpacing: '0.2em', color: 'var(--accent)', fontWeight: 600 }}>0{i + 1}</div>
+                  <div style={{ fontSize: 16, lineHeight: 1.5 }}>{p}</div>
                 </div>
               ))}
             </div>
           </div>
-
-          <div className={`fade-up delay-300 ${inView ? 'visible' : ''}`}>
-            <div className="bg-graphite border border-white/8 rounded-sm p-8 font-mono text-sm space-y-3">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-3 h-3 bg-red-500 rounded-full" />
-                <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-                <div className="w-3 h-3 bg-signal rounded-full" />
-                <span className="text-mist/50 text-xs ml-2">business_audit.log</span>
+          <div
+            className="problem-terminal"
+            style={{
+              border: '1px solid var(--ink)',
+              borderRadius: 12,
+              overflow: 'hidden',
+              background: 'var(--ink)',
+              color: 'var(--paper)',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 14,
+              lineHeight: 1.75,
+              boxShadow: '0 28px 56px rgba(20, 20, 19, 0.14)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignSelf: 'start',
+              width: '100%',
+            }}
+          >
+            <div
+              className="problem-terminal-titlebar"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 16,
+                flexShrink: 0,
+                padding: '14px 18px',
+                borderBottom: '1px solid rgba(244, 241, 234, 0.12)',
+                background: 'rgba(244, 241, 234, 0.045)',
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.04)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }} aria-hidden>
+                <span style={{ width: 12, height: 12, borderRadius: '50%', background: '#ff5f57', opacity: 0.88 }} />
+                <span style={{ width: 12, height: 12, borderRadius: '50%', background: '#febc2e', opacity: 0.88 }} />
+                <span style={{ width: 12, height: 12, borderRadius: '50%', background: '#28c840', opacity: 0.88 }} />
               </div>
-              <div className="text-mist/50">→ scanning workflows...</div>
-              <div className="text-ghost">→ manual invoicing detected <span className="text-pulse">[6hrs/week]</span></div>
-              <div className="text-ghost">→ customer follow-up gaps <span className="text-pulse">[12 missed/mo]</span></div>
-              <div className="text-ghost">→ manual reporting found <span className="text-pulse">[$3,200/mo labor]</span></div>
-              <div className="text-ghost">→ scheduling inefficiency <span className="text-pulse">[8hrs/week]</span></div>
-              <div className="text-ghost">→ no CRM automation <span className="text-pulse">[30% lead loss]</span></div>
-              <div className="mt-4 pt-4 border-t border-white/5">
-                <span className="text-mist/50">→ total recoverable value: </span>
-                <span className="text-signal font-600 text-base">$87,400/yr</span>
+              <span
+                style={{
+                  fontSize: 11,
+                  letterSpacing: '0.22em',
+                  opacity: 0.62,
+                  flex: 1,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                business_audit.log
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 128, justifyContent: 'flex-end' }}>
+                <span
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    background: 'var(--accent)',
+                    boxShadow: '0 0 12px color-mix(in oklab, var(--accent) 42%, transparent)',
+                    flexShrink: 0,
+                  }}
+                  aria-hidden
+                />
+                <span style={{ fontSize: 10, letterSpacing: '0.2em', color: 'var(--accent)', fontWeight: 600 }}>eevolvv.ai</span>
               </div>
-              <div className="text-signal/70">→ evolution readiness: CRITICAL ▓▓▓▓▓▓▓▓░░ 80%</div>
+            </div>
+            <div style={{ padding: '32px 36px 36px', flexShrink: 0 }}>
+              <div style={{ opacity: 0.5 }}>→ scanning workflows…</div>
+              <div>→ manual invoicing detected <span style={{ color: 'var(--accent)' }}>[6hrs/wk]</span></div>
+              <div>→ customer follow-up gaps <span style={{ color: 'var(--accent)' }}>[12 missed/mo]</span></div>
+              <div>→ manual reporting found <span style={{ color: 'var(--accent)' }}>[$3,200/mo labor]</span></div>
+              <div>→ scheduling inefficiency <span style={{ color: 'var(--accent)' }}>[8hrs/wk]</span></div>
+              <div>→ no CRM automation <span style={{ color: 'var(--accent)' }}>[30% lead loss]</span></div>
+              <div style={{ marginTop: 22, paddingTop: 22, borderTop: '1px solid rgba(244,241,234,0.16)' }}>
+                <span style={{ opacity: 0.5 }}>→ total recoverable value: </span>
+                <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 18 }}>$87,400/yr</span>
+              </div>
+              <div style={{ opacity: 0.72, marginTop: 10, fontSize: 13 }}>→ evolution readiness: CRITICAL ▓▓▓▓▓▓▓▓░░ 80%</div>
             </div>
           </div>
         </div>
@@ -338,83 +611,48 @@ function Problem() {
   )
 }
 
-// ─── How It Works ─────────────────────────────────────────────────────────────
-function HowItWorks() {
-  const { ref, inView } = useInView()
+// ─── Process ──────────────────────────────────────────────────────────────────
 
+function Process() {
   return (
-    <section id="how-it-works" className="py-32 px-6 bg-carbon border-y border-white/5">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-20" ref={ref}>
-          <span className="tag bg-signal/10 text-signal border border-signal/20 mb-6 inline-block">THE PROCESS</span>
-          <h2 className={`font-display font-800 text-4xl md:text-6xl text-pure fade-up ${inView ? 'visible' : ''}`}>
-            From intake to transformed<br />
-            <span className="text-signal">in 60 days.</span>
-          </h2>
+    <section id="how" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
+      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
+        <SectionHeader number="02" eyebrow="THE PROCESS" title="From intake to transformed in 60 days." note="N=5 STEPS" />
+        <div className="grid mt-14" style={{ gridTemplateColumns: 'repeat(5,1fr)', gap: 0, marginTop: 64, border: '1px solid var(--ink)' }}>
+          {PROCESS_STEPS.map((step, i) => (
+            <div key={i} className="status-cell" style={{ padding: 28, borderRight: i < PROCESS_STEPS.length - 1 ? '1px solid var(--ink)' : 'none' }}>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 600, marginBottom: 16 }}>{step.day}</div>
+              <div style={{ width: 14, height: 14, border: '2px solid var(--ink)', background: 'var(--accent)', borderRadius: 999, marginBottom: 16 }} />
+              <div style={{ fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em', marginBottom: 8 }}>{step.title}</div>
+              <p style={{ fontSize: 13, lineHeight: 1.5, opacity: 0.7, margin: 0 }}>{step.desc}</p>
+            </div>
+          ))}
         </div>
-
-        <div className="relative">
-          {/* Timeline line */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-signal/30 via-signal/10 to-transparent" />
-
-          <div className="space-y-12">
-            {PROCESS_STEPS.map((step, i) => (
-              <div key={i} className={`flex flex-col md:flex-row items-center gap-8 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
-                <div className={`flex-1 ${i % 2 === 1 ? 'md:text-right' : ''}`}>
-                  <div className={`fade-up delay-${(i + 1) * 100} ${inView ? 'visible' : ''} bg-graphite border border-white/8 rounded-sm p-6 card-hover`}>
-                    <span className="font-mono text-xs text-signal tracking-widest">{step.day}</span>
-                    <h3 className="font-display font-700 text-2xl text-pure mt-1 mb-2">{step.title}</h3>
-                    <p className="text-mist text-sm leading-relaxed">{step.desc}</p>
-                  </div>
-                </div>
-                <div className="hidden md:flex w-10 h-10 bg-void border-2 border-signal rounded-full items-center justify-center z-10 flex-shrink-0">
-                  <div className="w-3 h-3 bg-signal rounded-full" />
-                </div>
-                <div className="flex-1" />
-              </div>
-            ))}
-          </div>
+        <div className="mono" style={{ marginTop: 18, fontSize: 10, letterSpacing: '0.22em', opacity: 0.5, textAlign: 'right' }}>
+          ↳ ROI GUARANTEED · OR WE WORK FREE UNTIL IT IS
         </div>
       </div>
     </section>
   )
 }
 
-// ─── Who It's For ─────────────────────────────────────────────────────────────
-function WhoItsFor() {
-  const { ref, inView } = useInView()
-  const examples = [
-    { icon: '🏋️', type: 'Gym / Fitness', pain: 'Manual scheduling, member follow-ups, lost leads', win: 'Auto-booking, retention AI, revenue recovery' },
-    { icon: '🍽️', type: 'Restaurant', pain: 'Order errors, no-shows, manual inventory', win: 'Automated ops, smart reservations, waste reduction' },
-    { icon: '⚖️', type: 'Law Firm', pain: 'Admin overload, client intake, billing gaps', win: 'AI intake, automated billing, case tracking' },
-    { icon: '🏗️', type: 'Construction', pain: 'Scheduling chaos, quote delays, supplier chaos', win: 'Project AI, instant quotes, supplier automation' },
-    { icon: '🏥', type: 'Medical Practice', pain: 'Patient admin, billing errors, no-show rate', win: 'AI scheduling, billing automation, reminders' },
-    { icon: '🏢', type: 'Enterprise', pain: 'Siloed teams, manual reporting, process debt', win: 'Full ops rebuild, AI layer, unified intelligence' },
-  ]
+// ─── WhoItsFor ────────────────────────────────────────────────────────────────
 
+function WhoItsFor() {
   return (
-    <section className="py-32 px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16" ref={ref}>
-          <span className="tag bg-signal/10 text-signal border border-signal/20 mb-6 inline-block">WHO WE EVOLVE</span>
-          <h2 className={`font-display font-800 text-4xl md:text-6xl text-pure fade-up ${inView ? 'visible' : ''}`}>
-            Any business.<br /><span className="text-signal">Every industry.</span>
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {examples.map((ex, i) => (
-            <div key={i} className={`bg-graphite border border-white/8 rounded-sm p-6 card-hover fade-up delay-${(i + 1) * 100} ${inView ? 'visible' : ''}`}>
-              <div className="text-3xl mb-4">{ex.icon}</div>
-              <h3 className="font-display font-700 text-xl text-pure mb-3">{ex.type}</h3>
-              <div className="space-y-2">
-                <div className="flex items-start gap-2">
-                  <span className="text-pulse text-sm mt-0.5 flex-shrink-0">×</span>
-                  <span className="text-mist text-sm">{ex.pain}</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-signal text-sm mt-0.5 flex-shrink-0">→</span>
-                  <span className="text-ghost text-sm">{ex.win}</span>
-                </div>
+    <section id="who" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
+      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
+        <SectionHeader number="03" eyebrow="WHO WE EVOLVE" title="Any business. Every industry." note={`N=${EXAMPLES.length}`} />
+        <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(3,1fr)', gap: 0, marginTop: 56, border: '1px solid var(--ink)' }}>
+          {EXAMPLES.map((ex, i) => (
+            <div key={i} className="status-cell" style={{ padding: 28, borderRight: i % 3 < 2 ? '1px solid var(--ink)' : 'none', borderBottom: i < 3 ? '1px solid var(--ink)' : 'none' }}>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 16 }}>{ex.code}</div>
+              <div style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.015em', marginBottom: 20 }}>{ex.type}</div>
+              <div style={{ borderTop: '1px solid var(--rule)', paddingTop: 14 }}>
+                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: 0.55, marginBottom: 6 }}>BEFORE</div>
+                <div style={{ fontSize: 13, lineHeight: 1.5, opacity: 0.75, marginBottom: 16 }}>{ex.pain}</div>
+                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: 6 }}>AFTER →</div>
+                <div style={{ fontSize: 13, lineHeight: 1.5 }}>{ex.win}</div>
               </div>
             </div>
           ))}
@@ -425,86 +663,56 @@ function WhoItsFor() {
 }
 
 // ─── Pricing ──────────────────────────────────────────────────────────────────
-function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
-  const { ref, inView } = useInView()
 
+function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
   return (
-    <section id="pricing" className="py-32 px-6 bg-carbon border-y border-white/5">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16" ref={ref}>
-          <span className="tag bg-signal/10 text-signal border border-signal/20 mb-6 inline-block">PRICING</span>
-          <h2 className={`font-display font-800 text-4xl md:text-6xl text-pure fade-up ${inView ? 'visible' : ''}`}>
-            Every business has<br /><span className="text-signal">a starting point.</span>
-          </h2>
-          <p className="text-mist mt-4 max-w-xl mx-auto">All tiers include the Evolution Report. ROI guaranteed at 60 days post-deployment.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+    <section id="pricing" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
+      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
+        <SectionHeader number="04" eyebrow="PRICING" title="Every business has a starting point." note="FOUR TIERS" />
+        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24 }}>
+          All tiers include the Evolution Report. ROI guaranteed at 60 days post-deployment.
+        </p>
+        <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(4,1fr)', gap: 0, marginTop: 48, border: '1px solid var(--ink)' }}>
           {TIERS.map((tier, i) => (
-            <div
-              key={tier.id}
-              className={`relative rounded-sm p-7 flex flex-col card-hover fade-up delay-${(i + 1) * 100} ${inView ? 'visible' : ''}
-                ${tier.highlight
-                  ? 'bg-signal/5 border-2 border-signal glow-signal'
-                  : 'bg-graphite border border-white/8'
-                }`}
-            >
+            <div key={tier.id} className="status-cell" style={{ padding: 24, borderRight: i < TIERS.length - 1 ? '1px solid var(--ink)' : 'none', background: tier.highlight ? 'var(--ink)' : 'transparent', color: tier.highlight ? 'var(--paper)' : 'var(--ink)', position: 'relative', display: 'flex', flexDirection: 'column' }}>
               {tier.highlight && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="tag bg-signal text-void">MOST POPULAR</span>
-                </div>
+                <div className="mono" style={{ position: 'absolute', top: -12, left: 24, background: 'var(--accent)', color: 'var(--paper)', padding: '4px 10px', fontSize: 9, letterSpacing: '0.22em', fontWeight: 600 }}>HIGH IMPACT/COST</div>
               )}
-              <div className="mb-5">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xl">{tier.emoji}</span>
-                  <span className="font-mono text-xs text-mist tracking-widest uppercase">{tier.name}</span>
-                </div>
-                <h3 className="font-display font-800 text-2xl text-pure">{tier.label}</h3>
-                <p className="text-mist text-xs mt-1">{tier.who}</p>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 12 }}>{tier.code}</div>
+              <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>{tier.name}</div>
+              <div className="serif" style={{ fontStyle: 'italic', fontSize: 16, color: 'var(--accent)', marginBottom: 8 }}>{tier.label}</div>
+              <div style={{ fontSize: 12, opacity: 0.6, marginBottom: 20 }}>{tier.who}</div>
+              <div style={{ borderTop: '1px solid', borderColor: tier.highlight ? 'rgba(244,241,234,0.18)' : 'var(--rule)', paddingTop: 16, marginBottom: 16 }}>
+                <div style={{ fontSize: 24, fontWeight: 600, letterSpacing: '-0.015em' }}>{tier.price}</div>
+                <div style={{ fontSize: 12, opacity: 0.6, marginTop: 4 }}>{tier.tagline}</div>
               </div>
-              <div className="mb-6">
-                <div className={`font-display font-800 text-3xl ${tier.highlight ? 'text-signal' : 'text-pure'}`}>{tier.price}</div>
-                <p className="text-mist/60 text-xs mt-1">{tier.tagline}</p>
-              </div>
-              <ul className="space-y-2.5 flex-1 mb-7">
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, flex: 1, marginBottom: 20 }}>
                 {tier.features.map((f, j) => (
-                  <li key={j} className="flex items-start gap-2 text-sm">
-                    <span className="text-signal mt-0.5 flex-shrink-0">✓</span>
-                    <span className="text-ghost">{f}</span>
+                  <li key={j} style={{ display: 'grid', gridTemplateColumns: '16px 1fr', gap: 8, padding: '6px 0', fontSize: 13, lineHeight: 1.5, opacity: 0.85 }}>
+                    <span style={{ color: 'var(--accent)' }}>✓</span>
+                    <span>{f}</span>
                   </li>
                 ))}
               </ul>
-              <button
-                onClick={() => onCTA(tier.id)}
-                className={`w-full py-3 rounded-sm font-700 text-sm tracking-wide transition-all
-                  ${tier.highlight
-                    ? 'btn-primary'
-                    : 'border border-white/15 text-ghost hover:border-signal/40 hover:text-signal'
-                  }`}
-              >
-                Start with {tier.name} →
+              <button onClick={() => onCTA(tier.id)} className="mono" style={{ width: '100%', padding: '14px 0', background: tier.highlight ? 'var(--accent)' : 'transparent', color: tier.highlight ? 'var(--paper)' : 'var(--ink)', border: tier.highlight ? '0' : '1px solid var(--ink)', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, cursor: 'pointer' }}>
+                START WITH {tier.name.toUpperCase()} →
               </button>
             </div>
           ))}
         </div>
-
         {/* Retainer add-on */}
-        <div className="mt-8 bg-graphite border border-white/8 rounded-sm p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div style={{ marginTop: 32, border: '1px solid var(--ink)', padding: 28, display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'center' }}>
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 bg-signal rounded-full animate-pulse" />
-              <span className="font-mono text-xs text-signal tracking-widest">EVOLVE RETAINER</span>
-            </div>
-            <h3 className="font-display font-700 text-xl text-pure">Keep evolving every month.</h3>
-            <p className="text-mist text-sm mt-1">New automations built as your business grows. AI improves — so do you.</p>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10, fontWeight: 600 }}>+ ADD-ON · EVOLVE RETAINER</div>
+            <div style={{ fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em' }}>Keep evolving every month.</div>
+            <p style={{ fontSize: 14, lineHeight: 1.5, opacity: 0.7, margin: '6px 0 0', maxWidth: 520 }}>New automations built as your business grows. AI improves — so do you.</p>
           </div>
-          <div className="flex items-center gap-8 flex-shrink-0">
-            <div className="text-center">
-              <div className="font-display font-800 text-2xl text-signal">$500–$25K</div>
-              <div className="font-mono text-xs text-mist">/month</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.01em' }}>$500–$25K</div>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.55 }}>/ MONTH</div>
             </div>
-            <button onClick={() => onCTA('retainer')} className="btn-primary px-6 py-3 rounded-sm text-sm font-700 tracking-wide whitespace-nowrap">
-              Add Retainer →
-            </button>
+            <button onClick={() => onCTA('retainer')} className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 22px', border: 0, cursor: 'pointer', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600 }}>ADD RETAINER →</button>
           </div>
         </div>
       </div>
@@ -512,87 +720,62 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
   )
 }
 
-// ─── Loading Narrative ────────────────────────────────────────────────────────
-const LOADING_NARRATIVE = [
-  { label: 'SCANNING', message: 'Reading your business intake...', detail: 'Parsing operational data across all inputs' },
-  { label: 'MAPPING', message: 'Mapping your workflow architecture...', detail: 'Identifying process gaps and dependencies' },
-  { label: 'ANALYZING', message: 'Calculating automation opportunities...', detail: 'Running ROI models against your revenue range' },
-  { label: 'BUILDING', message: 'Generating your automation roadmap...', detail: 'Sequencing by impact-to-effort ratio' },
-  { label: 'WRITING', message: 'Compiling your Evolution Report...', detail: 'Formatting recommendations for your team' },
-]
+// ─── LoadingNarrative ─────────────────────────────────────────────────────────
 
-function LoadingNarrative({ step: loadingStep, elapsed }: { step: number; elapsed: number }) {
-  const progress = Math.min(((loadingStep + 1) / LOADING_NARRATIVE.length) * 100, 100)
+function LoadingNarrative({ step, elapsed }: { step: number; elapsed: number }) {
+  const progress = Math.min((step + 1) / LOADING_NARRATIVE.length * 100, 100)
   const filled = Math.round(progress / 5)
-
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-graphite border border-signal/20 rounded-sm p-8 font-mono glow-signal">
-        {/* Terminal header */}
-        <div className="flex items-center gap-2 mb-8 pb-4 border-b border-white/5">
-          <div className="w-3 h-3 bg-pulse rounded-full animate-pulse" />
-          <div className="w-3 h-3 bg-yellow-500/70 rounded-full" />
-          <div className="w-3 h-3 bg-signal rounded-full animate-pulse" />
-          <span className="text-mist/50 text-xs ml-3 tracking-widest">diagnostic_engine.run</span>
-          <span className="ml-auto text-signal text-xs tracking-widest">{elapsed}s</span>
+    <div style={{ maxWidth: 640, margin: '0 auto' }}>
+      <div style={{ border: '1px solid var(--ink)', background: 'var(--ink)', color: 'var(--paper)', padding: 32, fontFamily: 'JetBrains Mono, monospace' }}>
+        <div className="flex items-center justify-between" style={{ paddingBottom: 16, marginBottom: 24, borderBottom: '1px solid rgba(244,241,234,0.18)' }}>
+          <div className="flex items-center gap-2">
+            <div style={{ width: 8, height: 8, borderRadius: 999, background: 'var(--accent)' }} className="anim-blink" />
+            <span style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.6 }}>diagnostic_engine.run</span>
+          </div>
+          <span style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)' }}>{elapsed}s</span>
         </div>
-
-        {/* Current phase */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-signal text-xs tracking-[0.2em] font-700">
-              [{LOADING_NARRATIVE[loadingStep].label}]
-            </span>
-            <div className="w-1.5 h-1.5 bg-signal rounded-full animate-pulse" />
+        <div style={{ marginBottom: 24 }}>
+          <div className="flex items-center gap-3" style={{ marginBottom: 8 }}>
+            <span style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 600 }}>[{LOADING_NARRATIVE[step].label}]</span>
           </div>
-          <p className="text-pure text-base mb-1">{LOADING_NARRATIVE[loadingStep].message}</p>
-          <p className="text-mist text-xs">{LOADING_NARRATIVE[loadingStep].detail}</p>
+          <div style={{ fontSize: 15, marginBottom: 4 }}>{LOADING_NARRATIVE[step].message}</div>
+          <div style={{ fontSize: 12, opacity: 0.6 }}>{LOADING_NARRATIVE[step].detail}</div>
         </div>
-
-        {/* Progress bar */}
-        <div className="mb-6">
-          <div className="flex justify-between text-xs text-mist/60 mb-2">
-            <span>PROGRESS</span>
-            <span>{Math.round(progress)}%</span>
+        <div style={{ marginBottom: 24 }}>
+          <div className="flex items-center justify-between" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.55, marginBottom: 6 }}>
+            <span>PROGRESS</span><span>{Math.round(progress)}%</span>
           </div>
-          <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-signal transition-all duration-1000 ease-out"
-              style={{ width: `${progress}%` }}
-            />
+          <div style={{ height: 4, background: 'rgba(244,241,234,0.12)', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${progress}%`, background: 'var(--accent)', transition: 'width 1s ease-out' }} />
           </div>
-          <div className="mt-1 text-signal/50 text-xs tracking-widest overflow-hidden">
+          <div style={{ marginTop: 8, fontSize: 10, color: 'rgba(244,241,234,0.4)', letterSpacing: '0.05em' }}>
             {'▓'.repeat(filled)}{'░'.repeat(20 - filled)}
           </div>
         </div>
-
-        {/* Step log */}
-        <div className="space-y-1.5">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {LOADING_NARRATIVE.map((s, i) => {
-            const done = i < loadingStep
-            const active = i === loadingStep
+            const done = i < step, active = i === step
             return (
-              <div key={i} className={`text-xs flex items-center gap-2 transition-all duration-300 ${
-                done ? 'text-signal/70' : active ? 'text-ghost' : 'text-mist/30'
-              }`}>
+              <div key={i} style={{ fontSize: 11, opacity: done ? 0.7 : active ? 1 : 0.3, color: done ? 'var(--accent)' : 'inherit', display: 'flex', gap: 8 }}>
                 <span>{done ? '✓' : active ? '▶' : '○'}</span>
-                <span>{s.label.toLowerCase()} {done ? 'complete' : active ? 'in progress...' : 'queued'}</span>
+                <span>{s.label.toLowerCase()} {done ? 'complete' : active ? 'in progress…' : 'queued'}</span>
               </div>
             )
           })}
         </div>
-
-        <p className="mt-8 text-mist/40 text-xs text-center tracking-widest">
-          AI is generating your custom report — typically takes 20–35 seconds
+        <p style={{ marginTop: 28, textAlign: 'center', fontSize: 10, letterSpacing: '0.22em', opacity: 0.4 }}>
+          AI IS GENERATING YOUR REPORT · TYPICALLY 20–35 SECONDS
         </p>
       </div>
     </div>
   )
 }
 
-// ─── Diagnostic Form ──────────────────────────────────────────────────────────
+// ─── DiagnosticForm ───────────────────────────────────────────────────────────
+
 function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
-  const [form, setForm] = useState<FormData>({
+  const [form, setForm] = useState<FormFields>({
     name: '', email: '', businessName: '', businessType: '',
     industry: '', revenue: '', teamSize: '', topPains: '',
     tools: '', customerJourney: '', errorPoints: '', hoursFreed: '',
@@ -604,348 +787,210 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
   const [elapsed, setElapsed] = useState(0)
   const [report, setReport] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-
   const totalSteps = 4
 
-  // Advance loading narrative phase every 5.5s while loading
   useEffect(() => {
-    if (!loading) {
-      setLoadingStep(0)
-      setElapsed(0)
-      return
-    }
-    const stepTimer = setInterval(() => {
-      setLoadingStep(prev => Math.min(prev + 1, LOADING_NARRATIVE.length - 1))
-    }, 5500)
-    const elapsedTimer = setInterval(() => {
-      setElapsed(prev => prev + 1)
-    }, 1000)
-    return () => {
-      clearInterval(stepTimer)
-      clearInterval(elapsedTimer)
-    }
+    if (!loading) { setLoadingStep(0); setElapsed(0); return }
+    const a = setInterval(() => setLoadingStep(p => Math.min(p + 1, LOADING_NARRATIVE.length - 1)), 5500)
+    const b = setInterval(() => setElapsed(p => p + 1), 1000)
+    return () => { clearInterval(a); clearInterval(b) }
   }, [loading])
 
-  const update = (field: keyof FormData, value: string) =>
-    setForm(prev => ({ ...prev, [field]: value }))
+  useEffect(() => { setForm(f => ({ ...f, tier: defaultTier || f.tier })) }, [defaultTier])
+
+  const update = (k: keyof FormFields, v: string) => setForm(p => ({ ...p, [k]: v }))
 
   const handleSubmit = async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true); setError(null)
     try {
-      const res = await fetch('/api/diagnostic', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
-
+      const res = await fetch('/api/diagnostic', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       let data: Record<string, unknown> = {}
-      try {
-        data = await res.json()
-      } catch {
-        throw new Error('The server returned an unexpected response. Please try again.')
-      }
-
-      if (res.status === 429) {
-        throw new Error('You\'ve generated 3 reports this hour — your limit resets in 60 minutes. Check your email for your previous report.')
-      }
-      if (res.status === 400) {
-        throw new Error((data.error as string) || 'Please check your inputs and try again.')
-      }
-      if (res.status === 502) {
-        throw new Error('The AI engine timed out. This sometimes happens under load — please try again in 30 seconds.')
-      }
-      if (!res.ok) {
-        throw new Error((data.error as string) || `Unexpected error (${res.status}). Please try again.`)
-      }
-      if (!data.success) {
-        throw new Error((data.error as string) || 'Something went wrong generating your report. Please try again.')
-      }
-
+      try { data = await res.json() } catch { throw new Error('The server returned an unexpected response. Please try again.') }
+      if (res.status === 429) throw new Error("You've generated 3 reports this hour — your limit resets in 60 minutes.")
+      if (res.status === 400) throw new Error((data.error as string) || 'Please check your inputs and try again.')
+      if (res.status === 502) throw new Error('The AI engine timed out. Please try again in 30 seconds.')
+      if (!res.ok) throw new Error((data.error as string) || `Unexpected error (${res.status}).`)
+      if (!data.success) throw new Error((data.error as string) || 'Something went wrong. Please try again.')
       setReport(data.report as string)
     } catch (err: unknown) {
-      const message = err instanceof Error
-        ? err.message
-        : 'Connection failed. Check your internet connection and try again.'
-      setError(message)
+      setError(err instanceof Error ? err.message : 'Connection failed. Check your internet and try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  const formatReport = (text: string) => {
-    return text
-      .replace(/### (.*)/g, '<h3>$1</h3>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/^- (.*)/gm, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>\n?)+/g, (match) => `<ul>${match}</ul>`)
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/^(?!<[hup])/gm, '')
-  }
+  const formatReport = (text: string) =>
+    text.replace(/### (.*)/g, '<h3>$1</h3>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^- (.*)/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+        .replace(/\n\n/g, '</p><p>')
 
-  const inputClass = "w-full bg-graphite border border-white/8 rounded-sm px-4 py-3 text-sm text-pure placeholder-mist/40 focus:outline-none focus:border-signal/50 focus:shadow-[0_0_0_3px_rgba(0,255,148,0.08)] transition-all"
-  const labelClass = "block text-xs font-mono text-mist tracking-widest uppercase mb-2"
+  const inp: React.CSSProperties = { width: '100%', padding: '14px 16px', border: '1px solid var(--ink)', background: 'rgba(255,255,255,0.5)', fontSize: 15, color: 'var(--ink)', fontFamily: 'Space Grotesk, sans-serif' }
+  const lbl: React.CSSProperties = { display: 'block', fontFamily: 'JetBrains Mono, monospace', fontSize: 10, letterSpacing: '0.22em', opacity: 0.6, marginBottom: 8, textTransform: 'uppercase' }
+  const btnBack: React.CSSProperties = { padding: '14px 20px', border: '1px solid var(--ink)', background: 'transparent', cursor: 'pointer', fontSize: 11, letterSpacing: '0.18em', fontFamily: 'JetBrains Mono, monospace' }
+  const btnNext = (active: boolean): React.CSSProperties => ({ flex: 1, padding: '14px 0', background: 'var(--ink)', color: 'var(--paper)', border: 0, cursor: 'pointer', fontSize: 12, letterSpacing: '0.18em', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', opacity: active ? 1 : 0.4 })
 
   if (report) {
     return (
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-10">
-          <div className="w-14 h-14 bg-signal/10 border-2 border-signal rounded-full flex items-center justify-center mx-auto mb-5">
-            <span className="text-2xl">✓</span>
-          </div>
-          <h3 className="font-display font-800 text-3xl text-pure mb-2">Your Evolution Report</h3>
-          <p className="text-mist text-sm">AI-generated diagnostic for {form.businessName || form.businessType}</p>
+      <div style={{ maxWidth: 720, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <div style={{ width: 56, height: 56, border: '2px solid var(--ink)', background: 'var(--accent)', color: 'var(--paper)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 20 }}>✓</div>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>SHEET R-01 · EVOLUTION REPORT</div>
+          <div style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>Your Evolution Report</div>
+          <p style={{ fontSize: 14, opacity: 0.65, marginTop: 8 }}>AI-generated diagnostic for {form.businessName || form.businessType}</p>
         </div>
-        <div className="bg-graphite border border-signal/20 rounded-sm p-8 report-content">
-          <div dangerouslySetInnerHTML={{ __html: formatReport(report) }} />
-        </div>
-        <div className="mt-8 bg-graphite border border-white/8 rounded-sm p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="report-content" style={{ border: '1px solid var(--ink)', background: 'rgba(255,255,255,0.5)', padding: 32 }} dangerouslySetInnerHTML={{ __html: formatReport(report) }} />
+        <div style={{ marginTop: 24, border: '1px solid var(--ink)', padding: 24, display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'center' }}>
           <div>
-            <p className="font-display font-700 text-pure">Ready to make this real?</p>
-            <p className="text-mist text-sm">Book your 30-min strategy call and let's build the roadmap together.</p>
+            <div style={{ fontSize: 18, fontWeight: 500 }}>Ready to make this real?</div>
+            <p style={{ fontSize: 13, opacity: 0.7, marginTop: 4 }}>Book your 30-min strategy call and let&apos;s build the roadmap together.</p>
           </div>
-          <a
-            href="mailto:hello@theevolution.ai?subject=Evolution%20Strategy%20Call%20Request&body=I%20just%20received%20my%20Evolution%20Report%20and%20would%20like%20to%20book%20a%20strategy%20call."
-            className="btn-primary px-6 py-3 rounded-sm text-sm font-700 tracking-wide whitespace-nowrap"
-          >
-            Book Strategy Call →
-          </a>
+          <a href="mailto:hello@eevolvv.com?subject=Evolution%20Strategy%20Call%20Request" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 22px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600 }}>BOOK STRATEGY CALL →</a>
         </div>
       </div>
     )
   }
 
-  if (loading) {
-    return <LoadingNarrative step={loadingStep} elapsed={elapsed} />
-  }
+  if (loading) return <LoadingNarrative step={loadingStep} elapsed={elapsed} />
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Progress */}
-      <div className="flex items-center gap-2 mb-10">
+    <div style={{ maxWidth: 640, margin: '0 auto' }}>
+      {/* Progress strip */}
+      <div className="flex items-center gap-2" style={{ marginBottom: 32 }}>
         {Array.from({ length: totalSteps }).map((_, i) => (
-          <div key={i} className="flex-1 h-0.5 rounded-full overflow-hidden bg-white/10">
-            <div
-              className="h-full bg-signal transition-all duration-500"
-              style={{ width: i <= step ? '100%' : '0%' }}
-            />
+          <div key={i} style={{ flex: 1, height: 2, background: 'rgba(20,20,19,0.12)', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: i <= step ? '100%' : '0%', background: 'var(--accent)', transition: 'width 0.5s' }} />
           </div>
         ))}
-        <span className="font-mono text-xs text-mist ml-2">{step + 1}/{totalSteps}</span>
+        <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.6, marginLeft: 8 }}>{step + 1}/{totalSteps}</span>
       </div>
 
-      {/* Step 0: Contact */}
       {step === 0 && (
-        <div className="space-y-5">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div>
-            <h3 className="font-display font-700 text-2xl text-pure mb-1">Who are we evolving?</h3>
-            <p className="text-mist text-sm">Your report will be delivered to your email within minutes.</p>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>STEP 01 / 04</div>
+            <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>Who are we evolving?</div>
+            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6 }}>Your report will be delivered to your email within minutes.</p>
           </div>
+          <div><label style={lbl}>Your Name</label><input style={inp} placeholder="Bob Bobbert III" value={form.name} onChange={e => update('name', e.target.value)} /></div>
+          <div><label style={lbl}>Email Address</label><input style={inp} type="email" placeholder="you@business.com" value={form.email} onChange={e => update('email', e.target.value)} /></div>
+          <div><label style={lbl}>Business Name</label><input style={inp} placeholder="Your Business Name" value={form.businessName} onChange={e => update('businessName', e.target.value)} /></div>
           <div>
-            <label className={labelClass}>Your Name</label>
-            <input className={inputClass} placeholder="Eduardo Barbosa" value={form.name} onChange={e => update('name', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelClass}>Email Address</label>
-            <input className={inputClass} type="email" placeholder="you@business.com" value={form.email} onChange={e => update('email', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelClass}>Business Name</label>
-            <input className={inputClass} placeholder="Your Business Name" value={form.businessName} onChange={e => update('businessName', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelClass}>Evolution Tier</label>
-            <select className={inputClass} value={form.tier} onChange={e => update('tier', e.target.value)}>
+            <label style={lbl}>Evolution Tier</label>
+            <select style={inp} value={form.tier} onChange={e => update('tier', e.target.value)}>
               {TIERS.map(t => <option key={t.id} value={t.id}>{t.name} — {t.label} ({t.price})</option>)}
               <option value="retainer">Evolve Retainer</option>
             </select>
           </div>
-          <button
-            onClick={() => form.name && form.email ? setStep(1) : null}
-            disabled={!form.name || !form.email}
-            className="btn-primary w-full py-4 rounded-sm font-700 tracking-wide disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Continue →
-          </button>
+          <button onClick={() => { if (form.name && form.email) setStep(1) }} disabled={!form.name || !form.email} className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '16px 0', border: 0, cursor: 'pointer', fontSize: 12, letterSpacing: '0.18em', fontWeight: 600, opacity: form.name && form.email ? 1 : 0.4 }}>CONTINUE →</button>
         </div>
       )}
 
-      {/* Step 1: Business info */}
       {step === 1 && (
-        <div className="space-y-5">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div>
-            <h3 className="font-display font-700 text-2xl text-pure mb-1">Tell us about your business.</h3>
-            <p className="text-mist text-sm">The more specific, the more precise your report.</p>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>STEP 02 / 04</div>
+            <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>Tell us about your business.</div>
+            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6 }}>The more specific, the more precise your report.</p>
           </div>
+          <div><label style={lbl}>Business Type</label><input style={inp} placeholder="e.g. CrossFit gym, family restaurant, law firm…" value={form.businessType} onChange={e => update('businessType', e.target.value)} /></div>
           <div>
-            <label className={labelClass}>Business Type</label>
-            <input className={inputClass} placeholder="e.g. CrossFit gym, family restaurant, law firm..." value={form.businessType} onChange={e => update('businessType', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelClass}>Industry</label>
-            <select className={inputClass} value={form.industry} onChange={e => update('industry', e.target.value)}>
-              <option value="">Select industry...</option>
-              {INDUSTRIES.map(ind => <option key={ind} value={ind}>{ind}</option>)}
+            <label style={lbl}>Industry</label>
+            <select style={inp} value={form.industry} onChange={e => update('industry', e.target.value)}>
+              <option value="">Select industry…</option>
+              {INDUSTRIES_LIST.map(ind => <option key={ind} value={ind}>{ind}</option>)}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Annual Revenue</label>
-              <select className={inputClass} value={form.revenue} onChange={e => update('revenue', e.target.value)}>
+          <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div><label style={lbl}>Annual Revenue</label>
+              <select style={inp} value={form.revenue} onChange={e => update('revenue', e.target.value)}>
                 <option value="">Select range</option>
-                {['Under $100K', '$100K–$500K', '$500K–$1M', '$1M–$5M', '$5M–$20M', '$20M–$100M', '$100M+'].map(r => <option key={r} value={r}>{r}</option>)}
+                {['Under $100K','$100K–$500K','$500K–$1M','$1M–$5M','$5M–$20M','$20M–$100M','$100M+'].map(r => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
-            <div>
-              <label className={labelClass}>Team Size</label>
-              <select className={inputClass} value={form.teamSize} onChange={e => update('teamSize', e.target.value)}>
+            <div><label style={lbl}>Team Size</label>
+              <select style={inp} value={form.teamSize} onChange={e => update('teamSize', e.target.value)}>
                 <option value="">Select size</option>
-                {['Solo (just me)', '2–5', '6–15', '16–50', '51–200', '200+'].map(s => <option key={s} value={s}>{s}</option>)}
+                {['Solo (just me)','2–5','6–15','16–50','51–200','200+'].map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
           </div>
-          <div className="flex gap-3">
-            <button onClick={() => setStep(0)} className="border border-white/10 text-mist px-5 py-3 rounded-sm hover:border-white/20 transition-colors text-sm">← Back</button>
-            <button
-              onClick={() => form.businessType && form.industry ? setStep(2) : null}
-              disabled={!form.businessType || !form.industry}
-              className="btn-primary flex-1 py-3 rounded-sm font-700 tracking-wide disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Continue →
-            </button>
+          <div className="flex" style={{ gap: 12 }}>
+            <button onClick={() => setStep(0)} className="mono" style={btnBack}>← BACK</button>
+            <button onClick={() => { if (form.businessType && form.industry) setStep(2) }} disabled={!form.businessType || !form.industry} className="mono" style={btnNext(!!(form.businessType && form.industry))}>CONTINUE →</button>
           </div>
         </div>
       )}
 
-      {/* Step 2: Pain points */}
       {step === 2 && (
-        <div className="space-y-5">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div>
-            <h3 className="font-display font-700 text-2xl text-pure mb-1">Where's the pain?</h3>
-            <p className="text-mist text-sm">Be specific — this is what we'll target first.</p>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>STEP 03 / 04</div>
+            <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>Where&apos;s the pain?</div>
+            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6 }}>Be specific — this is what we&apos;ll target first.</p>
           </div>
-          <div>
-            <label className={labelClass}>Top 3 time-consuming tasks per week</label>
-            <textarea
-              className={`${inputClass} resize-none`}
-              rows={3}
-              placeholder="e.g. Manually entering customer data into spreadsheets takes 3hrs. Following up on unpaid invoices takes 2hrs. Creating weekly reports takes 4hrs..."
-              value={form.topPains}
-              onChange={e => update('topPains', e.target.value)}
-            />
+          <div><label style={lbl}>Top 3 time-consuming tasks per week</label>
+            <textarea rows={3} style={{ ...inp, resize: 'none' }} placeholder="e.g. Manually entering customer data takes 3hrs. Following up on unpaid invoices takes 2hrs…" value={form.topPains} onChange={e => update('topPains', e.target.value)} />
           </div>
-          <div>
-            <label className={labelClass}>Tools & software you currently use</label>
-            <input className={inputClass} placeholder="e.g. QuickBooks, Google Sheets, Slack, Salesforce, Square..." value={form.tools} onChange={e => update('tools', e.target.value)} />
+          <div><label style={lbl}>Tools & software you currently use</label>
+            <input style={inp} placeholder="e.g. QuickBooks, Google Sheets, Slack, Salesforce…" value={form.tools} onChange={e => update('tools', e.target.value)} />
           </div>
-          <div>
-            <label className={labelClass}>Where do errors or delays most often happen?</label>
-            <textarea
-              className={`${inputClass} resize-none`}
-              rows={2}
-              placeholder="e.g. When handing off between sales and fulfillment, double bookings happen..."
-              value={form.errorPoints}
-              onChange={e => update('errorPoints', e.target.value)}
-            />
+          <div><label style={lbl}>Where do errors or delays most often happen?</label>
+            <textarea rows={2} style={{ ...inp, resize: 'none' }} placeholder="e.g. When handing off between sales and fulfillment, double bookings happen…" value={form.errorPoints} onChange={e => update('errorPoints', e.target.value)} />
           </div>
-          <div className="flex gap-3">
-            <button onClick={() => setStep(1)} className="border border-white/10 text-mist px-5 py-3 rounded-sm hover:border-white/20 transition-colors text-sm">← Back</button>
-            <button
-              onClick={() => form.topPains ? setStep(3) : null}
-              disabled={!form.topPains}
-              className="btn-primary flex-1 py-3 rounded-sm font-700 tracking-wide disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Continue →
-            </button>
+          <div className="flex" style={{ gap: 12 }}>
+            <button onClick={() => setStep(1)} className="mono" style={btnBack}>← BACK</button>
+            <button onClick={() => { if (form.topPains) setStep(3) }} disabled={!form.topPains} className="mono" style={btnNext(!!form.topPains)}>CONTINUE →</button>
           </div>
         </div>
       )}
 
-      {/* Step 3: Vision + Submit */}
       {step === 3 && (
-        <div className="space-y-5">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div>
-            <h3 className="font-display font-700 text-2xl text-pure mb-1">Paint the picture.</h3>
-            <p className="text-mist text-sm">Help us understand your customer flow and your vision.</p>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>STEP 04 / 04</div>
+            <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>Paint the picture.</div>
+            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6 }}>Help us understand your customer flow and your vision.</p>
           </div>
-          <div>
-            <label className={labelClass}>Describe your customer journey (start to finish)</label>
-            <textarea
-              className={`${inputClass} resize-none`}
-              rows={3}
-              placeholder="e.g. Customer finds us on Instagram → calls to book → we manually check availability → send confirmation email → they show up → we bill manually after..."
-              value={form.customerJourney}
-              onChange={e => update('customerJourney', e.target.value)}
-            />
+          <div><label style={lbl}>Describe your customer journey</label>
+            <textarea rows={3} style={{ ...inp, resize: 'none' }} placeholder="e.g. Customer finds us on Instagram → calls to book → we manually check availability → send confirmation…" value={form.customerJourney} onChange={e => update('customerJourney', e.target.value)} />
           </div>
-          <div>
-            <label className={labelClass}>If you had 20 extra hours per week, you would...</label>
-            <textarea
-              className={`${inputClass} resize-none`}
-              rows={2}
-              placeholder="e.g. Focus on getting 3 more enterprise clients, expand to a second location, build out the team..."
-              value={form.hoursFreed}
-              onChange={e => update('hoursFreed', e.target.value)}
-            />
+          <div><label style={lbl}>If you had 20 extra hours per week, you would…</label>
+            <textarea rows={2} style={{ ...inp, resize: 'none' }} placeholder="e.g. Focus on getting 3 more enterprise clients, expand to a second location…" value={form.hoursFreed} onChange={e => update('hoursFreed', e.target.value)} />
           </div>
-
           {error && (
-            <div className="bg-red-500/8 border border-red-500/25 rounded-sm p-4 space-y-2">
-              <div className="flex items-start gap-2">
-                <span className="text-pulse text-sm flex-shrink-0 mt-0.5">×</span>
-                <p className="text-red-400 text-sm leading-relaxed">{error}</p>
-              </div>
-              <button
-                onClick={() => { setError(null) }}
-                className="text-xs font-mono text-mist/60 hover:text-signal transition-colors ml-4"
-              >
-                ↑ Try again
-              </button>
+            <div style={{ border: '1px solid var(--accent)', padding: 14, background: 'rgba(255,255,255,0.4)' }}>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 6 }}>※ ERROR</div>
+              <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0 }}>{error}</p>
+              <button onClick={() => setError(null)} className="mono" style={{ marginTop: 8, background: 'transparent', border: 0, fontSize: 10, letterSpacing: '0.18em', opacity: 0.6, cursor: 'pointer', padding: 0 }}>↑ TRY AGAIN</button>
             </div>
           )}
-
-          <div className="flex gap-3">
-            <button onClick={() => setStep(2)} className="border border-white/10 text-mist px-5 py-3 rounded-sm hover:border-white/20 transition-colors text-sm">← Back</button>
-            <button
-              onClick={handleSubmit}
-              disabled={loading || !form.customerJourney}
-              className="btn-primary flex-1 py-4 rounded-sm font-700 tracking-wide disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-            >
-              {loading ? (
-                <>
-                  <div className="spinner" />
-                  <span>AI is analyzing your business...</span>
-                </>
-              ) : (
-                'Generate My Evolution Report →'
-              )}
+          <div className="flex" style={{ gap: 12 }}>
+            <button onClick={() => setStep(2)} className="mono" style={btnBack}>← BACK</button>
+            <button onClick={handleSubmit} disabled={loading || !form.customerJourney} className="mono" style={{ flex: 1, padding: '16px 0', background: 'var(--accent)', color: 'var(--paper)', border: 0, cursor: 'pointer', fontSize: 12, letterSpacing: '0.18em', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', opacity: loading || !form.customerJourney ? 0.4 : 1 }}>
+              {loading ? 'ANALYZING…' : 'GENERATE MY EVOLUTION REPORT →'}
             </button>
           </div>
-          <p className="text-mist/40 text-xs text-center font-mono">
-            Your report is generated by AI in real-time. Takes ~30 seconds.
-          </p>
+          <p className="mono" style={{ textAlign: 'center', fontSize: 10, letterSpacing: '0.18em', opacity: 0.5 }}>↳ AI-GENERATED IN REAL-TIME · ~30 SECONDS</p>
         </div>
       )}
     </div>
   )
 }
 
-// ─── Diagnostic Section ───────────────────────────────────────────────────────
+// ─── DiagnosticSection ────────────────────────────────────────────────────────
+
 function DiagnosticSection({ targetTier }: { targetTier: string }) {
   return (
-    <section id="diagnostic" className="py-32 px-6 grid-bg">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="tag bg-signal/10 text-signal border border-signal/20 mb-6 inline-block">FREE AI AUDIT</span>
-          <h2 className="font-display font-800 text-4xl md:text-6xl text-pure mb-4">
-            Get your Evolution Report.<br />
-            <span className="text-signal">Right now. Free.</span>
-          </h2>
-          <p className="text-mist max-w-lg mx-auto">
-            Answer 10 questions about your business. Our AI analyzes your workflows and delivers a custom automation roadmap — valued at $2,500, yours free.
-          </p>
-        </div>
-        <div className="bg-carbon border border-white/8 rounded-sm p-8 md:p-12 border-gradient">
+    <section id="diagnostic" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', position: 'relative', overflow: 'hidden' }}>
+      <div className="absolute inset-0 blueprint-grid" style={{ opacity: 0.4, pointerEvents: 'none' }} />
+      <div className="mx-auto relative" style={{ maxWidth: 1280, padding: '0 32px' }}>
+        <SectionHeader number="05" eyebrow="FREE AI AUDIT" title="Get your Evolution Report. Right now. Free." note="VALUED $2,500" />
+        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24, marginBottom: 56 }}>
+          Answer 10 questions about your business. Our AI analyzes your workflows and delivers a custom automation roadmap.
+        </p>
+        <div style={{ border: '1px solid var(--ink)', background: 'var(--paper)', padding: '48px 32px' }}>
           <DiagnosticForm defaultTier={targetTier} />
         </div>
       </div>
@@ -953,59 +998,85 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
   )
 }
 
-// ─── Footer ───────────────────────────────────────────────────────────────────
-function Footer() {
+// ─── CTAClose ─────────────────────────────────────────────────────────────────
+
+function CTAClose({ onCTA }: { onCTA: () => void }) {
   return (
-    <footer className="py-16 px-6 border-t border-white/5 bg-void">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start gap-10">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-6 h-6 bg-signal rounded-sm" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%)' }} />
-              <span className="font-display font-700 text-pure tracking-tight">THE EVOLUTION</span>
-            </div>
-            <p className="text-mist text-sm max-w-xs leading-relaxed">
-              AI-native business transformation. Every business. Every size. Every industry.
-            </p>
-            <p className="text-mist/40 text-xs font-mono mt-4">theevolution.ai</p>
-          </div>
-          <div className="grid grid-cols-2 gap-x-16 gap-y-3 text-sm text-mist">
-            <a href="#how-it-works" className="hover:text-signal transition-colors">Process</a>
-            <a href="#diagnostic" className="hover:text-signal transition-colors">Free Audit</a>
-            <a href="#pricing" className="hover:text-signal transition-colors">Pricing</a>
-            <a href="mailto:hello@theevolution.ai" className="hover:text-signal transition-colors">Contact</a>
-          </div>
+    <section style={{ padding: '120px 0', background: 'var(--ink)', color: 'var(--paper)' }}>
+      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.5, marginBottom: 24 }}>SHEET A-09 · CALL TO ACTION</div>
+        <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(48px, 8vw, 128px)', fontWeight: 500, letterSpacing: '-0.04em', lineHeight: 0.92, margin: 0 }}>
+          Either you evolve,<br />
+          or you <em className="serif" style={{ fontStyle: 'italic', color: 'var(--accent)' }}>fall behind.</em>
+        </h2>
+        <div style={{ display: 'flex', gap: 16, marginTop: 48, flexWrap: 'wrap' }}>
+          <button onClick={onCTA} className="btn-gradient" style={{ padding: '20px 32px', fontSize: 16, fontWeight: 600, letterSpacing: '0.02em' }}>Get Your Free AI Audit →</button>
+          <a href="#pricing" style={{ background: 'transparent', color: 'var(--paper)', padding: '20px 32px', border: '1px solid var(--paper)', cursor: 'pointer', fontSize: 16, fontWeight: 600, letterSpacing: '0.02em', textDecoration: 'none' }}>See Pricing Tiers</a>
         </div>
-        <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between gap-4 text-xs text-mist/40 font-mono">
-          <span>© {new Date().getFullYear()} The Evolution. All rights reserved.</span>
-          <span>60-Day ROI Guarantee on all Transformation engagements.</span>
+      </div>
+    </section>
+  )
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+
+function Footer() {
+  const cols: [string, [string, string][]][] = [
+    ['NAVIGATE', [['Process','#how'],['Industries','#who'],['Pricing','#pricing']]],
+    ['ENGAGE',   [['Free Audit','#diagnostic'],['Strategy Call','mailto:hello@eevolvv.com']]],
+    ['LEGAL',    [['Privacy','#'],['Terms','#'],['Contact','mailto:hello@eevolvv.com']]],
+  ]
+  return (
+    <footer style={{ borderTop: '1px solid var(--rule)', padding: '56px 0 40px' }}>
+      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
+        <div className="grid" style={{ gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 48 }}>
+          <div>
+            <div className="flex items-center gap-3" style={{ marginBottom: 20 }}>
+              <EvMark />
+              <span className="mono" style={{ fontSize: 12, letterSpacing: '0.18em', fontWeight: 600 }}>EEVOLVV</span>
+            </div>
+            <p style={{ fontSize: 13, lineHeight: 1.55, opacity: 0.65, margin: 0, maxWidth: 320 }}>AI-native business transformation. Every business. Every size. Every industry.</p>
+            <p className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.45, marginTop: 12 }}>eevolvv.com</p>
+          </div>
+          {cols.map(([title, links]) => (
+            <div key={title}>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 16 }}>{title}</div>
+              {links.map(([l, h]) => (
+                <a key={l} href={h} className="link-rule" style={{ display: 'block', fontSize: 14, marginBottom: 10, color: 'var(--ink)', textDecoration: 'none' }}>{l}</a>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="mono flex items-center justify-between" style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid var(--rule)', fontSize: 10, letterSpacing: '0.22em', opacity: 0.5 }}>
+          <span>© 2026 · EEVOLVV · ALL RIGHTS RESERVED</span>
+          <span>SHEET A-99 · 60-DAY ROI GUARANTEE</span>
         </div>
       </div>
     </footer>
   )
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function Home() {
   const [targetTier, setTargetTier] = useState('grow')
-  const diagnosticRef = useRef<HTMLElement | null>(null)
 
   const scrollToDiagnostic = (tier?: string) => {
     if (tier) setTargetTier(tier)
-    const el = document.getElementById('diagnostic')
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    document.getElementById('diagnostic')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   return (
     <main>
-      <Nav onCTA={() => scrollToDiagnostic()} />
+      <Header onCTA={() => scrollToDiagnostic()} />
       <Hero onCTA={() => scrollToDiagnostic()} />
       <Stats />
       <Problem />
-      <HowItWorks />
+      <Process />
       <WhoItsFor />
-      <Pricing onCTA={(tier) => scrollToDiagnostic(tier)} />
+      <Pricing onCTA={tier => scrollToDiagnostic(tier)} />
       <DiagnosticSection targetTier={targetTier} />
+      <CTAClose onCTA={() => scrollToDiagnostic()} />
       <Footer />
     </main>
   )
