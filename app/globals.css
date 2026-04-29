@@ -151,7 +151,62 @@ input:focus, textarea:focus, select:focus { outline: none; }
   letter-spacing: 0;
 }
 
-/* Hero departure-board row: scale so longest phrase (~12 cells × 0.86em + gaps) fits content width */
+/* Hero quote marquee (eevolvv ticker) */
+.hero-quote-ticker {
+  position: relative;
+}
+.hero-quote-track {
+  display: inline-flex;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  width: max-content;
+  animation: heroQuoteMarquee 180s linear infinite;
+}
+.hero-quote-track.hero-quote-track--static {
+  animation: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  row-gap: 10px;
+  column-gap: 1.25rem;
+}
+.hero-quote-segment {
+  font-size: clamp(9px, 1.05vw, 11px);
+  letter-spacing: 0.16em;
+  opacity: 0.55;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.35;
+}
+.hero-quote-track--static .hero-quote-segment {
+  white-space: normal;
+  text-align: center;
+  max-width: min(100%, 52ch);
+}
+@keyframes heroQuoteMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-quote-track:not(.hero-quote-track--static) {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    row-gap: 10px;
+  }
+  .hero-quote-track:not(.hero-quote-track--static) .hero-quote-segment {
+    white-space: normal;
+    max-width: min(100%, 48ch);
+    text-align: center;
+  }
+}
+
 .hero-flap-stage.flap-stage {
   font-size: clamp(12px, calc((min(100vw, 1440px) - 48px) / 10.76), 180px);
   max-width: 100%;

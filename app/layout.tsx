@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://eevolvv.com'),
   title: 'eevolvv — AI Business Transformation',
-  description: 'We map your workflows, deploy AI automation, and permanently rebuild how your business operates. 60-day ROI guarantee.',
+  description: 'We map your workflows, deploy AI automation, and permanently rebuild how your business operates—with a structured day-60 review.',
   keywords: 'AI business transformation, business automation, AI operations, workflow automation, AI integration',
   openGraph: {
     title: 'eevolvv — AI Business Transformation',
