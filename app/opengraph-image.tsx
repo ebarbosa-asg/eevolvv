@@ -127,7 +127,7 @@ export default async function Image() {
           }}
         >
           <span style={{ fontSize: 13, color: '#999085', letterSpacing: '0.1em' }}>
-            60-DAY ROI GUARANTEE
+            DAY 60 · STRUCTURED AUDIT
           </span>
           <span style={{ fontSize: 13, color: '#999085', letterSpacing: '0.1em' }}>
             WORKFLOW AUTOMATION · AI AGENTS · OPERATIONS

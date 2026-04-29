@@ -6,6 +6,30 @@ import { useState, useEffect, useRef } from 'react'
 
 const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'STARTUP', 'ENTERPRISE', 'CLINIC', 'LOGISTICS', 'REAL ESTATE', 'E-COMMERCE', 'AGENCY', 'FRANCHISE', 'RETAILER', 'MANUFACTURER'] as const
 
+/** Rotating hero strip — “evolution” → eevolvv only; clean quotes + attributions. */
+const HERO_TICKER_QUOTES = [
+  `"It is not the strongest of the species that survives, but the one most responsive to change." — Charles Darwin (eevolvv at work)`,
+  `"Nothing in biology makes sense except in the light of eevolvv." — Theodosius Dobzhansky`,
+  `"Eevolvv is not a force but a process; not a cause but a law." — John Morley`,
+  `"We are the product of 4.5 billion years of eevolvv's success." — Richard Dawkins`,
+  `"Eevolvv is a fact, not a theory." — Richard Dawkins`,
+  `"Eevolvv cares nothing for comfort." — Carl Sagan`,
+  `"Eevolvv is written in the rocks underneath our feet." — Neil deGrasse Tyson`,
+  `"The great secret of eevolvv is time." — Edward O. Wilson`,
+  `"Eevolvv makes us all related." — Bill Nye`,
+  `"To study eevolvv is to study the most profound question: where did we come from?" — Francisco Ayala`,
+  `"Eevolvv is change, and change is life." — Anonymous`,
+  `"Eevolvv produces beauty as a byproduct of survival." — Geoffrey Miller`,
+  `"Natural selection is the mechanism; eevolvv is the result." — Ernst Mayr`,
+  `"Humans are not the end of eevolvv — they are the middle." — Stewart Brand`,
+  `"Eevolvv gives you a brain. Life requires you to use it." — Anonymous`,
+  `"Eevolvv is not a ladder but a bushy tree." — Stephen Jay Gould`,
+  `"The cornerstone of modern biology is eevolvv." — Ernst Mayr`,
+  `"Eevolvv wrote the first code — DNA." — Anonymous`,
+  `"Eevolvv doesn't optimize for happiness. It optimizes for survival." — Robert Wright`,
+  `"Understanding eevolvv is understanding ourselves." — Carl Sagan`,
+] as const
+
 const TIERS = [
   {
     id: 'seed', code: 'T-01', name: 'Seed', label: 'AI Starter',
@@ -18,14 +42,14 @@ const TIERS = [
     id: 'grow', code: 'T-02', name: 'Grow', label: 'AI Essentials',
     price: '$3,500–$7,500', who: 'Small business · $500K–$5M revenue',
     tagline: 'Core automations, real ROI.',
-    features: ['Full business diagnostic', 'Priority workflow automation', 'Tool integration setup', '3 core AI agents deployed', '60-day ROI guarantee'],
+    features: ['Full business diagnostic', 'Priority workflow automation', 'Tool integration setup', '3 core AI agents deployed', 'Structured day-60 review'],
     highlight: false,
   },
   {
     id: 'scale', code: 'T-03', name: 'Scale', label: 'AI Transformation',
     price: '$15,000–$75,000', who: 'SMB to mid-market',
     tagline: 'Full operational rebuild.',
-    features: ['Complete CORE framework', 'All workflows automated', 'Custom AI agent stack', 'Team training included', 'Dedicated build team', '60-day ROI guarantee'],
+    features: ['Complete CORE framework', 'All workflows automated', 'Custom AI agent stack', 'Team training included', 'Dedicated build team', 'Structured day-60 review'],
     highlight: true,
   },
   {
@@ -65,7 +89,7 @@ const PROCESS_STEPS = [
   { day: 'Day 07', title: 'Your Report',desc: 'AI-generated eevolvv Report delivered. Every automation opportunity mapped.' },
   { day: 'Day 14', title: 'First Win',  desc: 'First automation goes live. You feel the difference immediately.' },
   { day: 'Day 45', title: 'Transformed',desc: 'Full build complete. Your business runs differently.' },
-  { day: 'Day 60', title: 'ROI Positive',desc: 'Guaranteed. Or we work free until you are.' },
+  { day: 'Day 60', title: '60-Day Audit', desc: 'Structured review of metrics vs. plan—wins logged and next priorities set.' },
 ]
 
 const INDUSTRIES_LIST = [
@@ -268,7 +292,7 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
 
   const fromStr = padN(prevRef.current)
   const toStr = padN(curr)
-  const fs = 'clamp(56px, 7vw, 96px)'
+  const fs = 'clamp(72px, 11vw, 132px)'
 
   return (
     <div
@@ -326,7 +350,7 @@ function TypingStatLabel({ text, reducedMotion }: { text: string; reducedMotion:
   }, [text, reducedMotion])
   const typing = !reducedMotion && display.length < text.length
   return (
-    <p style={{ marginTop: 26, fontSize: 14, lineHeight: 1.6, color: 'rgba(20,20,19,0.78)', minHeight: '4.8em' }}>
+    <p style={{ marginTop: 26, fontSize: 'clamp(16px, 1.85vw, 20px)', lineHeight: 1.55, color: 'rgba(20,20,19,0.78)', minHeight: '5em' }}>
       <span className="mono" style={{ opacity: 0.42, marginRight: 8 }}>{'> '}</span>
       {display}
       {typing ? (
@@ -391,6 +415,33 @@ function SplitFlap({ word, length, fontSize, className }: { word: string; length
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
+function HeroQuoteTicker() {
+  const [reduceMotion, setReduceMotion] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReduceMotion(mq.matches)
+    const fn = () => setReduceMotion(mq.matches)
+    mq.addEventListener('change', fn)
+    return () => mq.removeEventListener('change', fn)
+  }, [])
+  const loop = reduceMotion ? [...HERO_TICKER_QUOTES] : [...HERO_TICKER_QUOTES, ...HERO_TICKER_QUOTES]
+  return (
+    <div
+      className="hero-quote-ticker anim-fade-in"
+      style={{ marginBottom: 56, width: '100%', overflow: 'hidden' }}
+      role="presentation"
+    >
+      <div className={`hero-quote-track${reduceMotion ? ' hero-quote-track--static' : ''}`}>
+        {loop.map((q, i) => (
+          <span key={`${i}-${q.slice(0, 12)}`} className="hero-quote-segment">
+            {q}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function Hero({ onCTA }: { onCTA: () => void }) {
   const [phraseIndex, setPhraseIndex] = useState(0)
   useEffect(() => {
@@ -406,11 +457,7 @@ function Hero({ onCTA }: { onCTA: () => void }) {
       <div className="absolute" style={{ inset: 0, background: 'radial-gradient(ellipse at 70% 30%, color-mix(in oklab, var(--accent) 14%, transparent) 0%, transparent 55%)', pointerEvents: 'none' }} />
 
       <div className="mx-auto relative" style={{ maxWidth: 1440, padding: '0 40px', width: '100%' }}>
-        <div className="flex items-center justify-between mono anim-fade-in" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 56 }}>
-          <span>SHEET A-01 · AI BUSINESS TRANSFORMATION · REV 2026.04</span>
-          <span>—— DEPARTURES BOARD · NOW EVOLVING ——</span>
-          <span>60-DAY ROI GUARANTEE</span>
-        </div>
+        <HeroQuoteTicker />
 
         {/* "We evolve every" + rule */}
         <div className="anim-fade-up" style={{ marginBottom: 16, display: 'flex', alignItems: 'baseline', gap: 20 }}>
@@ -504,7 +551,7 @@ function Stats() {
             }}
           >
             <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.48 }}>
-              telemetry_rotation.json · FIG_SEQUENCE
+              KEY METRICS · LIVE ROTATION
             </span>
             <span className="mono" style={{ fontSize: 10, letterSpacing: '0.2em', opacity: 0.42 }}>
               N={STATS.length} · LIVE
@@ -512,37 +559,11 @@ function Stats() {
           </div>
 
           <div style={{ padding: '40px 36px 36px' }}>
-            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 20 }}>
-              FIG · {String(idx + 1).padStart(2, '0')}
-            </div>
-
-            <div style={{ minHeight: 92, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ minHeight: 120, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Counter key={`slide-${idx}-${s.value}-${s.suffix}`} target={s.value} suffix={s.suffix} />
             </div>
 
             <TypingStatLabel key={`lbl-${idx}`} text={s.label} reducedMotion={reducedMotion} />
-
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 8, flexWrap: 'wrap' }}>
-              {STATS.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  aria-label={`Show statistic ${i + 1} of ${STATS.length}`}
-                  aria-current={i === idx ? 'step' : undefined}
-                  onClick={() => setIdx(i)}
-                  style={{
-                    width: i === idx ? 28 : 8,
-                    height: 8,
-                    borderRadius: 999,
-                    border: 'none',
-                    background: i === idx ? 'var(--ink)' : 'var(--rule)',
-                    cursor: 'pointer',
-                    transition: 'width 0.35s ease, background 0.25s ease',
-                    padding: 0,
-                  }}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </div>
@@ -675,7 +696,7 @@ function Process() {
           ))}
         </div>
         <div className="mono" style={{ marginTop: 18, fontSize: 10, letterSpacing: '0.22em', opacity: 0.5, textAlign: 'right' }}>
-          ↳ ROI GUARANTEED · OR WE WORK FREE UNTIL IT IS
+          ↳ CLOSE THE LOOP · AUDIT & NEXT ACTIONS
         </div>
       </div>
     </section>
@@ -716,7 +737,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
       <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
         <SectionHeader number="04" eyebrow="PRICING" title="Every business has a starting point." note="FOUR TIERS" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24 }}>
-          All tiers include the eevolvv Report. ROI guaranteed at 60 days post-deployment.
+          All tiers include the eevolvv Report. Outcomes reviewed at day 60 post-deployment.
         </p>
         <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(4,1fr)', gap: 0, marginTop: 48, border: '1px solid var(--ink)' }}>
           {TIERS.map((tier, i) => (
@@ -1104,7 +1125,7 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
     <section id="diagnostic" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', position: 'relative', overflow: 'hidden', scrollMarginTop: 72 }}>
       <div className="absolute inset-0 blueprint-grid" style={{ opacity: 0.4, pointerEvents: 'none' }} />
       <div className="mx-auto relative" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="05" eyebrow="FREE AI AUDIT" title="Get your eevolvv Report. Right now. Free." note="VALUED $2,500" />
+        <SectionHeader number="05" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. right now. Free." note="Valued ~$3k" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24, marginBottom: 56 }}>
           Answer 12 questions about your business. Our AI analyzes your workflows and delivers a custom automation roadmap.
         </p>
@@ -1141,7 +1162,7 @@ function CTAClose({ onCTA }: { onCTA: () => void }) {
 function Footer() {
   const cols: [string, [string, string][]][] = [
     ['NAVIGATE', [['Process','#how'],['Industries','#who'],['Pricing','#pricing']]],
-    ['ENGAGE',   [['Free Audit','#diagnostic'],['Strategy Call','mailto:hello@eevolvv.com']]],
+    ['ENGAGE',   [['Free Audit','#diagnostic']]],
     ['LEGAL',    [['Privacy','#'],['Terms','#'],['Contact','mailto:hello@eevolvv.com']]],
   ]
   return (
@@ -1167,7 +1188,7 @@ function Footer() {
         </div>
         <div className="mono flex items-center justify-between" style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid var(--rule)', fontSize: 10, letterSpacing: '0.22em', opacity: 0.5 }}>
           <span>© 2026 · EEVOLVV · ALL RIGHTS RESERVED</span>
-          <span>SHEET A-99 · 60-DAY ROI GUARANTEE</span>
+          <span>SHEET A-99 · DAY 60 AUDIT</span>
         </div>
       </div>
     </footer>

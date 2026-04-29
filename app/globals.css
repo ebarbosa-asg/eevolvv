@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Press+Start+2P&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -151,9 +151,11 @@ input:focus, textarea:focus, select:focus { outline: none; }
   letter-spacing: 0;
 }
 
-/* Hero quote marquee (eevolvv ticker) */
+/* Hero quote marquee — 8-bit arcade / BIOS (Press Start 2P) */
 .hero-quote-ticker {
   position: relative;
+  font-family: 'Press Start 2P', 'JetBrains Mono', ui-monospace, monospace;
+  font-synthesis: none;
 }
 .hero-quote-track {
   display: inline-flex;
@@ -172,12 +174,13 @@ input:focus, textarea:focus, select:focus { outline: none; }
   column-gap: 1.25rem;
 }
 .hero-quote-segment {
-  font-size: clamp(9px, 1.05vw, 11px);
-  letter-spacing: 0.16em;
-  opacity: 0.55;
+  font-size: clamp(10px, 1.05vw, 12px);
+  letter-spacing: 0;
+  font-weight: 400;
+  opacity: 0.68;
   white-space: nowrap;
   flex-shrink: 0;
-  line-height: 1.35;
+  line-height: 1.65;
 }
 .hero-quote-track--static .hero-quote-segment {
   white-space: normal;
