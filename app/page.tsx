@@ -6,28 +6,48 @@ import { useState, useEffect, useRef } from 'react'
 
 const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'STARTUP', 'ENTERPRISE', 'CLINIC', 'LOGISTICS', 'REAL ESTATE', 'E-COMMERCE', 'AGENCY', 'FRANCHISE', 'RETAILER', 'MANUFACTURER'] as const
 
-/** Rotating hero strip — “evolution” → eevolvv only; clean quotes + attributions. */
+/** Rotating hero strip — evolution-wordplay variants + rally cries + attributions. */
 const HERO_TICKER_QUOTES = [
-  `"It is not the strongest of the species that survives, but the one most responsive to change." — Charles Darwin (eevolvv at work)`,
-  `"Nothing in biology makes sense except in the light of eevolvv." — Theodosius Dobzhansky`,
-  `"Eevolvv is not a force but a process; not a cause but a law." — John Morley`,
-  `"We are the product of 4.5 billion years of eevolvv's success." — Richard Dawkins`,
-  `"Eevolvv is a fact, not a theory." — Richard Dawkins`,
-  `"Eevolvv cares nothing for comfort." — Carl Sagan`,
-  `"Eevolvv is written in the rocks underneath our feet." — Neil deGrasse Tyson`,
-  `"The great secret of eevolvv is time." — Edward O. Wilson`,
-  `"Eevolvv makes us all related." — Bill Nye`,
-  `"To study eevolvv is to study the most profound question: where did we come from?" — Francisco Ayala`,
-  `"Eevolvv is change, and change is life." — Anonymous`,
-  `"Eevolvv produces beauty as a byproduct of survival." — Geoffrey Miller`,
-  `"Natural selection is the mechanism; eevolvv is the result." — Ernst Mayr`,
-  `"Humans are not the end of eevolvv — they are the middle." — Stewart Brand`,
-  `"Eevolvv gives you a brain. Life requires you to use it." — Anonymous`,
-  `"Eevolvv is not a ladder but a bushy tree." — Stephen Jay Gould`,
-  `"The cornerstone of modern biology is eevolvv." — Ernst Mayr`,
-  `"Eevolvv wrote the first code — DNA." — Anonymous`,
-  `"Eevolvv doesn't optimize for happiness. It optimizes for survival." — Robert Wright`,
-  `"Understanding eevolvv is understanding ourselves." — Carl Sagan`,
+  `"It is not the strongest of the species that survives, but the one most responsive to change." — Charles Darwin (on eevolvvtion)`,
+  `"Nothing in biology makes sense except in the light of eevolvvtion." — Theodosius Dobzhansky`,
+  `"Eevolvvtion is not a force but a process; not a cause but a law." — John Morley`,
+  `"We are the product of 4.5 billion years of eevolvvtion's success." — Richard Dawkins`,
+  `"Eevolvvtion is a fact, not a theory." — Richard Dawkins`,
+  `"Eevolvvtion cares nothing for comfort." — Carl Sagan`,
+  `"Eevolvvtion is written in the rocks underneath our feet." — Neil deGrasse Tyson`,
+  `"The great secret of eevolvvtion is time." — Edward O. Wilson`,
+  `"Eevolvvtion makes us all related." — Bill Nye`,
+  `"To study eevolvvtion is to study the most profound question: where did we come from?" — Francisco Ayala`,
+  `"Eevolvvtion is change, and change is life." — Anonymous`,
+  `"Eevolvvtion produces beauty as a byproduct of survival." — Geoffrey Miller`,
+  `"Natural selection is the mechanism; eevolvvtion is the result." — Ernst Mayr`,
+  `"Humans are not the end of eevolvvtion — they are the middle." — Stewart Brand`,
+  `"Eevolvvtion gives you a brain. Life requires you to use it." — Anonymous`,
+  `"Eevolvvtion is not a ladder but a bushy tree." — Stephen Jay Gould`,
+  `"The cornerstone of modern biology is eevolvvtion." — Ernst Mayr`,
+  `"Eevolvvtion wrote the first code — DNA." — Anonymous`,
+  `"Eevolvvtion doesn't optimize for happiness. It optimizes for survival." — Robert Wright`,
+  `"Understanding eevolvvtion is understanding ourselves." — Carl Sagan`,
+  `"We do not eevolvv alone — we eevolvv together." — Anonymous`,
+  `"You have to eevolvv or you will be left behind." — Anonymous`,
+  `"Either you eevolvv or you dissolve." — Tupac Shakur`,
+  `"Species that cannot eevolvv go extinct. The same is true of ideas." — Anonymous`,
+  `"To eevolvv is to survive; to stagnate is to die." — Anonymous`,
+  `"We are wired to eevolvv — resistance is just friction." — Anonymous`,
+  `"Life's only directive: eevolvv." — Anonymous`,
+  `"Those who refuse to eevolvv hand their future to those who will." — Anonymous`,
+  `"The universe demands that we eevolvv." — Neil deGrasse Tyson`,
+  `"To eevolvv is not to abandon who you were — it is to honor what you can become." — Anonymous`,
+  `"Adapt, eevolvv, overcome." — Anonymous`,
+  `"Stars eevolvv. Galaxies eevolvv. Why would you be any different?" — Neil deGrasse Tyson`,
+  `"The brave eevolvv. The fearful repeat." — Anonymous`,
+  `"You cannot eevolvv by standing still." — Anonymous`,
+  `"We eevolvv not by force, but by necessity." — Charles Darwin`,
+  `"Every crisis is an invitation to eevolvv." — Anonymous`,
+  `"The mind that will not eevolvv is its own prison." — Anonymous`,
+  `"To eevolvv is to become more fully yourself." — Anonymous`,
+  `"Nature does not rush, yet everything eevolvvs." — Lao Tzu (adapted)`,
+  `"We eevolvv or we extinct — there is no third option." — Anonymous`,
 ] as const
 
 const TIERS = [
@@ -197,24 +217,140 @@ function EvMark() {
 
 function Header({ onCTA }: { onCTA: () => void }) {
   const nav: [string, string][] = [['how','PROCESS'],['who','INDUSTRIES'],['pricing','TIERS'],['diagnostic','GET REPORT']]
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [menuOpen])
+
+  const closeMenu = () => setMenuOpen(false)
+
   return (
-    <header className="sticky top-0 z-40 border-b" style={{ borderColor: 'var(--rule)', background: 'rgba(250,247,240,0.88)', backdropFilter: 'blur(8px)' }}>
-      <div className="mx-auto flex items-center justify-between gap-4 md:gap-8" style={{ maxWidth: 1280, padding: '10px 24px' }}>
-        <a href="#top" className="flex items-center gap-3" style={{ textDecoration: 'none', color: 'var(--ink)' }}>
-          <EvMark />
-          <span className="mono" style={{ fontSize: 12, letterSpacing: '0.18em', fontWeight: 600 }}>
-            EEVOLVV <span style={{ color: 'var(--accent)' }}>/ AI BUSINESS TRANSFORMATION</span>
-          </span>
-        </a>
-        <nav className="hidden md:flex shrink-0 items-center gap-6 lg:gap-8 mono" style={{ fontSize: 11, letterSpacing: '0.16em' }}>
-          {nav.map(([id, label]) => (
-            <a key={id} href={`#${id}`} className="link-rule" style={{ color: 'var(--ink)', opacity: 0.65, textDecoration: 'none', whiteSpace: 'nowrap' }}>{label}</a>
-          ))}
-        </nav>
-        <div className="flex shrink-0 items-center gap-2 md:ml-2 lg:ml-6">
-          <a href="#how" className="mono header-cta-secondary" style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}>SEE PROCESS</a>
-          <button onClick={onCTA} className="mono header-cta-gradient" style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px' }}>EVOLVE NOW →</button>
+    <header className="sticky top-0 z-50 border-b" style={{ borderColor: 'var(--rule)', background: 'rgba(250,247,240,0.88)', backdropFilter: 'blur(8px)' }}>
+      <div className="relative">
+        <div className="relative z-[50] mx-auto flex items-center justify-between gap-3 md:gap-8" style={{ maxWidth: 1280, padding: '10px 24px' }}>
+          <a href="#top" onClick={closeMenu} className="flex min-w-0 shrink items-center gap-3" style={{ textDecoration: 'none', color: 'var(--ink)' }}>
+            <EvMark />
+            <span className="mono" style={{ fontSize: 12, letterSpacing: '0.18em', fontWeight: 600 }}>
+              EEVOLVV{' '}
+              <span className="header-brand-sub" style={{ color: 'var(--accent)' }}>
+                / AI BUSINESS TRANSFORMATION
+              </span>
+            </span>
+          </a>
+          <nav className="hidden shrink-0 items-center gap-6 lg:gap-8 mono md:flex" style={{ fontSize: 11, letterSpacing: '0.16em' }}>
+            {nav.map(([id, label]) => (
+              <a key={id} href={`#${id}`} className="link-rule" style={{ color: 'var(--ink)', opacity: 0.65, textDecoration: 'none', whiteSpace: 'nowrap' }}>{label}</a>
+            ))}
+          </nav>
+          <div className="flex shrink-0 items-center gap-2 md:ml-2 lg:ml-6">
+            <a
+              href="#how"
+              className="mono header-cta-secondary hidden md:inline-flex"
+              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none', alignItems: 'center' }}
+            >
+              SEE PROCESS
+            </a>
+            <button
+              type="button"
+              className="header-menu-toggle md:hidden mono flex shrink-0 items-center justify-center"
+              aria-expanded={menuOpen}
+              aria-controls="site-mobile-nav"
+              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              onClick={() => setMenuOpen(o => !o)}
+              style={{
+                width: 42,
+                height: 42,
+                padding: 0,
+                border: '1px solid var(--rule)',
+                background: 'var(--paper)',
+                color: 'var(--ink)',
+                cursor: 'pointer',
+                fontSize: 18,
+                lineHeight: 1,
+              }}
+            >
+              <span aria-hidden>{menuOpen ? '×' : '☰'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                closeMenu()
+                onCTA()
+              }}
+              className="mono header-cta-gradient"
+              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px' }}
+            >
+              EVOLVE NOW →
+            </button>
+          </div>
         </div>
+
+        {menuOpen ? (
+          <>
+            <div
+              role="presentation"
+              className="fixed inset-0 z-[40] cursor-pointer md:hidden"
+              style={{ background: 'rgba(20,20,19,0.28)' }}
+              onClick={closeMenu}
+              aria-hidden
+            />
+            <nav
+              id="site-mobile-nav"
+              role="navigation"
+              aria-label="Primary sections"
+              className="absolute left-0 right-0 top-full z-[45] md:hidden"
+              style={{
+                borderBottom: '1px solid var(--rule)',
+                background: 'var(--paper)',
+                boxShadow: '0 24px 40px rgba(20,20,19,0.12)',
+              }}
+            >
+              <div className="mono" style={{ maxWidth: 1280, margin: '0 auto', padding: '16px 24px 20px', fontSize: 11, letterSpacing: '0.16em' }}>
+                {nav.map(([id, label]) => (
+                  <a
+                    key={id}
+                    href={`#${id}`}
+                    className="link-rule block py-3.5"
+                    style={{
+                      color: 'var(--ink)',
+                      opacity: 0.85,
+                      textDecoration: 'none',
+                      borderBottom: '1px solid var(--rule)',
+                    }}
+                    onClick={closeMenu}
+                  >
+                    {label}
+                  </a>
+                ))}
+                <a
+                  href="#how"
+                  className="link-rule block py-3.5"
+                  style={{
+                    color: 'var(--ink)',
+                    opacity: 0.85,
+                    textDecoration: 'none',
+                    paddingBottom: 4,
+                  }}
+                  onClick={closeMenu}
+                >
+                  SEE PROCESS
+                </a>
+              </div>
+            </nav>
+          </>
+        ) : null}
       </div>
     </header>
   )
@@ -224,7 +360,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
 
 function SectionHeader({ number, eyebrow, title, note }: { number: string; eyebrow: string; title: string; note: string }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr auto', gap: 24, alignItems: 'baseline', borderTop: '1px solid var(--ink)', paddingTop: 24 }}>
+    <div className="section-head" style={{ display: 'grid', gridTemplateColumns: '60px 1fr auto', gap: 24, alignItems: 'baseline', borderTop: '1px solid var(--ink)', paddingTop: 24 }}>
       <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 600 }}>§ {number}</div>
       <div>
         <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 12 }}>{eyebrow}</div>
@@ -456,15 +592,18 @@ function Hero({ onCTA }: { onCTA: () => void }) {
       <div className="absolute inset-0 grid-drift" style={{ opacity: 0.55, pointerEvents: 'none' }} />
       <div className="absolute" style={{ inset: 0, background: 'radial-gradient(ellipse at 70% 30%, color-mix(in oklab, var(--accent) 14%, transparent) 0%, transparent 55%)', pointerEvents: 'none' }} />
 
-      <div className="mx-auto relative" style={{ maxWidth: 1440, padding: '0 40px', width: '100%' }}>
+      <div className="mx-auto relative hero-shell" style={{ maxWidth: 1440, padding: '0 40px', width: '100%' }}>
         <HeroQuoteTicker />
 
         {/* "We evolve every" + rule */}
-        <div className="anim-fade-up" style={{ marginBottom: 16, display: 'flex', alignItems: 'baseline', gap: 20 }}>
-          <span className="serif" style={{ fontFamily: 'var(--font-serif)', fontStyle: 'normal', fontWeight: 400, fontSize: 'clamp(48px, 7.5vw, 132px)', lineHeight: 0.95, letterSpacing: '-0.025em', whiteSpace: 'nowrap', transform: 'skewX(12deg)', transformOrigin: 'left bottom', display: 'inline-block' }}>
+        <div className="anim-fade-up hero-tagline-row" style={{ marginBottom: 16, display: 'flex', alignItems: 'baseline', gap: 20 }}>
+          <span
+            className="serif hero-tagline-text"
+            style={{ fontFamily: 'var(--font-serif)', fontStyle: 'normal', fontWeight: 400, fontSize: 'clamp(48px, 7.5vw, 132px)', lineHeight: 0.95, letterSpacing: '-0.025em', whiteSpace: 'nowrap', transform: 'skewX(12deg)', transformOrigin: 'left bottom', display: 'inline-block' }}
+          >
             We evolve every
           </span>
-          <span style={{ flex: 1, height: 1, background: 'var(--ink)', opacity: 0.4, transform: 'translateY(-0.35em)' }} />
+          <span className="hero-tagline-rule" style={{ flex: 1, height: 1, background: 'var(--ink)', opacity: 0.4, transform: 'translateY(-0.35em)' }} />
         </div>
 
         {/* Split-flap word — font-size from .hero-flap-stage (viewport + longest phrase width) */}
@@ -477,12 +616,12 @@ function Hero({ onCTA }: { onCTA: () => void }) {
           into the new era.
         </h1>
 
-        <div className="grid mt-10 anim-fade-up" style={{ gridTemplateColumns: '1.1fr 0.9fr', gap: 56, animationDelay: '0.4s', marginTop: 56, alignItems: 'end' }}>
+        <div className="grid mt-10 anim-fade-up hero-body-grid" style={{ gridTemplateColumns: '1.1fr 0.9fr', gap: 56, animationDelay: '0.4s', marginTop: 56, alignItems: 'end' }}>
           <p style={{ fontSize: 18, lineHeight: 1.55, maxWidth: 560, color: 'color-mix(in oklab, var(--ink) 78%, transparent)', margin: 0 }}>
             From the corner gym to the Fortune 500 — we map your workflows, deploy AI automation, and permanently rebuild how your business operates.
             <span style={{ display: 'block', marginTop: 16, opacity: 0.6 }}>No software to learn. No consultants with decks. Just results.</span>
           </p>
-          <div className="flex items-end gap-3" style={{ alignSelf: 'end', justifySelf: 'end', flexWrap: 'wrap' }}>
+          <div className="flex items-end gap-3 hero-cta-row" style={{ alignSelf: 'end', justifySelf: 'end', flexWrap: 'wrap' }}>
             <button onClick={onCTA} className="btn-gradient" style={{ padding: '18px 30px', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>GET YOUR FREE AI AUDIT →</button>
             <a href="#how" style={{ background: 'transparent', color: 'var(--ink)', padding: '18px 30px', border: '1px solid var(--ink)', cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em', textDecoration: 'none' }}>SEE HOW IT WORKS</a>
           </div>
@@ -558,7 +697,7 @@ function Stats() {
             </span>
           </div>
 
-          <div style={{ padding: '40px 36px 36px' }}>
+          <div className="stats-panel-inner" style={{ padding: '40px 36px 36px' }}>
             <div style={{ minHeight: 120, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Counter key={`slide-${idx}-${s.value}-${s.suffix}`} target={s.value} suffix={s.suffix} />
             </div>
@@ -768,7 +907,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
           ))}
         </div>
         {/* Retainer add-on */}
-        <div style={{ marginTop: 32, border: '1px solid var(--ink)', padding: 28, display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'center' }}>
+        <div className="pricing-retainer-band" style={{ marginTop: 32, border: '1px solid var(--ink)', padding: 28, display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'center' }}>
           <div>
             <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10, fontWeight: 600 }}>+ ADD-ON · EVOLVE RETAINER</div>
             <div style={{ fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em' }}>Keep evolving every month.</div>
@@ -963,7 +1102,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
           <p style={{ fontSize: 14, opacity: 0.65, marginTop: 8 }}>AI-generated diagnostic for {form.businessName || form.businessType}</p>
         </div>
         <div className="report-content" style={{ border: '1px solid var(--ink)', background: 'rgba(255,255,255,0.5)', padding: 32 }} dangerouslySetInnerHTML={{ __html: formatReport(report) }} />
-        <div style={{ marginTop: 24, border: '1px solid var(--ink)', padding: 24, display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'center' }}>
+        <div className="diagnostic-report-cta" style={{ marginTop: 24, border: '1px solid var(--ink)', padding: 24, display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'center' }}>
           <div>
             <div style={{ fontSize: 18, fontWeight: 500 }}>Ready to make this real?</div>
             <p style={{ fontSize: 13, opacity: 0.7, marginTop: 4 }}>Book your 30-min strategy call and let&apos;s build the roadmap together.</p>
@@ -989,7 +1128,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
       <div style={{ border: '1px solid var(--ink)', borderTop: 'none', background: 'rgba(255,255,255,0.45)', overflow: 'hidden' }}>
 
         {/* Messages */}
-        <div ref={messagesRef} style={{ maxHeight: 420, overflowY: 'auto', padding: '32px 32px 8px' }}>
+        <div ref={messagesRef} className="chat-messages-panel" style={{ maxHeight: 420, overflowY: 'auto', padding: '32px 32px 8px' }}>
           {history.map((msg, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 20 }}>
               {msg.role === 'ai' && (
