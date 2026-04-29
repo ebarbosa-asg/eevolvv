@@ -852,7 +852,6 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
   const [report, setReport] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
-  const chatEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null)
 
   useEffect(() => {
@@ -864,8 +863,10 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
 
   useEffect(() => { setForm(f => ({ ...f, tier: defaultTier || f.tier })) }, [defaultTier])
 
+  const messagesRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const el = messagesRef.current
+    if (el) el.scrollTop = el.scrollHeight
   }, [history, currentQ])
 
   useEffect(() => {
@@ -953,7 +954,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
       <div style={{ border: '1px solid var(--ink)', borderTop: 'none', background: 'rgba(255,255,255,0.45)', overflow: 'hidden' }}>
 
         {/* Messages */}
-        <div style={{ maxHeight: 420, overflowY: 'auto', padding: '32px 32px 8px' }}>
+        <div ref={messagesRef} style={{ maxHeight: 420, overflowY: 'auto', padding: '32px 32px 8px' }}>
           {history.map((msg, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 20 }}>
               {msg.role === 'ai' && (
@@ -978,7 +979,6 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
             </div>
           )}
 
-          <div ref={chatEndRef} />
         </div>
 
         {/* Chips */}
@@ -999,7 +999,6 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
                 rows={3}
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && isValid) advance(input) }}
                 placeholder={q.placeholder}
                 style={{ flex: 1, padding: '18px 20px', border: 'none', background: 'transparent', fontSize: 15, resize: 'none', fontFamily: 'Space Grotesk, sans-serif', color: 'var(--ink)', lineHeight: 1.55 }}
               />
@@ -1009,7 +1008,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
                 type={q.type}
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter' && isValid) advance(input) }}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); if (isValid) advance(input) } }}
                 placeholder={q.placeholder}
                 style={{ flex: 1, padding: '18px 20px', border: 'none', background: 'transparent', fontSize: 15, fontFamily: 'Space Grotesk, sans-serif', color: 'var(--ink)' }}
               />
@@ -1050,7 +1049,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
       {/* Step counter */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
         <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.4 }}>
-          {q.type === 'textarea' ? '⌘ + ENTER TO SEND' : q.type !== 'chips' ? 'ENTER TO SEND' : ''}
+          {q.type === 'text' || q.type === 'email' ? 'ENTER TO SEND' : ''}
         </span>
         <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.4 }}>
           {currentQ + 1} / {CHAT_QUESTIONS.length}
