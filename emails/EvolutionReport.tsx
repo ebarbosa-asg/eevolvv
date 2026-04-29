@@ -75,7 +75,6 @@ export function EvolutionReportEmail({
 
           {/* Header */}
           <Section style={header}>
-            <div style={logoMark} />
             <Text style={logoText}>EEVOLVV</Text>
             <Text style={tagline}>AI BUSINESS TRANSFORMATION</Text>
           </Section>
@@ -168,49 +167,46 @@ export default EvolutionReportEmail
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 
+const INK = '#141413'
+const PAPER = '#faf7f0'
+const RULE = 'rgba(20,20,19,0.14)'
+const ACCENT = '#8B2A1A'
+
 const body: React.CSSProperties = {
-  backgroundColor: '#080808',
+  backgroundColor: '#ede9df',
   fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
   margin: 0,
-  padding: 0,
+  padding: '32px 0',
 }
 
 const container: React.CSSProperties = {
   maxWidth: '600px',
   margin: '0 auto',
-  backgroundColor: '#111111',
-  border: '1px solid #222222',
+  backgroundColor: PAPER,
+  border: `1px solid ${INK}`,
 }
 
 const header: React.CSSProperties = {
-  backgroundColor: '#0a0a0a',
-  padding: '32px 40px 28px',
-  borderBottom: '1px solid #1e1e1e',
+  backgroundColor: INK,
+  padding: '28px 40px 24px',
+  borderBottom: `1px solid ${RULE}`,
   textAlign: 'center',
 }
 
-const logoMark: React.CSSProperties = {
-  width: '24px',
-  height: '24px',
-  backgroundColor: '#00ff94',
-  display: 'inline-block',
-  clipPath: 'polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%)',
-  marginBottom: '12px',
-}
-
 const logoText: React.CSSProperties = {
-  color: '#f5f5f5',
-  fontSize: '18px',
+  color: PAPER,
+  fontSize: '20px',
   fontWeight: 700,
-  letterSpacing: '0.12em',
-  margin: '0 0 4px',
+  letterSpacing: '0.14em',
+  margin: '0 0 6px',
 }
 
 const tagline: React.CSSProperties = {
-  color: '#00ff94',
+  color: ACCENT,
   fontSize: '10px',
-  letterSpacing: '0.2em',
+  letterSpacing: '0.22em',
   margin: 0,
+  fontFamily: 'monospace',
 }
 
 const introSection: React.CSSProperties = {
@@ -218,59 +214,60 @@ const introSection: React.CSSProperties = {
 }
 
 const greetingText: React.CSSProperties = {
-  color: '#f5f5f5',
+  color: INK,
   fontSize: '16px',
   fontWeight: 600,
   margin: '0 0 12px',
 }
 
 const introText: React.CSSProperties = {
-  color: '#aaaaaa',
+  color: 'rgba(20,20,19,0.78)',
   fontSize: '15px',
-  lineHeight: '1.7',
+  lineHeight: '1.65',
   margin: '0 0 12px',
 }
 
 const highlight: React.CSSProperties = {
-  color: '#f5f5f5',
+  color: INK,
 }
 
 const metaText: React.CSSProperties = {
-  color: '#555555',
-  fontSize: '12px',
+  color: 'rgba(20,20,19,0.45)',
+  fontSize: '11px',
   fontFamily: 'monospace',
-  letterSpacing: '0.04em',
+  letterSpacing: '0.1em',
   margin: '8px 0 0',
 }
 
 const divider: React.CSSProperties = {
-  borderColor: '#1e1e1e',
+  borderColor: RULE,
   margin: '0',
 }
 
 const reportSection: React.CSSProperties = {
   padding: '24px 40px',
-  borderBottom: '1px solid #1a1a1a',
+  borderBottom: `1px solid ${RULE}`,
 }
 
 const sectionHeading: React.CSSProperties = {
-  color: '#00ff94',
-  fontSize: '11px',
+  color: ACCENT,
+  fontSize: '10px',
   fontWeight: 700,
-  letterSpacing: '0.15em',
+  letterSpacing: '0.18em',
   textTransform: 'uppercase',
   margin: '0 0 14px',
+  fontFamily: 'monospace',
 }
 
 const bodyText: React.CSSProperties = {
-  color: '#cccccc',
+  color: 'rgba(20,20,19,0.82)',
   fontSize: '14px',
-  lineHeight: '1.7',
+  lineHeight: '1.65',
   margin: '0 0 8px',
 }
 
 const boldLine: React.CSSProperties = {
-  color: '#f5f5f5',
+  color: INK,
   fontSize: '14px',
   fontWeight: 600,
   lineHeight: '1.6',
@@ -278,7 +275,7 @@ const boldLine: React.CSSProperties = {
 }
 
 const bulletLine: React.CSSProperties = {
-  color: '#cccccc',
+  color: 'rgba(20,20,19,0.82)',
   fontSize: '14px',
   lineHeight: '1.6',
   margin: '0 0 4px',
@@ -286,33 +283,34 @@ const bulletLine: React.CSSProperties = {
 }
 
 const ctaSection: React.CSSProperties = {
-  padding: '32px 40px',
+  padding: '36px 40px',
   textAlign: 'center',
+  backgroundColor: 'rgba(20,20,19,0.02)',
 }
 
 const ctaHeading: React.CSSProperties = {
-  color: '#f5f5f5',
+  color: INK,
   fontSize: '20px',
-  fontWeight: 700,
+  fontWeight: 600,
   margin: '0 0 12px',
+  letterSpacing: '-0.01em',
 }
 
 const ctaText: React.CSSProperties = {
-  color: '#888888',
+  color: 'rgba(20,20,19,0.65)',
   fontSize: '14px',
   lineHeight: '1.6',
   margin: '0 0 24px',
 }
 
 const ctaButton: React.CSSProperties = {
-  backgroundColor: '#00ff94',
-  color: '#080808',
-  fontSize: '14px',
-  fontWeight: 700,
-  letterSpacing: '0.04em',
+  backgroundColor: INK,
+  color: PAPER,
+  fontSize: '12px',
+  fontWeight: 600,
+  letterSpacing: '0.08em',
   padding: '14px 28px',
   textDecoration: 'none',
-  borderRadius: '2px',
   display: 'inline-block',
 }
 
@@ -322,18 +320,18 @@ const footerSection: React.CSSProperties = {
 }
 
 const footerText: React.CSSProperties = {
-  color: '#444444',
+  color: 'rgba(20,20,19,0.45)',
   fontSize: '12px',
   margin: '0 0 6px',
 }
 
 const footerLink: React.CSSProperties = {
-  color: '#444444',
+  color: 'rgba(20,20,19,0.45)',
   textDecoration: 'underline',
 }
 
 const footerSmall: React.CSSProperties = {
-  color: '#333333',
+  color: 'rgba(20,20,19,0.3)',
   fontSize: '11px',
   lineHeight: '1.5',
   margin: 0,

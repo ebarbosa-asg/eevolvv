@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'STARTUP', 'ENTERPRISE', 'CLINIC', 'REAL ESTATE', 'E-COMMERCE', 'AGENCY', 'FRANCHISE', 'RETAILER', 'MANUFACTURER'] as const
+const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'STARTUP', 'ENTERPRISE', 'CLINIC', 'LOGISTICS', 'REAL ESTATE', 'E-COMMERCE', 'AGENCY', 'FRANCHISE', 'RETAILER', 'MANUFACTURER'] as const
 
 const TIERS = [
   {
@@ -691,7 +691,7 @@ function WhoItsFor() {
         <SectionHeader number="03" eyebrow="WHO WE EVOLVE" title="Any business. Every industry." note={`N=${EXAMPLES.length}`} />
         <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(3,1fr)', gap: 0, marginTop: 56, border: '1px solid var(--ink)' }}>
           {EXAMPLES.map((ex, i) => (
-            <div key={i} className="status-cell" style={{ padding: 28, borderRight: i % 3 < 2 ? '1px solid var(--ink)' : 'none', borderBottom: i < 3 ? '1px solid var(--ink)' : 'none' }}>
+            <div key={i} className="status-cell" style={{ padding: 28, borderRight: i % 3 < 2 ? '1px solid var(--ink)' : 'none', borderBottom: i < EXAMPLES.length - 3 ? '1px solid var(--ink)' : 'none' }}>
               <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 16 }}>{ex.code}</div>
               <div style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.015em', marginBottom: 20 }}>{ex.type}</div>
               <div style={{ borderTop: '1px solid var(--rule)', paddingTop: 14 }}>
@@ -911,12 +911,26 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
     }
   }
 
-  const formatReport = (text: string) =>
-    text.replace(/### (.*)/g, '<h3>$1</h3>')
+  const formatReport = (text: string) => {
+    const sections = text.split(/(?=###\s)/).map(chunk => {
+      const headingMatch = chunk.match(/^###\s+(.+?)\n([\s\S]*)$/)
+      if (!headingMatch) return `<p>${chunk.trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br />')}</p>`
+      const [, heading, body] = headingMatch
+      const formattedBody = body.trim()
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/^- (.*)/gm, '<li>$1</li>')
-        .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
-        .replace(/\n\n/g, '</p><p>')
+        .split('\n\n')
+        .map(para => {
+          const lines = para.trim().split('\n')
+          if (lines.every(l => l.trim().startsWith('- '))) {
+            return `<ul>${lines.map(l => `<li>${l.replace(/^- /, '')}</li>`).join('')}</ul>`
+          }
+          return `<p>${lines.join('<br />')}</p>`
+        })
+        .join('')
+      return `<h3>${heading}</h3>${formattedBody}`
+    })
+    return sections.join('')
+  }
 
   if (report) {
     return (
@@ -941,7 +955,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
 
   if (loading) return <LoadingNarrative step={loadingStep} elapsed={elapsed} />
 
-  const progress = (currentQ / CHAT_QUESTIONS.length) * 100
+  const progress = ((currentQ + 1) / CHAT_QUESTIONS.length) * 100
 
   return (
     <div style={{ maxWidth: 680, margin: '0 auto' }}>
@@ -1087,12 +1101,12 @@ function ChipButton({ label, onClick }: { label: string; onClick: () => void }) 
 
 function DiagnosticSection({ targetTier }: { targetTier: string }) {
   return (
-    <section id="diagnostic" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', position: 'relative', overflow: 'hidden' }}>
+    <section id="diagnostic" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', position: 'relative', overflow: 'hidden', scrollMarginTop: 72 }}>
       <div className="absolute inset-0 blueprint-grid" style={{ opacity: 0.4, pointerEvents: 'none' }} />
       <div className="mx-auto relative" style={{ maxWidth: 1280, padding: '0 32px' }}>
         <SectionHeader number="05" eyebrow="FREE AI AUDIT" title="Get your eevolvv Report. Right now. Free." note="VALUED $2,500" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24, marginBottom: 56 }}>
-          Answer 10 questions about your business. Our AI analyzes your workflows and delivers a custom automation roadmap.
+          Answer 12 questions about your business. Our AI analyzes your workflows and delivers a custom automation roadmap.
         </p>
         <div style={{ border: '1px solid var(--ink)', background: 'var(--paper)', padding: '48px 32px' }}>
           <DiagnosticForm defaultTier={targetTier} />
