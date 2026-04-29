@@ -9,6 +9,15 @@ export const metadata: Metadata = {
     title: 'eevolvv — AI Business Transformation',
     description: 'We map your workflows, deploy AI automation, and permanently rebuild how your business operates.',
     type: 'website',
+    url: 'https://eevolvv.com',
+    siteName: 'eevolvv',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'eevolvv — AI Business Transformation' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'eevolvv — AI Business Transformation',
+    description: 'We map your workflows, deploy AI automation, and permanently rebuild how your business operates.',
+    images: ['/opengraph-image'],
   },
 }
 
