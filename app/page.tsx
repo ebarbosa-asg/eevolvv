@@ -313,11 +313,18 @@ function FlapCell({ from, to, delay = 0 }: { from: string; to: string; delay?: n
   }, [from, to, delay])
 
   const G = ({ ch }: { ch: string }) => <i data-wide={/[MW]/.test(ch) ? '1' : '0'}>{ch}</i>
+  const isBlank = shown === ' ' && phase === 'idle'
+  const blankTop    = isBlank
+    ? { background: 'transparent', borderBottomColor: 'transparent', transition: 'background 0.4s ease, border-color 0.4s ease' }
+    : { transition: 'background 0.4s ease, border-color 0.4s ease' }
+  const blankBottom = isBlank
+    ? { background: 'transparent', borderTopColor: 'transparent', transition: 'background 0.4s ease, border-color 0.4s ease' }
+    : { transition: 'background 0.4s ease, border-color 0.4s ease' }
 
   return (
     <span className="flap-cell" aria-hidden>
-      <span className="flap-half top"><span><G ch={phase === 'flipping' ? to : shown} /></span></span>
-      <span className="flap-half bottom"><span><G ch={phase === 'flipping' ? from : shown} /></span></span>
+      <span className="flap-half top"    style={blankTop}><span><G ch={phase === 'flipping' ? to : shown} /></span></span>
+      <span className="flap-half bottom" style={blankBottom}><span><G ch={phase === 'flipping' ? from : shown} /></span></span>
       {phase === 'flipping' && <>
         <span className="flap-half top flip-top"><span><G ch={from} /></span></span>
         <span className="flap-half bottom flip-bottom"><span><G ch={to} /></span></span>
