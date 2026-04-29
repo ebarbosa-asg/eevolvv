@@ -107,6 +107,45 @@ const LOADING_NARRATIVE = [
   { label: 'WRITING',   message: 'Compiling your eevolvv Report…',       detail: 'Formatting recommendations for your team.' },
 ]
 
+// ─── Chat questions ───────────────────────────────────────────────────────────
+
+type QType = 'text' | 'email' | 'textarea' | 'chips'
+interface ChatQ {
+  key: string
+  ask: string | ((f: Record<string, string>) => string)
+  type: QType
+  options?: string[]
+  placeholder?: string
+  validate?: (v: string) => boolean
+}
+
+const CHAT_QUESTIONS: ChatQ[] = [
+  { key: 'name',            type: 'text',     placeholder: 'Your name',          validate: v => v.trim().length > 0,
+    ask: "Hi! I'm the eevolvv AI. I'll map your business and find every automation win inside it.\n\nWhat's your name?" },
+  { key: 'email',           type: 'email',    placeholder: 'you@business.com',   validate: v => /\S+@\S+\.\S+/.test(v),
+    ask: f => `Nice to meet you, ${f.name.split(' ')[0]}. What email should I send your report to?` },
+  { key: 'businessName',    type: 'text',     placeholder: 'Business name',      validate: v => v.trim().length > 0,
+    ask: "What's the name of your business?" },
+  { key: 'businessType',    type: 'text',     placeholder: 'e.g. CrossFit gym, e-commerce brand, law firm…', validate: v => v.trim().length > 0,
+    ask: 'How would you describe what your business does in one sentence?' },
+  { key: 'industry',        type: 'chips',    options: INDUSTRIES_LIST,
+    ask: 'Which industry are you in?' },
+  { key: 'revenue',         type: 'chips',    options: ['Under $100K','$100K–$500K','$500K–$1M','$1M–$5M','$5M–$20M','$20M–$100M','$100M+'],
+    ask: "What's your approximate annual revenue?" },
+  { key: 'teamSize',        type: 'chips',    options: ['Solo (just me)','2–5','6–15','16–50','51–200','200+'],
+    ask: 'How many people are on your team?' },
+  { key: 'topPains',        type: 'textarea', placeholder: 'e.g. Manually entering customer data (3hrs), chasing unpaid invoices (2hrs)…', validate: v => v.trim().length > 5,
+    ask: 'What are your top 3 most time-consuming manual tasks every week? Be specific — the more detail, the better your report.' },
+  { key: 'tools',           type: 'text',     placeholder: 'e.g. QuickBooks, Google Sheets, Slack, Salesforce…', validate: v => v.trim().length > 0,
+    ask: 'What tools and software does your business currently use?' },
+  { key: 'errorPoints',     type: 'textarea', placeholder: 'e.g. Handoffs between sales and fulfillment cause double-bookings…', validate: v => v.trim().length > 5,
+    ask: 'Where do errors or delays most often happen? What slows you down or breaks?' },
+  { key: 'customerJourney', type: 'textarea', placeholder: 'e.g. Customer finds us on Instagram → messages us → we manually check availability…', validate: v => v.trim().length > 5,
+    ask: 'Walk me through your customer journey — from first contact to completed sale.' },
+  { key: 'hoursFreed',      type: 'textarea', placeholder: 'e.g. Land 3 more enterprise clients, actually take weekends off…', validate: v => v.trim().length > 5,
+    ask: f => `Last one. If we freed up 20 hours a week for ${f.businessName || 'your business'}, what would you do with that time?` },
+]
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface FormFields {
@@ -779,6 +818,21 @@ function LoadingNarrative({ step, elapsed }: { step: number; elapsed: number }) 
   )
 }
 
+// ─── ChatMark ─────────────────────────────────────────────────────────────────
+
+function ChatMark() {
+  return (
+    <div style={{ flexShrink: 0, width: 28, height: 28, border: '1px solid var(--ink)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 2, background: 'var(--paper)' }}>
+      <svg width="16" height="16" viewBox="0 0 28 28" fill="none">
+        <path d="M6 20 L6 8 L14 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />
+        <path d="M6 14 L12 14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />
+        <path d="M14 8 L22 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />
+        <circle cx="22" cy="20" r="2" fill="var(--accent)" />
+      </svg>
+    </div>
+  )
+}
+
 // ─── DiagnosticForm ───────────────────────────────────────────────────────────
 
 function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
@@ -788,13 +842,18 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
     tools: '', customerJourney: '', errorPoints: '', hoursFreed: '',
     tier: defaultTier || 'grow',
   })
-  const [step, setStep] = useState(0)
+  const [history, setHistory] = useState<{ role: 'ai' | 'user'; text: string }[]>([])
+  const [currentQ, setCurrentQ] = useState(0)
+  const [input, setInput] = useState('')
+  const [animKey, setAnimKey] = useState(0)
   const [loading, setLoading] = useState(false)
   const [loadingStep, setLoadingStep] = useState(0)
   const [elapsed, setElapsed] = useState(0)
   const [report, setReport] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const totalSteps = 4
+  const [done, setDone] = useState(false)
+  const chatEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (!loading) { setLoadingStep(0); setElapsed(0); return }
@@ -805,12 +864,22 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
 
   useEffect(() => { setForm(f => ({ ...f, tier: defaultTier || f.tier })) }, [defaultTier])
 
-  const update = (k: keyof FormFields, v: string) => setForm(p => ({ ...p, [k]: v }))
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [history, currentQ])
 
-  const handleSubmit = async () => {
+  useEffect(() => {
+    if (!done) inputRef.current?.focus()
+  }, [currentQ, done])
+
+  const q = CHAT_QUESTIONS[currentQ]
+  const aiText = typeof q.ask === 'function' ? q.ask(form as unknown as Record<string, string>) : q.ask
+  const isValid = q.validate ? q.validate(input) : input.trim().length > 0
+
+  const runSubmit = async (finalForm: FormFields) => {
     setLoading(true); setError(null)
     try {
-      const res = await fetch('/api/diagnostic', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await fetch('/api/diagnostic', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(finalForm) })
       let data: Record<string, unknown> = {}
       try { data = await res.json() } catch { throw new Error('The server returned an unexpected response. Please try again.') }
       if (res.status === 429) throw new Error("You've generated 3 reports this hour — your limit resets in 60 minutes.")
@@ -826,17 +895,27 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
     }
   }
 
+  const advance = (value: string) => {
+    if (!value.trim()) return
+    const updatedForm = { ...form, [q.key]: value } as FormFields
+    setForm(updatedForm)
+    setHistory(h => [...h, { role: 'ai', text: aiText }, { role: 'user', text: value }])
+    setInput('')
+    setAnimKey(k => k + 1)
+    if (currentQ < CHAT_QUESTIONS.length - 1) {
+      setCurrentQ(c => c + 1)
+    } else {
+      setDone(true)
+      runSubmit(updatedForm)
+    }
+  }
+
   const formatReport = (text: string) =>
     text.replace(/### (.*)/g, '<h3>$1</h3>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/^- (.*)/gm, '<li>$1</li>')
         .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
         .replace(/\n\n/g, '</p><p>')
-
-  const inp: React.CSSProperties = { width: '100%', padding: '14px 16px', border: '1px solid var(--ink)', background: 'rgba(255,255,255,0.5)', fontSize: 15, color: 'var(--ink)', fontFamily: 'Space Grotesk, sans-serif' }
-  const lbl: React.CSSProperties = { display: 'block', fontFamily: 'JetBrains Mono, monospace', fontSize: 10, letterSpacing: '0.22em', opacity: 0.6, marginBottom: 8, textTransform: 'uppercase' }
-  const btnBack: React.CSSProperties = { padding: '14px 20px', border: '1px solid var(--ink)', background: 'transparent', cursor: 'pointer', fontSize: 11, letterSpacing: '0.18em', fontFamily: 'JetBrains Mono, monospace' }
-  const btnNext = (active: boolean): React.CSSProperties => ({ flex: 1, padding: '14px 0', background: 'var(--ink)', color: 'var(--paper)', border: 0, cursor: 'pointer', fontSize: 12, letterSpacing: '0.18em', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', opacity: active ? 1 : 0.4 })
 
   if (report) {
     return (
@@ -861,129 +940,147 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
 
   if (loading) return <LoadingNarrative step={loadingStep} elapsed={elapsed} />
 
+  const progress = (currentQ / CHAT_QUESTIONS.length) * 100
+
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto' }}>
-      {/* Progress strip */}
-      <div className="flex items-center gap-2" style={{ marginBottom: 32 }}>
-        {Array.from({ length: totalSteps }).map((_, i) => (
-          <div key={i} style={{ flex: 1, height: 2, background: 'rgba(20,20,19,0.12)', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: i <= step ? '100%' : '0%', background: 'var(--accent)', transition: 'width 0.5s' }} />
-          </div>
-        ))}
-        <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.6, marginLeft: 8 }}>{step + 1}/{totalSteps}</span>
+    <div style={{ maxWidth: 680, margin: '0 auto' }}>
+      {/* Progress bar */}
+      <div style={{ height: 2, background: 'rgba(20,20,19,0.1)', marginBottom: 0, overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${progress}%`, background: 'var(--accent)', transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)' }} />
       </div>
 
-      {step === 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div>
-            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>STEP 01 / 04</div>
-            <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>Who are we evolving?</div>
-            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6 }}>Your report will be delivered to your email within minutes.</p>
-          </div>
-          <div><label style={lbl}>Your Name</label><input style={inp} placeholder="Bob Bobbert III" value={form.name} onChange={e => update('name', e.target.value)} /></div>
-          <div><label style={lbl}>Email Address</label><input style={inp} type="email" placeholder="you@business.com" value={form.email} onChange={e => update('email', e.target.value)} /></div>
-          <div><label style={lbl}>Business Name</label><input style={inp} placeholder="Your Business Name" value={form.businessName} onChange={e => update('businessName', e.target.value)} /></div>
-          <div>
-            <label style={lbl}>Service tier</label>
-            <select style={inp} value={form.tier} onChange={e => update('tier', e.target.value)}>
-              {TIERS.map(t => <option key={t.id} value={t.id}>{t.name} — {t.label} ({t.price})</option>)}
-              <option value="retainer">Evolve Retainer ($500–$25K/mo)</option>
-              <option value="unsure">Not sure yet</option>
-            </select>
-          </div>
-          <button onClick={() => { if (form.name && form.email) setStep(1) }} disabled={!form.name || !form.email} className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '16px 0', border: 0, cursor: 'pointer', fontSize: 12, letterSpacing: '0.18em', fontWeight: 600, opacity: form.name && form.email ? 1 : 0.4 }}>CONTINUE →</button>
-        </div>
-      )}
+      {/* Chat window */}
+      <div style={{ border: '1px solid var(--ink)', borderTop: 'none', background: 'rgba(255,255,255,0.45)', overflow: 'hidden' }}>
 
-      {step === 1 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div>
-            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>STEP 02 / 04</div>
-            <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>Tell us about your business.</div>
-            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6 }}>The more specific, the more precise your report.</p>
-          </div>
-          <div><label style={lbl}>Business Type</label><input style={inp} placeholder="e.g. CrossFit gym, family restaurant, law firm…" value={form.businessType} onChange={e => update('businessType', e.target.value)} /></div>
-          <div>
-            <label style={lbl}>Industry</label>
-            <select style={inp} value={form.industry} onChange={e => update('industry', e.target.value)}>
-              <option value="">Select industry…</option>
-              {INDUSTRIES_LIST.map(ind => <option key={ind} value={ind}>{ind}</option>)}
-            </select>
-          </div>
-          <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div><label style={lbl}>Annual Revenue</label>
-              <select style={inp} value={form.revenue} onChange={e => update('revenue', e.target.value)}>
-                <option value="">Select range</option>
-                {['Under $100K','$100K–$500K','$500K–$1M','$1M–$5M','$5M–$20M','$20M–$100M','$100M+'].map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
+        {/* Messages */}
+        <div style={{ maxHeight: 420, overflowY: 'auto', padding: '32px 32px 8px' }}>
+          {history.map((msg, i) => (
+            <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 20 }}>
+              {msg.role === 'ai' && (
+                <div style={{ display: 'flex', gap: 14, maxWidth: '82%' }}>
+                  <ChatMark />
+                  <div style={{ fontSize: 15, lineHeight: 1.65, color: 'var(--ink)', opacity: 0.6, whiteSpace: 'pre-line', paddingTop: 4 }}>{msg.text}</div>
+                </div>
+              )}
+              {msg.role === 'user' && (
+                <div style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '10px 18px', fontSize: 15, lineHeight: 1.5, maxWidth: '72%' }}>
+                  {msg.text}
+                </div>
+              )}
             </div>
-            <div><label style={lbl}>Team Size</label>
-              <select style={inp} value={form.teamSize} onChange={e => update('teamSize', e.target.value)}>
-                <option value="">Select size</option>
-                {['Solo (just me)','2–5','6–15','16–50','51–200','200+'].map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="flex" style={{ gap: 12 }}>
-            <button onClick={() => setStep(0)} className="mono" style={btnBack}>← BACK</button>
-            <button onClick={() => { if (form.businessType && form.industry) setStep(2) }} disabled={!form.businessType || !form.industry} className="mono" style={btnNext(!!(form.businessType && form.industry))}>CONTINUE →</button>
-          </div>
-        </div>
-      )}
+          ))}
 
-      {step === 2 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div>
-            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>STEP 03 / 04</div>
-            <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>Where&apos;s the pain?</div>
-            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6 }}>Be specific — this is what we&apos;ll target first.</p>
-          </div>
-          <div><label style={lbl}>Top 3 time-consuming tasks per week</label>
-            <textarea rows={3} style={{ ...inp, resize: 'none' }} placeholder="e.g. Manually entering customer data takes 3hrs. Following up on unpaid invoices takes 2hrs…" value={form.topPains} onChange={e => update('topPains', e.target.value)} />
-          </div>
-          <div><label style={lbl}>Tools & software you currently use</label>
-            <input style={inp} placeholder="e.g. QuickBooks, Google Sheets, Slack, Salesforce…" value={form.tools} onChange={e => update('tools', e.target.value)} />
-          </div>
-          <div><label style={lbl}>Where do errors or delays most often happen?</label>
-            <textarea rows={2} style={{ ...inp, resize: 'none' }} placeholder="e.g. When handing off between sales and fulfillment, double bookings happen…" value={form.errorPoints} onChange={e => update('errorPoints', e.target.value)} />
-          </div>
-          <div className="flex" style={{ gap: 12 }}>
-            <button onClick={() => setStep(1)} className="mono" style={btnBack}>← BACK</button>
-            <button onClick={() => { if (form.topPains) setStep(3) }} disabled={!form.topPains} className="mono" style={btnNext(!!form.topPains)}>CONTINUE →</button>
-          </div>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div>
-            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>STEP 04 / 04</div>
-            <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>Paint the picture.</div>
-            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6 }}>Help us understand your customer flow and your vision.</p>
-          </div>
-          <div><label style={lbl}>Describe your customer journey</label>
-            <textarea rows={3} style={{ ...inp, resize: 'none' }} placeholder="e.g. Customer finds us on Instagram → calls to book → we manually check availability → send confirmation…" value={form.customerJourney} onChange={e => update('customerJourney', e.target.value)} />
-          </div>
-          <div><label style={lbl}>If you had 20 extra hours per week, you would…</label>
-            <textarea rows={2} style={{ ...inp, resize: 'none' }} placeholder="e.g. Focus on getting 3 more enterprise clients, expand to a second location…" value={form.hoursFreed} onChange={e => update('hoursFreed', e.target.value)} />
-          </div>
-          {error && (
-            <div style={{ border: '1px solid var(--accent)', padding: 14, background: 'rgba(255,255,255,0.4)' }}>
-              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 6 }}>※ ERROR</div>
-              <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0 }}>{error}</p>
-              <button onClick={() => setError(null)} className="mono" style={{ marginTop: 8, background: 'transparent', border: 0, fontSize: 10, letterSpacing: '0.18em', opacity: 0.6, cursor: 'pointer', padding: 0 }}>↑ TRY AGAIN</button>
+          {/* Current AI question */}
+          {!done && (
+            <div key={animKey} className="anim-fade-up" style={{ display: 'flex', gap: 14, maxWidth: '82%', marginBottom: 28 }}>
+              <ChatMark />
+              <div style={{ fontSize: 15, lineHeight: 1.65, color: 'var(--ink)', whiteSpace: 'pre-line', fontWeight: 500, paddingTop: 4 }}>{aiText}</div>
             </div>
           )}
-          <div className="flex" style={{ gap: 12 }}>
-            <button onClick={() => setStep(2)} className="mono" style={btnBack}>← BACK</button>
-            <button onClick={handleSubmit} disabled={loading || !form.customerJourney} className="mono" style={{ flex: 1, padding: '16px 0', background: 'var(--accent)', color: 'var(--paper)', border: 0, cursor: 'pointer', fontSize: 12, letterSpacing: '0.18em', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', opacity: loading || !form.customerJourney ? 0.4 : 1 }}>
-              {loading ? 'ANALYZING…' : 'GENERATE MY REPORT →'}
-            </button>
-          </div>
-          <p className="mono" style={{ textAlign: 'center', fontSize: 10, letterSpacing: '0.18em', opacity: 0.5 }}>↳ AI-GENERATED IN REAL-TIME · ~30 SECONDS</p>
+
+          <div ref={chatEndRef} />
         </div>
-      )}
+
+        {/* Chips */}
+        {!done && q.type === 'chips' && (
+          <div style={{ padding: '4px 32px 24px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {q.options!.map(opt => (
+              <ChipButton key={opt} label={opt} onClick={() => advance(opt)} />
+            ))}
+          </div>
+        )}
+
+        {/* Text / textarea input */}
+        {!done && q.type !== 'chips' && (
+          <div style={{ borderTop: '1px solid rgba(20,20,19,0.12)', display: 'flex', alignItems: q.type === 'textarea' ? 'flex-end' : 'center' }}>
+            {q.type === 'textarea' ? (
+              <textarea
+                ref={inputRef}
+                rows={3}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && isValid) advance(input) }}
+                placeholder={q.placeholder}
+                style={{ flex: 1, padding: '18px 20px', border: 'none', background: 'transparent', fontSize: 15, resize: 'none', fontFamily: 'Space Grotesk, sans-serif', color: 'var(--ink)', lineHeight: 1.55 }}
+              />
+            ) : (
+              <input
+                ref={inputRef}
+                type={q.type}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && isValid) advance(input) }}
+                placeholder={q.placeholder}
+                style={{ flex: 1, padding: '18px 20px', border: 'none', background: 'transparent', fontSize: 15, fontFamily: 'Space Grotesk, sans-serif', color: 'var(--ink)' }}
+              />
+            )}
+            <button
+              onClick={() => advance(input)}
+              disabled={!isValid}
+              style={{
+                padding: '0 22px',
+                alignSelf: 'stretch',
+                background: isValid ? 'var(--ink)' : 'transparent',
+                color: isValid ? 'var(--paper)' : 'var(--ink)',
+                border: 'none',
+                borderLeft: '1px solid rgba(20,20,19,0.12)',
+                cursor: isValid ? 'pointer' : 'default',
+                fontSize: 20,
+                opacity: isValid ? 1 : 0.25,
+                transition: 'background 0.2s, opacity 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >→</button>
+          </div>
+        )}
+
+        {/* Error */}
+        {error && (
+          <div style={{ borderTop: '1px solid var(--accent)', padding: '14px 32px', background: 'rgba(255,255,255,0.4)', display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: 4 }}>※ ERROR</div>
+              <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0 }}>{error}</p>
+            </div>
+            <button onClick={() => { setError(null); setDone(false); runSubmit(form) }} className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '10px 16px', border: 0, cursor: 'pointer', fontSize: 10, letterSpacing: '0.18em', flexShrink: 0 }}>RETRY →</button>
+          </div>
+        )}
+      </div>
+
+      {/* Step counter */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
+        <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.4 }}>
+          {q.type === 'textarea' ? '⌘ + ENTER TO SEND' : q.type !== 'chips' ? 'ENTER TO SEND' : ''}
+        </span>
+        <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.4 }}>
+          {currentQ + 1} / {CHAT_QUESTIONS.length}
+        </span>
+      </div>
     </div>
+  )
+}
+
+function ChipButton({ label, onClick }: { label: string; onClick: () => void }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        padding: '7px 14px',
+        border: '1px solid var(--ink)',
+        background: hovered ? 'var(--ink)' : 'transparent',
+        color: hovered ? 'var(--paper)' : 'var(--ink)',
+        cursor: 'pointer',
+        fontSize: 13,
+        fontFamily: 'Space Grotesk, sans-serif',
+        transition: 'background 0.15s, color 0.15s',
+        lineHeight: 1.4,
+      }}
+    >
+      {label}
+    </button>
   )
 }
 
