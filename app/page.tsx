@@ -252,7 +252,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
     <header className="sticky top-0 z-50 border-b" style={{ borderColor: 'var(--rule)', background: 'rgba(250,247,240,0.88)', backdropFilter: 'blur(8px)' }}>
       <div className="relative">
         <div
-          className="site-header-toolbar relative z-[50] mx-auto grid w-full max-w-[1280px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-5 md:py-2.5 lg:gap-x-8"
+          className="site-header-toolbar keep-grid relative z-[50] mx-auto grid w-full max-w-[1280px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-5 md:py-2.5 lg:gap-x-8"
         >
           <a
             href="#top"
@@ -349,7 +349,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
                   <a
                     key={id}
                     href={`#${id}`}
-                    className="link-rule block py-3.5"
+                    className="block py-3.5"
                     style={{
                       color: 'var(--ink)',
                       opacity: 0.85,
@@ -363,7 +363,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
                 ))}
                 <a
                   href="#how"
-                  className="link-rule block py-3.5"
+                  className="block py-3.5"
                   style={{
                     color: 'var(--ink)',
                     opacity: 0.85,
