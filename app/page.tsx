@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'STARTUP', 'ENTERPRISE', 'CLINIC', 'LOGISTICS', 'REAL ESTATE', 'E-COMMERCE', 'AGENCY', 'FRANCHISE', 'RETAILER', 'MANUFACTURER'] as const
+const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'QUALITY TEAM', 'STARTUP', 'ENTERPRISE', 'FINANCE DEPT', 'CLINIC', 'LOGISTICS', 'HR PROGRAM', 'REAL ESTATE', 'E-COMMERCE', 'COMPLIANCE', 'AGENCY', 'FRANCHISE', 'OPERATIONS', 'RETAILER', 'MANUFACTURER'] as const
 
 /** Rotating hero strip — evolution-wordplay variants + rally cries + attributions. */
 const HERO_TICKER_QUOTES = [
@@ -118,22 +118,30 @@ const INDUSTRIES_LIST = [
   'Legal / Law Firm', 'Medical / Healthcare', 'Real Estate',
   'Construction / Trades', 'Accounting / Finance', 'Marketing / Agency',
   'Manufacturing', 'Logistics / Supply Chain', 'Technology / SaaS',
-  'Hospitality / Hotel', 'Education', 'Non-Profit', 'Other',
+  'Hospitality / Hotel', 'Education', 'Non-Profit',
+  'Quality / QA Program', 'Finance & FP&A', 'HR & People Ops',
+  'Procurement', 'Compliance & Risk', 'IT & Help Desk', 'Other',
 ]
 
 const EXAMPLES = [
-  { code: 'I-01', type: 'Gym / Fitness',    pain: 'Manual scheduling, member follow-ups, lost leads', win: 'Auto-booking, retention AI, revenue recovery' },
-  { code: 'I-02', type: 'Restaurant',        pain: 'Order errors, no-shows, manual inventory', win: 'Automated ops, smart reservations, waste reduction' },
-  { code: 'I-03', type: 'Law Firm',          pain: 'Admin overload, client intake, billing gaps', win: 'AI intake, automated billing, case tracking' },
-  { code: 'I-04', type: 'Construction',      pain: 'Scheduling chaos, quote delays, supplier chaos', win: 'Project AI, instant quotes, supplier automation' },
-  { code: 'I-05', type: 'Medical Practice',  pain: 'Patient admin, billing errors, no-show rate', win: 'AI scheduling, billing automation, reminders' },
-  { code: 'I-06', type: 'Enterprise',        pain: 'Siloed teams, manual reporting, process debt', win: 'Full ops rebuild, AI layer, unified intelligence' },
-  { code: 'I-07', type: 'Logistics / 3PL',   pain: 'Manual dispatch, route inefficiency, missed SLAs', win: 'AI routing, automated dispatch, real-time visibility' },
-  { code: 'I-08', type: 'Real Estate',        pain: 'Lead rot, manual follow-up, listing admin', win: 'AI lead nurture, automated CRM, smart listing sync' },
-  { code: 'I-09', type: 'E-Commerce',         pain: 'Cart abandonment, manual CS, inventory errors', win: 'Automated recovery, AI support, smart stock alerts' },
-  { code: 'I-10', type: 'Marketing Agency',   pain: 'Reporting drag, client updates, scope creep', win: 'Auto-reporting, AI account mgmt, budget alerts' },
-  { code: 'I-11', type: 'Franchise',          pain: 'Inconsistent ops, multi-location reporting gaps', win: 'Unified AI layer, location benchmarking, auto-QA' },
-  { code: 'I-12', type: 'Manufacturing',      pain: 'Production bottlenecks, quality control gaps', win: 'Predictive maintenance, AI QC, supply chain sync' },
+  { code: 'I-01', type: 'Gym / Fitness',      pain: 'Manual scheduling, member follow-ups, lost leads', win: 'Auto-booking, retention AI, revenue recovery' },
+  { code: 'I-02', type: 'Restaurant',          pain: 'Order errors, no-shows, manual inventory', win: 'Automated ops, smart reservations, waste reduction' },
+  { code: 'I-03', type: 'Law Firm',            pain: 'Admin overload, client intake, billing gaps', win: 'AI intake, automated billing, case tracking' },
+  { code: 'I-04', type: 'Construction',        pain: 'Scheduling chaos, quote delays, supplier chaos', win: 'Project AI, instant quotes, supplier automation' },
+  { code: 'I-05', type: 'Medical Practice',    pain: 'Patient admin, billing errors, no-show rate', win: 'AI scheduling, billing automation, reminders' },
+  { code: 'I-06', type: 'Enterprise',          pain: 'Siloed teams, manual reporting, process debt', win: 'Full ops rebuild, AI layer, unified intelligence' },
+  { code: 'I-07', type: 'Logistics / 3PL',     pain: 'Manual dispatch, route inefficiency, missed SLAs', win: 'AI routing, automated dispatch, real-time visibility' },
+  { code: 'I-08', type: 'Real Estate',          pain: 'Lead rot, manual follow-up, listing admin', win: 'AI lead nurture, automated CRM, smart listing sync' },
+  { code: 'I-09', type: 'E-Commerce',           pain: 'Cart abandonment, manual CS, inventory errors', win: 'Automated recovery, AI support, smart stock alerts' },
+  { code: 'I-10', type: 'Marketing Agency',     pain: 'Reporting drag, client updates, scope creep', win: 'Auto-reporting, AI account mgmt, budget alerts' },
+  { code: 'I-11', type: 'Franchise',            pain: 'Inconsistent ops, multi-location reporting gaps', win: 'Unified AI layer, location benchmarking, auto-QA' },
+  { code: 'I-12', type: 'Manufacturing',        pain: 'Production bottlenecks, quality control gaps', win: 'Predictive maintenance, AI QC, supply chain sync' },
+  { code: 'P-01', type: 'Quality Program',      pain: 'Manual QC tracking, audit prep, NCR backlogs', win: 'Automated QC workflows, AI audit prep, live dashboards' },
+  { code: 'P-02', type: 'Finance & FP&A',       pain: 'Month-end grind, manual reporting, stale forecasts', win: 'Automated close, AI forecasting, real-time P&L' },
+  { code: 'P-03', type: 'HR & People Ops',      pain: 'Manual hiring workflows, slow onboarding, compliance gaps', win: 'AI recruiting, automated onboarding, HR compliance AI' },
+  { code: 'P-04', type: 'Procurement',          pain: 'PO bottlenecks, vendor sprawl, blind spend', win: 'Automated POs, AI vendor scoring, spend analytics' },
+  { code: 'P-05', type: 'Compliance & Risk',    pain: 'Regulatory drift, manual evidence collection, audit exposure', win: 'Continuous monitoring, automated evidence, AI risk alerts' },
+  { code: 'P-06', type: 'IT & Help Desk',       pain: 'Ticket backlogs, manual triage, repeated issues', win: 'AI ticket routing, self-service automation, proactive monitoring' },
 ]
 
 const PAIN_POINTS = [
@@ -875,7 +883,7 @@ function WhoItsFor() {
   return (
     <section id="who" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
       <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="03" eyebrow="WHO WE EVOLVE" title="Any business. Every industry." note={`N=${EXAMPLES.length}`} />
+        <SectionHeader number="03" eyebrow="WHO WE EVOLVE" title="Any business. Any program. Every industry." note={`N=${EXAMPLES.length}`} />
         <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(3,1fr)', gap: 0, marginTop: 56, border: '1px solid var(--ink)' }}>
           {EXAMPLES.map((ex, i) => (
             <div key={i} className="status-cell" style={{ padding: 28, borderRight: i % 3 < 2 ? '1px solid var(--ink)' : 'none', borderBottom: i < EXAMPLES.length - 3 ? '1px solid var(--ink)' : 'none' }}>
