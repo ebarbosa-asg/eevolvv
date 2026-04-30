@@ -42,11 +42,11 @@ input:focus, textarea:focus, select:focus { outline: none; }
 }
 .serif { font-family: 'Newsreader', 'Instrument Serif', Georgia, serif; }
 
-/* Brand logo — raster evolution strip; bottom baked wordmark clipped off */
+/* Brand logo — transparent PNG; clip hides the baked "eevolvv" text at bottom */
 .brand-logo-figures {
   flex-shrink: 0;
   line-height: 0;
-  clip-path: inset(0 0 27% 0);
+  clip-path: inset(0 0 25% 0);
 }
 .brand-logo-figures img {
   display: block;
@@ -57,16 +57,16 @@ input:focus, textarea:focus, select:focus { outline: none; }
   width: clamp(72px, 18vw, 104px);
 }
 
-/* Header strip — fixed visual height so toolbar stays one clean row */
+/* Header strip — taller on mobile so the silhouette is legible */
 .brand-logo-figures--header img {
   width: auto;
-  height: 30px;
-  max-width: min(132px, 46vw);
+  height: 44px;
+  max-width: min(180px, 52vw);
 }
 @media (min-width: 768px) {
   .brand-logo-figures--header img {
-    height: 34px;
-    max-width: 168px;
+    height: 48px;
+    max-width: 200px;
   }
 }
 
@@ -84,6 +84,57 @@ input:focus, textarea:focus, select:focus { outline: none; }
   gap: 1px;
   align-items: flex-start;
   min-width: 0;
+}
+
+/* Header toolbar + nav: CSS fallbacks if Tailwind utilities fail to load (cached/broken CSS → glued links) */
+.site-header-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.75rem;
+  row-gap: 0.25rem;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .site-header-toolbar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: 1.25rem;
+  }
+}
+
+.site-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+@media (min-width: 768px) {
+  .site-header-actions {
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 767px) {
+  nav.site-header-nav {
+    display: none;
+  }
+  .site-header-actions .header-cta-secondary {
+    display: none;
+  }
+}
+@media (min-width: 768px) {
+  nav.site-header-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    min-width: 0;
+  }
+  .site-header-actions .header-menu-toggle {
+    display: none;
+  }
 }
 
 /* HTML wordmark — matches site theme (Space Grotesk / display) */

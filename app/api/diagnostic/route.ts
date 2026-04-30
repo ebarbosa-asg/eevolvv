@@ -18,12 +18,30 @@ function getClientIp(req: NextRequest): string {
   )
 }
 
+async function checkRateLimitDb(ip: string): Promise<{ allowed: boolean; remaining: number }> {
+  const MAX = parseInt(process.env.RATE_LIMIT_MAX ?? '3', 10)
+  if (!supabase) return checkRateLimit(ip)
+
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+  const { count, error } = await supabase
+    .from('submissions')
+    .select('*', { count: 'exact', head: true })
+    .eq('ip_address', ip)
+    .gte('created_at', oneHourAgo)
+
+  if (error) return checkRateLimit(ip)
+
+  const used = count ?? 0
+  if (used >= MAX) return { allowed: false, remaining: 0 }
+  return { allowed: true, remaining: MAX - used - 1 }
+}
+
 export async function POST(req: NextRequest) {
   const startMs = Date.now()
 
   // ── Rate limiting ─────────────────────────────────────────────────────────
   const ip = getClientIp(req)
-  const { allowed, remaining } = checkRateLimit(ip)
+  const { allowed, remaining } = await checkRateLimitDb(ip)
   if (!allowed) {
     return NextResponse.json(
       { error: 'Too many requests. You can generate up to 3 reports per hour. Please try again later.' },
@@ -102,9 +120,9 @@ Generate their eevolvv Report now.`
   let report: string
   try {
     const message = await anthropic.messages.create({
-      model: 'claude-opus-4-5',
-      max_tokens: 2000,
-      system: systemPrompt,
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4000,
+      system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: userMessage }],
     })
     report = message.content[0].type === 'text'

@@ -213,11 +213,11 @@ function BrandLogoFigures({ size = 'md', header }: { size?: 'sm' | 'md'; header?
   return (
     <div className={classes} aria-hidden>
       <Image
-        src="/brand-logo.jpg"
+        src="/brand-logo.png"
         alt=""
-        width={1024}
-        height={528}
-        sizes={header ? '(max-width:767px) 132px, 168px' : size === 'sm' ? '104px' : '156px'}
+        width={695}
+        height={359}
+        sizes={header ? '(max-width:767px) 180px, 200px' : size === 'sm' ? '104px' : '156px'}
         priority={header || size === 'md'}
         className="h-auto max-w-none"
       />
@@ -252,7 +252,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
     <header className="sticky top-0 z-50 border-b" style={{ borderColor: 'var(--rule)', background: 'rgba(250,247,240,0.88)', backdropFilter: 'blur(8px)' }}>
       <div className="relative">
         <div
-          className="relative z-[50] mx-auto grid w-full max-w-[1280px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-5 md:py-2.5 lg:gap-x-8"
+          className="site-header-toolbar relative z-[50] mx-auto grid w-full max-w-[1280px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-5 md:py-2.5 lg:gap-x-8"
         >
           <a
             href="#top"
@@ -279,7 +279,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
               <a key={id} href={`#${id}`} className="link-rule shrink-0" style={{ color: 'var(--ink)', opacity: 0.65, textDecoration: 'none', whiteSpace: 'nowrap' }}>{label}</a>
             ))}
           </nav>
-          <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:justify-self-end md:gap-3">
+          <div className="site-header-actions flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:justify-self-end md:gap-3">
             <a
               href="#how"
               className="mono header-cta-secondary inline-flex max-md:hidden"
@@ -340,6 +340,8 @@ function Header({ onCTA }: { onCTA: () => void }) {
                 borderBottom: '1px solid var(--rule)',
                 background: 'var(--paper)',
                 boxShadow: '0 24px 40px rgba(20,20,19,0.12)',
+                maxHeight: 'calc(100dvh - 68px)',
+                overflowY: 'auto',
               }}
             >
               <div className="mono" style={{ maxWidth: 1280, margin: '0 auto', padding: '16px 24px 20px', fontSize: 11, letterSpacing: '0.16em' }}>
@@ -1007,13 +1009,25 @@ function LoadingNarrative({ step, elapsed }: { step: number; elapsed: number }) 
 
 function ChatMark() {
   return (
-    <div style={{ flexShrink: 0, width: 28, height: 28, border: '1px solid var(--ink)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 2, background: 'var(--paper)' }}>
-      <svg width="16" height="16" viewBox="0 0 28 28" fill="none">
-        <path d="M6 20 L6 8 L14 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />
-        <path d="M6 14 L12 14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />
-        <path d="M14 8 L22 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />
-        <circle cx="22" cy="20" r="2" fill="var(--accent)" />
-      </svg>
+    <div
+      className="relative shrink-0 overflow-hidden"
+      style={{
+        width: 28,
+        height: 28,
+        border: '1px solid var(--ink)',
+        marginTop: 2,
+        background: 'var(--paper)',
+      }}
+      aria-hidden
+    >
+      <Image
+        src="/brand-logo.jpg"
+        alt=""
+        fill
+        sizes="28px"
+        className="object-cover"
+        style={{ objectPosition: '48% 14%' }}
+      />
     </div>
   )
 }
@@ -1064,8 +1078,16 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
 
   const runSubmit = async (finalForm: FormFields) => {
     setLoading(true); setError(null)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 55_000)
     try {
-      const res = await fetch('/api/diagnostic', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(finalForm) })
+      const res = await fetch('/api/diagnostic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalForm),
+        signal: controller.signal,
+      })
+      clearTimeout(timeout)
       let data: Record<string, unknown> = {}
       try { data = await res.json() } catch { throw new Error('The server returned an unexpected response. Please try again.') }
       if (res.status === 429) throw new Error("You've generated 3 reports this hour — your limit resets in 60 minutes.")
@@ -1075,7 +1097,12 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
       if (!data.success) throw new Error((data.error as string) || 'Something went wrong. Please try again.')
       setReport(data.report as string)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Connection failed. Check your internet and try again.')
+      clearTimeout(timeout)
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('The request timed out — the AI is taking longer than expected. Please try again.')
+      } else {
+        setError(err instanceof Error ? err.message : 'Connection failed. Check your internet and try again.')
+      }
     } finally {
       setLoading(false)
     }
