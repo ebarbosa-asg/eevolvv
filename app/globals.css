@@ -398,6 +398,33 @@ input:focus, textarea:focus, select:focus { outline: none; }
 .report-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
 .report-content strong { font-weight: 600; opacity: 1; }
 
+/* ── Agents catalog grid (main site §05 — AI agents; not the Talent / human-network section) ── */
+.agents-grid {
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--ink);
+  border-left: 1px solid var(--ink);
+}
+.agents-grid > .agent-card-cell {
+  border-right: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+@media (max-width: 1100px) {
+  .agents-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .agents-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Talent network band — stacks graphic under copy on narrow viewports */
+@media (max-width: 900px) {
+  .talent-band-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+}
+
 /* ── Mobile responsive ── */
 @media (max-width: 760px) {
   .problem-grid { gap: 40px !important; margin-top: 40px !important; }

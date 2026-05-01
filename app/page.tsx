@@ -257,9 +257,13 @@ function BrandLogoFigures({ size = 'md', header }: { size?: 'sm' | 'md'; header?
 }
 
 // ─── Header ───────────────────────────────────────────────────────────────────
+//
+// AGENTS (#agents) = §05 deployable AI agent catalog on this page.
+// TALENT = separate human network: in-page strip `#talent` (TalentNetworkBand, after diagnostic) + `talent/` app + footer URL.
+// Header “AGENTS” scrolls to `#agents` only. Swap `public/talent-band.png` when final talent art is ready.
 
 function Header({ onCTA }: { onCTA: () => void }) {
-  const nav: [string, string][] = [['how','PROCESS'],['who','INDUSTRIES'],['pricing','TIERS'],['diagnostic','GET REPORT']]
+  const nav: [string, string][] = [['how','PROCESS'],['who','INDUSTRIES'],['pricing','TIERS'],['agents','AGENTS'],['diagnostic','GET REPORT']]
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -311,15 +315,14 @@ function Header({ onCTA }: { onCTA: () => void }) {
             ))}
           </nav>
           <div className="site-header-actions flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:justify-self-end md:gap-3">
+            {/* In-page §05 agents catalog — not the external Talent network */}
             <a
-              href="https://talent.eevolvv.com"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#agents"
               className="mono header-cta-secondary inline-flex max-md:hidden items-center gap-1.5"
               style={{ fontSize: 11, letterSpacing: '0.16em', padding: '7px 12px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}
             >
               <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
-              TALENT
+              AGENTS
             </a>
             <a
               href="#how"
@@ -1346,44 +1349,58 @@ function ChipButton({ label, onClick }: { label: string; onClick: () => void }) 
   )
 }
 
-// ─── TalentSection ────────────────────────────────────────────────────────────
+// ─── AgentsSection (§05) ───────────────────────────────────────────────────────
+//
+// This section *replaced* the old “EEVOLVV / TALENT / micro-contracting operators” block on the marketing page.
+// Naming & anchor: `id="agents"` only. Human talent promo lives in `TalentNetworkBand` (`id="talent"`) after the diagnostic section.
+//
+// Talent split:
+//   • Here: AI agents we build & integrate for clients (`AGENT_CARDS`, eyebrow EEVOLVV / AGENTS).
+//   • Elsewhere: human talent network → `talent/` Next app + footer “Talent network” URL (new talent artwork belongs there).
 
-const TALENT_ROLES = [
-  { code: 'R-01', title: 'AI Operations Lead', desc: 'Designs and deploys automation workflows end-to-end.' },
-  { code: 'R-02', title: 'Process Analyst', desc: 'Maps your current workflows, finds the friction, writes the brief.' },
-  { code: 'R-03', title: 'WhatsApp Automation Specialist', desc: 'Builds WhatsApp-native automations for emerging market operators.' },
-  { code: 'R-04', title: 'Data & Reporting Engineer', desc: 'Turns raw business data into live dashboards and alerts.' },
-  { code: 'R-05', title: 'Growth & CRM Strategist', desc: 'Automates lead nurture, follow-up, and retention sequences.' },
-  { code: 'R-06', title: 'Fractional COO', desc: 'Senior ops leadership, project-scoped. No full-time hire needed.' },
+const AGENT_CARDS = [
+  { code: 'A-01', icon: '🎯', title: 'Intake & routing agent', desc: 'Qualifies leads, routes conversations, and keeps CRM fields honest.' },
+  { code: 'A-02', icon: '🗺️', title: 'Workflow mapper agent', desc: 'Turns how your team actually works into a clear automation brief.' },
+  { code: 'A-03', icon: '📅', title: 'Scheduler agent', desc: 'Handles reminders, no-shows, and calendar Tetris without the ping-pong.' },
+  { code: 'A-04', icon: '💳', title: 'Billing pulse agent', desc: 'Chases invoices, flags overdue accounts, and surfaces cash-flow risks.' },
+  { code: 'A-05', icon: '💬', title: 'Support desk agent', desc: 'Answers FAQs, drafts replies, and escalates only when a human should.' },
+  { code: 'A-06', icon: '📦', title: 'Inventory signal agent', desc: 'Watches stock levels and reorder thresholds so you never wing it.' },
+  { code: 'A-07', icon: '📈', title: 'Reporting agent', desc: 'Pulls spreadsheets and tools into live dashboards your team will open.' },
+  { code: 'A-08', icon: '🧲', title: 'CRM hygiene agent', desc: 'Dedupes messy contacts and nudges stalled deals before they go cold.' },
+  { code: 'A-09', icon: '📱', title: 'WhatsApp concierge agent', desc: 'Runs broadcasts, two-way flows, and fast replies where your customers already are.' },
+  { code: 'A-10', icon: '📄', title: 'Docs & contracts agent', desc: 'Summaries, version trails, and gentle nudges until signatures land.' },
+  { code: 'A-11', icon: '🪄', title: 'Hiring screen agent', desc: 'Scores applicants against your rubric so interviews start with the shortlist.' },
+  { code: 'A-12', icon: '⚡', title: 'Ops pulse agent', desc: 'Monitors KPI drift and pings owners when the business slips off track.' },
 ]
 
-function TalentSection() {
+function AgentsSection() {
   return (
-    <section id="talent" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
+    <section id="agents" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)', scrollMarginTop: 72 }}>
       <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="05" eyebrow="EEVOLVV / TALENT" title="The operators who build it with you." note="MICRO-CONTRACTING" />
-        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24 }}>
-          Every eevolvv engagement is backed by vetted operators, analysts, and AI specialists — available on-demand, scoped to your project, no full-time hire required.
+        <SectionHeader number="05" eyebrow="EEVOLVV / AGENTS" title="Agents we build to optimize how you operate." note="12 DEPLOYABLE" />
+        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 720, marginTop: 24 }}>
+          These are the kinds of AI agents eevolvv can ship for your business — narrow, reliable automations that tighten ops, protect revenue, and free your team for judgment work. Pick what fits; we scope and integrate each one to your stack.
         </p>
-        <div className="grid mt-12 keep-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)', gap: 0, marginTop: 48, border: '1px solid var(--ink)' }}>
-          {TALENT_ROLES.map((role, i) => (
-            <div key={role.code} className="status-cell" style={{
-              padding: 28,
-              borderRight: (i + 1) % 3 !== 0 ? '1px solid var(--ink)' : 'none',
-              borderBottom: i < 3 ? '1px solid var(--ink)' : 'none',
-            }}>
-              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.45, marginBottom: 12 }}>{role.code}</div>
-              <div style={{ fontSize: 18, fontWeight: 500, letterSpacing: '-0.01em', marginBottom: 8 }}>{role.title}</div>
-              <p style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.65, margin: 0 }}>{role.desc}</p>
+        <div className="agents-grid mt-12" style={{ marginTop: 48 }}>
+          {AGENT_CARDS.map(agent => (
+            <div key={agent.code} className="agent-card-cell">
+              <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '16px 18px' }}>
+                <span style={{ fontSize: 22, lineHeight: 1, flexShrink: 0 }} aria-hidden>{agent.icon}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: 0.45, marginBottom: 6 }}>{agent.code}</div>
+                  <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 6, lineHeight: 1.25 }}>{agent.title}</div>
+                  <p style={{ fontSize: 12, lineHeight: 1.55, opacity: 0.62, margin: 0 }}>{agent.desc}</p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
         <div style={{ marginTop: 32, border: '1px solid var(--ink)', padding: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
           <div>
-            <div style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em' }}>Need someone to build it?</div>
-            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6, margin: '6px 0 0' }}>Match with a specialist who has done it in your industry. Scoped, vetted, ready.</p>
+            <div style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em' }}>Not sure which agents fit first?</div>
+            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6, margin: '6px 0 0' }}>Tell our AI diagnostic what you run — it maps the highest-impact automations for your business.</p>
           </div>
-          <a href="https://talent.eevolvv.com" target="_blank" rel="noopener noreferrer" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 24px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, whiteSpace: 'nowrap' }}>FIND A SPECIALIST →</a>
+          <a href="#diagnostic" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 24px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, whiteSpace: 'nowrap' }}>FIND A SPECIALIST →</a>
         </div>
       </div>
     </section>
@@ -1409,19 +1426,55 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
   )
 }
 
-// ─── CTAClose ─────────────────────────────────────────────────────────────────
+// ─── TalentNetworkBand — replaces CTAClose ─────────────────────────────────────
+//
+// Full-width “talent tab”: human operator network (talent.eevolvv.com). Keeps the ink-band slot that used to be “Either you evolve…”.
+// Audit/pricing urgency CTAs remain in Hero, Pricing tiers, and Diagnostic — not duplicated here.
+// Hero image: `public/talent-band.png` (replace when final talent graphic ships).
 
-function CTAClose({ onCTA }: { onCTA: () => void }) {
+const TALENT_SITE_URL = process.env.NEXT_PUBLIC_TALENT_URL?.trim() || 'https://talent.eevolvv.com'
+
+function TalentNetworkBand() {
   return (
-    <section style={{ padding: '120px 0', background: 'var(--ink)', color: 'var(--paper)' }}>
+    <section id="talent" style={{ padding: '120px 0', background: 'var(--ink)', color: 'var(--paper)', borderBottom: '1px solid var(--rule)', scrollMarginTop: 72 }}>
       <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(48px, 8vw, 128px)', fontWeight: 500, letterSpacing: '-0.04em', lineHeight: 0.92, margin: 0 }}>
-          Either you evolve,<br />
-          or you <em className="serif" style={{ fontStyle: 'italic', color: 'var(--accent)' }}>fall behind.</em>
-        </h2>
-        <div style={{ display: 'flex', gap: 16, marginTop: 48, flexWrap: 'wrap' }}>
-          <button onClick={onCTA} className="btn-gradient" style={{ padding: '20px 32px', fontSize: 16, fontWeight: 600, letterSpacing: '0.02em' }}>Get Your Free AI Audit →</button>
-          <a href="#pricing" style={{ background: 'transparent', color: 'var(--paper)', padding: '20px 32px', border: '1px solid var(--paper)', cursor: 'pointer', fontSize: 16, fontWeight: 600, letterSpacing: '0.02em', textDecoration: 'none' }}>See Pricing Tiers</a>
+        <div
+          className="talent-band-grid"
+          style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(260px, 400px)', gap: 40, alignItems: 'center' }}
+        >
+          <div>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 14 }}>EEVOLVV / TALENT</div>
+            <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(30px, 4.2vw, 48px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1.08, margin: 0 }}>
+              Operators who build it with you — <em className="serif" style={{ fontStyle: 'italic', color: 'var(--accent)' }}>on demand.</em>
+            </h2>
+            <p style={{ fontSize: 15, lineHeight: 1.6, opacity: 0.72, marginTop: 18, maxWidth: 460 }}>
+              Scoped specialists when you need hands on keyboard — not another hiring cycle. Paired with the AI agents above when both matter.
+            </p>
+            <div style={{ display: 'flex', gap: 14, marginTop: 28, flexWrap: 'wrap', alignItems: 'center' }}>
+              <a
+                href={TALENT_SITE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-gradient mono"
+                style={{ padding: '16px 26px', fontSize: 11, letterSpacing: '0.16em', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+              >
+                VISIT TALENT NETWORK →
+              </a>
+              <a href="#agents" style={{ color: 'var(--paper)', padding: '14px 22px', border: '1px solid rgba(255,255,255,0.35)', fontSize: 14, fontWeight: 600, textDecoration: 'none', opacity: 0.95 }}>
+                Browse AI agents
+              </a>
+            </div>
+          </div>
+          <div style={{ position: 'relative', border: '1px solid rgba(255,255,255,0.22)', background: 'rgba(255,255,255,0.03)' }}>
+            <Image
+              src="/talent-band.png"
+              alt="eevolvv talent network"
+              width={1024}
+              height={675}
+              sizes="(max-width:900px) 100vw, 400px"
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -1633,9 +1686,10 @@ function GlobalHorizon() {
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
 function Footer() {
+  // ENGAGE: “Talent” → `#talent` (TalentNetworkBand). External talent URL is the primary CTA on that strip.
   const cols: [string, [string, string][]][] = [
     ['NAVIGATE', [['Process','#how'],['Industries','#who'],['Pricing','#pricing']]],
-    ['ENGAGE',   [['Free Audit','#diagnostic'],['Talent Network','https://talent.eevolvv.com']]],
+    ['ENGAGE',   [['Talent','#talent'],['AI agents','#agents'],['Free Audit','#diagnostic']]],
     ['LEGAL',    [['Privacy','#'],['Terms','#'],['Contact','mailto:hello@eevolvv.com']]],
   ]
   return (
@@ -1687,9 +1741,9 @@ export default function Home() {
       <Process />
       <WhoItsFor />
       <Pricing onCTA={tier => scrollToDiagnostic(tier)} />
-      <TalentSection />
+      <AgentsSection />
       <DiagnosticSection targetTier={targetTier} />
-      <CTAClose onCTA={() => scrollToDiagnostic()} />
+      <TalentNetworkBand />
       <GlobalHorizon />
       <Footer />
     </main>

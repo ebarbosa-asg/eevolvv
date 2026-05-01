@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 
 type Phase = 'chatting' | 'extracting' | 'report' | 'error'
@@ -18,14 +19,33 @@ const EXTRACTING_STEPS = [
 
 function ChatMark() {
   return (
-    <div style={{
-      width: 28, height: 28, minWidth: 28,
-      background: 'var(--ink)', color: 'var(--paper)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 11, fontWeight: 700, flexShrink: 0, marginTop: 2,
-      fontFamily: 'Space Grotesk, sans-serif',
-      letterSpacing: '0.02em',
-    }}>E</div>
+    <div
+      style={{
+        width: 28,
+        height: 28,
+        minWidth: 28,
+        flexShrink: 0,
+        marginTop: 2,
+        position: 'relative',
+        overflow: 'hidden',
+        border: '1px solid var(--ink)',
+        background: 'var(--paper)',
+      }}
+    >
+      <Image
+        src="/mascot.png"
+        alt="eevolvv diagnostic assistant"
+        width={248}
+        height={250}
+        sizes="28px"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          imageRendering: 'pixelated',
+        }}
+      />
+    </div>
   )
 }
 

@@ -9,6 +9,9 @@ import { NotSection } from "@/components/sections/NotSection";
 import { FounderSection } from "@/components/sections/FounderSection";
 import { CtaCloseSection } from "@/components/sections/CtaCloseSection";
 
+/** Human talent network (eevolvv/talent). New talent-focused hero / graphics belong in this app.
+ *  Main marketing site §05 is **Agents** (`app/page.tsx` → `AgentsSection`, `#agents`) — not Talent. */
+
 export default function HomePage() {
   return (
     <>

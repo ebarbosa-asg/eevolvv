@@ -11,6 +11,8 @@ const nextConfig = {
         'localhost:3005',
         '127.0.0.1:3000',
         '127.0.0.1:3005',
+        'talent.eevolvv.com',
+        'eevolvv.com',
       ],
     },
     instrumentationHook: true,
