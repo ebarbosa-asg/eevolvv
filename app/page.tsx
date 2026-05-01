@@ -312,6 +312,16 @@ function Header({ onCTA }: { onCTA: () => void }) {
           </nav>
           <div className="site-header-actions flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:justify-self-end md:gap-3">
             <a
+              href="https://talent.eevolvv.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mono header-cta-secondary inline-flex max-md:hidden items-center gap-1.5"
+              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '7px 12px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}
+            >
+              <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
+              TALENT
+            </a>
+            <a
               href="#how"
               className="mono header-cta-secondary inline-flex max-md:hidden"
               style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none', alignItems: 'center' }}

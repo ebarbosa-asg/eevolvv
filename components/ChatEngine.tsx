@@ -64,6 +64,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const messagesRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const hasInteracted = useRef(false)
 
   useEffect(() => {
     const el = messagesRef.current
@@ -71,7 +72,8 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
   }, [messages, streamText])
 
   useEffect(() => {
-    if (phase === 'chatting' && !isStreaming) {
+    // Only auto-focus after the user has started the conversation — never on mount
+    if (phase === 'chatting' && !isStreaming && hasInteracted.current) {
       inputRef.current?.focus()
     }
   }, [phase, isStreaming])
@@ -88,6 +90,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
     const trimmed = text.trim()
     if (!trimmed || isStreaming) return
 
+    hasInteracted.current = true
     const nextApiMsgs: ApiMsg[] = [...apiMsgs, { role: 'user', content: trimmed }]
     setApiMsgs(nextApiMsgs)
     setMessages(m => [...m, { role: 'user', text: trimmed }])
