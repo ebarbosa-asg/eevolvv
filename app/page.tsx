@@ -732,10 +732,6 @@ function Stats() {
       style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)', scrollMarginTop: 96 }}
     >
       <div ref={ref} className="mx-auto" style={{ maxWidth: 720, padding: '0 32px' }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 28, textAlign: 'center' }}>
-          SHEET A-02 · MARKET TELEMETRY
-        </div>
-
         <div
           style={{
             border: '1px solid var(--ink)',
@@ -1062,7 +1058,7 @@ function ChatMark() {
       aria-hidden
     >
       <Image
-        src="/brand-logo.jpg"
+        src="/brand-logo.png"
         alt=""
         fill
         sizes="28px"
