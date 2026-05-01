@@ -1,18 +1,15 @@
 import Image from "next/image";
 
-/**
- * eevolvv/talent mascot — the smallest monkey from the eevolvv evolution strip.
- * Replaces the former geometric-A Archimedes mark.
- */
+/** eevolvv/talent header mark — same pixel mascot as the main site (`/public/mascot.png`). */
 export function LogoMark({ className = "" }: { className?: string }) {
   return (
     <Image
       src="/mascot.png"
       alt="eevolvv/talent"
-      width={28}
-      height={28}
+      width={338}
+      height={338}
       className={className}
-      style={{ imageRendering: "pixelated", objectFit: "contain" }}
+      style={{ width: 28, height: 28, imageRendering: "pixelated", objectFit: "contain" }}
       priority
     />
   );

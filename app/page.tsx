@@ -71,7 +71,7 @@ const TIERS = [
       'Daily sales summary (WhatsApp)',
       'Supplier payment tracker',
       'New automation every 60 days',
-      'English · Spanish · Portuguese',
+      'English · Spanish · Portuguese — and more soon!',
     ],
     highlight: false,
   },
@@ -147,24 +147,24 @@ const INDUSTRIES_LIST = [
 ]
 
 const EXAMPLES = [
-  { code: 'I-01', type: 'Gym / Fitness',      pain: 'Manual scheduling, member follow-ups, lost leads', win: 'Auto-booking, retention AI, revenue recovery' },
-  { code: 'I-02', type: 'Restaurant',          pain: 'Order errors, no-shows, manual inventory', win: 'Automated ops, smart reservations, waste reduction' },
-  { code: 'I-03', type: 'Law Firm',            pain: 'Admin overload, client intake, billing gaps', win: 'AI intake, automated billing, case tracking' },
-  { code: 'I-04', type: 'Construction',        pain: 'Scheduling chaos, quote delays, supplier chaos', win: 'Project AI, instant quotes, supplier automation' },
-  { code: 'I-05', type: 'Medical Practice',    pain: 'Patient admin, billing errors, no-show rate', win: 'AI scheduling, billing automation, reminders' },
-  { code: 'I-06', type: 'Enterprise',          pain: 'Siloed teams, manual reporting, process debt', win: 'Full ops rebuild, AI layer, unified intelligence' },
-  { code: 'I-07', type: 'Logistics / 3PL',     pain: 'Manual dispatch, route inefficiency, missed SLAs', win: 'AI routing, automated dispatch, real-time visibility' },
-  { code: 'I-08', type: 'Real Estate',          pain: 'Lead rot, manual follow-up, listing admin', win: 'AI lead nurture, automated CRM, smart listing sync' },
-  { code: 'I-09', type: 'E-Commerce',           pain: 'Cart abandonment, manual CS, inventory errors', win: 'Automated recovery, AI support, smart stock alerts' },
-  { code: 'I-10', type: 'Marketing Agency',     pain: 'Reporting drag, client updates, scope creep', win: 'Auto-reporting, AI account mgmt, budget alerts' },
-  { code: 'I-11', type: 'Franchise',            pain: 'Inconsistent ops, multi-location reporting gaps', win: 'Unified AI layer, location benchmarking, auto-QA' },
-  { code: 'I-12', type: 'Manufacturing',        pain: 'Production bottlenecks, quality control gaps', win: 'Predictive maintenance, AI QC, supply chain sync' },
-  { code: 'P-01', type: 'Quality Program',      pain: 'Manual QC tracking, audit prep, NCR backlogs', win: 'Automated QC workflows, AI audit prep, live dashboards' },
-  { code: 'P-02', type: 'Finance & FP&A',       pain: 'Month-end grind, manual reporting, stale forecasts', win: 'Automated close, AI forecasting, real-time P&L' },
-  { code: 'P-03', type: 'HR & People Ops',      pain: 'Manual hiring workflows, slow onboarding, compliance gaps', win: 'AI recruiting, automated onboarding, HR compliance AI' },
-  { code: 'P-04', type: 'Procurement',          pain: 'PO bottlenecks, vendor sprawl, blind spend', win: 'Automated POs, AI vendor scoring, spend analytics' },
-  { code: 'P-05', type: 'Compliance & Risk',    pain: 'Regulatory drift, manual evidence collection, audit exposure', win: 'Continuous monitoring, automated evidence, AI risk alerts' },
-  { code: 'P-06', type: 'IT & Help Desk',       pain: 'Ticket backlogs, manual triage, repeated issues', win: 'AI ticket routing, self-service automation, proactive monitoring' },
+  { code: 'I-01', type: 'Gym / Fitness', pain: 'Manual schedules & lost leads', win: 'Auto-booking + retention AI' },
+  { code: 'I-02', type: 'Restaurant', pain: 'Order errors & no-shows', win: 'Smart reservations + waste alerts' },
+  { code: 'I-03', type: 'Law Firm', pain: 'Intake noise & billing gaps', win: 'AI intake + tracked billing' },
+  { code: 'I-04', type: 'Construction', pain: 'Quote lag & supplier chaos', win: 'Project AI + instant quotes' },
+  { code: 'I-05', type: 'Medical Practice', pain: 'Front-desk load & no-shows', win: 'Scheduling + billing automation' },
+  { code: 'I-06', type: 'Enterprise', pain: 'Siloed teams & report grind', win: 'Unified AI ops layer' },
+  { code: 'I-07', type: 'Logistics / 3PL', pain: 'Dispatch drag & missed SLAs', win: 'AI routing + live visibility' },
+  { code: 'I-08', type: 'Real Estate', pain: 'Cold leads & listing busywork', win: 'Nurture AI + CRM sync' },
+  { code: 'I-09', type: 'E-Commerce', pain: 'Cart drop-off & stock misses', win: 'Recovery flows + inventory alerts' },
+  { code: 'I-10', type: 'Marketing Agency', pain: 'Reporting & update treadmill', win: 'Auto reports + scope guardrails' },
+  { code: 'I-11', type: 'Franchise', pain: 'Uneven ops across locations', win: 'One AI playbook + benchmarks' },
+  { code: 'I-12', type: 'Manufacturing', pain: 'Downtime & QC blind spots', win: 'Predictive maintenance + AI QC' },
+  { code: 'P-01', type: 'Quality Program', pain: 'QC sheets & audit scramble', win: 'Digital QC + audit-ready trails' },
+  { code: 'P-02', type: 'Finance & FP&A', pain: 'Close crunch & stale forecasts', win: 'Faster close + live P&L signals' },
+  { code: 'P-03', type: 'HR & People Ops', pain: 'Slow hire & onboarding loops', win: 'AI screening + guided onboarding' },
+  { code: 'P-04', type: 'Procurement', pain: 'PO friction & spend blind spots', win: 'Auto POs + vendor intelligence' },
+  { code: 'P-05', type: 'Compliance & Risk', pain: 'Evidence hunts & policy drift', win: 'Continuous checks + risk alerts' },
+  { code: 'P-06', type: 'IT & Help Desk', pain: 'Ticket pile-ups & repeat fires', win: 'Smart routing + self-serve fixes' },
 ]
 
 const PAIN_POINTS = [
@@ -231,7 +231,9 @@ interface FormFields {
   tier: string
 }
 
-// ─── Brand logo (evolution strip asset + theme wordmark) ────────────────────────
+// ─── Brand mark (pixel mascot — same asset site-wide as `/mascot.png`) ───────────
+
+const MASCOT_PX = { w: 338, h: 338 } as const
 
 function BrandLogoFigures({ size = 'md', header }: { size?: 'sm' | 'md'; header?: boolean }) {
   const classes = [
@@ -244,13 +246,14 @@ function BrandLogoFigures({ size = 'md', header }: { size?: 'sm' | 'md'; header?
   return (
     <div className={classes} aria-hidden>
       <Image
-        src="/brand-logo.png"
+        src="/mascot.png"
         alt=""
-        width={695}
-        height={359}
-        sizes={header ? '(max-width:767px) 180px, 200px' : size === 'sm' ? '104px' : '156px'}
+        width={MASCOT_PX.w}
+        height={MASCOT_PX.h}
+        sizes={header ? '(max-width:767px) 160px, 180px' : size === 'sm' ? '104px' : '156px'}
         priority={header || size === 'md'}
         className="h-auto max-w-none"
+        style={{ imageRendering: 'pixelated' }}
       />
     </div>
   )
@@ -258,9 +261,8 @@ function BrandLogoFigures({ size = 'md', header }: { size?: 'sm' | 'md'; header?
 
 // ─── Header ───────────────────────────────────────────────────────────────────
 //
-// AGENTS (#agents) = §05 deployable AI agent catalog on this page.
-// TALENT = separate human network: in-page strip `#talent` (TalentNetworkBand, after diagnostic) + `talent/` app + footer URL.
-// Header “AGENTS” scrolls to `#agents` only. Swap `public/talent-band.png` when final talent art is ready.
+// AGENTS (#agents) = §06 deployable AI agent catalog on this page (main nav still links here).
+// TALENT = human network at `/talent` + in-page strip `#talent` (TalentNetworkBand). Header secondary CTA goes to `/talent`.
 
 function Header({ onCTA }: { onCTA: () => void }) {
   const nav: [string, string][] = [['how','PROCESS'],['who','INDUSTRIES'],['pricing','TIERS'],['agents','AGENTS'],['diagnostic','GET REPORT']]
@@ -287,7 +289,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
     <header className="sticky top-0 z-50 border-b" style={{ borderColor: 'var(--rule)', background: 'rgba(250,247,240,0.88)', backdropFilter: 'blur(8px)' }}>
       <div className="relative">
         <div
-          className="site-header-toolbar keep-grid relative z-[50] mx-auto grid w-full max-w-[1280px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-5 md:py-2.5 lg:gap-x-8"
+          className="site-header-toolbar keep-grid relative z-[50] mx-auto grid w-full max-w-[1280px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 px-4 py-1.5 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-5 md:px-8 md:py-2 lg:gap-x-8"
         >
           <a
             href="#top"
@@ -315,19 +317,19 @@ function Header({ onCTA }: { onCTA: () => void }) {
             ))}
           </nav>
           <div className="site-header-actions flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:justify-self-end md:gap-3">
-            {/* In-page §05 agents catalog — not the external Talent network */}
+            {/* Talent microsite — main nav “AGENTS” still jumps to `#agents` on this page */}
             <a
-              href="#agents"
+              href="/talent"
               className="mono header-cta-secondary inline-flex max-md:hidden items-center gap-1.5"
-              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '7px 12px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}
+              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '6px 10px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}
             >
               <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
-              AGENTS
+              TALENT
             </a>
             <a
               href="#how"
               className="mono header-cta-secondary inline-flex max-md:hidden"
-              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 14px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none', alignItems: 'center' }}
+              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '6px 12px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none', alignItems: 'center' }}
             >
               SEE PROCESS
             </a>
@@ -339,14 +341,14 @@ function Header({ onCTA }: { onCTA: () => void }) {
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               onClick={() => setMenuOpen(o => !o)}
               style={{
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 padding: 0,
                 border: '1px solid var(--rule)',
                 background: 'var(--paper)',
                 color: 'var(--ink)',
                 cursor: 'pointer',
-                fontSize: 17,
+                fontSize: 16,
                 lineHeight: 1,
               }}
             >
@@ -359,7 +361,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
                 onCTA()
               }}
               className="mono header-cta-gradient whitespace-nowrap"
-              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '8px 12px' }}
+              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '6px 11px' }}
             >
               EVOLVE NOW →
             </button>
@@ -384,11 +386,11 @@ function Header({ onCTA }: { onCTA: () => void }) {
                 borderBottom: '1px solid var(--rule)',
                 background: 'var(--paper)',
                 boxShadow: '0 24px 40px rgba(20,20,19,0.12)',
-                maxHeight: 'calc(100dvh - 68px)',
+                maxHeight: 'calc(100dvh - 54px)',
                 overflowY: 'auto',
               }}
             >
-              <div className="mono" style={{ maxWidth: 1280, margin: '0 auto', padding: '16px 24px 20px', fontSize: 11, letterSpacing: '0.16em' }}>
+              <div className="mono site-rail" style={{ paddingTop: 16, paddingBottom: 20, fontSize: 11, letterSpacing: '0.16em' }}>
                 {nav.map(([id, label]) => (
                   <a
                     key={id}
@@ -732,7 +734,8 @@ function Stats() {
   return (
     <section
       id="stats"
-      style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)', scrollMarginTop: 96 }}
+      className="anchor-scroll"
+      style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}
     >
       <div ref={ref} className="mx-auto" style={{ maxWidth: 720, padding: '0 32px' }}>
         <div
@@ -782,9 +785,9 @@ function Stats() {
 function Problem() {
   return (
     <section style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
-      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
+      <div className="mx-auto site-rail">
         <SectionHeader number="01" eyebrow="THE PROBLEM" title="Your team is doing work AI should be doing." note="DIAGNOSIS" />
-        <div className="grid mt-12 problem-grid" style={{ gridTemplateColumns: 'minmax(0, 1fr) minmax(340px, 1.22fr)', gap: 72, marginTop: 56, alignItems: 'stretch' }}>
+        <div className="grid problem-grid" style={{ gridTemplateColumns: 'minmax(0, 1fr) minmax(340px, 1.22fr)', gap: 72, marginTop: 56, alignItems: 'stretch' }}>
           <div>
             <p style={{ fontSize: 18, lineHeight: 1.55, color: 'rgba(20,20,19,0.78)', marginBottom: 32 }}>
               Most businesses lose <strong>23 hours a week</strong> to tasks that AI can do faster, cheaper, and without errors. The damage is invisible until you measure it.
@@ -888,8 +891,8 @@ function Problem() {
 
 function Process() {
   return (
-    <section id="how" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
-      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
+    <section id="how" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
+      <div className="mx-auto site-rail">
         <SectionHeader number="02" eyebrow="THE PROCESS" title="From intake to transformed in 60 days." note="N=5 STEPS" />
         <div className="grid mt-14" style={{ gridTemplateColumns: 'repeat(5,1fr)', gap: 0, marginTop: 64, border: '1px solid var(--ink)' }}>
           {PROCESS_STEPS.map((step, i) => (
@@ -909,26 +912,87 @@ function Process() {
   )
 }
 
+/** §03 industry grid: 4-across on desktop; fewer columns on narrow viewports. */
+function useWhoEvolveCols() {
+  const [cols, setCols] = useState(4)
+  useEffect(() => {
+    const apply = () => {
+      const w = window.innerWidth
+      if (w < 520) setCols(1)
+      else if (w < 1180) setCols(2)
+      else setCols(4)
+    }
+    apply()
+    window.addEventListener('resize', apply)
+    return () => window.removeEventListener('resize', apply)
+  }, [])
+  return cols
+}
+
+function whoEvolveCellBorders(index: number, total: number, cols: number) {
+  const rows = Math.ceil(total / cols)
+  const row = Math.floor(index / cols)
+  const hasRight =
+    index + 1 < total && Math.floor(index / cols) === Math.floor((index + 1) / cols)
+  const hasBottom = row < rows - 1
+  return {
+    borderRight: hasRight ? '1px solid var(--ink)' : 'none',
+    borderBottom: hasBottom ? '1px solid var(--ink)' : 'none',
+  }
+}
+
 // ─── WhoItsFor ────────────────────────────────────────────────────────────────
 
 function WhoItsFor() {
+  const cols = useWhoEvolveCols()
+  const n = EXAMPLES.length
   return (
-    <section id="who" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
-      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="03" eyebrow="WHO WE EVOLVE" title="Any business. Any program. Every industry." note={`N=${EXAMPLES.length}`} />
-        <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(3,1fr)', gap: 0, marginTop: 56, border: '1px solid var(--ink)' }}>
-          {EXAMPLES.map((ex, i) => (
-            <div key={i} className="status-cell" style={{ padding: 28, borderRight: i % 3 < 2 ? '1px solid var(--ink)' : 'none', borderBottom: i < EXAMPLES.length - 3 ? '1px solid var(--ink)' : 'none' }}>
-              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 16 }}>{ex.code}</div>
-              <div style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.015em', marginBottom: 20 }}>{ex.type}</div>
-              <div style={{ borderTop: '1px solid var(--rule)', paddingTop: 14 }}>
-                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: 0.55, marginBottom: 6 }}>BEFORE</div>
-                <div style={{ fontSize: 13, lineHeight: 1.5, opacity: 0.75, marginBottom: 16 }}>{ex.pain}</div>
-                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: 6 }}>AFTER →</div>
-                <div style={{ fontSize: 13, lineHeight: 1.5 }}>{ex.win}</div>
+    <section id="who" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
+      <div className="mx-auto site-rail">
+        <SectionHeader number="04" eyebrow="WHO WE EVOLVE" title="Any business. Any program. Every industry." note={`N=${EXAMPLES.length}`} />
+        <div
+          className="who-we-evolve-grid grid mt-12"
+          style={{
+            gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+            gap: 0,
+            marginTop: 56,
+            border: '1px solid var(--ink)',
+          }}
+        >
+          {EXAMPLES.map((ex, i) => {
+            const compact = cols >= 4
+            const pad = compact ? '9px 10px' : cols === 2 ? '12px 14px' : '16px 18px'
+            return (
+              <div
+                key={i}
+                className="status-cell who-evolve-card"
+                style={{
+                  padding: pad,
+                  ...whoEvolveCellBorders(i, n, cols),
+                }}
+              >
+                <div className="mono" style={{ fontSize: compact ? 7 : 8, letterSpacing: '0.16em', opacity: 0.48, marginBottom: compact ? 5 : 7 }}>
+                  {ex.code}
+                </div>
+                <div
+                  className="who-evolve-card-title"
+                  style={{
+                    fontSize: compact ? 'clamp(12px, 1vw, 14px)' : 'clamp(13px, 1.2vw, 16px)',
+                    fontWeight: 600,
+                    letterSpacing: '-0.02em',
+                    lineHeight: 1.15,
+                    marginBottom: compact ? 6 : 8,
+                  }}
+                >
+                  {ex.type}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: compact ? 3 : 5 }}>
+                  <p className="who-evolve-card-line who-evolve-card-line--pain">{ex.pain}</p>
+                  <p className="who-evolve-card-line who-evolve-card-line--win">→ {ex.win}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
@@ -939,9 +1003,9 @@ function WhoItsFor() {
 
 function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
   return (
-    <section id="pricing" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
-      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="04" eyebrow="PRICING" title="Every business has a starting point." note="FIVE TIERS" />
+    <section id="pricing" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
+      <div className="mx-auto site-rail">
+        <SectionHeader number="05" eyebrow="PRICING" title="Every business has a starting point." note="FIVE TIERS" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24 }}>
           All tiers include the eevolvv Report. Outcomes reviewed at day 60 post-deployment.
         </p>
@@ -1061,12 +1125,12 @@ function ChatMark() {
       aria-hidden
     >
       <Image
-        src="/brand-logo.png"
+        src="/mascot.png"
         alt=""
         fill
         sizes="28px"
-        className="object-cover"
-        style={{ objectPosition: '48% 14%' }}
+        className="object-contain"
+        style={{ imageRendering: 'pixelated', objectPosition: 'center' }}
       />
     </div>
   )
@@ -1349,35 +1413,208 @@ function ChipButton({ label, onClick }: { label: string; onClick: () => void }) 
   )
 }
 
-// ─── AgentsSection (§05) ───────────────────────────────────────────────────────
+// ─── AgentsSection (§06) ───────────────────────────────────────────────────────
 //
 // This section *replaced* the old “EEVOLVV / TALENT / micro-contracting operators” block on the marketing page.
-// Naming & anchor: `id="agents"` only. Human talent promo lives in `TalentNetworkBand` (`id="talent"`) after the diagnostic section.
+// Naming & anchor: `id="agents"` only. Human talent promo lives in `TalentNetworkBand` (`id="talent"`) after Agents on the homepage.
 //
 // Talent split:
 //   • Here: AI agents we build & integrate for clients (`AGENT_CARDS`, eyebrow EEVOLVV / AGENTS).
 //   • Elsewhere: human talent network → `talent/` Next app + footer “Talent network” URL (new talent artwork belongs there).
 
-const AGENT_CARDS = [
-  { code: 'A-01', icon: '🎯', title: 'Intake & routing agent', desc: 'Qualifies leads, routes conversations, and keeps CRM fields honest.' },
-  { code: 'A-02', icon: '🗺️', title: 'Workflow mapper agent', desc: 'Turns how your team actually works into a clear automation brief.' },
-  { code: 'A-03', icon: '📅', title: 'Scheduler agent', desc: 'Handles reminders, no-shows, and calendar Tetris without the ping-pong.' },
-  { code: 'A-04', icon: '💳', title: 'Billing pulse agent', desc: 'Chases invoices, flags overdue accounts, and surfaces cash-flow risks.' },
-  { code: 'A-05', icon: '💬', title: 'Support desk agent', desc: 'Answers FAQs, drafts replies, and escalates only when a human should.' },
-  { code: 'A-06', icon: '📦', title: 'Inventory signal agent', desc: 'Watches stock levels and reorder thresholds so you never wing it.' },
-  { code: 'A-07', icon: '📈', title: 'Reporting agent', desc: 'Pulls spreadsheets and tools into live dashboards your team will open.' },
-  { code: 'A-08', icon: '🧲', title: 'CRM hygiene agent', desc: 'Dedupes messy contacts and nudges stalled deals before they go cold.' },
-  { code: 'A-09', icon: '📱', title: 'WhatsApp concierge agent', desc: 'Runs broadcasts, two-way flows, and fast replies where your customers already are.' },
-  { code: 'A-10', icon: '📄', title: 'Docs & contracts agent', desc: 'Summaries, version trails, and gentle nudges until signatures land.' },
-  { code: 'A-11', icon: '🪄', title: 'Hiring screen agent', desc: 'Scores applicants against your rubric so interviews start with the shortlist.' },
-  { code: 'A-12', icon: '⚡', title: 'Ops pulse agent', desc: 'Monitors KPI drift and pings owners when the business slips off track.' },
+/** Mascot-aligned pixel palette: terracotta body + ink outline + red accent “eye” pixels. */
+const AGENT_PIXEL_PALETTE: Record<string, string> = {
+  '.': 'transparent',
+  x: '#161514',
+  m: '#bf604f',
+  d: '#8c4337',
+  l: '#e8c4b8',
+  r: '#e03d2f',
+  g: '#ff2d20',
+}
+
+function normalizePixelRows(rows: readonly string[]): string[] {
+  const w = Math.max(1, ...rows.map((r) => r.length))
+  return rows.map((r) => r.padEnd(w, '.'))
+}
+
+function AgentPixelIcon({ rows }: { rows: readonly string[] }) {
+  const grid = normalizePixelRows(rows)
+  const gw = grid[0]!.length
+  const gh = grid.length
+  const rects: JSX.Element[] = []
+  grid.forEach((row, y) => {
+    Array.from(row).forEach((ch, x) => {
+      const fill = AGENT_PIXEL_PALETTE[ch]
+      if (!fill || fill === 'transparent') return
+      rects.push(<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={fill} />)
+    })
+  })
+  return (
+    <span className="agent-pixel-icon" aria-hidden>
+      <svg viewBox={`0 0 ${gw} ${gh}`} xmlns="http://www.w3.org/2000/svg">
+        {rects}
+      </svg>
+    </span>
+  )
+}
+
+const AGENT_PIXEL_GRIDS = {
+  // Funnel: wide top narrows to red-flow outlet
+  intake: [
+    'xxxxxxxxxxxx',
+    'xmmmmmmmmmmx',
+    '.xmmmmmmmmx.',
+    '..xmmmrmmx..',
+    '...xmrrmx...',
+    '....xrrx....',
+    '....xrrx....',
+    '.....xx.....',
+  ],
+  // Diamond: classic flowchart decision node, red fill
+  workflow: [
+    '.....xx.....',
+    '....xrrx....',
+    '...xrrrrx...',
+    '..xrrrrrrx..',
+    '...xrrrrx...',
+    '....xrrx....',
+    '.....xx.....',
+  ],
+  // Calendar: red header bar + date grid
+  scheduler: [
+    '.xxxxxxxxxx.',
+    '.xrrrrrrrrx.',
+    '.xxxxxxxxxx.',
+    '.xmm.mm.mmx.',
+    '.xmm.mm.mmx.',
+    '.xmm.mm.mmx.',
+    '.xxxxxxxxxx.',
+  ],
+  // Credit card: red magnetic stripe + dark chip
+  billing: [
+    'xxxxxxxxxxxx',
+    'xrrrrrrrrrrx',
+    'xxxxxxxxxxxx',
+    'xmdxmmmmmmmx',
+    'xmdxmmmmmmmx',
+    'xmmmmmmmmmmx',
+    'xxxxxxxxxxxx',
+  ],
+  // Chat bubble: 3 dots inside + tail
+  support: [
+    '.xxxxxxxxxx.',
+    'xmmmmmmmmmmx',
+    'xm.mm.mm.mmx',
+    'xmmmmmmmmmmx',
+    '.xxxxxxxxxx.',
+    '....xxx.....',
+    '.....x......',
+  ],
+  // Storage box: terracotta fill with red level indicator
+  inventory: [
+    'xxxxxxxxxxxx',
+    'xmmmmmmmmmmx',
+    'xmmmmmmmmmmx',
+    'xrrrrrrrrrrx',
+    'xmmmmmmmmmmx',
+    'xmmmmmmmmmmx',
+    'xxxxxxxxxxxx',
+  ],
+  // Bar chart: 3 ascending bars, rightmost red
+  reporting: [
+    '............',
+    '.........rr.',
+    '.........rr.',
+    '.....mm..rr.',
+    '.....mm..rr.',
+    '.mm..mm..rr.',
+    '.mm..mm..rr.',
+    'xxxxxxxxxxxx',
+  ],
+  // Person: filled head circle + torso
+  crm: [
+    '....xxxx....',
+    '...xmmmmx...',
+    '...xmmmmx...',
+    '....xxxx....',
+    '..xxxxxxxx..',
+    '.xmmmmmmmmx.',
+    '.xxxxxxxxxx.',
+  ],
+  // Smartphone: screen with centered red message
+  whatsapp: [
+    '..xxxxxxxx..',
+    '..xmmmmmmx..',
+    '..xmrrrrmx..',
+    '..xmrrrrmx..',
+    '..xmmmmmmx..',
+    '..xmmmmmmx..',
+    '..xmmmmmmx..',
+    '..xxxxxxxx..',
+  ],
+  // Document: rectangle with 3 red text lines
+  docs: [
+    '.xxxxxxxxxx.',
+    '.xmmmmmmmmx.',
+    '.xmrrrrrmmx.',
+    '.xmmmmmmmmx.',
+    '.xmrrrrrmmx.',
+    '.xmmmmmmmmx.',
+    '.xmrrrrrmmx.',
+    '.xxxxxxxxxx.',
+  ],
+  // Magnifying glass: circle lens + diagonal handle
+  hiring: [
+    '..xxxxxx....',
+    '.xmmmmmmx...',
+    'xmmm..mmmx..',
+    'xmm....mmx..',
+    'xmmm..mmmx..',
+    '.xmmmmmmx...',
+    '..xxxxxxxx..',
+    '.........xx.',
+    '..........xx',
+  ],
+  // EKG pulse: dark baseline + red triangular spike
+  ops: [
+    '............',
+    '.......r....',
+    '......r.r...',
+    '.....r...r..',
+    'xxxx.....xxx',
+    '............',
+    '............',
+  ],
+} as const
+
+type AgentPixelId = keyof typeof AGENT_PIXEL_GRIDS
+
+const AGENT_CARDS: Array<{
+  code: string
+  pixelId: AgentPixelId
+  title: string
+  desc: string
+}> = [
+  { code: 'A-01', pixelId: 'intake', title: 'Intake & routing agent', desc: 'Qualifies leads, routes conversations, and keeps CRM fields honest.' },
+  { code: 'A-02', pixelId: 'workflow', title: 'Workflow mapper agent', desc: 'Turns how your team actually works into a clear automation brief.' },
+  { code: 'A-03', pixelId: 'scheduler', title: 'Scheduler agent', desc: 'Handles reminders, no-shows, and calendar Tetris without the ping-pong.' },
+  { code: 'A-04', pixelId: 'billing', title: 'Billing pulse agent', desc: 'Chases invoices, flags overdue accounts, and surfaces cash-flow risks.' },
+  { code: 'A-05', pixelId: 'support', title: 'Support desk agent', desc: 'Answers FAQs, drafts replies, and escalates only when a human should.' },
+  { code: 'A-06', pixelId: 'inventory', title: 'Inventory signal agent', desc: 'Watches stock levels and reorder thresholds so you never wing it.' },
+  { code: 'A-07', pixelId: 'reporting', title: 'Reporting agent', desc: 'Pulls spreadsheets and tools into live dashboards your team will open.' },
+  { code: 'A-08', pixelId: 'crm', title: 'CRM hygiene agent', desc: 'Dedupes messy contacts and nudges stalled deals before they go cold.' },
+  { code: 'A-09', pixelId: 'whatsapp', title: 'WhatsApp concierge agent', desc: 'Runs broadcasts, two-way flows, and fast replies where your customers already are.' },
+  { code: 'A-10', pixelId: 'docs', title: 'Docs & contracts agent', desc: 'Summaries, version trails, and gentle nudges until signatures land.' },
+  { code: 'A-11', pixelId: 'hiring', title: 'Hiring screen agent', desc: 'Scores applicants against your rubric so interviews start with the shortlist.' },
+  { code: 'A-12', pixelId: 'ops', title: 'Ops pulse agent', desc: 'Monitors KPI drift and pings owners when the business slips off track.' },
 ]
 
 function AgentsSection() {
   return (
-    <section id="agents" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)', scrollMarginTop: 72 }}>
-      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="05" eyebrow="EEVOLVV / AGENTS" title="Agents we build to optimize how you operate." note="12 DEPLOYABLE" />
+    <section id="agents" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
+      <div className="mx-auto site-rail">
+        <SectionHeader number="06" eyebrow="EEVOLVV / AGENTS" title="Agents we build to optimize how you operate." note="12 DEPLOYABLE" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 720, marginTop: 24 }}>
           These are the kinds of AI agents eevolvv can ship for your business — narrow, reliable automations that tighten ops, protect revenue, and free your team for judgment work. Pick what fits; we scope and integrate each one to your stack.
         </p>
@@ -1385,7 +1622,7 @@ function AgentsSection() {
           {AGENT_CARDS.map(agent => (
             <div key={agent.code} className="agent-card-cell">
               <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '16px 18px' }}>
-                <span style={{ fontSize: 22, lineHeight: 1, flexShrink: 0 }} aria-hidden>{agent.icon}</span>
+                <AgentPixelIcon rows={AGENT_PIXEL_GRIDS[agent.pixelId]} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: 0.45, marginBottom: 6 }}>{agent.code}</div>
                   <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 6, lineHeight: 1.25 }}>{agent.title}</div>
@@ -1411,10 +1648,10 @@ function AgentsSection() {
 
 function DiagnosticSection({ targetTier }: { targetTier: string }) {
   return (
-    <section id="diagnostic" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', position: 'relative', overflow: 'hidden', scrollMarginTop: 72 }}>
+    <section id="diagnostic" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', position: 'relative', overflow: 'hidden' }}>
       <div className="absolute inset-0 blueprint-grid" style={{ opacity: 0.4, pointerEvents: 'none' }} />
-      <div className="mx-auto relative" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="06" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. right now. Free." note="Valued ~$3k" />
+      <div className="mx-auto relative site-rail">
+        <SectionHeader number="03" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. right now. Free." note="Valued ~$3k" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24, marginBottom: 56 }}>
           Just talk to us. Our AI asks the right questions, maps your workflows, and delivers a custom automation roadmap — free.
         </p>
@@ -1428,52 +1665,197 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
 
 // ─── TalentNetworkBand — replaces CTAClose ─────────────────────────────────────
 //
-// Full-width “talent tab”: human operator network (talent.eevolvv.com). Keeps the ink-band slot that used to be “Either you evolve…”.
-// Audit/pricing urgency CTAs remain in Hero, Pricing tiers, and Diagnostic — not duplicated here.
-// Hero image: `public/talent-band.png` (replace when final talent graphic ships).
+// Lean strip for talent.eevolvv.com — scrolling geometric wave/grid backdrop; frosted highlight clips to text only.
 
 const TALENT_SITE_URL = process.env.NEXT_PUBLIC_TALENT_URL?.trim() || 'https://talent.eevolvv.com'
 
+const TALENT_TILE_W = 1200
+const TALENT_TILE_H = 300
+
+/** Zigzag polyline; extends past tile horizontally so the marquee never gaps. */
+function zigzagWavePath(y: number, halfPeriod: number, amp: number, x0: number, x1: number) {
+  let d = `M ${x0} ${y}`
+  let x = x0
+  let i = 0
+  while (x < x1 - 0.001) {
+    x += halfPeriod
+    const dy = i % 2 === 0 ? -amp : amp
+    d += ` L ${x} ${y + dy}`
+    i++
+  }
+  return d
+}
+
+function TalentGeomTile({ className }: { className?: string }) {
+  const waveRows = [
+    { y: 28, h: 44, amp: 12, phase: 0 },
+    { y: 58, h: 38, amp: 9, phase: -26 },
+    { y: 94, h: 50, amp: 13, phase: 18 },
+    { y: 134, h: 42, amp: 10, phase: -40 },
+    { y: 174, h: 46, amp: 11, phase: 30 },
+    { y: 216, h: 36, amp: 8, phase: -14 },
+    { y: 254, h: 54, amp: 14, phase: 44 },
+  ]
+
+  const vStep = 80
+  const hStep = 50
+
+  return (
+    <svg
+      className={className}
+      viewBox={`0 0 ${TALENT_TILE_W} ${TALENT_TILE_H}`}
+      width="50%"
+      height="100%"
+      preserveAspectRatio="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g fill="none" stroke="currentColor" strokeWidth="1.45" strokeLinecap="square" strokeLinejoin="miter">
+        {waveRows.map((row, idx) => (
+          <path
+            key={`z-${idx}`}
+            className="talent-geom-zig"
+            transform={`translate(${row.phase} 0)`}
+            d={zigzagWavePath(row.y, row.h, row.amp, -120, TALENT_TILE_W + 120)}
+          />
+        ))}
+        {Array.from({ length: Math.floor(TALENT_TILE_W / vStep) + 4 }, (_, i) => (
+          <line
+            key={`gv-${i}`}
+            className="talent-geom-grid-v"
+            x1={i * vStep - 40}
+            y1={0}
+            x2={i * vStep - 40}
+            y2={TALENT_TILE_H}
+            strokeWidth="1"
+          />
+        ))}
+        {Array.from({ length: Math.floor(TALENT_TILE_H / hStep) + 3 }, (_, i) => (
+          <line key={`gh-${i}`} className="talent-geom-grid-h" x1={0} y1={i * hStep} x2={TALENT_TILE_W} y2={i * hStep} strokeWidth="1" />
+        ))}
+      </g>
+    </svg>
+  )
+}
+
+const TALENT_DIAG_W = 720
+
+function TalentDiagTile({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox={`0 0 ${TALENT_DIAG_W} ${TALENT_TILE_H}`}
+      width="50%"
+      height="100%"
+      preserveAspectRatio="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g fill="none" stroke="currentColor" strokeWidth="1.05" strokeLinecap="square">
+        {Array.from({ length: 42 }, (_, i) => {
+          const x = i * 44 - 140
+          return (
+            <line key={`d-${i}`} className="talent-geom-diag" x1={x} y1={TALENT_TILE_H + 60} x2={x + 240} y2={-80} />
+          )
+        })}
+      </g>
+    </svg>
+  )
+}
+
+/** Seamless scrolling geometric waves + grid + counter-scrolling diagonals */
+function TalentWavePattern() {
+  return (
+    <div className="talent-wave-backdrop" aria-hidden>
+      <div className="talent-wave-scroll talent-wave-scroll--geom">
+        <div className="talent-wave-marquee talent-wave-marquee--forward">
+          <TalentGeomTile />
+          <TalentGeomTile />
+        </div>
+      </div>
+      <div className="talent-wave-scroll talent-wave-scroll--diag">
+        <div className="talent-wave-marquee talent-wave-marquee--reverse">
+          <TalentDiagTile />
+          <TalentDiagTile />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function TalentNetworkBand() {
   return (
-    <section id="talent" style={{ padding: '120px 0', background: 'var(--ink)', color: 'var(--paper)', borderBottom: '1px solid var(--rule)', scrollMarginTop: 72 }}>
-      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <div
-          className="talent-band-grid"
-          style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(260px, 400px)', gap: 40, alignItems: 'center' }}
-        >
-          <div>
-            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 14 }}>EEVOLVV / TALENT</div>
-            <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(30px, 4.2vw, 48px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1.08, margin: 0 }}>
-              Operators who build it with you — <em className="serif" style={{ fontStyle: 'italic', color: 'var(--accent)' }}>on demand.</em>
-            </h2>
-            <p style={{ fontSize: 15, lineHeight: 1.6, opacity: 0.72, marginTop: 18, maxWidth: 460 }}>
-              Scoped specialists when you need hands on keyboard — not another hiring cycle. Paired with the AI agents above when both matter.
-            </p>
-            <div style={{ display: 'flex', gap: 14, marginTop: 28, flexWrap: 'wrap', alignItems: 'center' }}>
-              <a
-                href={TALENT_SITE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-gradient mono"
-                style={{ padding: '16px 26px', fontSize: 11, letterSpacing: '0.16em', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
-              >
-                VISIT TALENT NETWORK →
-              </a>
-              <a href="#agents" style={{ color: 'var(--paper)', padding: '14px 22px', border: '1px solid rgba(255,255,255,0.35)', fontSize: 14, fontWeight: 600, textDecoration: 'none', opacity: 0.95 }}>
-                Browse AI agents
-              </a>
-            </div>
+    <section
+      id="talent"
+      className="talent-section relative z-[1] anchor-scroll"
+      style={{
+        padding: '72px 0',
+        background: 'transparent',
+        color: 'var(--paper)',
+      }}
+    >
+      <div className="mx-auto relative z-[1] site-rail">
+        <div className="talent-section-copy">
+          <div style={{ marginBottom: 14 }}>
+            <span
+              className="mono talent-frost-inline talent-frost-inline--tight"
+              style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.88 }}
+            >
+              EEVOLVV / TALENT
+            </span>
           </div>
-          <div style={{ position: 'relative', border: '1px solid rgba(255,255,255,0.22)', background: 'rgba(255,255,255,0.03)' }}>
-            <Image
-              src="/talent-band.png"
-              alt="eevolvv talent network"
-              width={1024}
-              height={675}
-              sizes="(max-width:900px) 100vw, 400px"
-              style={{ width: '100%', height: 'auto', display: 'block' }}
-            />
+          <h2
+            className="talent-heading"
+            style={{
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: 'clamp(28px, 3.8vw, 44px)',
+              fontWeight: 500,
+              letterSpacing: '-0.03em',
+              lineHeight: 1.15,
+              margin: 0,
+            }}
+          >
+            <span className="talent-frost-inline">
+              Operators who build it with you — <em className="serif talent-frost-em">on demand.</em>
+            </span>
+          </h2>
+          <p className="talent-lede" style={{ fontSize: 15, lineHeight: 1.65, opacity: 0.93, marginTop: 18, maxWidth: 520 }}>
+            <span className="talent-frost-inline talent-frost-inline--body">
+              Scoped specialists when you need hands on keyboard — not another hiring cycle. Paired with the AI agents above when
+              both matter.
+            </span>
+          </p>
+          <div style={{ display: 'flex', gap: 14, marginTop: 30, flexWrap: 'wrap', alignItems: 'center' }}>
+            <a
+              href={TALENT_SITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-gradient mono"
+              style={{
+                padding: '16px 26px',
+                fontSize: 11,
+                letterSpacing: '0.16em',
+                fontWeight: 600,
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              VISIT TALENT NETWORK →
+            </a>
+            <a
+              href="#agents"
+              style={{
+                color: 'var(--paper)',
+                padding: '14px 22px',
+                border: '1px solid rgba(255,255,255,0.42)',
+                fontSize: 14,
+                fontWeight: 600,
+                textDecoration: 'none',
+                background: 'rgba(20,20,19,0.25)',
+                backdropFilter: 'blur(6px)',
+              }}
+            >
+              Browse AI agents
+            </a>
           </div>
         </div>
       </div>
@@ -1565,8 +1947,9 @@ function WorldDotMap() {
 
   return (
     <svg
+      className="horizon-dot-map-svg"
       viewBox={`0 0 ${(COLS - 1) * STEP + 2} ${(ROWS - 1) * STEP + 2}`}
-      style={{ width: '100%', maxWidth: 520, display: 'block' }}
+      style={{ width: '100%', maxWidth: 430, display: 'block', margin: '0 auto' }}
       aria-hidden
     >
       {/* All grid dots — ocean faint, land brighter */}
@@ -1644,35 +2027,59 @@ function GlobalHorizon() {
   ]
 
   return (
-    <section style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '80px 0 72px', overflow: 'hidden' }}>
-      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 40px' }}>
-        <div className="mono" style={{ fontSize: 9, letterSpacing: '0.28em', color: 'var(--accent)', marginBottom: 48, opacity: 0.85 }}>
-          LONG HORIZON · EEVOLVV GLOBAL · EST. 2026
+    <section
+      className="horizon-section relative z-[1]"
+      style={{ background: 'transparent', color: 'var(--paper)', padding: '80px 0 72px', overflow: 'hidden' }}
+    >
+      <div className="mx-auto site-rail">
+        <div style={{ marginBottom: 48 }}>
+          <span
+            className="mono talent-frost-inline talent-frost-inline--tight"
+            style={{ fontSize: 9, letterSpacing: '0.28em', color: 'var(--accent)' }}
+          >
+            LONG HORIZON · EEVOLVV GLOBAL · EST. 2026
+          </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 64, alignItems: 'center' }}>
-          {/* Dot world map */}
-          <div style={{ position: 'relative' }}>
+        <div className="horizon-grid">
+          {/* Dot world map — frosted panel */}
+          <div className="horizon-frost-panel horizon-frost-panel--graphic">
             <WorldDotMap />
-            <div className="mono" style={{ marginTop: 14, fontSize: 9, letterSpacing: '0.18em', opacity: 0.3, textAlign: 'center' }}>
-              SIGNAL STRENGTH: GROWING · MARKET: EARTH
+            <div style={{ marginTop: 10, textAlign: 'center' }}>
+              <span className="mono talent-frost-inline talent-frost-inline--tight" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.72 }}>
+                SIGNAL STRENGTH: GROWING · MARKET: EARTH
+              </span>
             </div>
           </div>
 
           {/* Copy + stats */}
           <div>
-            <h2 style={{ fontSize: 'clamp(26px, 3.8vw, 50px)', fontWeight: 500, letterSpacing: '-0.025em', lineHeight: 1.05, margin: '0 0 28px' }}>
-              Every business on earth deserves this.
+            <h2
+              style={{
+                fontSize: 'clamp(26px, 3.8vw, 50px)',
+                fontWeight: 500,
+                letterSpacing: '-0.025em',
+                lineHeight: 1.12,
+                margin: '0 0 28px',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.35)',
+              }}
+            >
+              <span className="talent-frost-inline">Every business on earth deserves this.</span>
             </h2>
-            <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.55, margin: '0 0 40px', maxWidth: 380 }}>
-              We&apos;re starting in the US. The model works everywhere humans run businesses — which is everywhere. The horizon is global. We&apos;re just warming up.
+            <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.72, margin: '0 0 40px', maxWidth: 400, textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)' }}>
+              <span className="talent-frost-inline talent-frost-inline--body">
+                We&apos;re starting in the US. The model works everywhere humans run businesses — which is everywhere. The horizon is global.
+                We&apos;re just warming up.
+              </span>
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px 24px' }}>
+            <div className="horizon-stats-grid">
               {stats.map(({ n, label }) => (
-                <div key={n}>
+                <div key={n} className="horizon-stat-chip">
                   <div style={{ fontSize: 'clamp(24px, 3vw, 38px)', fontWeight: 500, letterSpacing: '-0.02em', color: 'var(--accent)', lineHeight: 1 }}>{n}</div>
-                  <div className="mono" style={{ fontSize: 9, letterSpacing: '0.16em', opacity: 0.45, marginTop: 6, textTransform: 'uppercase' }}>{label}</div>
+                  <div className="mono" style={{ fontSize: 9, letterSpacing: '0.16em', opacity: 0.62, marginTop: 8, textTransform: 'uppercase' }}>
+                    {label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1693,27 +2100,38 @@ function Footer() {
     ['LEGAL',    [['Privacy','#'],['Terms','#'],['Contact','mailto:hello@eevolvv.com']]],
   ]
   return (
-    <footer style={{ borderTop: '1px solid var(--rule)', padding: '56px 0 40px' }}>
-      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <div className="grid" style={{ gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 48 }}>
+    <footer className="site-footer">
+      <div className="mx-auto site-rail">
+        <div className="grid site-footer-grid" style={{ gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 48 }}>
           <div>
             <div className="flex items-center gap-3" style={{ marginBottom: 20 }}>
               <BrandLogoFigures size="sm" />
-              <span className="brand-wordmark">eevolvv</span>
+              <span className="brand-wordmark site-footer-wordmark">eevolvv</span>
             </div>
-            <p style={{ fontSize: 13, lineHeight: 1.55, opacity: 0.65, margin: 0, maxWidth: 320 }}>AI-native business transformation. Every business. Every size. Every industry.</p>
-            <p className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.45, marginTop: 12 }}>eevolvv.com</p>
+            <p className="site-footer-desc" style={{ fontSize: 13, lineHeight: 1.55, margin: 0, maxWidth: 320 }}>
+              AI-native business transformation. Every business. Every size. Every industry.
+            </p>
+            <p className="mono site-footer-domain" style={{ fontSize: 10, letterSpacing: '0.22em', marginTop: 12 }}>
+              eevolvv.com
+            </p>
           </div>
           {cols.map(([title, links]) => (
             <div key={title}>
-              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 16 }}>{title}</div>
+              <div className="mono site-footer-col-title" style={{ fontSize: 10, letterSpacing: '0.22em', marginBottom: 16 }}>
+                {title}
+              </div>
               {links.map(([l, h]) => (
-                <a key={l} href={h} className="link-rule" style={{ display: 'block', fontSize: 14, marginBottom: 10, color: 'var(--ink)', textDecoration: 'none' }}>{l}</a>
+                <a key={l} href={h} className="link-rule site-footer-link" style={{ display: 'block', fontSize: 14, marginBottom: 10, textDecoration: 'none' }}>
+                  {l}
+                </a>
               ))}
             </div>
           ))}
         </div>
-        <div className="mono flex items-center justify-between" style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid var(--rule)', fontSize: 10, letterSpacing: '0.22em', opacity: 0.5 }}>
+        <div
+          className="mono site-footer-bottom flex items-center justify-between"
+          style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid rgba(255, 255, 255, 0.12)', fontSize: 10, letterSpacing: '0.22em' }}
+        >
           <span>© 2026 · EEVOLVV · ALL RIGHTS RESERVED</span>
           <span>eevolvving forward, together.</span>
         </div>
@@ -1739,12 +2157,15 @@ export default function Home() {
       <Stats />
       <Problem />
       <Process />
+      <DiagnosticSection targetTier={targetTier} />
       <WhoItsFor />
       <Pricing onCTA={tier => scrollToDiagnostic(tier)} />
       <AgentsSection />
-      <DiagnosticSection targetTier={targetTier} />
-      <TalentNetworkBand />
-      <GlobalHorizon />
+      <div className="talent-horizon-band">
+        <TalentWavePattern />
+        <TalentNetworkBand />
+        <GlobalHorizon />
+      </div>
       <Footer />
     </main>
   )

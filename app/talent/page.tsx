@@ -6,7 +6,6 @@ import { TrueTodaySection } from "@/components/talent/sections/TrueTodaySection"
 import { First100Section } from "@/components/talent/sections/First100Section";
 import { PrinciplesSection } from "@/components/talent/sections/PrinciplesSection";
 import { NotSection } from "@/components/talent/sections/NotSection";
-import { FounderSection } from "@/components/talent/sections/FounderSection";
 import { CtaCloseSection } from "@/components/talent/sections/CtaCloseSection";
 
 /** Human talent network (eevolvv/talent). New talent-focused hero / graphics belong in this app.
@@ -23,7 +22,6 @@ export default function HomePage() {
       <First100Section />
       <PrinciplesSection />
       <NotSection />
-      <FounderSection />
       <CtaCloseSection />
     </>
   );

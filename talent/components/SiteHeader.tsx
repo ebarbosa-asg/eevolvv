@@ -8,7 +8,6 @@ const NAV_LINKS: [string, string][] = [
   ["#work", "WORK"],
   ["#pool", "THE POOL"],
   ["#how", "PROCESS"],
-  ["#who", "WHO"],
 ];
 
 export function SiteHeader() {

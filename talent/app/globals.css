@@ -581,15 +581,8 @@
 
 
 /* ------------------------------------------------------------
-   § 08 Founder + Footer — wide layouts (768px+)
-   Base grid columns; mobile overrides below.
+   Footer — wide layouts (768px+)
    ------------------------------------------------------------ */
-.founder-grid {
-  grid-template-columns: minmax(200px, 340px) 1fr;
-  align-items: start;
-}
-
-.footer-grid {
   grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
   align-items: start;
 }
@@ -733,16 +726,6 @@
   }
   .not-cell {
     border-right: none !important;
-  }
-
-  /* --- § 08 Founder --- */
-  .founder-grid {
-    grid-template-columns: 1fr !important;
-    gap: 32px !important;
-  }
-  .founder-photo {
-    max-width: 280px !important;
-    margin: 0 auto !important;
   }
 
   /* --- Footer --- */

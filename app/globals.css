@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Instrument+Serif:ital@0;1&family=Press+Start+2P&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,6 +11,10 @@
   --accent: oklch(0.45 0.13 25);
   --font-display: 'Space Grotesk', sans-serif;
   --font-serif: 'Newsreader', serif;
+  /* Homepage layout rhythm — keep section rails + anchor jumps aligned */
+  --site-max: 1280px;
+  --site-pad-x: 32px;
+  --anchor-scroll-margin: 72px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -23,6 +27,20 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+}
+
+/* Standard content rail — matches header `max-w-[1280px]` + section wrappers */
+.site-rail {
+  max-width: var(--site-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--site-pad-x);
+  padding-right: var(--site-pad-x);
+}
+
+/* In-page #anchors clear sticky header uniformly */
+.anchor-scroll {
+  scroll-margin-top: var(--anchor-scroll-margin);
 }
 
 ::selection { background: var(--ink); color: var(--paper); }
@@ -42,41 +60,41 @@ input:focus, textarea:focus, select:focus { outline: none; }
 }
 .serif { font-family: 'Newsreader', 'Instrument Serif', Georgia, serif; }
 
-/* Brand logo — transparent PNG; clip hides the baked "eevolvv" text at bottom */
+/* Brand mark — pixel mascot PNG (`/mascot.png`), crisp when scaled */
 .brand-logo-figures {
   flex-shrink: 0;
   line-height: 0;
-  clip-path: inset(0 0 25% 0);
 }
 .brand-logo-figures img {
   display: block;
   height: auto;
   width: clamp(92px, 24vw, 156px);
+  image-rendering: pixelated;
 }
 .brand-logo-figures--sm img {
   width: clamp(72px, 18vw, 104px);
 }
 
-/* Header strip — taller on mobile so the silhouette is legible */
+/* Header strip — compact height; silhouette stays legible */
 .brand-logo-figures--header img {
   width: auto;
-  height: 44px;
-  max-width: min(180px, 52vw);
+  height: 38px;
+  max-width: min(172px, 52vw);
 }
 @media (min-width: 768px) {
   .brand-logo-figures--header img {
-    height: 48px;
-    max-width: 200px;
+    height: 42px;
+    max-width: 190px;
   }
 }
 
 .site-header-brand {
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
   position: relative;
   z-index: 2;
-  padding-right: clamp(8px, 2vw, 20px);
+  padding-right: clamp(8px, 2vw, 16px);
 }
 .site-header-brand-text {
   display: flex;
@@ -92,7 +110,7 @@ input:focus, textarea:focus, select:focus { outline: none; }
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   column-gap: 0.75rem;
-  row-gap: 0.25rem;
+  row-gap: 0.125rem;
   width: 100%;
 }
 @media (min-width: 768px) {
@@ -384,6 +402,47 @@ input:focus, textarea:focus, select:focus { outline: none; }
 }
 .link-rule:hover::after { transform: scaleX(1); transform-origin: left center; }
 
+/* ── Site footer (inverted ink band, red-accent typography) ── */
+.site-footer {
+  background: var(--ink);
+  color: color-mix(in oklch, var(--accent) 24%, var(--paper));
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 56px 0 40px;
+}
+
+.site-footer-wordmark {
+  color: var(--accent);
+}
+
+.site-footer-desc {
+  color: color-mix(in oklch, var(--accent) 20%, var(--paper));
+  opacity: 0.88;
+}
+
+.site-footer-domain {
+  color: var(--accent);
+  opacity: 0.55;
+}
+
+.site-footer-col-title {
+  color: var(--accent);
+  opacity: 0.78;
+}
+
+.site-footer-link {
+  color: color-mix(in oklch, var(--accent) 58%, var(--paper));
+  transition: color 0.2s ease;
+}
+
+.site-footer-link:hover {
+  color: var(--accent);
+}
+
+.site-footer-bottom {
+  color: color-mix(in oklch, var(--accent) 32%, var(--paper));
+  opacity: 0.82;
+}
+
 /* ── Report content ── */
 .report-content h3 {
   font-family: 'JetBrains Mono', monospace;
@@ -398,7 +457,37 @@ input:focus, textarea:focus, select:focus { outline: none; }
 .report-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
 .report-content strong { font-weight: 600; opacity: 1; }
 
-/* ── Agents catalog grid (main site §05 — AI agents; not the Talent / human-network section) ── */
+/* ── §03 Who we evolve — compact industry/program tiles ─────────────────────── */
+.who-evolve-card {
+  min-width: 0;
+}
+.who-evolve-card-title {
+  word-break: break-word;
+}
+.who-evolve-card-line {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.34;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+@media (min-width: 1180px) {
+  .who-evolve-card-line {
+    font-size: 9px;
+    line-height: 1.32;
+  }
+}
+.who-evolve-card-line--pain {
+  opacity: 0.68;
+}
+.who-evolve-card-line--win {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── Agents catalog grid (main site §06 — AI agents; not the Talent / human-network section) ── */
 .agents-grid {
   display: grid;
   gap: 0;
@@ -410,6 +499,21 @@ input:focus, textarea:focus, select:focus { outline: none; }
   border-right: 1px solid var(--ink);
   border-bottom: 1px solid var(--ink);
 }
+
+.agent-pixel-icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.agent-pixel-icon svg {
+  width: 100%;
+  height: 100%;
+  shape-rendering: crispEdges;
+}
+
 @media (max-width: 1100px) {
   .agents-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
@@ -417,11 +521,224 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .agents-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* Talent network band — stacks graphic under copy on narrow viewports */
-@media (max-width: 900px) {
-  .talent-band-grid {
-    grid-template-columns: 1fr !important;
-    gap: 28px !important;
+/* ── Talent + Long horizon: one ink band, shared scrolling geometric backdrop ── */
+.talent-horizon-band {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+/* ── Talent section: scrolling geometric pattern + frosted text highlights only ── */
+.talent-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.talent-wave-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  color: color-mix(in oklch, var(--accent) 68%, var(--paper));
+}
+
+.talent-wave-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      ellipse 78% 120% at 68% 42%,
+      color-mix(in oklch, var(--accent) 26%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 52% 70% at 18% 58%,
+      color-mix(in oklch, var(--accent) 11%, transparent) 0%,
+      transparent 55%
+    );
+  opacity: 0.95;
+}
+
+.talent-wave-scroll {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.talent-wave-scroll--diag {
+  z-index: 2;
+  color: color-mix(in oklch, var(--accent) 52%, var(--paper));
+  opacity: 0.92;
+}
+
+.talent-wave-marquee {
+  display: flex;
+  width: 200%;
+  height: 100%;
+}
+
+.talent-wave-marquee--forward {
+  animation: talent-wave-marquee 38s linear infinite;
+}
+
+.talent-wave-marquee--reverse {
+  animation: talent-wave-marquee-rev 52s linear infinite;
+}
+
+@keyframes talent-wave-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes talent-wave-marquee-rev {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.talent-geom-zig {
+  opacity: 0.58;
+}
+
+.talent-geom-grid-v,
+.talent-geom-grid-h {
+  opacity: 0.18;
+}
+
+.talent-geom-diag {
+  opacity: 0.26;
+}
+
+/* Frost follows glyphs / wrapped lines only — not the whole column */
+.talent-frost-inline {
+  display: inline;
+  padding: 0.18em 0.4em;
+  border-radius: 6px;
+  background: rgba(20, 20, 19, 0.58);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 4px 22px rgba(0, 0, 0, 0.28);
+}
+
+.talent-frost-inline--tight {
+  padding: 0.12em 0.34em;
+  border-radius: 4px;
+}
+
+.talent-frost-inline--body {
+  padding: 0.12em 0.34em;
+}
+
+.talent-frost-em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.talent-section-copy {
+  position: relative;
+  max-width: min(540px, 100%);
+}
+
+.talent-heading {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.talent-lede {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .talent-wave-marquee--forward,
+  .talent-wave-marquee--reverse {
+    animation: none !important;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 760px) {
+  .talent-frost-inline {
+    padding: 0.14em 0.32em;
+  }
+}
+
+/* ── Long horizon (GlobalHorizon): frosted dot map + frost chips on copy/stats ── */
+.horizon-section {
+  position: relative;
+}
+
+.horizon-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.horizon-frost-panel {
+  border-radius: 12px;
+  padding: 24px 22px 20px;
+  background: rgba(20, 20, 19, 0.48);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 12px 48px rgba(0, 0, 0, 0.38);
+}
+
+/* Narrower frosted tile + tighter inset than default panel */
+.horizon-frost-panel--graphic {
+  max-width: min(470px, 100%);
+  justify-self: center;
+  padding: 16px 18px 14px;
+}
+
+.horizon-frost-panel--graphic .horizon-dot-map-svg {
+  width: 100%;
+  max-width: 430px;
+}
+
+.horizon-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 14px;
+}
+
+.horizon-stat-chip {
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: rgba(20, 20, 19, 0.52);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 6px 28px rgba(0, 0, 0, 0.28);
+}
+
+@media (max-width: 960px) {
+  .horizon-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 560px) {
+  .horizon-stats-grid {
+    grid-template-columns: 1fr;
   }
 }
 

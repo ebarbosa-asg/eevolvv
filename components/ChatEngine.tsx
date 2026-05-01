@@ -35,13 +35,13 @@ function ChatMark() {
       <Image
         src="/mascot.png"
         alt="eevolvv diagnostic assistant"
-        width={248}
-        height={250}
+      width={338}
+      height={338}
         sizes="28px"
         style={{
           width: '100%',
           height: '100%',
-          objectFit: 'cover',
+          objectFit: 'contain',
           imageRendering: 'pixelated',
         }}
       />
