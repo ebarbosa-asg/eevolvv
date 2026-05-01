@@ -33,7 +33,10 @@ OUTPUT STRUCTURE (use these exact headers):
 [Month 1, Month 3, Month 6 milestones for their specific business]
 
 ### THE BOTTOM LINE
-[1-2 sentences that crystallize the opportunity cost of staying manual — make it real]`
+[1-2 sentences that crystallize the opportunity cost of staying manual — make it real]
+
+### TALENT MATCH (OPTIONAL)
+[If this business could benefit from a fractional operator, specialist, or micro-consultant to implement these automations, briefly note that eevolvv/talent connects businesses with vetted specialists who can execute the roadmap — 1-2 sentences max, only if genuinely relevant]`
 
 const INDUSTRY_CONTEXT: Record<string, string> = {
   'Restaurant / Food & Beverage': `
@@ -155,6 +158,30 @@ Industry benchmarks: automated donor stewardship increases retention by 20–30%
 Common stack: Salesforce NPSP, Bloomerang, Little Green Light, DonorPerfect, MailChimp, Eventbrite, Network for Good.
 Highest-ROI automations: new donor onboarding sequence, recurring gift upgrade campaign, lapsed donor reactivation, grant deadline management, volunteer coordination automation.
 Language: use terms like "donor retention," "LYBUNT," "SYBUNT," "major gift," "cultivation," "stewardship," "ask ladder," "restricted funds."`,
+
+  'Corner Store / Bodega': `
+INDUSTRY CONTEXT — CORNER STORE / BODEGA:
+Key automation targets: inventory reorder alerts, supplier payment tracking, daily sales summaries via WhatsApp, cash flow tracking, low-stock notifications, top-seller identification, supplier invoice reconciliation, simple loyalty tracking.
+Industry benchmarks: automated reorder alerts reduce stockouts by 40–60% and cut emergency buying by 20–30%; daily automated sales summaries save 1–2 hrs/day on manual tracking; supplier payment reminders reduce late fees by 80%; automated cash flow snapshots reduce accounting errors by 50%.
+Common stack: WhatsApp Business, Square, Loyverse, Shopify POS, simple spreadsheets — most are low-tech and benefit from WhatsApp-native automations.
+Highest-ROI automations: inventory reorder threshold alerts, WhatsApp daily sales digest, supplier payment reminders, top-product velocity tracking, end-of-week cash flow summary.
+Language: be plain and practical — these are owner-operators with no technical team; focus on WhatsApp-first automations, time saved vs. cost, simple ROI, and automations that work on a phone.`,
+
+  'Kirana Store': `
+INDUSTRY CONTEXT — KIRANA STORE:
+Key automation targets: inventory management and reorder alerts, WhatsApp-based supplier ordering, daily sales tracking, credit customer tracking (khata/ledger), payment reminders to credit customers, supplier invoice reconciliation, top-product identification.
+Industry benchmarks: automated khata/credit reminders recover 15–25% of outstanding credit balances; WhatsApp reorder automation reduces stockouts by 40–50%; daily sales digest saves 1–2 hrs/day; automated supplier communication reduces ordering errors by 30%.
+Common stack: WhatsApp Business, Vyapar, OkCredit, Khatabook, or manual ledgers — most kirana owners are mobile-first with limited tech.
+Highest-ROI automations: credit customer payment reminders (WhatsApp), inventory reorder alerts, daily sales + profit summary, supplier order automation via WhatsApp, fast-moving vs. slow-moving SKU tracking.
+Language: reference Indian retail context — use terms like "khata," "credit customers," "margin," "fast-moving goods," "FMCG," "distributor," "cash flow"; emphasize WhatsApp-first, mobile-native, Hindi/English bilingual where appropriate.`,
+
+  'Sari-Sari Store': `
+INDUSTRY CONTEXT — SARI-SARI STORE:
+Key automation targets: daily sales tracking, inventory replenishment alerts, credit/utang tracking and reminders, supplier payment scheduling, cash flow visibility, top-selling item identification, suki (loyal customer) tracking.
+Industry benchmarks: automated utang reminders recover 10–20% of outstanding balances weekly; daily sales summaries save 1–2 hrs/day; inventory alerts reduce stockouts by 35–50%; consistent supplier payment tracking reduces penalties and improves supplier terms.
+Common stack: WhatsApp, Facebook Messenger, simple notebooks or spreadsheets — most sari-sari stores are cash-first and phone-native; solutions must be WhatsApp-first and frictionless.
+Highest-ROI automations: utang/credit customer payment reminders via WhatsApp, daily sales + inventory digest, stock reorder alerts for fast-moving items, supplier payment calendar, suki loyalty tracking.
+Language: reference Philippine sari-sari context — use terms like "utang," "suki," "tindahan," "palengke," "diskwento"; keep language practical and direct; emphasize WhatsApp-native, no-app-needed automations that work on a basic Android phone.`,
 }
 
 const DEFAULT_CONTEXT = `
@@ -185,6 +212,9 @@ export function getIndustryShortName(industry: string): string {
     'Hospitality / Hotel': 'Hospitality',
     'Education': 'Education',
     'Non-Profit': 'Non-Profit',
+    'Corner Store / Bodega': 'Corner Store',
+    'Kirana Store': 'Kirana',
+    'Sari-Sari Store': 'Sari-Sari',
   }
   return map[industry] ?? 'Business'
 }

@@ -2,10 +2,15 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
+import ChatEngine from '@/components/ChatEngine'
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const HERO_PHRASES = ['GYM', 'RESTAURANT', 'LAW FIRM', 'QUALITY TEAM', 'STARTUP', 'ENTERPRISE', 'FINANCE DEPT', 'CLINIC', 'LOGISTICS', 'HR PROGRAM', 'REAL ESTATE', 'E-COMMERCE', 'COMPLIANCE', 'AGENCY', 'FRANCHISE', 'OPERATIONS', 'RETAILER', 'MANUFACTURER'] as const
+const HERO_PHRASES = [
+  'CORNER STORE', 'GYM', 'RESTAURANT', 'LAW FIRM', 'KIRANA SHOP',
+  'STARTUP', 'ENTERPRISE', 'BODEGA', 'CLINIC', 'LOGISTICS',
+  'REAL ESTATE', 'AGENCY', 'FRANCHISE', 'MANUFACTURER', 'SARI-SARI STORE',
+] as const
 
 /** Rotating hero strip — evolution-wordplay variants + rally cries + attributions. */
 const HERO_TICKER_QUOTES = [
@@ -52,6 +57,24 @@ const HERO_TICKER_QUOTES = [
 ] as const
 
 const TIERS = [
+  {
+    id: 'micro',
+    code: 'T-00',
+    name: 'Micro',
+    label: 'AI Starter',
+    price: '$29–$49/mo',
+    who: 'Corner stores · Bodegas · Kirana shops · Solo operators',
+    tagline: 'WhatsApp-native automations. Live in 48 hours.',
+    features: [
+      'AI business diagnostic',
+      'Inventory reorder alerts',
+      'Daily sales summary (WhatsApp)',
+      'Supplier payment tracker',
+      'New automation every 60 days',
+      'English · Spanish · Portuguese',
+    ],
+    highlight: false,
+  },
   {
     id: 'seed', code: 'T-01', name: 'Seed', label: 'AI Starter',
     price: '$500–$1,500', who: 'Gyms, restaurants, solo operators',
@@ -653,8 +676,8 @@ function Hero({ onCTA }: { onCTA: () => void }) {
 
         <div className="grid mt-10 anim-fade-up hero-body-grid" style={{ gridTemplateColumns: '1.1fr 0.9fr', gap: 56, animationDelay: '0.4s', marginTop: 56, alignItems: 'end' }}>
           <p style={{ fontSize: 18, lineHeight: 1.55, maxWidth: 560, color: 'color-mix(in oklab, var(--ink) 78%, transparent)', margin: 0 }}>
-            From the corner gym to the Fortune 500 — we map your workflows, deploy AI automation, and permanently rebuild how your business operates.
-            <span style={{ display: 'block', marginTop: 16, opacity: 0.6 }}>No software to learn. No consultants with decks. Just results.</span>
+            We don&apos;t sell software. We become your AI operations team — mapping your workflows, deploying automations, and rebuilding how your business runs.
+            <span style={{ display: 'block', marginTop: 16, opacity: 0.6 }}>From your corner store to your enterprise. eevolvving forward, together.</span>
           </p>
           <div className="flex items-end gap-3 hero-cta-row" style={{ alignSelf: 'end', justifySelf: 'end', flexWrap: 'wrap' }}>
             <button onClick={onCTA} className="btn-gradient" style={{ padding: '18px 30px', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>GET YOUR FREE AI AUDIT →</button>
@@ -909,11 +932,11 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
   return (
     <section id="pricing" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
       <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="04" eyebrow="PRICING" title="Every business has a starting point." note="FOUR TIERS" />
+        <SectionHeader number="04" eyebrow="PRICING" title="Every business has a starting point." note="FIVE TIERS" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24 }}>
           All tiers include the eevolvv Report. Outcomes reviewed at day 60 post-deployment.
         </p>
-        <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(4,1fr)', gap: 0, marginTop: 48, border: '1px solid var(--ink)' }}>
+        <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(5,1fr)', gap: 0, marginTop: 48, border: '1px solid var(--ink)' }}>
           {TIERS.map((tier, i) => (
             <div key={tier.id} className="status-cell" style={{ padding: 24, borderRight: i < TIERS.length - 1 ? '1px solid var(--ink)' : 'none', background: tier.highlight ? 'var(--ink)' : 'transparent', color: tier.highlight ? 'var(--paper)' : 'var(--ink)', position: 'relative', display: 'flex', flexDirection: 'column' }}>
               {tier.highlight && (
@@ -1167,7 +1190,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
             <div style={{ fontSize: 18, fontWeight: 500 }}>Ready to make this real?</div>
             <p style={{ fontSize: 13, opacity: 0.7, marginTop: 4 }}>Book your 30-min strategy call and let&apos;s build the roadmap together.</p>
           </div>
-          <a href="mailto:hello@eevolvv.com?subject=eevolvv%20Strategy%20Call%20Request" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 22px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600 }}>BOOK STRATEGY CALL →</a>
+          <a href={process.env.NEXT_PUBLIC_CALENDLY_URL || 'mailto:hello@eevolvv.com?subject=eevolvv%20Strategy%20Call%20Request'} target="_blank" rel="noopener noreferrer" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 22px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600 }}>BOOK STRATEGY CALL →</a>
         </div>
       </div>
     )
@@ -1317,6 +1340,50 @@ function ChipButton({ label, onClick }: { label: string; onClick: () => void }) 
   )
 }
 
+// ─── TalentSection ────────────────────────────────────────────────────────────
+
+const TALENT_ROLES = [
+  { code: 'R-01', title: 'AI Operations Lead', desc: 'Designs and deploys automation workflows end-to-end.' },
+  { code: 'R-02', title: 'Process Analyst', desc: 'Maps your current workflows, finds the friction, writes the brief.' },
+  { code: 'R-03', title: 'WhatsApp Automation Specialist', desc: 'Builds WhatsApp-native automations for emerging market operators.' },
+  { code: 'R-04', title: 'Data & Reporting Engineer', desc: 'Turns raw business data into live dashboards and alerts.' },
+  { code: 'R-05', title: 'Growth & CRM Strategist', desc: 'Automates lead nurture, follow-up, and retention sequences.' },
+  { code: 'R-06', title: 'Fractional COO', desc: 'Senior ops leadership, project-scoped. No full-time hire needed.' },
+]
+
+function TalentSection() {
+  return (
+    <section id="talent" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
+      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
+        <SectionHeader number="05" eyebrow="EEVOLVV / TALENT" title="The operators who build it with you." note="MICRO-CONTRACTING" />
+        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24 }}>
+          Every eevolvv engagement is backed by vetted operators, analysts, and AI specialists — available on-demand, scoped to your project, no full-time hire required.
+        </p>
+        <div className="grid mt-12 keep-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)', gap: 0, marginTop: 48, border: '1px solid var(--ink)' }}>
+          {TALENT_ROLES.map((role, i) => (
+            <div key={role.code} className="status-cell" style={{
+              padding: 28,
+              borderRight: (i + 1) % 3 !== 0 ? '1px solid var(--ink)' : 'none',
+              borderBottom: i < 3 ? '1px solid var(--ink)' : 'none',
+            }}>
+              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.45, marginBottom: 12 }}>{role.code}</div>
+              <div style={{ fontSize: 18, fontWeight: 500, letterSpacing: '-0.01em', marginBottom: 8 }}>{role.title}</div>
+              <p style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.65, margin: 0 }}>{role.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 32, border: '1px solid var(--ink)', padding: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em' }}>Need someone to build it?</div>
+            <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6, margin: '6px 0 0' }}>Match with a specialist who has done it in your industry. Scoped, vetted, ready.</p>
+          </div>
+          <a href="https://talent.eevolvv.com" target="_blank" rel="noopener noreferrer" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 24px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, whiteSpace: 'nowrap' }}>FIND A SPECIALIST →</a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // ─── DiagnosticSection ────────────────────────────────────────────────────────
 
 function DiagnosticSection({ targetTier }: { targetTier: string }) {
@@ -1324,12 +1391,12 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
     <section id="diagnostic" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', position: 'relative', overflow: 'hidden', scrollMarginTop: 72 }}>
       <div className="absolute inset-0 blueprint-grid" style={{ opacity: 0.4, pointerEvents: 'none' }} />
       <div className="mx-auto relative" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <SectionHeader number="05" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. right now. Free." note="Valued ~$3k" />
+        <SectionHeader number="06" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. right now. Free." note="Valued ~$3k" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24, marginBottom: 56 }}>
-          Answer 12 questions about your business. Our AI analyzes your workflows and delivers a custom automation roadmap.
+          Just talk to us. Our AI asks the right questions, maps your workflows, and delivers a custom automation roadmap — free.
         </p>
         <div style={{ border: '1px solid var(--ink)', background: 'var(--paper)', padding: '48px 32px' }}>
-          <DiagnosticForm defaultTier={targetTier} />
+          <ChatEngine defaultTier={targetTier} />
         </div>
       </div>
     </section>
@@ -1342,7 +1409,6 @@ function CTAClose({ onCTA }: { onCTA: () => void }) {
   return (
     <section style={{ padding: '120px 0', background: 'var(--ink)', color: 'var(--paper)' }}>
       <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 32px' }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.5, marginBottom: 24 }}>SHEET A-09 · CALL TO ACTION</div>
         <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(48px, 8vw, 128px)', fontWeight: 500, letterSpacing: '-0.04em', lineHeight: 0.92, margin: 0 }}>
           Either you evolve,<br />
           or you <em className="serif" style={{ fontStyle: 'italic', color: 'var(--accent)' }}>fall behind.</em>
@@ -1361,7 +1427,7 @@ function CTAClose({ onCTA }: { onCTA: () => void }) {
 function Footer() {
   const cols: [string, [string, string][]][] = [
     ['NAVIGATE', [['Process','#how'],['Industries','#who'],['Pricing','#pricing']]],
-    ['ENGAGE',   [['Free Audit','#diagnostic']]],
+    ['ENGAGE',   [['Free Audit','#diagnostic'],['Talent Network','https://talent.eevolvv.com']]],
     ['LEGAL',    [['Privacy','#'],['Terms','#'],['Contact','mailto:hello@eevolvv.com']]],
   ]
   return (
@@ -1387,7 +1453,7 @@ function Footer() {
         </div>
         <div className="mono flex items-center justify-between" style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid var(--rule)', fontSize: 10, letterSpacing: '0.22em', opacity: 0.5 }}>
           <span>© 2026 · EEVOLVV · ALL RIGHTS RESERVED</span>
-          <span>SHEET A-99 · DAY 60 AUDIT</span>
+          <span>eevolvving forward, together.</span>
         </div>
       </div>
     </footer>
@@ -1413,6 +1479,7 @@ export default function Home() {
       <Process />
       <WhoItsFor />
       <Pricing onCTA={tier => scrollToDiagnostic(tier)} />
+      <TalentSection />
       <DiagnosticSection targetTier={targetTier} />
       <CTAClose onCTA={() => scrollToDiagnostic()} />
       <Footer />
