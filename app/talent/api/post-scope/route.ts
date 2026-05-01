@@ -20,8 +20,7 @@ type PostScopeData = z.infer<typeof postScopeSchema>;
 async function sendScopeNotification(data: PostScopeData): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.warn("[post-scope] RESEND_API_KEY not set — logging submission:");
-    console.log(JSON.stringify(data, null, 2));
+    console.warn("[post-scope] RESEND_API_KEY not set — skipping email");
     return false;
   }
 

@@ -1430,7 +1430,6 @@ const AGENT_PIXEL_PALETTE: Record<string, string> = {
   d: '#8c4337',
   l: '#e8c4b8',
   r: '#e03d2f',
-  g: '#ff2d20',
 }
 
 function normalizePixelRows(rows: readonly string[]): string[] {
@@ -1460,7 +1459,7 @@ function AgentPixelIcon({ rows }: { rows: readonly string[] }) {
 }
 
 const AGENT_PIXEL_GRIDS = {
-  // Funnel: wide top narrows to red-flow outlet
+  // Funnel: wide top narrows to stem at bottom
   intake: [
     'xxxxxxxxxxxx',
     'xmmmmmmmmmmx',
@@ -1469,22 +1468,27 @@ const AGENT_PIXEL_GRIDS = {
     '...xmrrmx...',
     '....xrrx....',
     '....xrrx....',
-    '.....xx.....',
+    '.....xrx....',
+    '.....xrx....',
+    '.....xrx....',
   ],
-  // Diamond: classic flowchart decision node, red fill
+  // Map pin: circle with red center + pointed tip
   workflow: [
-    '.....xx.....',
-    '....xrrx....',
-    '...xrrrrx...',
-    '..xrrrrrrx..',
-    '...xrrrrx...',
-    '....xrrx....',
+    '....xxxx....',
+    '...xmmmmx...',
+    '..xmmrrmmx..',
+    '..xmmrrmmx..',
+    '...xmmmmx...',
+    '....xxxx....',
     '.....xx.....',
   ],
-  // Calendar: red header bar + date grid
+  // Calendar: red header + 2-week date grid
   scheduler: [
     '.xxxxxxxxxx.',
     '.xrrrrrrrrx.',
+    '.xxxxxxxxxx.',
+    '.xmm.mm.mmx.',
+    '.xmm.mm.mmx.',
     '.xxxxxxxxxx.',
     '.xmm.mm.mmx.',
     '.xmm.mm.mmx.',
@@ -1553,16 +1557,15 @@ const AGENT_PIXEL_GRIDS = {
     '..xmmmmmmx..',
     '..xxxxxxxx..',
   ],
-  // Document: rectangle with 3 red text lines
+  // Folder: tab at top-left + open body
   docs: [
-    '.xxxxxxxxxx.',
-    '.xmmmmmmmmx.',
-    '.xmrrrrrmmx.',
-    '.xmmmmmmmmx.',
-    '.xmrrrrrmmx.',
-    '.xmmmmmmmmx.',
-    '.xmrrrrrmmx.',
-    '.xxxxxxxxxx.',
+    '.xxxx.......',
+    'xxxxxxxxxxxx',
+    'xmmmmmmmmmmx',
+    'xmmmmmmmmmmx',
+    'xmmmmmmmmmmx',
+    'xmmmmmmmmmmx',
+    'xxxxxxxxxxxx',
   ],
   // Magnifying glass: circle lens + diagonal handle
   hiring: [
