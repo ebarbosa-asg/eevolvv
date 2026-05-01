@@ -53,22 +53,6 @@ export function SiteHeader() {
 
           <div className="hidden md:flex items-center gap-2">
             <Link
-              href="/post"
-              className="mono header-cta-secondary"
-              style={{
-                fontSize: 11,
-                letterSpacing: "0.16em",
-                padding: "8px 14px",
-                border: "1px solid var(--rule)",
-                background: "transparent",
-                cursor: "pointer",
-                textDecoration: "none",
-                color: "var(--ink)",
-              }}
-            >
-              POST WORK
-            </Link>
-            <Link
               href="/join"
               className="mono"
               style={{
@@ -158,23 +142,6 @@ export function SiteHeader() {
             ))}
           </nav>
           <div style={{ marginTop: "auto", paddingTop: 32, display: "flex", flexDirection: "column", gap: 10 }}>
-            <Link
-              href="/post"
-              className="mono"
-              onClick={() => setMenuOpen(false)}
-              style={{
-                fontSize: 13,
-                letterSpacing: "0.16em",
-                padding: "16px",
-                border: "1px solid var(--ink)",
-                textDecoration: "none",
-                color: "var(--ink)",
-                textAlign: "center",
-                display: "block",
-              }}
-            >
-              POST WORK
-            </Link>
             <Link
               href="/join"
               className="mono"

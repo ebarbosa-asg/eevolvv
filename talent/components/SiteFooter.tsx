@@ -5,7 +5,7 @@ export function SiteFooter() {
   return (
     <footer style={{ borderTop: "1px solid var(--rule)", padding: "56px 0 40px" }}>
       <div className="mx-auto" style={{ maxWidth: 1280, padding: "0 32px" }}>
-        <div className="grid" style={{ gridTemplateColumns: "minmax(0,1.4fr) repeat(4,minmax(0,1fr))", gap: 48 }}>
+        <div className="grid" style={{ gridTemplateColumns: "minmax(0,1.4fr) repeat(3,minmax(0,1fr))", gap: 48 }}>
           <div>
             <div className="flex items-center gap-3" style={{ marginBottom: 20 }}>
               <LogoMark />
@@ -43,21 +43,6 @@ export function SiteFooter() {
             <a href="#how" className="link-rule" style={{ display: "block", fontSize: 14, marginBottom: 10, color: "var(--ink)", textDecoration: "none" }}>
               How it works
             </a>
-          </div>
-
-          <div>
-            <div className="mono" style={{ fontSize: 10, letterSpacing: "0.22em", opacity: 0.55, marginBottom: 16 }}>
-              WORK
-            </div>
-            <Link href="/post" className="link-rule" style={{ display: "block", fontSize: 14, marginBottom: 10, color: "var(--ink)", textDecoration: "none" }}>
-              Post a task
-            </Link>
-            <Link href="/post" className="link-rule" style={{ display: "block", fontSize: 14, marginBottom: 10, color: "var(--ink)", textDecoration: "none" }}>
-              Post a contract
-            </Link>
-            <Link href="/post" className="link-rule" style={{ display: "block", fontSize: 14, marginBottom: 10, color: "var(--ink)", textDecoration: "none" }}>
-              Book a consult
-            </Link>
           </div>
 
           <div>

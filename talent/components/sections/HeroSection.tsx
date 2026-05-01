@@ -84,18 +84,6 @@ function HeroLever() {
           >
             Join →
           </Link>
-          <Link
-            href="/post"
-            style={{
-              background: "transparent", color: "var(--ink)",
-              padding: "16px 28px",
-              border: "1px solid var(--ink)",
-              fontSize: 14, fontWeight: 600,
-              letterSpacing: "0.02em", textDecoration: "none", display: "inline-block",
-            }}
-          >
-            Post work
-          </Link>
         </div>
       </div>
       <div className="lever-diagram">

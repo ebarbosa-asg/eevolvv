@@ -13,10 +13,11 @@ export function CtaCloseSection() {
             fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 0.92, margin: 0,
           }}
         >
-          Either you have skills,
+          You bring the{" "}
+          <em className="serif" style={{ fontStyle: "italic", color: "var(--accent)" }}>skills.</em>
           <br />
-          or you have{" "}
-          <em className="serif" style={{ fontStyle: "italic", color: "var(--accent)" }}>work.</em>
+          We bring the{" "}
+          <em className="serif" style={{ fontStyle: "italic" }}>work.</em>
         </h2>
         <div style={{ display: "flex", gap: 16, marginTop: 56 }}>
           <Link
@@ -28,19 +29,7 @@ export function CtaCloseSection() {
               textDecoration: "none", display: "inline-block",
             }}
           >
-            Join → 
-          </Link>
-          <Link
-            href="/post"
-            style={{
-              background: "transparent", color: "var(--paper)",
-              padding: "20px 32px",
-              border: "1px solid var(--paper)",
-              fontSize: 16, fontWeight: 600, letterSpacing: "0.02em",
-              textDecoration: "none", display: "inline-block",
-            }}
-          >
-            Post work
+            Join the pool →
           </Link>
         </div>
       </div>

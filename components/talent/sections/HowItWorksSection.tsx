@@ -9,10 +9,10 @@ const OP_STEPS = [
   ["MATCH", "Scoped work lands. Opt in — or pass."],
 ];
 
-const BUYER_STEPS = [
-  ["BRIEF", "What must ship — task, contract, or consult."],
-  ["PLACE", "One matched operator from the pool."],
-  ["DELIVER", "Work ships. Payout clears. Next."],
+const EEVOLVV_STEPS = [
+  ["SOURCE", "We find the work. You focus on the craft."],
+  ["VET", "Every scope is reviewed before it reaches you."],
+  ["DELIVER", "You ship. Payout clears. We handle the rest."],
 ];
 
 export function HowItWorksSection() {
@@ -26,10 +26,10 @@ export function HowItWorksSection() {
           </div>
           <div className="process-vline" aria-hidden />
           <div className="process-tab process-tab--r mono" role="presentation">
-            BUYER · WORK
+            EEVOLVV · PLATFORM
           </div>
           <ProcessTrack className="process-col--l" items={OP_STEPS} cta="JOIN THE POOL →" href="/join" />
-          <ProcessTrack className="process-col--r" items={BUYER_STEPS} cta="POST WORK →" href="/post" />
+          <ProcessTrack className="process-col--r" items={EEVOLVV_STEPS} cta="LEARN MORE →" href="https://eevolvv.com" />
         </div>
       </div>
     </section>

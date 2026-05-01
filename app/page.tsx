@@ -912,15 +912,15 @@ function Process() {
   )
 }
 
-/** §03 industry grid: 4-across on desktop; fewer columns on narrow viewports. */
+/** §04 industry grid: 3-across on wide screens; 2 on tablet; 1 on narrow viewports. */
 function useWhoEvolveCols() {
-  const [cols, setCols] = useState(4)
+  const [cols, setCols] = useState(3)
   useEffect(() => {
     const apply = () => {
       const w = window.innerWidth
       if (w < 520) setCols(1)
       else if (w < 1180) setCols(2)
-      else setCols(4)
+      else setCols(3)
     }
     apply()
     window.addEventListener('resize', apply)
