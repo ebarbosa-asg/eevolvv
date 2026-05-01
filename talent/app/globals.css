@@ -1,0 +1,772 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   BLUEPRINT — Design tokens + global styles
+   Direction: Operator / ink / cream / oxblood
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #faf7f0;
+  --ink: #141413;
+  --rule: rgba(20, 20, 19, 0.14);
+  --accent: oklch(0.45 0.13 25); /* oxblood */
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-serif: "Newsreader", "Georgia", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(20, 20, 19, 0.2);
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(20, 20, 19, 0.4);
+  }
+
+  input,
+  textarea,
+  button,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+  }
+}
+
+/* ─── Typography utilities ─────────────────────────────────────────────────── */
+.mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "ss01", "cv01";
+}
+.serif {
+  font-family: var(--font-serif);
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes drawLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.anim-fade-up {
+  animation: fadeUp 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.anim-fade-in {
+  animation: fadeIn 1.2s ease both;
+}
+.anim-draw-line {
+  transform-origin: left center;
+  animation: drawLine 1.4s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+.anim-blink {
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Link underline hover ─────────────────────────────────────────────────── */
+.link-rule {
+  position: relative;
+  display: inline-block;
+}
+.link-rule::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.link-rule:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* ─── Blueprint grid backgrounds ───────────────────────────────────────────── */
+.blueprint-grid {
+  background-image:
+    linear-gradient(rgba(20, 20, 19, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 20, 19, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.blueprint-grid-fine {
+  background-image:
+    linear-gradient(rgba(20, 20, 19, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 20, 19, 0.04) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+/* ============================================================
+   ARCHIMEDES · CONSOLIDATED FIX PATCH
+   Mobile + Desktop — anothertechweb.site
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   BUTTON SYSTEM (desktop + mobile)
+   ------------------------------------------------------------ */
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 16px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  display: inline-block;
+  transition: opacity 0.15s ease;
+  cursor: pointer;
+}
+.btn-primary:hover { opacity: 0.85; }
+
+.btn-primary--accent {
+  background: var(--accent);
+  color: var(--paper);
+  padding: 16px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  display: inline-block;
+  transition: opacity 0.15s ease;
+  cursor: pointer;
+}
+.btn-primary--accent:hover { opacity: 0.85; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  padding: 16px 28px;
+  border: 1px solid var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn-secondary--paper {
+  background: transparent;
+  color: var(--paper);
+  padding: 16px 28px;
+  border: 1px solid var(--paper);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+.btn-secondary--paper:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 16px 0;
+}
+
+
+/* ------------------------------------------------------------
+   SECTION HEADERS (all §§)
+   ------------------------------------------------------------ */
+.section-header {
+  display: grid;
+  grid-template-columns: 60px 1fr minmax(80px, auto);
+  gap: 24px;
+  align-items: baseline;
+  border-top: 1px solid var(--ink);
+  padding-top: 24px;
+}
+
+
+/* ------------------------------------------------------------
+   WORK CARDS — § 01 hover states
+   ------------------------------------------------------------ */
+.work-card {
+  transition: background 0.2s ease;
+  cursor: default;
+}
+.work-card:hover {
+  background: rgba(20, 20, 19, 0.035);
+}
+
+
+/* ------------------------------------------------------------
+   HERO GRID — desktop layout
+   ------------------------------------------------------------ */
+.hero-grid {
+  grid-template-columns: 1.1fr 1fr;
+  gap: 60px;
+}
+
+
+/* ------------------------------------------------------------
+   § 02 HOW IT MOVES — shared tracks so tab labels + columns stay even
+   ------------------------------------------------------------ */
+.process-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  margin-top: 32px;
+  align-items: start;
+}
+
+.process-tab {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  opacity: 0.55;
+  padding: 14px clamp(12px, 2.2vw, 20px);
+  text-align: center;
+  border-bottom: 1px solid var(--rule);
+  min-width: 0;
+}
+
+.process-tab--l {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.process-tab--r {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.process-vline {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  width: 1px;
+  margin: 0 auto;
+  background: var(--ink);
+  opacity: 0.12;
+  min-height: 100%;
+}
+
+.process-col {
+  padding: 20px clamp(12px, 2.2vw, 20px) 0;
+  min-width: 0;
+}
+
+.process-col--l {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.process-col--r {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+/* legacy — no longer used in §02; keep if referenced elsewhere */
+.process-divider {
+  background: var(--ink);
+  opacity: 0.12;
+  width: 1px;
+}
+
+.process-grid {
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  align-items: start;
+}
+
+
+/* ------------------------------------------------------------
+   POOL DOMAIN SWITCHER — § 03 fade transition
+   ------------------------------------------------------------ */
+@keyframes poolFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.pool-skills-panel {
+  animation: poolFadeIn 0.22s ease;
+  width: 100%;
+  max-width: 17.5rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* “Pool” — readout centered in a watery basin beside the domain list */
+.pool-basin {
+  position: relative;
+  justify-self: center;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 420px);
+  margin-inline: auto;
+  padding: clamp(32px, 5vw, 56px) clamp(26px, 4vw, 40px);
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, #3d6d76);
+  background: radial-gradient(
+    ellipse 72% 68% at 50% 38%,
+    color-mix(in srgb, var(--paper) 58%, #d4eef3) 0%,
+    color-mix(in srgb, var(--paper) 78%, #9ec9d4) 42%,
+    color-mix(in srgb, var(--paper) 88%, #6a9ea6) 100%
+  );
+  box-shadow:
+    inset 0 2px 24px rgba(255, 255, 255, 0.45),
+    inset 0 -12px 28px rgba(61, 109, 118, 0.12);
+}
+
+.pool-skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.pool-skill-chip {
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--ink) 35%, #4a7a82);
+  font-size: 12px;
+  font-weight: 500;
+  background: color-mix(in srgb, var(--paper) 76%, #d0e8ec);
+}
+
+.pool-readout-quote {
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.45;
+  margin: 36px auto 0;
+  max-width: 100%;
+  color: rgba(20, 20, 19, 0.82);
+}
+
+/* § 03 Pool — tide-wash backdrop + desktop two-column chart */
+.pool-section {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    var(--paper) 0%,
+    color-mix(in srgb, var(--paper) 92%, #86b4bf) 42%,
+    var(--paper) 100%
+  );
+}
+
+.pool-wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 20px;
+  pointer-events: none;
+  color: var(--ink);
+  opacity: 0.14;
+}
+
+.pool-grid {
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  align-items: center;
+}
+
+
+/* ------------------------------------------------------------
+   STATUS CELL — § 04 label overflow fix
+   ------------------------------------------------------------ */
+.status-cell {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 18px;
+  align-items: baseline;
+}
+
+
+/* ------------------------------------------------------------
+   SLOT GRID — § 05
+   ------------------------------------------------------------ */
+.slots-grid {
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+
+.slot--filled {
+  border: 1px solid var(--ink) !important;
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+  opacity: 1 !important;
+}
+
+.slot--open {
+  border: 1px dashed rgba(20, 20, 19, 0.2);
+  background: transparent;
+  color: var(--ink);
+  opacity: 0.45;
+}
+
+
+/* ------------------------------------------------------------
+   § 06 PRINCIPLES (dark) — tidy header + 2×2 grid rhythm
+   ------------------------------------------------------------ */
+.principles-section {
+  --principles-rule: rgba(245, 241, 232, 0.18);
+}
+
+.principles-head {
+  border-top: 1px solid var(--principles-rule);
+  padding-top: 24px;
+}
+
+.principles-kicker {
+  margin: 0 0 12px;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  opacity: 0.55;
+}
+
+.principles-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4.8vw, 64px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0;
+  max-width: 52rem;
+}
+
+.principles-title em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.principles-lede {
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 16px 0 0;
+  max-width: 42rem;
+  opacity: 0.7;
+}
+
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 48px;
+  row-gap: 0;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--principles-rule);
+}
+
+.principles-section .tenet-cell {
+  margin: 0;
+  padding: 18px 0;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  border-bottom: none;
+}
+
+.principles-section .tenet-cell:nth-child(-n + 2) {
+  border-bottom: 1px solid var(--principles-rule);
+}
+
+.principles-section .tenet-index {
+  margin: 0;
+  padding-top: 2px;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.principles-section .tenet-title {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.principles-section .tenet-body {
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.75;
+  margin: 0;
+}
+
+
+/* ------------------------------------------------------------
+   SCROLL REVEAL
+   ------------------------------------------------------------ */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ------------------------------------------------------------
+   § 08 Founder + Footer — wide layouts (768px+)
+   Base grid columns; mobile overrides below.
+   ------------------------------------------------------------ */
+.founder-grid {
+  grid-template-columns: minmax(200px, 340px) 1fr;
+  align-items: start;
+}
+
+.footer-grid {
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  align-items: start;
+}
+
+
+/* ============================================================
+   MOBILE OVERRIDES — max-width: 767px
+   ============================================================ */
+@media (max-width: 767px) {
+
+  section {
+    padding-top: 64px !important;
+    padding-bottom: 64px !important;
+  }
+
+  .mx-auto {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .section-header {
+    grid-template-columns: 40px 1fr !important;
+    gap: 12px !important;
+  }
+  .section-header-badge {
+    display: none !important;
+  }
+
+  /* --- HERO --- */
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  .lever-diagram {
+    display: none !important;
+  }
+  .hero-meta-row span:last-child {
+    display: none !important;
+  }
+
+  /* --- § 01 Work Types --- */
+  .work-types-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .work-types-grid > div {
+    border-right: none !important;
+    border-bottom: 1px solid var(--ink) !important;
+  }
+  .work-types-grid > div:last-child {
+    border-bottom: none !important;
+  }
+
+  /* --- § 02 Process --- */
+  .process-shell {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto;
+  }
+  .process-vline {
+    display: none !important;
+  }
+  .process-tab--l {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .process-col--l {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .process-tab--r {
+    grid-column: 1;
+    grid-row: 3;
+    border-top: 1px solid var(--rule);
+    margin-top: 8px;
+    padding-top: 18px;
+  }
+  .process-col--r {
+    grid-column: 1;
+    grid-row: 4;
+    border-top: 1px solid var(--rule);
+    padding-top: 24px !important;
+    margin-top: 8px;
+  }
+  .process-col {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .process-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .process-divider {
+    display: none !important;
+  }
+
+  /* --- § 03 Pool --- */
+  .pool-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  .pool-basin {
+    width: 100%;
+    max-width: 26rem;
+    margin-inline: auto;
+    padding: clamp(28px, 6vw, 44px) clamp(22px, 5vw, 32px);
+  }
+  .pool-skills-panel {
+    max-width: 100%;
+  }
+
+  /* --- § 05 First 100 --- */
+  .first-100-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+  .slots-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 4px !important;
+    padding: 10px !important;
+  }
+  .slots-grid > div {
+    font-size: 7px !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  /* --- § 06 Principles (dark section) --- */
+  .principles-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .tenet-cell {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(245, 241, 232, 0.18) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .tenet-cell:last-child {
+    border-bottom: none !important;
+  }
+
+  /* --- § 07 What We Are Not --- */
+  .not-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .not-cell {
+    border-right: none !important;
+  }
+
+  /* --- § 08 Founder --- */
+  .founder-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  .founder-photo {
+    max-width: 280px !important;
+    margin: 0 auto !important;
+  }
+
+  /* --- Footer --- */
+  .footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* --- Buttons mobile sizing --- */
+  .btn-primary,
+  .btn-secondary,
+  .btn-primary--accent,
+  .btn-secondary--paper {
+    padding: 14px 20px !important;
+    font-size: 13px !important;
+  }
+
+  h1 { font-size: clamp(40px, 11vw, 72px) !important; }
+  h2 { font-size: clamp(32px, 9vw, 56px) !important; }
+}
+
+/* Extra small — 480px and below */
+@media (max-width: 480px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
