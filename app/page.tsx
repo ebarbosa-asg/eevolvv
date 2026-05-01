@@ -7,9 +7,9 @@ import ChatEngine from '@/components/ChatEngine'
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const HERO_PHRASES = [
-  'CORNER STORE', 'GYM', 'RESTAURANT', 'LAW FIRM', 'KIRANA SHOP',
+  'CORNER STORE', 'GYM', 'RESTAURANT', 'LAW FIRM',
   'STARTUP', 'ENTERPRISE', 'BODEGA', 'CLINIC', 'LOGISTICS',
-  'REAL ESTATE', 'AGENCY', 'FRANCHISE', 'MANUFACTURER', 'SARI-SARI STORE',
+  'REAL ESTATE', 'AGENCY', 'FRANCHISE', 'MANUFACTURER',
 ] as const
 
 /** Rotating hero strip — evolution-wordplay variants + rally cries + attributions. */
@@ -63,7 +63,7 @@ const TIERS = [
     name: 'Micro',
     label: 'AI Starter',
     price: '$29–$49/mo',
-    who: 'Corner stores · Bodegas · Kirana shops · Solo operators',
+    who: 'Corner stores · Bodegas · Solo operators',
     tagline: 'WhatsApp-native automations. Live in 48 hours.',
     features: [
       'AI business diagnostic',
@@ -1432,6 +1432,208 @@ function CTAClose({ onCTA }: { onCTA: () => void }) {
   )
 }
 
+// ─── GlobalHorizon ────────────────────────────────────────────────────────────
+
+const LAND: [number, number][] = [
+  // North America
+  [2,1],[3,1],[4,1],[5,1],
+  [1,2],[2,2],[3,2],[4,2],[5,2],[6,2],
+  [2,3],[3,3],[4,3],[5,3],[6,3],
+  [3,4],[4,4],[5,4],
+  [4,5],[5,5],
+  // South America
+  [5,6],[6,6],[7,6],
+  [5,7],[6,7],[7,7],
+  [6,8],[7,8],
+  [6,9],
+  // Europe
+  [10,1],[11,1],
+  [9,2],[10,2],[11,2],[12,2],
+  [10,3],[11,3],
+  // Africa
+  [10,3],[11,3],[12,3],
+  [9,4],[10,4],[11,4],[12,4],[13,4],
+  [9,5],[10,5],[11,5],[12,5],[13,5],
+  [10,6],[11,6],[12,6],
+  [10,7],[11,7],[12,7],
+  [11,8],[12,8],
+  // Middle East
+  [13,3],[14,3],[13,4],[14,4],
+  // South / Central Asia
+  [14,2],[15,2],[16,2],
+  [14,3],[15,3],[16,3],
+  [14,4],[15,4],[16,4],
+  [14,5],[15,5],
+  // East Asia
+  [16,1],[17,1],[18,1],
+  [15,2],[16,2],[17,2],[18,2],
+  [16,3],[17,3],[18,3],
+  [16,4],[17,4],
+  // SE Asia
+  [15,5],[16,5],[17,5],[18,5],
+  [17,6],[18,6],
+  // Japan
+  [19,2],[19,3],
+  // Australia
+  [17,7],[18,7],[19,7],
+  [17,8],[18,8],
+]
+
+// Dots that "glow" to show market potential — no labels, just signal
+const SIGNAL_DOTS: { cx: number; cy: number; delay: number }[] = [
+  // Americas cluster (current)
+  { cx: 3,  cy: 3,  delay: 0    },
+  { cx: 5,  cy: 3,  delay: 0.3  },
+  { cx: 6,  cy: 6,  delay: 0.6  },
+  { cx: 7,  cy: 7,  delay: 0.9  },
+  // Europe
+  { cx: 10, cy: 2,  delay: 1.4  },
+  { cx: 11, cy: 2,  delay: 1.6  },
+  // Africa
+  { cx: 10, cy: 5,  delay: 2.2  },
+  { cx: 12, cy: 6,  delay: 2.5  },
+  { cx: 11, cy: 8,  delay: 2.8  },
+  // South Asia
+  { cx: 14, cy: 4,  delay: 3.2  },
+  { cx: 15, cy: 5,  delay: 3.5  },
+  // East Asia
+  { cx: 17, cy: 3,  delay: 4.0  },
+  { cx: 18, cy: 2,  delay: 4.3  },
+  // SE Asia
+  { cx: 17, cy: 5,  delay: 4.8  },
+  { cx: 18, cy: 6,  delay: 5.1  },
+  // Australia
+  { cx: 18, cy: 8,  delay: 5.6  },
+]
+
+function WorldDotMap() {
+  const COLS = 21
+  const ROWS = 11
+  const STEP = 5.5
+  const R_LAND = 0.7
+  const R_SIGNAL = 1.6
+  const landSet = new Set(LAND.map(([c, r]) => `${c},${r}`))
+
+  return (
+    <svg
+      viewBox={`0 0 ${(COLS - 1) * STEP + 2} ${(ROWS - 1) * STEP + 2}`}
+      style={{ width: '100%', maxWidth: 520, display: 'block' }}
+      aria-hidden
+    >
+      {/* All grid dots — ocean faint, land brighter */}
+      {Array.from({ length: COLS * ROWS }, (_, i) => {
+        const col = i % COLS
+        const row = Math.floor(i / COLS)
+        const isLand = landSet.has(`${col},${row}`)
+        return (
+          <circle
+            key={i}
+            cx={col * STEP + 1}
+            cy={row * STEP + 1}
+            r={isLand ? R_LAND : 0.3}
+            fill="var(--paper)"
+            opacity={isLand ? 0.28 : 0.06}
+          />
+        )
+      })}
+
+      {/* Signal dots — pulsing accent, staggered by continent */}
+      {SIGNAL_DOTS.map((s, i) => (
+        <g key={i}>
+          {/* Outer glow ring */}
+          <circle
+            cx={s.cx * STEP + 1}
+            cy={s.cy * STEP + 1}
+            r={R_SIGNAL * 2.8}
+            fill="var(--accent)"
+            opacity={0}
+          >
+            <animate
+              attributeName="opacity"
+              values="0;0.18;0"
+              dur="3s"
+              begin={`${s.delay}s`}
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="r"
+              values={`${R_SIGNAL};${R_SIGNAL * 3.5};${R_SIGNAL * 3.5}`}
+              dur="3s"
+              begin={`${s.delay}s`}
+              repeatCount="indefinite"
+            />
+          </circle>
+          {/* Core */}
+          <circle
+            cx={s.cx * STEP + 1}
+            cy={s.cy * STEP + 1}
+            r={R_SIGNAL}
+            fill="var(--accent)"
+            opacity={0}
+          >
+            <animate
+              attributeName="opacity"
+              values="0;0.9;0.9;0.15;0"
+              keyTimes="0;0.1;0.5;0.85;1"
+              dur="3s"
+              begin={`${s.delay}s`}
+              repeatCount="indefinite"
+            />
+          </circle>
+        </g>
+      ))}
+    </svg>
+  )
+}
+
+function GlobalHorizon() {
+  const stats = [
+    { n: '500M+',   label: 'small businesses worldwide' },
+    { n: '$4.5T',   label: 'informal retail market' },
+    { n: '<1%',     label: 'AI adoption in emerging markets' },
+    { n: '∞',       label: 'runway' },
+  ]
+
+  return (
+    <section style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '80px 0 72px', overflow: 'hidden' }}>
+      <div className="mx-auto" style={{ maxWidth: 1280, padding: '0 40px' }}>
+        <div className="mono" style={{ fontSize: 9, letterSpacing: '0.28em', color: 'var(--accent)', marginBottom: 48, opacity: 0.85 }}>
+          LONG HORIZON · EEVOLVV GLOBAL · EST. 2026
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 64, alignItems: 'center' }}>
+          {/* Dot world map */}
+          <div style={{ position: 'relative' }}>
+            <WorldDotMap />
+            <div className="mono" style={{ marginTop: 14, fontSize: 9, letterSpacing: '0.18em', opacity: 0.3, textAlign: 'center' }}>
+              SIGNAL STRENGTH: GROWING · MARKET: EARTH
+            </div>
+          </div>
+
+          {/* Copy + stats */}
+          <div>
+            <h2 style={{ fontSize: 'clamp(26px, 3.8vw, 50px)', fontWeight: 500, letterSpacing: '-0.025em', lineHeight: 1.05, margin: '0 0 28px' }}>
+              Every business on earth deserves this.
+            </h2>
+            <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.55, margin: '0 0 40px', maxWidth: 380 }}>
+              We&apos;re starting in the US. The model works everywhere humans run businesses — which is everywhere. The horizon is global. We&apos;re just warming up.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px 24px' }}>
+              {stats.map(({ n, label }) => (
+                <div key={n}>
+                  <div style={{ fontSize: 'clamp(24px, 3vw, 38px)', fontWeight: 500, letterSpacing: '-0.02em', color: 'var(--accent)', lineHeight: 1 }}>{n}</div>
+                  <div className="mono" style={{ fontSize: 9, letterSpacing: '0.16em', opacity: 0.45, marginTop: 6, textTransform: 'uppercase' }}>{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
 function Footer() {
@@ -1492,6 +1694,7 @@ export default function Home() {
       <TalentSection />
       <DiagnosticSection targetTier={targetTier} />
       <CTAClose onCTA={() => scrollToDiagnostic()} />
+      <GlobalHorizon />
       <Footer />
     </main>
   )
