@@ -1674,12 +1674,60 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
   return (
     <section id="diagnostic" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', position: 'relative', overflow: 'hidden' }}>
       <div className="absolute inset-0 blueprint-grid" style={{ opacity: 0.4, pointerEvents: 'none' }} />
-      <div className="mx-auto relative site-rail">
-        <SectionHeader number="03" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. right now. Free." note="Valued ~$3k" />
-        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24, marginBottom: 56 }}>
+
+      {/* Ghost watermark */}
+      <div className="mono" style={{
+        position: 'absolute', right: -16, top: '50%', transform: 'translateY(-50%)',
+        fontSize: 'clamp(180px, 26vw, 360px)', fontWeight: 700,
+        color: 'var(--ink)', opacity: 0.022, lineHeight: 1,
+        pointerEvents: 'none', userSelect: 'none', zIndex: 0,
+      }}>03</div>
+
+      <div className="mx-auto site-rail" style={{ position: 'relative', zIndex: 1 }}>
+        <SectionHeader number="03" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. right now. Free." note="" />
+
+        {/* Animated value badge */}
+        <div style={{ marginTop: 16, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="diagnostic-value-badge mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 700 }}>
+            ★&nbsp;&nbsp;VALUED ~$3K
+          </div>
+          <span className="mono" style={{ fontSize: 9, letterSpacing: '0.14em', opacity: 0.38 }}>— YOURS FREE</span>
+        </div>
+
+        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 580, marginTop: 16, marginBottom: 40 }}>
           Just talk to us. Our AI asks the right questions, maps your workflows, and delivers a custom automation roadmap — free.
         </p>
-        <div style={{ border: '1px solid var(--ink)', background: 'var(--paper)', padding: '48px 32px' }}>
+
+        {/* Value prop cards */}
+        <div className="diagnostic-value-cards">
+          {([
+            { icon: '◈', label: 'AI WORKFLOW MAP', desc: 'Every bottleneck, mapped' },
+            { icon: '◎', label: 'ROI PROJECTION', desc: 'Exact dollar impact identified' },
+            { icon: '▷', label: '90-DAY ROADMAP', desc: 'Your first 3 automations, ready to build' },
+          ] as const).map((card, i) => (
+            <div
+              key={i}
+              className="anim-fade-up"
+              style={{
+                border: '1px solid var(--rule)',
+                padding: '18px 22px',
+                background: 'rgba(255,255,255,0.55)',
+                display: 'flex', gap: 14, alignItems: 'flex-start',
+                animationDelay: `${i * 0.1}s`,
+                opacity: 0,
+              }}
+            >
+              <div className="mono" style={{ fontSize: 18, color: 'var(--accent)', lineHeight: 1, paddingTop: 2, flexShrink: 0 }}>{card.icon}</div>
+              <div>
+                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: 0.5, marginBottom: 5 }}>{card.label}</div>
+                <div style={{ fontSize: 13, opacity: 0.7, lineHeight: 1.4 }}>{card.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Chat container */}
+        <div style={{ border: '1px solid var(--ink)', overflow: 'hidden' }}>
           <ChatEngine defaultTier={targetTier} />
         </div>
       </div>
