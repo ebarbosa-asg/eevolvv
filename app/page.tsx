@@ -608,7 +608,7 @@ function SplitFlap({ word, length, fontSize, className }: { word: string; length
     const t = setTimeout(() => setPrev(word), 720)
     return () => clearTimeout(t)
   }, [word])
-  const pad = (s: string) => s.padEnd(length, ' ').slice(0, length)
+  const pad = (s: string | undefined) => (s ?? '').padEnd(length, ' ').slice(0, length)
   const a = pad(prev), b = pad(word)
   return (
     <span className={`flap-stage ${className ?? ''}`.trim()} style={{ ...(fontSize ? { fontSize } : {}), color: 'var(--paper)' }}>
