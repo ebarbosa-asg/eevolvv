@@ -130,7 +130,7 @@ const STATS = [
 
 const PROCESS_STEPS = [
   { day: 'Day 01', title: 'Intake',     desc: 'You tell us how your business runs. Ten minutes, all questions.' },
-  { day: 'Day 07', title: 'Your Report',desc: 'AI-generated eevolvv Report delivered. Every automation opportunity mapped.' },
+  { day: 'Day 07', title: 'Your Report',desc: 'AI-generated eevolvv report delivered. Every automation opportunity mapped.' },
   { day: 'Day 14', title: 'First Win',  desc: 'First automation goes live. You feel the difference immediately.' },
   { day: 'Day 45', title: 'Transformed',desc: 'Full build complete. Your business runs differently.' },
   { day: 'Day 60', title: '60-Day Audit', desc: 'Structured review of metrics vs. plan—wins logged and next priorities set.' },
@@ -180,7 +180,7 @@ const LOADING_NARRATIVE = [
   { label: 'MAPPING',   message: 'Mapping your workflow architecture…',    detail: 'Identifying process gaps and dependencies.' },
   { label: 'ANALYZING', message: 'Calculating automation opportunities…',  detail: 'Running ROI models against your revenue range.' },
   { label: 'BUILDING',  message: 'Generating your automation roadmap…',    detail: 'Sequencing by impact-to-effort ratio.' },
-  { label: 'WRITING',   message: 'Compiling your eevolvv Report…',       detail: 'Formatting recommendations for your team.' },
+  { label: 'WRITING',   message: 'Compiling your eevolvv report…',       detail: 'Formatting recommendations for your team.' },
 ]
 
 // ─── Chat questions ───────────────────────────────────────────────────────────
@@ -317,10 +317,18 @@ function Header({ onCTA }: { onCTA: () => void }) {
             ))}
           </nav>
           <div className="site-header-actions flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:justify-self-end md:gap-3">
-            {/* Talent microsite — main nav “AGENTS” still jumps to `#agents` on this page */}
             <a
               href="/talent"
-              className="mono header-cta-secondary inline-flex max-md:hidden items-center gap-1.5"
+              className="mono inline-flex md:hidden shrink-0 items-center gap-1"
+              style={{ fontSize: 10, letterSpacing: '0.14em', padding: '6px 10px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}
+            >
+              <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
+              TALENT
+            </a>
+            {/* Talent microsite — desktop pill keeps dot + label; mobile uses compact link above */}
+            <a
+              href="/talent"
+              className="mono header-cta-secondary hidden md:inline-flex items-center gap-1.5"
               style={{ fontSize: 11, letterSpacing: '0.16em', padding: '6px 10px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}
             >
               <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
@@ -407,6 +415,19 @@ function Header({ onCTA }: { onCTA: () => void }) {
                     {label}
                   </a>
                 ))}
+                <a
+                  href="/talent"
+                  className="block py-3.5"
+                  style={{
+                    color: 'var(--ink)',
+                    opacity: 0.85,
+                    textDecoration: 'none',
+                    borderBottom: '1px solid var(--rule)',
+                  }}
+                  onClick={closeMenu}
+                >
+                  TALENT
+                </a>
                 <a
                   href="#how"
                   className="block py-3.5"
@@ -1007,7 +1028,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
       <div className="mx-auto site-rail">
         <SectionHeader number="05" eyebrow="PRICING" title="Every business has a starting point." note="FIVE TIERS" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24 }}>
-          All tiers include the eevolvv Report. Outcomes reviewed at day 60 post-deployment.
+          All tiers include the eevolvv report. Outcomes reviewed at day 60 post-deployment.
         </p>
         <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(5,1fr)', gap: 0, marginTop: 48, border: '1px solid var(--ink)' }}>
           {TIERS.map((tier, i) => (
@@ -1254,7 +1275,7 @@ function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <div style={{ width: 56, height: 56, border: '2px solid var(--ink)', background: 'var(--accent)', color: 'var(--paper)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 20 }}>✓</div>
           <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>SHEET R-01 · EEVOLVV REPORT</div>
-          <div style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>Your eevolvv Report</div>
+          <div style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>Your eevolvv report</div>
           <p style={{ fontSize: 14, opacity: 0.65, marginTop: 8 }}>AI-generated diagnostic for {form.businessName || form.businessType}</p>
         </div>
         <div className="report-content" style={{ border: '1px solid var(--ink)', background: 'rgba(255,255,255,0.5)', padding: 32 }} dangerouslySetInnerHTML={{ __html: formatReport(report) }} />

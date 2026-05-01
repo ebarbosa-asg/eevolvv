@@ -14,7 +14,7 @@ const EXTRACTING_STEPS = [
   'Mapping automation opportunities...',
   'Calculating ROI projections...',
   'Building your roadmap...',
-  'Finalizing your eevolvv Report...',
+  'Finalizing your eevolvv report...',
 ]
 
 function ChatMark() {
@@ -213,7 +213,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <div style={{ width: 56, height: 56, border: '2px solid var(--ink)', background: 'var(--accent)', color: 'var(--paper)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 20 }}>✓</div>
           <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>SHEET R-01 · EEVOLVV REPORT</div>
-          <div style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>Your eevolvv Report</div>
+          <div style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>Your eevolvv report</div>
           <p style={{ fontSize: 14, opacity: 0.65, marginTop: 8 }}>AI-generated diagnostic for {report.businessName || 'your business'}</p>
         </div>
         <div className="report-content" style={{ border: '1px solid var(--ink)', background: 'rgba(255,255,255,0.5)', padding: 32 }} dangerouslySetInnerHTML={{ __html: formatReport(report.text) }} />

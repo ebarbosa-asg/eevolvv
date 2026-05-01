@@ -5,7 +5,7 @@ export function SiteFooter() {
   return (
     <footer style={{ borderTop: "1px solid var(--rule)", padding: "56px 0 40px" }}>
       <div className="mx-auto" style={{ maxWidth: 1280, padding: "0 32px" }}>
-        <div className="grid" style={{ gridTemplateColumns: "minmax(0,1.4fr) repeat(3,minmax(0,1fr))", gap: 48 }}>
+        <div className="talent-footer-grid">
           <div>
             <div className="flex items-center gap-3" style={{ marginBottom: 20 }}>
               <LogoMark />
@@ -66,7 +66,7 @@ export function SiteFooter() {
         </div>
 
         <div
-          className="mono flex items-center justify-between"
+          className="mono talent-footer-bottom"
           style={{ marginTop: 56, paddingTop: 24, borderTop: "1px solid var(--rule)", fontSize: 10, letterSpacing: "0.22em", opacity: 0.5 }}
         >
           <span>© 2026 EEVOLVV / TALENT · DAY ZERO</span>

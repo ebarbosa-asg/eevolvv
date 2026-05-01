@@ -115,7 +115,7 @@ ${hoursFreed || 'Not specified'}
 INTERESTED TIER: ${tier === 'unsure' ? 'Not sure yet — infer best Seed / Grow / Scale / Enterprise fit from their profile' : tier === 'retainer' ? 'Evolve Retainer' : tier || 'grow'}
 Contact: ${name || 'Not provided'} — ${email}
 
-Generate their eevolvv Report now.`
+Generate their eevolvv report now.`
 
   let report: string
   try {
@@ -160,7 +160,7 @@ Generate their eevolvv Report now.`
         const { error: emailError } = await resend.emails.send({
           from: process.env.FROM_EMAIL ?? 'hello@eevolvv.com',
           to: email,
-          subject: `Your eevolvv Report is ready${businessName ? ` — ${businessName}` : ''}`,
+          subject: `Your eevolvv report is ready${businessName ? ` — ${businessName}` : ''}`,
           html,
         })
         if (emailError) {

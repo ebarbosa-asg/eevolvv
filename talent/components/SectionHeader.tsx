@@ -7,16 +7,7 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ number, eyebrow, title, note }: SectionHeaderProps) {
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "60px 1fr auto",
-        gap: 24,
-        alignItems: "baseline",
-        borderTop: "1px solid var(--ink)",
-        paddingTop: 24,
-      }}
-    >
+    <div className="section-header">
       <div className="mono" style={{ fontSize: 11, letterSpacing: "0.22em", color: "var(--accent)", fontWeight: 600 }}>
         § {number}
       </div>

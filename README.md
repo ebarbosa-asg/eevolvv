@@ -64,7 +64,7 @@ Add environment variables in Vercel dashboard under Settings → Environment Var
 1. User fills 4-step intake form (10 questions total)
 2. On submit: POST to `/api/diagnostic`
 3. API formats business data into a structured prompt
-4. Claude (claude-opus-4-5) generates a custom **eevolvv Report**
+4. Claude (claude-opus-4-5) generates a custom **eevolvv report**
 5. Report displays inline — formatted, actionable, specific
 6. CTA to book strategy call via email
 
@@ -100,7 +100,7 @@ Edit `lib/diagnosticPrompts.ts`
 - [ ] Stripe payment integration (Seed tier self-serve)
 - [ ] Cal.com embed for strategy call booking
 - [ ] Notion API — auto-create client workspace on form submit
-- [ ] Resend email — send eevolvv Report copy to client email
+- [ ] Resend email — send eevolvv report copy to client email
 - [ ] Make.com webhook — trigger internal Slack notification on new lead
 - [ ] Analytics dashboard (track conversion rates by tier)
 - [ ] Case studies section (add after first 3 clients)

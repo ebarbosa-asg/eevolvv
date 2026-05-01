@@ -22,7 +22,7 @@ export function HeroSection() {
         <div
           className="anim-fade-up"
           style={{
-            display: "inline-flex", alignItems: "center", gap: 10,
+            display: "inline-flex", alignItems: "center", gap: 10, flexWrap: "wrap",
             padding: "8px 14px", border: "1px solid var(--ink)",
             marginBottom: 32, background: "var(--paper)",
           }}

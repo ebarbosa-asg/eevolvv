@@ -579,12 +579,26 @@
   transform: translateY(0);
 }
 
-
-/* ------------------------------------------------------------
-   Footer — wide layouts (768px+)
-   ------------------------------------------------------------ */
-  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+/* Footer layout — matches components/talent/SiteFooter.tsx */
+.talent-footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  gap: 48px;
   align-items: start;
+}
+
+.talent-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cta-close-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 
@@ -729,9 +743,20 @@
   }
 
   /* --- Footer --- */
-  .footer-grid {
+  .talent-footer-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 32px !important;
+  }
+
+  .talent-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cta-close-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
   }
 
   /* --- Buttons mobile sizing --- */
@@ -749,7 +774,7 @@
 
 /* Extra small — 480px and below */
 @media (max-width: 480px) {
-  .footer-grid {
+  .talent-footer-grid {
     grid-template-columns: 1fr !important;
   }
 }

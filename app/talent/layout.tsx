@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import '@/components/talent/talent-pages.css'
 import { SiteHeader } from '@/components/talent/SiteHeader'
 import { SiteFooter } from '@/components/talent/SiteFooter'
 
@@ -18,10 +19,10 @@ export const metadata: Metadata = {
 
 export default function TalentLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className="talent-root">
       <SiteHeader />
       <main>{children}</main>
       <SiteFooter />
-    </>
+    </div>
   )
 }

@@ -27,11 +27,23 @@ export function SiteHeader() {
           className="mx-auto flex items-center justify-between"
           style={{ maxWidth: 1280, padding: "10px 24px" }}
         >
-          <div className="flex items-center gap-3">
-            <Link href="/" style={{ textDecoration: "none", color: "inherit" }} aria-label="eevolvv/talent home">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <Link
+              href="/"
+              className="shrink-0 leading-none"
+              style={{ textDecoration: "none", color: "inherit" }}
+              aria-label="eevolvv/talent home"
+            >
               <LogoMark />
             </Link>
-            <span className="mono" style={{ fontSize: 12, letterSpacing: "0.18em", fontWeight: 600 }}>
+            <span
+              className="mono min-w-0"
+              style={{
+                fontSize: "clamp(10px, 2.9vw, 12px)",
+                letterSpacing: "0.18em",
+                fontWeight: 600,
+              }}
+            >
               <a href="https://eevolvv.com" style={{ color: "inherit", textDecoration: "none" }}>EEVOLVV</a>
               {" "}
               <Link href="/" style={{ color: "var(--accent)", textDecoration: "none" }}>/ TALENT</Link>
