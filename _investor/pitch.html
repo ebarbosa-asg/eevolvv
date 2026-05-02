@@ -159,10 +159,18 @@
       border-bottom: 1px solid var(--rule);
     }
     .nav-logo {
-      font-family: var(--font-d);
-      font-weight: 700;
-      font-size: 17px;
-      letter-spacing: .1em;
+      display: flex;
+      align-items: center;
+      line-height: 0;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .nav-logo img {
+      height: clamp(30px, 4.2vw, 40px);
+      width: auto;
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
     .nav-tag {
       font-family: var(--font-m);
@@ -403,33 +411,56 @@
     .founder-email { font-family: var(--font-m); font-size: 12px; color: var(--accent); margin-top: 18px; }
 
     /* ─────────────────────────────────────────
-       § 00 COVER
+       § 00 COVER (light hero + evolution graphic)
     ───────────────────────────────────────── */
     #s00 {
-      background: var(--ink);
-      color: var(--paper);
-      justify-content: flex-end;
-      padding-bottom: 88px;
-      overflow: hidden;
+             background:
+               radial-gradient(ellipse 90% 75% at 88% 12%, rgba(140, 43, 26, 0.09), transparent 58%),
+               radial-gradient(ellipse 55% 45% at 8% 88%, rgba(20, 20, 19, 0.045), transparent 55%),
+               linear-gradient(180deg, #fdfcf8 0%, var(--paper) 38%, #f5f1ea 100%);
+             color: var(--ink);
+             justify-content: center;
+             padding-top: 108px;
+             padding-bottom: 96px;
+             overflow: hidden;
+           }
+    #s00 .cover-split {
+      display: grid;
+      grid-template-columns: 1fr minmax(260px, 42%);
+      gap: clamp(32px, 5vw, 72px);
+      align-items: center;
     }
-    .cover-bg {
-      position: absolute;
-      top: 50%; right: var(--px);
-      transform: translateY(-50%);
-      font-family: var(--font-m);
-      font-size: clamp(40px, 9vw, 100px);
-      letter-spacing: .12em;
-      opacity: .055;
+    @media (max-width: 860px) {
+      #s00 .cover-split { grid-template-columns: 1fr; }
+      #s00 .cover-art {
+        order: -1;
+        margin: 0 auto 8px;
+        max-width: min(400px, 100%);
+      }
+    }
+    .cover-art {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      margin-left: auto;
       pointer-events: none;
       user-select: none;
-      line-height: 1.4;
-      text-align: right;
     }
-    .cover-ew  { font-family: var(--font-d); font-size: clamp(72px, 14vw, 150px); font-weight: 700; letter-spacing: -.04em; line-height: .9; }
-    .cover-tag { font-family: var(--font-s); font-style: italic; font-size: clamp(18px, 2.8vw, 30px); opacity: .6; margin-top: 22px; }
+    .cover-art svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 28px 56px rgba(20, 20, 19, 0.07));
+    }
+    .cover-ew  { font-family: var(--font-d); font-size: clamp(64px, 12vw, 132px); font-weight: 700; letter-spacing: -.04em; line-height: .9; color: var(--ink); }
+    #s00 .cover-tag {
+      font-family: var(--font-s); font-style: italic; font-size: clamp(18px, 2.8vw, 30px);
+      color: rgba(20, 20, 19, 0.56);
+      margin-top: 22px;
+    }
     .cover-meta { display: flex; gap: 44px; margin-top: 52px; flex-wrap: wrap; }
-    .cm-lbl { font-family: var(--font-m); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; opacity: .32; margin-bottom: 4px; }
-    .cm-val { font-family: var(--font-d); font-size: 17px; font-weight: 600; }
+    #s00 .cm-lbl { font-family: var(--font-m); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; opacity: .45; margin-bottom: 4px; color: var(--ink); }
+    #s00 .cm-val { font-family: var(--font-d); font-size: 17px; font-weight: 600; color: var(--ink); }
 
     /* ─────────────────────────────────────────
        § 11 CTA
@@ -496,7 +527,7 @@
 ═══════════════════════════════════════ -->
 <div id="gate">
   <div class="g-wordmark" id="gw">EEVOLVV</div>
-  <div class="g-eyebrow" id="ge">§ INVESTOR ACCESS · CONFIDENTIAL · 2026</div>
+  <div class="g-eyebrow" id="ge">INVESTOR ACCESS · CONFIDENTIAL · 2026</div>
   <div class="g-question" id="gq">Ready to eevolvv?</div>
   <form class="g-form" id="gf" onsubmit="unlock(event)">
     <input id="pw" class="g-input" type="password" placeholder="enter password" autocomplete="off" />
@@ -511,23 +542,69 @@
 <div id="deck">
 
   <nav>
-    <div class="nav-logo">EEVOLVV</div>
+    <a class="nav-logo" href="https://eevolvv.com" target="_blank" rel="noopener noreferrer" title="eevolvv">
+      <img src="logo.png" width="1024" height="528" alt="eevolvv" />
+    </a>
     <div class="nav-dots" id="ndots"></div>
     <div class="nav-tag">CONFIDENTIAL · PRE-SEED · 2026</div>
   </nav>
 
   <!-- ─── § 00 COVER ─────────────────────── -->
   <section id="s00">
-    <div class="cover-bg">◌→◎<br>◎→●<br>●→✦</div>
-    <div class="inner">
-      <div class="marker fi">§ 00 <span>· INVESTOR DECK · Q2 2026</span></div>
-      <div class="cover-ew fi d1">eevolvv</div>
-      <div class="cover-tag fi d2">A service, not software.</div>
-      <div class="cover-meta fi d3">
-        <div><div class="cm-lbl">Round</div><div class="cm-val">Pre-Seed</div></div>
-        <div><div class="cm-lbl">Raising</div><div class="cm-val">$1,000,000</div></div>
-        <div><div class="cm-lbl">Stage</div><div class="cm-val">MVP · Live</div></div>
-        <div><div class="cm-lbl">Date</div><div class="cm-val">Q2 2026</div></div>
+    <div class="inner cover-split">
+      <div class="cover-copy">
+        <div class="marker fi">00 <span>· INVESTOR DECK · Q2 2026</span></div>
+        <div class="cover-ew fi d1">eevolvv</div>
+        <div class="cover-tag fi d2">A service, not software.</div>
+        <div class="cover-meta fi d3">
+          <div><div class="cm-lbl">Round</div><div class="cm-val">Pre-Seed</div></div>
+          <div><div class="cm-lbl">Raising</div><div class="cm-val">$1,000,000</div></div>
+          <div><div class="cm-lbl">Stage</div><div class="cm-val">MVP · Live</div></div>
+          <div><div class="cm-lbl">Date</div><div class="cm-val">Q2 2026</div></div>
+        </div>
+      </div>
+
+      <div class="cover-art fi d2" aria-hidden="true">
+        <svg viewBox="0 0 440 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="cvOrb" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#8C2B1A" stop-opacity="0.14"/>
+              <stop offset="55%" stop-color="#8C2B1A" stop-opacity="0.05"/>
+              <stop offset="100%" stop-color="#141413" stop-opacity="0.04"/>
+            </linearGradient>
+            <linearGradient id="cvStroke" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#8C2B1A" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#8C2B1A" stop-opacity="0.3"/>
+            </linearGradient>
+          </defs>
+
+          <circle cx="308" cy="102" r="124" fill="url(#cvOrb)"/>
+
+          <path d="M 76 418 C 76 310 124 268 182 218 C 214 194 242 178 268 168 C 296 152 322 122 340 96" stroke="url(#cvStroke)" stroke-width="2.5" stroke-linecap="round" fill="none" stroke-dasharray="3 10"/>
+
+          <g>
+            <circle cx="76" cy="418" r="21" stroke="#141413" stroke-width="2" stroke-dasharray="4.5 5" fill="#fdfcf8"/>
+            <text x="76" y="423" text-anchor="middle" fill="#141413" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="11" font-weight="600" letter-spacing=".14em">01</text>
+          </g>
+
+          <g>
+            <circle cx="182" cy="218" r="23" stroke="#8C2B1A" stroke-width="2.5" fill="none"/>
+            <circle cx="182" cy="218" r="6.5" fill="#8C2B1A"/>
+            <text x="182" y="258" text-anchor="middle" fill="rgba(20,20,19,.4)" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="8.5" letter-spacing=".22em">MAP</text>
+          </g>
+
+          <g>
+            <circle cx="268" cy="168" r="25" fill="#141413"/>
+            <circle cx="268" cy="168" r="10" fill="#fdfcf8"/>
+            <text x="268" y="212" text-anchor="middle" fill="rgba(20,20,19,.4)" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="8.5" letter-spacing=".18em">BUILD</text>
+          </g>
+
+          <g>
+            <circle cx="340" cy="96" r="32" stroke="#8C2B1A" stroke-width="1.75" fill="none" opacity=".5"/>
+            <path d="M 340 68 L350 90 L374 90 L356 104 L364 128 L340 112 L316 128 L324 104 L306 90 L330 90 Z" fill="#8C2B1A"/>
+            <text x="340" y="144" text-anchor="middle" fill="rgba(20,20,19,.4)" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="8.5" letter-spacing=".14em">GROWTH</text>
+          </g>
+        </svg>
       </div>
     </div>
   </section>
@@ -535,8 +612,8 @@
   <!-- ─── § 01 PROBLEM ────────────────────── -->
   <section id="s01">
     <div class="inner">
-      <div class="marker fi">§ 01 <span>· THE PROBLEM</span></div>
-      <h2 class="fi d1">Small businesses are<br><span class="it">drowning in tools,</span><br>not insights.</h2>
+      <div class="marker fi">01 <span>· THE PROBLEM</span></div>
+      <h2 class="fi d1">Businesses are<br><span class="it">drowning in tools,</span><br>not insights.</h2>
       <div class="rule fi d2"></div>
 
       <div class="fi d2">
@@ -568,18 +645,18 @@
   <!-- ─── § 02 SOLUTION ───────────────────── -->
   <section id="s02" class="dk">
     <div class="inner">
-      <div class="marker fi">§ 02 <span>· THE SOLUTION</span></div>
+      <div class="marker fi">02 <span>· THE SOLUTION</span></div>
       <h2 class="fi d1">McKinsey-grade intelligence.<br><span class="it">Without the McKinsey bill.</span></h2>
       <div class="rule fi d2"></div>
       <p class="lead fi d2">eevolvv is an AI-native business transformation <em>service</em>. We pair a proprietary diagnostic engine with ongoing AI advisory — giving every SMB access to the insight that was once reserved for Fortune 500s.</p>
 
       <div class="term fi d3" style="margin-top:44px;">
-        <div class="tc">// eevolvving forward, together</div>
-        <div><span class="ta">→</span><span class="tk">DIAGNOSE</span>  <span class="tv">↳ AI-led session · maps business health across 12 nodes</span></div>
-        <div><span class="ta">→</span><span class="tk">ROADMAP &nbsp;</span><span class="tv">↳ 90-day transformation plan, industry-benchmarked</span></div>
-        <div><span class="ta">→</span><span class="tk">EXECUTE &nbsp;</span><span class="tv">↳ Ongoing AI advisory + vetted micro-consulting network</span></div>
-        <div><span class="ta">→</span><span class="tk">REVIEW &nbsp;&nbsp;</span><span class="tv">↳ Day-60 audit · iteration · re-calibration</span></div>
-        <div class="tc" style="margin-top:6px;">// result: a business that can't stop eevolvving</div>
+        <div class="tc">// proprietary_pipeline.log — eevolvv service delivery</div>
+        <div><span class="ta">→</span><span class="tk">DIAGNOSE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">↳ AI-led conversation · maps business health across 12 nodes · outputs Evolution Report</span></div>
+        <div><span class="ta">→</span><span class="tk">ONBOARD &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">↳ Scope agreement · access provisioned · integrations mapped · pilot defined</span></div>
+        <div><span class="ta">→</span><span class="tk">BUILD TASK AGENTS &amp; INTEGRATION</span><span class="tv">↳ Custom AI agents built per workflow · connected to CRM, ERP, QA, finance tools</span></div>
+        <div><span class="ta">→</span><span class="tk">MAINTAIN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">↳ Ongoing advisory · monitoring · quarterly re-calibration · context compounds monthly</span></div>
+        <div class="tc" style="margin-top:6px;">// result: a business that can't stop eevolvving — the forever customer</div>
       </div>
     </div>
   </section>
@@ -587,11 +664,34 @@
   <!-- ─── § 03 PRODUCT ────────────────────── -->
   <section id="s03">
     <div class="inner">
-      <div class="marker fi">§ 03 <span>· PRODUCT</span></div>
+      <div class="marker fi">03 <span>· PRODUCT</span></div>
       <h2 class="fi d1">The platform.<br><span class="it">Alive and learning.</span></h2>
       <div class="rule fi d2"></div>
 
-      <div class="g2 fi d2" style="margin-top:44px;">
+      <div class="term fi d2" style="margin-top:44px;">
+        <div class="tc">// proprietary_pipeline.log — how we deliver transformation</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;margin-top:8px;">
+          <div>
+            <div style="margin-bottom:4px;"><span class="ta">→</span><span class="tk" style="font-size:12px;letter-spacing:.12em;">N=01 · DIAGNOSE</span></div>
+            <div style="padding-left:20px;margin-bottom:18px;opacity:.65;font-size:12px;line-height:1.8;">AI-led conversation maps business health across 12 nodes. Outputs ranked Evolution Report with automation opportunities.</div>
+          </div>
+          <div>
+            <div style="margin-bottom:4px;"><span class="ta">→</span><span class="tk" style="font-size:12px;letter-spacing:.12em;">N=02 · ONBOARD</span></div>
+            <div style="padding-left:20px;margin-bottom:18px;opacity:.65;font-size:12px;line-height:1.8;">Scope agreement, access provisioned, integrations mapped. Pilot program defined before we build a single thing.</div>
+          </div>
+          <div>
+            <div style="margin-bottom:4px;"><span class="ta">→</span><span class="tk" style="font-size:12px;letter-spacing:.12em;">N=03 · BUILD TASK AGENTS &amp; INTEGRATION</span></div>
+            <div style="padding-left:20px;margin-bottom:18px;opacity:.65;font-size:12px;line-height:1.8;">Custom AI task agents built per workflow. Plugged into existing CRM, ERP, QA, and finance tools — no rip-and-replace.</div>
+          </div>
+          <div>
+            <div style="margin-bottom:4px;"><span class="ta">→</span><span class="tk" style="font-size:12px;letter-spacing:.12em;">N=04 · MAINTAIN</span></div>
+            <div style="padding-left:20px;margin-bottom:18px;opacity:.65;font-size:12px;line-height:1.8;">Ongoing advisory, monitoring, quarterly re-calibration. Context compounds monthly — the forever customer is born here.</div>
+          </div>
+        </div>
+        <div class="tc">// result: irreplaceable AI infrastructure inside every client · switching cost compounds</div>
+      </div>
+
+      <div class="g2 fi d3" style="margin-top:44px;">
         <div class="card">
           <div class="card-lbl">CORE · LIVE NOW</div>
           <h3>Diagnostic Engine</h3>
@@ -602,6 +702,7 @@
           <div class="card-lbl">CORE · LIVE NOW</div>
           <h3>Evolution Report</h3>
           <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Post-diagnostic report delivered within minutes. Industry-benchmarked, actionable, specific — the first thing most owners have received that actually fits their business.</p>
+          <p style="margin-top:14px;font-size:12px;opacity:.45;line-height:1.6;font-family:var(--font-m);letter-spacing:.06em;">Redacted sample available on request — proof artifact for diligence.</p>
           <div class="pill live" style="margin-top:18px;">▓▓▓▓▓▓▓░░░ &nbsp;LIVE</div>
         </div>
         <div class="card">
@@ -612,7 +713,7 @@
         </div>
         <div class="card">
           <div class="card-lbl">ROADMAP · Q3 2026+</div>
-          <h3>WhatsApp Integration</h3>
+          <h3>WhatsApp/Telegram Integration</h3>
           <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Delivery for the Micro tier. Reaching 25M+ corner stores, kirana shops, sari-sari stores, and bodegas where they already operate — no app required.</p>
           <div class="pill" style="margin-top:18px;">▓░░░░░░░░░ &nbsp;PLANNED</div>
         </div>
@@ -623,42 +724,45 @@
   <!-- ─── § 04 MARKET ─────────────────────── -->
   <section id="s04" class="dk">
     <div class="inner">
-      <div class="marker fi">§ 04 <span>· MARKET SIZE</span></div>
+      <div class="marker fi">04 <span>· MARKET SIZE</span></div>
       <h2 class="fi d1">The market isn't<br><span class="it">a niche. It's the world.</span></h2>
       <div class="rule fi d2"></div>
 
       <div class="g3 fi d2" style="margin-top:48px;">
         <div class="card">
-          <div class="card-lbl">TAM · GLOBAL SMB ADVISORY</div>
-          <div class="card-val">$340B</div>
-          <div class="card-sub">Total addressable market</div>
+          <div class="card-lbl">TAM · SMB + ENTERPRISE AI SERVICES</div>
+          <div class="card-val">$340B+</div>
+          <div class="card-sub">Global SMB advisory + AI automation</div>
           <div style="margin-top:18px;">
             <div class="pbar-row"><div class="pbar-lbl">Global</div><div class="pbar">▓▓▓▓▓▓▓▓▓▓</div><div class="pbar-pct">100%</div></div>
           </div>
         </div>
         <div class="card">
-          <div class="card-lbl">SAM · ENGLISH-SPEAKING DIGITAL SMBS</div>
-          <div class="card-val">$68B</div>
-          <div class="card-sub">Serviceable addressable market</div>
+          <div class="card-lbl">SAM · SMB AI AUTOMATION (2033)</div>
+          <div class="card-val">$124B</div>
+          <div class="card-sub">$68.3B today → $124.5B by 2033</div>
           <div style="margin-top:18px;">
-            <div class="pbar-row"><div class="pbar-lbl">SAM</div><div class="pbar">▓▓░░░░░░░░</div><div class="pbar-pct">20%</div></div>
+            <div class="pbar-row"><div class="pbar-lbl">SAM</div><div class="pbar">▓▓░░░░░░░░</div><div class="pbar-pct">~36%</div></div>
           </div>
         </div>
         <div class="card">
           <div class="card-lbl">SOM · 36-MONTH TARGET</div>
           <div class="card-val">$18M</div>
-          <div class="card-sub">Serviceable obtainable market</div>
+          <div class="card-sub">Enterprise + Core + Micro combined</div>
           <div style="margin-top:18px;">
-            <div class="pbar-row"><div class="pbar-lbl">Yr 1–3</div><div class="pbar">▓░░░░░░░░░</div><div class="pbar-pct">0.03%</div></div>
+            <div class="pbar-row"><div class="pbar-lbl">Yr 1–3</div><div class="pbar">▓░░░░░░░░░</div><div class="pbar-pct">0.01%</div></div>
           </div>
         </div>
       </div>
 
       <div class="term fi d3" style="margin-top:40px;">
-        <div class="tc">// market context</div>
-        <div><span class="ta">→</span><span class="tk">400M+</span>   <span class="tv">SMBs globally (World Bank, 2024)</span></div>
-        <div><span class="ta">→</span><span class="tk">25M+ &nbsp;</span><span class="tv">micro-retailers in emerging markets (Phase 2 target)</span></div>
-        <div><span class="ta">→</span><span class="tk">&lt;1%  &nbsp;</span><span class="tv">of SMBs have ever accessed professional business advisory</span></div>
+        <div class="tc">// market_context.log — why now</div>
+        <div><span class="ta">→</span><span class="tk">400M+       </span><span class="tv">SMBs globally · &lt;1% have ever accessed professional advisory (World Bank)</span></div>
+        <div><span class="ta">→</span><span class="tk">91%         </span><span class="tv">of SMBs using AI report revenue increase — demand is proven, supply is thin</span></div>
+        <div><span class="ta">→</span><span class="tk">QA AUTOMATION</span><span class="tv">$28.1B → $55.2B by 2028 · 14.5% CAGR · 75% of enterprises now using AI in QA</span></div>
+        <div><span class="ta">→</span><span class="tk">FINANCE AUDIT </span><span class="tv">$1.4B → $8.7B by 2033 · 22.8% CAGR · 1 in 2 CFOs still in pilot phase</span></div>
+        <div><span class="ta">→</span><span class="tk">SME SEGMENT   </span><span class="tv">fastest growing at 45.2% CAGR — eevolvv's exact sweet spot</span></div>
+        <div><span class="ta">→</span><span class="tk">25M+ MICRO    </span><span class="tv">retailers in emerging markets — Phase 2 WhatsApp/Telegram-first target</span></div>
       </div>
     </div>
   </section>
@@ -666,7 +770,7 @@
   <!-- ─── § 05 BUSINESS MODEL ─────────────── -->
   <section id="s05">
     <div class="inner">
-      <div class="marker fi">§ 05 <span>· BUSINESS MODEL</span></div>
+      <div class="marker fi">05 <span>· BUSINESS MODEL</span></div>
       <h2 class="fi d1">Recurring revenue.<br><span class="it">The forever customer.</span></h2>
       <div class="rule fi d2"></div>
       <p class="lead fi d2">The AI learns the business so deeply that switching becomes genuinely prohibitive — not through lock-in tactics, but through irreplaceability. Context compounds every month.</p>
@@ -675,7 +779,7 @@
         <div class="card" style="border-top:3px solid rgba(20,20,19,.18);">
           <div class="card-lbl">TIER · MICRO</div>
           <div class="card-val">$29<span style="font-size:16px;font-weight:400;opacity:.45;">–49/mo</span></div>
-          <p style="margin-top:14px;font-size:14px;opacity:.6;line-height:1.7;">Corner stores, kirana, sari-sari, bodegas. WhatsApp-first. The underserved 99%. Global micro-retail expansion.</p>
+          <p style="margin-top:14px;font-size:14px;opacity:.6;line-height:1.7;">Corner stores, kirana, sari-sari, bodegas. WhatsApp/Telegram-first. The underserved 99%. Global micro-retail expansion.</p>
         </div>
         <div class="card" style="border-top:3px solid var(--accent);">
           <div class="card-lbl">TIER · CORE · FLAGSHIP</div>
@@ -692,10 +796,12 @@
       <div class="fi d4" style="margin-top:28px;">
         <div class="term">
           <div class="tc">// enterprise_wedge.log — the unsexy, high-margin play</div>
-          <div><span class="ta">→</span><span class="tk">QA PROGRAMS &nbsp;&nbsp;</span><span class="tv">↳ ISO 9001, Six Sigma, CMMI audits — $50K–$500K/yr consultant spend, ripe for AI</span></div>
-          <div><span class="ta">→</span><span class="tk">FINANCE AUDIT &nbsp;</span><span class="tv">↳ CFOs at $5M–$50M cos. — too small for Big 4, too complex for generic tools</span></div>
+          <div><span class="ta">→</span><span class="tk">QA PROGRAMS    </span><span class="tv">↳ $28.1B → $55.2B market by 2028 · ISO 9001 / Six Sigma / CMMI · $50K–$500K/yr consultant spend</span></div>
+          <div><span class="ta">→</span><span class="tk">FINANCE AUDIT  </span><span class="tv">↳ AI audit market $1.4B → $8.7B by 2033 · 22.8% CAGR · CFOs $5M–$50M: underserved + motivated</span></div>
+          <div><span class="ta">→</span><span class="tk">SME SWEET SPOT </span><span class="tv">↳ SME segment growing at 45.2% CAGR · 1 in 2 CFOs still in pilot phase = door is open</span></div>
           <div><span class="ta">→</span><span class="tk">CONTRACT VALUE </span><span class="tv">↳ $2K–$10K/mo per account · 3 enterprise clients = meaningful MRR</span></div>
-          <div><span class="ta">→</span><span class="tk">STRATEGIC ROLE </span><span class="tv">↳ Enterprise revenue funds growth while SMB builds brand + data flywheel</span></div>
+          <div><span class="ta">→</span><span class="tk">REGULATORY PULL</span><span class="tv">↳ SOX/ISO deadlines create urgency · motivated buyers who sign fast</span></div>
+          <div><span class="ta">→</span><span class="tk">STRATEGIC ROLE </span><span class="tv">↳ Enterprise funds growth while SMB builds brand · data flywheel compounds</span></div>
         </div>
       </div>
 
@@ -709,7 +815,7 @@
   <!-- ─── § 06 TRACTION ───────────────────── -->
   <section id="s06" class="dk">
     <div class="inner">
-      <div class="marker fi">§ 06 <span>· TRACTION</span></div>
+      <div class="marker fi">06 <span>· TRACTION</span></div>
       <h2 class="fi d1">Early signal.<br><span class="it">Real proof.</span></h2>
       <div class="rule fi d2"></div>
 
@@ -742,7 +848,7 @@
         <div><span class="ta">→</span><span class="tk">INFRA &nbsp;&nbsp;&nbsp;</span><span class="tv">Supabase + Vercel + Resend · production-stable stack</span></div>
         <div><span class="ta">→</span><span class="tk">AI &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">Claude claude-sonnet-4-6 · 14 industry context blocks in production</span></div>
         <div><span class="ta">→</span><span class="tk">TALENT &nbsp;&nbsp;</span><span class="tv">eevolvv/talent rebrand ✓ complete · marketplace build in progress</span></div>
-        <div><span class="ta">→</span><span class="tk">NEXT &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">enterprise pilot program · eevolvv/talent beta · WhatsApp Phase 1</span></div>
+        <div><span class="ta">→</span><span class="tk">NEXT &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">enterprise pilot program · eevolvv/talent beta · WhatsApp/Telegram Phase 1</span></div>
       </div>
     </div>
   </section>
@@ -750,7 +856,7 @@
   <!-- ─── § 07 GO-TO-MARKET ───────────────── -->
   <section id="s07">
     <div class="inner">
-      <div class="marker fi">§ 07 <span>· GO-TO-MARKET</span></div>
+      <div class="marker fi">07 <span>· GO-TO-MARKET</span></div>
       <h2 class="fi d1">Three waves.<br><span class="it">One compounding flywheel.</span></h2>
       <div class="rule fi d2"></div>
 
@@ -772,8 +878,9 @@
         <div class="tl-item">
           <div class="tl-ph">WAVE 03<br>Q4 '27+</div>
           <div>
-            <h3>WhatsApp-First Micro Tier</h3>
-            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">25M+ micro-retailers globally. No app download. No desktop. Just WhatsApp. $29–49/mo × massive volume = a new revenue frontier in emerging markets.</p>
+            <h3>WhatsApp/Telegram-First Micro Tier</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">25M+ micro-retailers globally. No app download. No desktop. Just WhatsApp/Telegram — where everyone talks to agents. $29–49/mo × massive volume = a new revenue frontier in emerging markets.</p>
+            <p style="margin-top:12px;font-size:13px;opacity:.5;line-height:1.75;font-style:italic;">The long-range proof: density in India, LatAm, and the Philippines meets penetration that already lives on every phone — first-contact AI for businesses software never reached.</p>
           </div>
         </div>
       </div>
@@ -783,7 +890,7 @@
   <!-- ─── § 08 COMPETITIVE ─────────────────── -->
   <section id="s08" class="dk">
     <div class="inner">
-      <div class="marker fi">§ 08 <span>· COMPETITIVE LANDSCAPE</span></div>
+      <div class="marker fi">08 <span>· COMPETITIVE LANDSCAPE</span></div>
       <h2 class="fi d1">Nobody else is<br><span class="it">doing exactly this.</span></h2>
       <div class="rule fi d2"></div>
 
@@ -797,7 +904,7 @@
             </div>
             <div class="mc hi">
               <div class="mc-name">eevolvv ✦</div>
-              <div class="mc-desc">Affordable + deep context<br>The only player here</div>
+              <div class="mc-desc">Affordable + deep context<br>From SMB brand to QA / finance audit</div>
             </div>
             <div class="mc">
               <div class="mc-name">SaaS Tools</div>
@@ -817,6 +924,7 @@
             <div><span class="ta">→</span><span class="tk">VS McKinsey</span> <span class="tv">↳ 100× cheaper · AI-speed delivery</span></div>
             <div><span class="ta">→</span><span class="tk">VS ChatGPT </span> <span class="tv">↳ Deep context · continuity · accountability</span></div>
             <div><span class="ta">→</span><span class="tk">VS HubSpot </span> <span class="tv">↳ Strategy, not just record-keeping</span></div>
+            <div><span class="ta">→</span><span class="tk">ENTERPRISE</span> <span class="tv">↳ AI diagnostic + audit narrative · not generic RPA or ticketing</span></div>
             <div><span class="ta">→</span><span class="tk">MOAT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="tv">↳ Context compounds monthly → forever customer</span></div>
           </div>
         </div>
@@ -827,7 +935,7 @@
   <!-- ─── § 09 TEAM ────────────────────────── -->
   <section id="s09">
     <div class="inner">
-      <div class="marker fi">§ 09 <span>· TEAM</span></div>
+      <div class="marker fi">09 <span>· TEAM</span></div>
       <h2 class="fi d1">Built by someone who<br><span class="it">has lived this problem.</span></h2>
       <div class="rule fi d2"></div>
 
@@ -836,8 +944,8 @@
           <div class="founder-init">E</div>
           <div class="founder-name">Eduardo Barbosa</div>
           <div class="founder-title">Founder &amp; CEO</div>
-          <div class="founder-bio">Veteran. From submarines to rockets to brain-computer interfaces — with a professional cage fighting stint in between. Eduardo has operated in the highest-stakes environments on earth and emerged with one conviction: leadership is grown, not given. eevolvv is his biggest venture yet, and he's building it to last.</div>
-          <div class="founder-email">→ eduardocbarbosa1998@gmail.com</div>
+          <div class="founder-bio">Human, Veteran, Artist. From submarines to rockets to brain-computer interfaces — with a professional cage fighting stint in between. Eduardo has operated in the highest-stakes environments on earth and emerged with one conviction: leadership is grown, not given. His biggest venture yet, and the one he's building to last, is Eevolvv.</div>
+          <div class="founder-email">→ hello@eevolvv.com</div>
         </div>
 
         <div style="flex:1;min-width:240px;padding-top:4px;">
@@ -856,7 +964,7 @@
   <!-- ─── § 10 USE OF FUNDS ────────────────── -->
   <section id="s10">
     <div class="inner">
-      <div class="marker fi">§ 10 <span>· USE OF FUNDS</span></div>
+      <div class="marker fi">10 <span>· USE OF FUNDS</span></div>
       <h2 class="fi d1">$1M deployed with<br><span class="it">precision and intent.</span></h2>
       <div class="rule fi d2"></div>
 
@@ -903,7 +1011,7 @@
               <div><span style="color:var(--accent);">→</span> eevolvv/talent beta · 50 consultants onboarded</div>
               <div><span style="color:var(--accent);">→</span> $50K MRR achieved</div>
               <div><span style="color:var(--accent);">→</span> 3 paying enterprise accounts</div>
-              <div><span style="color:var(--accent);">→</span> Seed round raised · WhatsApp Phase 1 live</div>
+              <div><span style="color:var(--accent);">→</span> Seed round raised · WhatsApp/Telegram Phase 1 live</div>
             </div>
           </div>
         </div>
@@ -914,7 +1022,7 @@
   <!-- ─── § 11 CTA ─────────────────────────── -->
   <section id="s11">
     <div class="inner">
-      <div class="marker fi">§ 11 <span>· LET'S BUILD THIS</span></div>
+      <div class="marker fi">11 <span>· LET'S BUILD THIS</span></div>
       <h2 class="fi d1" style="font-size:clamp(44px,8vw,88px);">Join the<br>evolution.</h2>
       <div class="rule fi d2"></div>
       <p class="lead fi d2" style="color:rgba(250,247,240,.72);">We're raising $1M to build the world's most accessible business transformation service. If you believe the advice gap is real — and that AI is the mechanism to close it — we'd like to talk.</p>
@@ -926,7 +1034,7 @@
 
       <div class="cta-contact fi d4">
         <div>Eduardo Barbosa · Founder &amp; CEO</div>
-        <div>eduardocbarbosa1998@gmail.com</div>
+        <div>hello@eevolvv.com</div>
         <div style="opacity:.5;margin-top:6px;">eevolvv.com · Q2 2026</div>
       </div>
     </div>
@@ -940,6 +1048,28 @@
 </div><!-- /deck -->
 
 <script>
+  /* Local preview: open with #dev or ?dev=1 on file:// or localhost to skip the gate. */
+  const __DEV_DECK = (function () {
+    const local =
+      location.protocol === 'file:' ||
+      /^localhost$/i.test(location.hostname) ||
+      /^127\.0\.0\.1$/.test(location.hostname);
+    if (!local) return false;
+    if (location.hash === '#dev') return true;
+    try {
+      return new URLSearchParams(location.search).get('dev') === '1';
+    } catch {
+      return false;
+    }
+  })();
+
+  if (__DEV_DECK) {
+    const g = document.getElementById('gate');
+    const d = document.getElementById('deck');
+    if (g) g.style.display = 'none';
+    if (d) d.classList.add('on');
+  }
+
   /* ─── Gate ───────────────────────────── */
   const PASS = 'eevolvv!';
 
@@ -969,16 +1099,20 @@
   });
 
   /* gate entrance */
-  (function gateIn() {
-    const gw = document.getElementById('gw');
-    const ge = document.getElementById('ge');
-    const gq = document.getElementById('gq');
-    const gf = document.getElementById('gf');
-    setTimeout(() => { gw.classList.add('g-in-1'); }, 80);
-    setTimeout(() => { ge.classList.add('g-in-2'); }, 220);
-    setTimeout(() => { gq.classList.add('g-in-1'); }, 360);
-    setTimeout(() => { gf.classList.add('g-in-2'); }, 500);
-  })();
+  if (__DEV_DECK) {
+    initDeck();
+  } else {
+    (function gateIn() {
+      const gw = document.getElementById('gw');
+      const ge = document.getElementById('ge');
+      const gq = document.getElementById('gq');
+      const gf = document.getElementById('gf');
+      setTimeout(() => { gw.classList.add('g-in-1'); }, 80);
+      setTimeout(() => { ge.classList.add('g-in-2'); }, 220);
+      setTimeout(() => { gq.classList.add('g-in-1'); }, 360);
+      setTimeout(() => { gf.classList.add('g-in-2'); }, 500);
+    })();
+  }
 
   /* ─── Deck init ──────────────────────── */
   function initDeck() {

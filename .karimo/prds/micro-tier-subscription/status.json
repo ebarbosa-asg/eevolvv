@@ -1,0 +1,13 @@
+{
+  "slug": "micro-tier-subscription",
+  "stage": "research",
+  "created_at": "2026-05-01T00:00:00Z",
+  "updated_at": "2026-05-01T00:00:00Z",
+  "prd_number": null,
+  "assets": [],
+  "research": {
+    "internal": "pending",
+    "external": "pending",
+    "summary": "pending"
+  }
+}
