@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const EFFECTIVE_DATE = "May 1, 2025";
 const CONTACT_EMAIL = "hello@eevolvv.com";
-const COMPANY = "eevolvv";
+const COMPANY = "eevolvv, Inc.";
 const DOMAINS = "eevolvv.com and talent.eevolvv.com";
 
 export default function PrivacyPage() {
@@ -82,10 +82,10 @@ export default function PrivacyPage() {
                 2. Who We Are (Data Controller)
               </h2>
               <p>
-                {COMPANY} is the data controller for personal information
-                collected through the Services. We are an AI-native business
-                transformation service helping businesses automate workflows and
-                operate more efficiently.
+                {COMPANY} is a Delaware C corporation and the data controller
+                for personal information collected through the Services. We are
+                an AI-native business transformation service helping businesses
+                automate workflows and operate more efficiently.
               </p>
               <p>
                 For privacy inquiries, contact us at{" "}

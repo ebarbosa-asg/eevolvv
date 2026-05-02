@@ -42,8 +42,8 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-slate-900">3. The Platform</h2>
             <p>
-              {BRAND.talentName} is a matching and facilitation platform. eevolvv connects
-              skilled contributors with scoped business engagements. eevolvv is not an employer,
+              {BRAND.talentName} is a matching and facilitation platform. eevolvv, Inc. connects
+              skilled contributors with scoped business engagements. eevolvv, Inc. is not an employer,
               staffing agency, or professional employer organisation. Contributors are independent
               contractors unless a separate written agreement states otherwise.
             </p>
@@ -55,7 +55,7 @@ export default function TermsPage() {
               <li>Provide accurate, complete, and current information in all forms and profiles.</li>
               <li>Use the Services lawfully and not for harassment, fraud, or illegal activity.</li>
               <li>Not misrepresent your skills, availability, or identity.</li>
-              <li>Not circumvent the platform to engage directly with a match introduced through eevolvv for 12 months following the introduction, without our written consent.</li>
+              <li>Not circumvent the platform to engage directly with a match introduced through eevolvv, Inc. for 12 months following the introduction, without our written consent.</li>
               <li>Not attempt to scrape, reverse-engineer, or gain unauthorised access to the Services.</li>
             </ul>
             <p>We may remove access for violations at our sole discretion.</p>
@@ -65,7 +65,7 @@ export default function TermsPage() {
             <h2 className="text-base font-semibold text-slate-900">5. Engagements</h2>
             <p>
               Specific work engagements are governed by separate agreements between the
-              contracting parties. eevolvv is not responsible for disputes arising from those
+              contracting parties. eevolvv, Inc. is not responsible for disputes arising from those
               engagements. Use appropriate contracts, NDAs, and insurance for your work.
             </p>
           </section>
@@ -73,8 +73,8 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-slate-900">6. Intellectual Property</h2>
             <p>
-              The Services and all underlying technology are owned by eevolvv. You retain
-              ownership of content you submit. By submitting content you grant eevolvv a
+              The Services and all underlying technology are owned by eevolvv, Inc. You retain
+              ownership of content you submit. By submitting content you grant eevolvv, Inc. a
               non-exclusive licence to use it to provide and improve the Services.
             </p>
           </section>
@@ -95,7 +95,7 @@ export default function TermsPage() {
             <h2 className="text-base font-semibold text-slate-900">8. Disclaimer of Warranties</h2>
             <p>
               The Services are provided "as is" and "as available" without warranties of any
-              kind. eevolvv disclaims all implied warranties including merchantability, fitness
+              kind. eevolvv, Inc. disclaims all implied warranties including merchantability, fitness
               for a particular purpose, and non-infringement.
             </p>
           </section>
@@ -103,9 +103,9 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-slate-900">9. Limitation of Liability</h2>
             <p>
-              To the fullest extent permitted by law, eevolvv's total liability for any claims
-              arising under these Terms shall not exceed the greater of fees you paid to eevolvv
-              in the preceding 12 months or $100. eevolvv is not liable for indirect,
+              To the fullest extent permitted by law, eevolvv, Inc.'s total liability for any claims
+              arising under these Terms shall not exceed the greater of fees you paid to eevolvv, Inc.
+              in the preceding 12 months or $100. eevolvv, Inc. is not liable for indirect,
               incidental, or consequential damages.
             </p>
           </section>
@@ -113,7 +113,7 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-base font-semibold text-slate-900">10. Governing Law</h2>
             <p>
-              These Terms are governed by the laws of the United States. Disputes not resolved
+              These Terms are governed by the laws of the State of Delaware and the United States. Disputes not resolved
               informally shall be settled by binding arbitration. Class action waiver applies.
               Contact{" "}
               <a href={`mailto:${contactEmail}`} className="font-medium text-cyan-700 underline-offset-2 hover:underline">

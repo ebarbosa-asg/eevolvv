@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const EFFECTIVE_DATE = "May 1, 2025";
 const CONTACT_EMAIL = "hello@eevolvv.com";
-const COMPANY = "eevolvv";
+const COMPANY = "eevolvv, Inc.";
 
 export default function TermsPage() {
   return (
@@ -300,8 +300,8 @@ export default function TermsPage() {
             <section id="governing-law" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">14. Governing Law and Disputes</h2>
               <p>
-                These Terms are governed by the laws of the United States and the State in which{" "}
-                {COMPANY} is principally located, without regard to conflict-of-law principles.
+                These Terms are governed by the laws of the State of Delaware and the United
+                States, without regard to conflict-of-law principles.
               </p>
               <p>
                 Any dispute, claim, or controversy arising out of or relating to these Terms or
