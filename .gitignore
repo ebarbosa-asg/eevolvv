@@ -39,3 +39,6 @@ next-env.d.ts
 memory/
 docs/*.docx
 .DS_Store
+
+# KARIMO worktree directories
+.karimo/.worktrees/
