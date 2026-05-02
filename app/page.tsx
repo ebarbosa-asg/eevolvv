@@ -2169,7 +2169,7 @@ function Footer() {
   const cols: [string, [string, string][]][] = [
     ['NAVIGATE', [['Process','#how'],['Industries','#who'],['Pricing','#pricing']]],
     ['ENGAGE',   [['Talent','#talent'],['AI agents','#agents'],['Free Audit','#diagnostic']]],
-    ['LEGAL',    [['Privacy','#'],['Terms','#'],['Contact','mailto:hello@eevolvv.com']]],
+    ['LEGAL',    [['Privacy','/privacy'],['Terms','/terms'],['Contact','mailto:hello@eevolvv.com']]],
   ]
   return (
     <footer className="site-footer">

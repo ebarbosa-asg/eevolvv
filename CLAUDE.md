@@ -5,6 +5,16 @@ eevolvv is an AI-native business transformation service. Tagline: **"A service, 
 Core brand truth: **"eevolvving forward, together."**
 Owner: E (Eduardo Barbosa) — eduardocbarbosa1998@gmail.com
 
+## Contact / Infrastructure
+| Item | Value |
+|------|-------|
+| **Business email** | hello@eevolvv.com |
+| **Phone** | +1 (844) 433-8658 (Grasshopper) |
+| **Calendly** | https://calendly.com/hello-eevolvv |
+| **Banking** | Mercury |
+| **Payments** | Stripe Atlas (entity + Stripe) |
+| **Entity** | eevolvv, Inc. (Delaware C corp, via Stripe Atlas) |
+
 ## Active Projects
 | Name | What | Status |
 |------|------|--------|
@@ -19,8 +29,8 @@ Owner: E (Eduardo Barbosa) — eduardocbarbosa1998@gmail.com
 | **Micro tier** | New $29–49/mo subscription for corner stores, kirana, sari-sari, bodegas |
 | **eevolvv/talent** | Rebranded Archimedes — micro-contracting + micro-consulting platform |
 | **forever customer** | Retention model: AI learns the store so deeply switching is prohibitive |
-| **SHEET labels** | Bug: "SHEET A-09", "SHEET A-02", "SHEET A-99" — dev labels left in production, MUST FIX |
-| **diagnostic engine** | The AI chat at /diagnostic — currently a static 12-Q form, needs true AI conversation |
+| **SHEET labels** | FIXED: A-09, A-99 removed. R-01/D-01 are intentional UI reference codes |
+| **diagnostic engine** | The AI chat at /diagnostic — true AI conversation via ChatEngine.tsx |
 | **the monkey logo** | eevolvv logo = evolution strip of primates; smallest monkey = eevolvv/talent logo |
 | **Archimedes** | Project being absorbed into eevolvv as the "talent" sub-brand |
 | **WhatsApp-first** | Delivery mechanism for Micro tier in emerging markets |
@@ -38,19 +48,31 @@ Owner: E (Eduardo Barbosa) — eduardocbarbosa1998@gmail.com
 ## Key Files
 | File | Purpose |
 |------|---------|
-| `app/page.tsx` | Entire homepage (1422 lines — Hero, Stats, Problem, Process, WhoItsFor, Pricing, DiagnosticForm, Footer) |
+| `app/page.tsx` | Entire homepage — Hero, Stats, Problem, Process, WhoItsFor, Pricing, DiagnosticForm, Footer |
+| `components/ChatEngine.tsx` | True AI diagnostic chat engine (replaces static form) |
 | `app/api/diagnostic/route.ts` | POST handler → Claude → Supabase → Resend |
+| `app/privacy/page.tsx` | Privacy Policy page (live at /privacy) |
+| `app/terms/page.tsx` | Terms of Service page (live at /terms) |
 | `lib/diagnosticPrompts.ts` | System prompts + 14 industry context blocks |
 | `lib/rateLimit.ts` | IP-based rate limiting (3/hr, also checked against Supabase) |
 | `lib/supabase.ts` | DB client + saveSubmission / markEmailSent helpers |
 | `public/brand-logo.png` | Evolution strip logo (695×359) |
+| `eevolvv-service-agreement.docx` | Client service agreement template |
 
-## Current Known Bugs
-1. "SHEET A-09 · CALL TO ACTION" visible in CTAClose component (line 1346 page.tsx)
-2. "SHEET A-02 · MARKET TELEMETRY" in Stats (line 703) — internal, acceptable to keep or remove
-3. "SHEET A-99 · DAY 60 AUDIT" in Footer (line 1390) — same
-4. Post-report CTA is mailto: link only — needs Calendly embed
-5. Rate limit 3/hr per IP — needs session-based or user-auth upgrade
+## Current Known Issues
+1. Rate limit 3/hr per IP — needs session-based or user-auth upgrade
+2. `RESEND_API_KEY` not set in `.env.local` — emails won't send locally
+3. `SUPABASE_SERVICE_ROLE_KEY` not set — some admin operations unavailable
+
+## Env Vars (set in .env.local AND Vercel dashboard)
+| Var | Status |
+|-----|--------|
+| `ANTHROPIC_API_KEY` | ✅ Set |
+| `SUPABASE_URL` | ✅ Set |
+| `SUPABASE_ANON_KEY` | ✅ Set |
+| `NEXT_PUBLIC_CALENDLY_URL` | ✅ Set → https://calendly.com/hello-eevolvv |
+| `RESEND_API_KEY` | ⚠️ Needs adding |
+| `SUPABASE_SERVICE_ROLE_KEY` | ⚠️ Needs adding |
 
 → Full project details: memory/projects/
 → Full strategy docs: eevolvv_Global_Expansion_Strategy.docx, eevolvv_AI_Audit_Review.docx

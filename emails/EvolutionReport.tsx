@@ -136,7 +136,7 @@ export function EvolutionReportEmail({
               Book your free 30-minute strategy call. We&apos;ll walk through your roadmap together and confirm the right starting point for your business.
             </Text>
             <Button
-              href="mailto:hello@eevolvv.com?subject=eevolvv%20Strategy%20Call%20Request"
+              href="https://calendly.com/hello-eevolvv"
               style={ctaButton}
             >
               Book Your Strategy Call →
