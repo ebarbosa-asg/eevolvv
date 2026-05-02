@@ -18,8 +18,8 @@ Owner: E (Eduardo Barbosa) — eduardocbarbosa1998@gmail.com
 ## Active Projects
 | Name | What | Status |
 |------|------|--------|
-| **homepage-v2** | Full page redesign + true AI chat engine | SHORT-TERM NOW |
-| **archimedes-rebrand** | Rename archimedes.ai → eevolvv/talent | SHORT-TERM NOW |
+| **homepage-v2** | Full page redesign + true AI chat engine | ✅ DONE |
+| **archimedes-rebrand** | Rename archimedes.ai → eevolvv/talent | ✅ DONE — talent lives at /talent in main app only |
 | **micro-tier** | Corner store / global micro-retail expansion | LONG-TERM PLANNED |
 | **global-expansion** | 25M+ micro-retailers worldwide, WhatsApp-first | LONG-TERM PLANNED |
 
