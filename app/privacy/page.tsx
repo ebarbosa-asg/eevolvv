@@ -464,11 +464,74 @@ export default function PrivacyPage() {
               </div>
             </section>
 
-            {/* 9. DATA SHARING */}
+            {/* 9. MESSAGING TERMS */}
+            <section id="messaging-terms" className="space-y-4">
+              <h2 className="text-base font-semibold text-[var(--ink)]">
+                9. eevolvv Messaging Terms and Conditions
+              </h2>
+              <ol className="ml-4 list-decimal space-y-3">
+                <li>
+                  The messaging program consists of general conversational
+                  messaging to answer questions and provide support to customers.
+                </li>
+                <li>
+                  You can cancel the SMS service at any time. Just text{" "}
+                  <span className="mono font-semibold">STOP</span> to the phone
+                  number from which you received messages. After you send the SMS
+                  message <span className="mono font-semibold">STOP</span> to us,
+                  we will send you an SMS message to confirm that you have been
+                  unsubscribed. After this, you will no longer receive SMS
+                  messages from us. If you want to join again, just sign up as you
+                  did the first time and we will start sending SMS messages to you
+                  again.
+                </li>
+                <li>
+                  If you are experiencing issues with the messaging program you
+                  can reply with the keyword{" "}
+                  <span className="mono font-semibold">HELP</span> for more
+                  assistance, or you can get help directly at{" "}
+                  <a
+                    href="mailto:hello@eevolvv.com"
+                    className="font-medium underline-offset-2 hover:underline"
+                  >
+                    hello@eevolvv.com
+                  </a>
+                  .
+                </li>
+                <li>
+                  Carriers are not liable for delayed or undelivered messages.
+                </li>
+                <li>
+                  As always, message and data rates may apply for any messages
+                  sent to you from us and to us from you. Message frequency will
+                  vary based on communication needs. If you have any questions
+                  about your text plan or data plan, it is best to contact your
+                  wireless provider.
+                </li>
+                <li>
+                  If you have any questions regarding privacy, please read our
+                  privacy policy contained in the rest of this document.
+                </li>
+              </ol>
+            </section>
+
+            {/* 10. DATA SHARING */}
             <section id="data-sharing" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                9. Data Sharing and Disclosure
+                10. Data Sharing and Disclosure
               </h2>
+              <div className="rounded border border-black/10 bg-black/[0.03] p-4 text-sm space-y-2">
+                <p>
+                  <strong>Customer data is not shared with third parties for
+                  promotional or marketing purposes.</strong>
+                </p>
+                <p>
+                  Mobile opt-in and consent data are never shared with anyone
+                  for any purpose. Any information sharing described in this
+                  section explicitly excludes mobile opt-in data and SMS consent
+                  records.
+                </p>
+              </div>
               <p>
                 Beyond the sub-processors listed above, we may disclose personal
                 information:
@@ -499,10 +562,10 @@ export default function PrivacyPage() {
               </ul>
             </section>
 
-            {/* 10. RETENTION */}
+            {/* 11. RETENTION */}
             <section id="retention" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                10. Data Retention
+                11. Data Retention
               </h2>
               <p>
                 We retain personal information for as long as necessary to
@@ -540,10 +603,10 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            {/* 11. INTERNATIONAL TRANSFERS */}
+            {/* 12. INTERNATIONAL TRANSFERS */}
             <section id="international" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                11. International Data Transfers
+                12. International Data Transfers
               </h2>
               <p>
                 Our Services are operated in the United States. If you are
@@ -561,10 +624,10 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            {/* 12. SECURITY */}
+            {/* 13. SECURITY */}
             <section id="security" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                12. Security
+                13. Security
               </h2>
               <p>
                 We implement industry-standard technical and organisational
@@ -589,10 +652,10 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            {/* 13. YOUR RIGHTS */}
+            {/* 14. YOUR RIGHTS */}
             <section id="your-rights" className="space-y-4">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                13. Your Privacy Rights
+                14. Your Privacy Rights
               </h2>
 
               <div className="space-y-2">
@@ -671,10 +734,10 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            {/* 14. CHILDREN */}
+            {/* 15. CHILDREN */}
             <section id="children" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                14. Children's Privacy
+                15. Children's Privacy
               </h2>
               <p>
                 Our Services are not directed to individuals under 18 years of
@@ -693,10 +756,10 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            {/* 15. THIRD-PARTY LINKS */}
+            {/* 16. THIRD-PARTY LINKS */}
             <section id="third-party-links" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                15. Links to Third-Party Sites
+                16. Links to Third-Party Sites
               </h2>
               <p>
                 Our Services may contain links to third-party websites or
@@ -707,10 +770,10 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            {/* 16. LEGAL BASIS */}
+            {/* 17. LEGAL BASIS */}
             <section id="legal-basis" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                16. Legal Basis for Processing (EEA / UK)
+                17. Legal Basis for Processing (EEA / UK)
               </h2>
               <p>
                 If you are located in the EEA or UK, we process your personal
@@ -724,10 +787,10 @@ export default function PrivacyPage() {
               </ul>
             </section>
 
-            {/* 17. CHANGES */}
+            {/* 18. CHANGES */}
             <section id="changes" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                17. Changes to This Policy
+                18. Changes to This Policy
               </h2>
               <p>
                 We may update this Privacy Policy from time to time. When we
@@ -742,10 +805,10 @@ export default function PrivacyPage() {
               </p>
             </section>
 
-            {/* 18. CONTACT */}
+            {/* 19. CONTACT */}
             <section id="contact" className="space-y-3">
               <h2 className="text-base font-semibold text-[var(--ink)]">
-                18. Contact Us
+                19. Contact Us
               </h2>
               <p>
                 If you have questions, concerns, or requests regarding this
