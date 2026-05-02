@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EEVOLVV · INVESTOR DECK · 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #faf7f0;
+      --ink:   #141413;
+      --accent: #8C2B1A;
+      --rule:  rgba(20,20,19,.14);
+      --rule-s: rgba(20,20,19,.30);
+      --font-d: 'Space Grotesk', sans-serif;
+      --font-m: 'JetBrains Mono', monospace;
+      --font-s: 'Newsreader', serif;
+      --max: 1100px;
+      --px: clamp(24px, 5vw, 80px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-d);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─────────────────────────────────────────
+       PASSWORD GATE
+    ───────────────────────────────────────── */
+    #gate {
+      position: fixed; inset: 0;
+      background: var(--ink);
+      color: var(--paper);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      gap: 0;
+      padding: var(--px);
+      transition: opacity .65s ease;
+    }
+    #gate.out { opacity: 0; pointer-events: none; }
+
+    .g-wordmark {
+      font-family: var(--font-d);
+      font-size: clamp(36px, 7vw, 64px);
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--paper);
+      margin-bottom: 6px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .g-eyebrow {
+      font-family: var(--font-m);
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(250,247,240,.35);
+      margin-bottom: 48px;
+      opacity: 0;
+      transition: opacity .5s ease .12s;
+    }
+    .g-question {
+      font-family: var(--font-d);
+      font-size: clamp(22px, 3.5vw, 34px);
+      font-weight: 500;
+      color: var(--paper);
+      margin-bottom: 32px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .5s ease .22s, transform .5s ease .22s;
+    }
+    .g-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 340px;
+      opacity: 0;
+      transition: opacity .5s ease .34s;
+    }
+    .g-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid rgba(250,247,240,.25);
+      color: var(--paper);
+      font-family: var(--font-m);
+      font-size: 16px;
+      padding: 12px 4px;
+      outline: none;
+      letter-spacing: .1em;
+      text-align: center;
+      transition: border-color .2s;
+    }
+    .g-input::placeholder { color: rgba(250,247,240,.25); }
+    .g-input:focus { border-bottom-color: var(--accent); }
+    .g-error {
+      font-family: var(--font-m);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: .1em;
+      min-height: 14px;
+      text-align: center;
+    }
+    .g-btn {
+      width: 100%;
+      background: var(--accent);
+      color: var(--paper);
+      border: none;
+      font-family: var(--font-d);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity .2s;
+    }
+    .g-btn:hover { opacity: .82; }
+
+    /* gate entrance animations */
+    .g-in-1 { opacity: 1 !important; transform: translateY(0) !important; }
+    .g-in-2 { opacity: 1 !important; }
+
+    /* ─────────────────────────────────────────
+       DECK WRAPPER
+    ───────────────────────────────────────── */
+    #deck { display: none; }
+    #deck.on { display: block; }
+
+    /* ─────────────────────────────────────────
+       NAV
+    ───────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px var(--px);
+      background: rgba(250,247,240,.93);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-logo {
+      font-family: var(--font-d);
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: .1em;
+    }
+    .nav-tag {
+      font-family: var(--font-m);
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      opacity: .35;
+    }
+    .nav-dots { display: flex; gap: 7px; align-items: center; }
+    .nd {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(20,20,19,.25);
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+    .nd.on { background: var(--accent); transform: scale(1.5); }
+
+    /* ─────────────────────────────────────────
+       SECTIONS
+    ───────────────────────────────────────── */
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px var(--px) 80px;
+      border-bottom: 1px solid var(--rule);
+      position: relative;
+    }
+    section.dk {
+      background: var(--ink);
+      color: var(--paper);
+      --rule: rgba(250,247,240,.12);
+      --rule-s: rgba(250,247,240,.28);
+    }
+    .inner { max-width: var(--max); margin: 0 auto; width: 100%; }
+
+    /* ─────────────────────────────────────────
+       FADE-IN
+    ───────────────────────────────────────── */
+    .fi {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .fi.vis { opacity: 1; transform: translateY(0); }
+    .fi.d1 { transition-delay: .1s; }
+    .fi.d2 { transition-delay: .2s; }
+    .fi.d3 { transition-delay: .3s; }
+    .fi.d4 { transition-delay: .4s; }
+    .fi.d5 { transition-delay: .55s; }
+
+    /* ─────────────────────────────────────────
+       TYPOGRAPHY
+    ───────────────────────────────────────── */
+    .marker {
+      font-family: var(--font-m);
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+    .marker span { opacity: .45; color: inherit; }
+
+    h1 {
+      font-family: var(--font-d);
+      font-size: clamp(52px, 9vw, 100px);
+      font-weight: 700;
+      line-height: .95;
+      letter-spacing: -.03em;
+    }
+    h2 {
+      font-family: var(--font-d);
+      font-size: clamp(34px, 5.5vw, 64px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -.025em;
+    }
+    h3 {
+      font-family: var(--font-d);
+      font-size: clamp(18px, 2.5vw, 26px);
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    .it { font-family: var(--font-s); font-style: italic; }
+    .mono { font-family: var(--font-m); }
+    p.lead {
+      font-size: clamp(15px, 2vw, 20px);
+      line-height: 1.65;
+      opacity: .7;
+      max-width: 620px;
+      margin-top: 20px;
+    }
+    .rule { width: 44px; height: 2px; background: var(--accent); margin: 24px 0; }
+
+    /* ─────────────────────────────────────────
+       GRID
+    ───────────────────────────────────────── */
+    .g2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 28px; }
+    .g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+    @media(max-width:768px) { .g2,.g3,.g4 { grid-template-columns: 1fr; } }
+
+    /* ─────────────────────────────────────────
+       CARD
+    ───────────────────────────────────────── */
+    .card {
+      border: 1px solid var(--rule);
+      padding: 26px;
+    }
+    .card-lbl {
+      font-family: var(--font-m);
+      font-size: 9px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      opacity: .38;
+      margin-bottom: 10px;
+    }
+    .card-val {
+      font-family: var(--font-d);
+      font-size: clamp(26px, 4vw, 42px);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .card-sub { font-size: 12px; opacity: .45; margin-top: 5px; }
+
+    /* ─────────────────────────────────────────
+       TERMINAL
+    ───────────────────────────────────────── */
+    .term {
+      background: rgba(20,20,19,.055);
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--accent);
+      padding: 20px 24px;
+      font-family: var(--font-m);
+      font-size: 13px;
+      line-height: 1.9;
+    }
+    section.dk .term { background: rgba(250,247,240,.055); }
+    .tc { opacity: .3; }
+    .tk { color: var(--accent); }
+    .tv { opacity: .68; }
+    .ta { color: var(--accent); margin-right: 8px; }
+
+    /* ─────────────────────────────────────────
+       PROGRESS
+    ───────────────────────────────────────── */
+    .pbar-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .pbar-lbl { font-family: var(--font-m); font-size: 11px; opacity: .6; min-width: 60px; }
+    .pbar { font-family: var(--font-m); font-size: 15px; color: var(--accent); flex: 1; letter-spacing: -.02em; }
+    .pbar-pct { font-family: var(--font-m); font-size: 11px; opacity: .45; min-width: 36px; text-align: right; }
+
+    /* ─────────────────────────────────────────
+       PROBLEM ITEMS
+    ───────────────────────────────────────── */
+    .prob {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 18px;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--rule);
+      align-items: start;
+    }
+    .prob-n { font-family: var(--font-m); font-size: 10px; color: var(--accent); letter-spacing: .1em; padding-top: 5px; }
+
+    /* ─────────────────────────────────────────
+       TIMELINE
+    ───────────────────────────────────────── */
+    .tl-item {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 24px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--rule);
+      align-items: start;
+    }
+    .tl-ph { font-family: var(--font-m); font-size: 10px; letter-spacing: .16em; color: var(--accent); text-transform: uppercase; padding-top: 4px; line-height: 1.8; }
+    @media(max-width:600px) { .tl-item { grid-template-columns: 1fr; } }
+
+    /* ─────────────────────────────────────────
+       MATRIX
+    ───────────────────────────────────────── */
+    .matrix-wrap { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; margin-top: 48px; }
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 2px;
+      max-width: 460px;
+      flex-shrink: 0;
+    }
+    .mc {
+      padding: 22px;
+      border: 1px solid var(--rule);
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .mc.hi { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+    .mc-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+    .mc-desc { font-size: 11px; opacity: .65; font-family: var(--font-m); line-height: 1.5; }
+    .ax { font-family: var(--font-m); font-size: 9px; letter-spacing: .18em; opacity: .35; text-transform: uppercase; }
+
+    /* ─────────────────────────────────────────
+       FUND ROWS
+    ───────────────────────────────────────── */
+    .fund-row { display: flex; align-items: center; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+    .fund-icon { font-family: var(--font-m); font-size: 12px; color: var(--accent); min-width: 20px; }
+    .fund-name { font-weight: 600; flex: 1; font-size: 15px; }
+    .fund-amt  { font-family: var(--font-m); font-size: 13px; opacity: .55; min-width: 72px; text-align: right; }
+    .fund-pct  { font-family: var(--font-m); font-size: 12px; color: var(--accent); min-width: 34px; text-align: right; }
+    .fund-note { font-size: 13px; opacity: .48; padding: 6px 0 14px 38px; line-height: 1.6; }
+
+    /* ─────────────────────────────────────────
+       FOUNDER
+    ───────────────────────────────────────── */
+    .founder {
+      border: 1px solid var(--rule);
+      padding: 36px;
+      max-width: 460px;
+    }
+    .founder-init {
+      width: 64px; height: 64px;
+      background: var(--accent);
+      color: var(--paper);
+      font-family: var(--font-d);
+      font-size: 24px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 22px;
+    }
+    .founder-name  { font-size: 20px; font-weight: 700; margin-bottom: 3px; }
+    .founder-title { font-family: var(--font-m); font-size: 11px; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 16px; }
+    .founder-bio   { font-size: 14px; opacity: .6; line-height: 1.75; }
+    .founder-email { font-family: var(--font-m); font-size: 12px; color: var(--accent); margin-top: 18px; }
+
+    /* ─────────────────────────────────────────
+       § 00 COVER
+    ───────────────────────────────────────── */
+    #s00 {
+      background: var(--ink);
+      color: var(--paper);
+      justify-content: flex-end;
+      padding-bottom: 88px;
+      overflow: hidden;
+    }
+    .cover-bg {
+      position: absolute;
+      top: 50%; right: var(--px);
+      transform: translateY(-50%);
+      font-family: var(--font-m);
+      font-size: clamp(40px, 9vw, 100px);
+      letter-spacing: .12em;
+      opacity: .055;
+      pointer-events: none;
+      user-select: none;
+      line-height: 1.4;
+      text-align: right;
+    }
+    .cover-ew  { font-family: var(--font-d); font-size: clamp(72px, 14vw, 150px); font-weight: 700; letter-spacing: -.04em; line-height: .9; }
+    .cover-tag { font-family: var(--font-s); font-style: italic; font-size: clamp(18px, 2.8vw, 30px); opacity: .6; margin-top: 22px; }
+    .cover-meta { display: flex; gap: 44px; margin-top: 52px; flex-wrap: wrap; }
+    .cm-lbl { font-family: var(--font-m); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; opacity: .32; margin-bottom: 4px; }
+    .cm-val { font-family: var(--font-d); font-size: 17px; font-weight: 600; }
+
+    /* ─────────────────────────────────────────
+       § 11 CTA
+    ───────────────────────────────────────── */
+    #s11 { background: var(--accent); color: var(--paper); }
+    #s11 .marker { color: rgba(250,247,240,.55); }
+    #s11 .rule { background: rgba(250,247,240,.45); }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--paper);
+      color: var(--accent);
+      font-family: var(--font-d);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: .1em;
+      padding: 14px 28px;
+      margin-top: 32px;
+      text-decoration: none;
+      transition: opacity .2s;
+    }
+    .cta-btn:hover { opacity: .85; }
+    .cta-btn + .cta-btn { margin-top: 10px; margin-left: 0; display: inline-flex; }
+    .cta-contact { font-family: var(--font-m); font-size: 13px; opacity: .65; margin-top: 28px; line-height: 1.9; }
+
+    /* ─────────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────────── */
+    footer {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 22px var(--px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .fc { font-family: var(--font-m); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; opacity: .35; }
+
+    /* ─────────────────────────────────────────
+       INLINE HELPERS
+    ───────────────────────────────────────── */
+    .sep { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
+    .pill {
+      display: inline-block;
+      font-family: var(--font-m);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid var(--rule);
+      opacity: .55;
+      margin-top: 14px;
+    }
+    .pill.live { border-color: var(--accent); color: var(--accent); opacity: 1; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     PASSWORD GATE
+═══════════════════════════════════════ -->
+<div id="gate">
+  <div class="g-wordmark" id="gw">EEVOLVV</div>
+  <div class="g-eyebrow" id="ge">§ INVESTOR ACCESS · CONFIDENTIAL · 2026</div>
+  <div class="g-question" id="gq">Ready to eevolvv?</div>
+  <form class="g-form" id="gf" onsubmit="unlock(event)">
+    <input id="pw" class="g-input" type="password" placeholder="enter password" autocomplete="off" />
+    <div id="gerr" class="g-error"></div>
+    <button type="submit" class="g-btn">→ &nbsp;Enter</button>
+  </form>
+</div>
+
+<!-- ═══════════════════════════════════════
+     INVESTOR DECK
+═══════════════════════════════════════ -->
+<div id="deck">
+
+  <nav>
+    <div class="nav-logo">EEVOLVV</div>
+    <div class="nav-dots" id="ndots"></div>
+    <div class="nav-tag">CONFIDENTIAL · PRE-SEED · 2026</div>
+  </nav>
+
+  <!-- ─── § 00 COVER ─────────────────────── -->
+  <section id="s00">
+    <div class="cover-bg">◌→◎<br>◎→●<br>●→✦</div>
+    <div class="inner">
+      <div class="marker fi">§ 00 <span>· INVESTOR DECK · Q2 2026</span></div>
+      <div class="cover-ew fi d1">eevolvv</div>
+      <div class="cover-tag fi d2">A service, not software.</div>
+      <div class="cover-meta fi d3">
+        <div><div class="cm-lbl">Round</div><div class="cm-val">Pre-Seed</div></div>
+        <div><div class="cm-lbl">Raising</div><div class="cm-val">$1,000,000</div></div>
+        <div><div class="cm-lbl">Stage</div><div class="cm-val">MVP · Live</div></div>
+        <div><div class="cm-lbl">Date</div><div class="cm-val">Q2 2026</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 01 PROBLEM ────────────────────── -->
+  <section id="s01">
+    <div class="inner">
+      <div class="marker fi">§ 01 <span>· THE PROBLEM</span></div>
+      <h2 class="fi d1">Small businesses are<br><span class="it">drowning in tools,</span><br>not insights.</h2>
+      <div class="rule fi d2"></div>
+
+      <div class="fi d2">
+        <div class="prob">
+          <div class="prob-n">N=01</div>
+          <div>
+            <h3>Software ≠ Strategy</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">CRMs, ERPs, project managers — none diagnose. They record symptoms, never cure them. The average SMB runs 6+ disconnected tools and still can't answer "why are we stuck?"</p>
+          </div>
+        </div>
+        <div class="prob">
+          <div class="prob-n">N=02</div>
+          <div>
+            <h3>Consulting Is Out of Reach</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">McKinsey charges $500K+ per engagement. The 99% of SMBs that need transformation most are permanently priced out. The advice gap is widening, not closing.</p>
+          </div>
+        </div>
+        <div class="prob">
+          <div class="prob-n">N=03</div>
+          <div>
+            <h3>Generic AI Has No Context</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">Asking ChatGPT for business strategy is like asking a stranger for a health diagnosis. No continuity, no accountability, no institutional memory. Context is everything.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 02 SOLUTION ───────────────────── -->
+  <section id="s02" class="dk">
+    <div class="inner">
+      <div class="marker fi">§ 02 <span>· THE SOLUTION</span></div>
+      <h2 class="fi d1">McKinsey-grade intelligence.<br><span class="it">Without the McKinsey bill.</span></h2>
+      <div class="rule fi d2"></div>
+      <p class="lead fi d2">eevolvv is an AI-native business transformation <em>service</em>. We pair a proprietary diagnostic engine with ongoing AI advisory — giving every SMB access to the insight that was once reserved for Fortune 500s.</p>
+
+      <div class="term fi d3" style="margin-top:44px;">
+        <div class="tc">// eevolvving forward, together</div>
+        <div><span class="ta">→</span><span class="tk">DIAGNOSE</span>  <span class="tv">↳ AI-led session · maps business health across 12 nodes</span></div>
+        <div><span class="ta">→</span><span class="tk">ROADMAP &nbsp;</span><span class="tv">↳ 90-day transformation plan, industry-benchmarked</span></div>
+        <div><span class="ta">→</span><span class="tk">EXECUTE &nbsp;</span><span class="tv">↳ Ongoing AI advisory + vetted micro-consulting network</span></div>
+        <div><span class="ta">→</span><span class="tk">REVIEW &nbsp;&nbsp;</span><span class="tv">↳ Day-60 audit · iteration · re-calibration</span></div>
+        <div class="tc" style="margin-top:6px;">// result: a business that can't stop eevolvving</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 03 PRODUCT ────────────────────── -->
+  <section id="s03">
+    <div class="inner">
+      <div class="marker fi">§ 03 <span>· PRODUCT</span></div>
+      <h2 class="fi d1">The platform.<br><span class="it">Alive and learning.</span></h2>
+      <div class="rule fi d2"></div>
+
+      <div class="g2 fi d2" style="margin-top:44px;">
+        <div class="card">
+          <div class="card-lbl">CORE · LIVE NOW</div>
+          <h3>Diagnostic Engine</h3>
+          <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">AI-powered conversation that maps business health across 12 dimensions. No forms. No jargon. A real conversation that produces a real Evolution Report.</p>
+          <div class="pill live" style="margin-top:18px;">▓▓▓▓▓▓▓░░░ &nbsp;LIVE</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">CORE · LIVE NOW</div>
+          <h3>Evolution Report</h3>
+          <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Post-diagnostic report delivered within minutes. Industry-benchmarked, actionable, specific — the first thing most owners have received that actually fits their business.</p>
+          <div class="pill live" style="margin-top:18px;">▓▓▓▓▓▓▓░░░ &nbsp;LIVE</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">IN DEVELOPMENT</div>
+          <h3>eevolvv/talent</h3>
+          <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Micro-contracting marketplace for vetted consultants and specialists. Bridge from AI diagnosis to human execution. Rebranding from Archimedes.</p>
+          <div class="pill" style="margin-top:18px;">▓▓▓░░░░░░░ &nbsp;IN BUILD</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">ROADMAP · Q3 2026+</div>
+          <h3>WhatsApp Integration</h3>
+          <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Delivery for the Micro tier. Reaching 25M+ corner stores, kirana shops, sari-sari stores, and bodegas where they already operate — no app required.</p>
+          <div class="pill" style="margin-top:18px;">▓░░░░░░░░░ &nbsp;PLANNED</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 04 MARKET ─────────────────────── -->
+  <section id="s04" class="dk">
+    <div class="inner">
+      <div class="marker fi">§ 04 <span>· MARKET SIZE</span></div>
+      <h2 class="fi d1">The market isn't<br><span class="it">a niche. It's the world.</span></h2>
+      <div class="rule fi d2"></div>
+
+      <div class="g3 fi d2" style="margin-top:48px;">
+        <div class="card">
+          <div class="card-lbl">TAM · GLOBAL SMB ADVISORY</div>
+          <div class="card-val">$340B</div>
+          <div class="card-sub">Total addressable market</div>
+          <div style="margin-top:18px;">
+            <div class="pbar-row"><div class="pbar-lbl">Global</div><div class="pbar">▓▓▓▓▓▓▓▓▓▓</div><div class="pbar-pct">100%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">SAM · ENGLISH-SPEAKING DIGITAL SMBS</div>
+          <div class="card-val">$68B</div>
+          <div class="card-sub">Serviceable addressable market</div>
+          <div style="margin-top:18px;">
+            <div class="pbar-row"><div class="pbar-lbl">SAM</div><div class="pbar">▓▓░░░░░░░░</div><div class="pbar-pct">20%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">SOM · 36-MONTH TARGET</div>
+          <div class="card-val">$18M</div>
+          <div class="card-sub">Serviceable obtainable market</div>
+          <div style="margin-top:18px;">
+            <div class="pbar-row"><div class="pbar-lbl">Yr 1–3</div><div class="pbar">▓░░░░░░░░░</div><div class="pbar-pct">0.03%</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="term fi d3" style="margin-top:40px;">
+        <div class="tc">// market context</div>
+        <div><span class="ta">→</span><span class="tk">400M+</span>   <span class="tv">SMBs globally (World Bank, 2024)</span></div>
+        <div><span class="ta">→</span><span class="tk">25M+ &nbsp;</span><span class="tv">micro-retailers in emerging markets (Phase 2 target)</span></div>
+        <div><span class="ta">→</span><span class="tk">&lt;1%  &nbsp;</span><span class="tv">of SMBs have ever accessed professional business advisory</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 05 BUSINESS MODEL ─────────────── -->
+  <section id="s05">
+    <div class="inner">
+      <div class="marker fi">§ 05 <span>· BUSINESS MODEL</span></div>
+      <h2 class="fi d1">Recurring revenue.<br><span class="it">The forever customer.</span></h2>
+      <div class="rule fi d2"></div>
+      <p class="lead fi d2">The AI learns the business so deeply that switching becomes genuinely prohibitive — not through lock-in tactics, but through irreplaceability. Context compounds every month.</p>
+
+      <div class="g3 fi d3" style="margin-top:48px;">
+        <div class="card" style="border-top:3px solid rgba(20,20,19,.18);">
+          <div class="card-lbl">TIER · MICRO</div>
+          <div class="card-val">$29<span style="font-size:16px;font-weight:400;opacity:.45;">–49/mo</span></div>
+          <p style="margin-top:14px;font-size:14px;opacity:.6;line-height:1.7;">Corner stores, kirana, sari-sari, bodegas. WhatsApp-first. The underserved 99%. Global micro-retail expansion.</p>
+        </div>
+        <div class="card" style="border-top:3px solid var(--accent);">
+          <div class="card-lbl">TIER · CORE · FLAGSHIP</div>
+          <div class="card-val">$299<span style="font-size:16px;font-weight:400;opacity:.45;">/mo</span></div>
+          <p style="margin-top:14px;font-size:14px;opacity:.6;line-height:1.7;">SMBs $0.5M–$10M revenue. Full diagnostic, Evolution Report, ongoing AI advisory, quarterly reviews.</p>
+        </div>
+        <div class="card" style="border-top:3px solid var(--ink);">
+          <div class="card-lbl">TIER · ENTERPRISE · WEDGE</div>
+          <div class="card-val">$2,500<span style="font-size:16px;font-weight:400;opacity:.45;">/mo</span></div>
+          <p style="margin-top:14px;font-size:14px;opacity:.6;line-height:1.7;">QA programs + finance audit. High-contract-value, underserved by AI diagnostics. SOX/ISO regulatory urgency means motivated buyers who sign fast.</p>
+        </div>
+      </div>
+
+      <div class="fi d4" style="margin-top:28px;">
+        <div class="term">
+          <div class="tc">// enterprise_wedge.log — the unsexy, high-margin play</div>
+          <div><span class="ta">→</span><span class="tk">QA PROGRAMS &nbsp;&nbsp;</span><span class="tv">↳ ISO 9001, Six Sigma, CMMI audits — $50K–$500K/yr consultant spend, ripe for AI</span></div>
+          <div><span class="ta">→</span><span class="tk">FINANCE AUDIT &nbsp;</span><span class="tv">↳ CFOs at $5M–$50M cos. — too small for Big 4, too complex for generic tools</span></div>
+          <div><span class="ta">→</span><span class="tk">CONTRACT VALUE </span><span class="tv">↳ $2K–$10K/mo per account · 3 enterprise clients = meaningful MRR</span></div>
+          <div><span class="ta">→</span><span class="tk">STRATEGIC ROLE </span><span class="tv">↳ Enterprise revenue funds growth while SMB builds brand + data flywheel</span></div>
+        </div>
+      </div>
+
+      <div class="fi d5" style="margin-top:28px;padding:26px;border:1px solid var(--rule);border-left:3px solid var(--accent);">
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:.18em;color:var(--accent);margin-bottom:14px;text-transform:uppercase;">The Forever Customer Model</div>
+        <p style="font-size:15px;opacity:.65;line-height:1.75;">Every month the AI ingests more data, learns more patterns, and builds a deeper model of the business. The switching cost compounds — not through friction, but through genuine irreplaceability. eevolvv becomes the institutional memory of the company.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 06 TRACTION ───────────────────── -->
+  <section id="s06" class="dk">
+    <div class="inner">
+      <div class="marker fi">§ 06 <span>· TRACTION</span></div>
+      <h2 class="fi d1">Early signal.<br><span class="it">Real proof.</span></h2>
+      <div class="rule fi d2"></div>
+
+      <div class="g4 fi d2" style="margin-top:48px;">
+        <div class="card">
+          <div class="card-lbl">AI ENGINE</div>
+          <div class="card-val">Live</div>
+          <div class="card-sub">eevolvv.com deployed</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">INDUSTRIES TRAINED</div>
+          <div class="card-val">14</div>
+          <div class="card-sub">Industry context blocks</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">STAGE</div>
+          <div class="card-val" style="font-size:28px;">Pre-seed</div>
+          <div class="card-sub">Q2 2026 · Building pipeline</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">MRR TARGET</div>
+          <div class="card-val">$50K</div>
+          <div class="card-sub">By Q4 2026</div>
+        </div>
+      </div>
+
+      <div class="term fi d3" style="margin-top:40px;">
+        <div class="tc">// business_audit.log — Q2 2026</div>
+        <div><span class="ta">→</span><span class="tk">PRODUCT &nbsp;</span><span class="tv">eevolvv.com live · homepage-v2 shipped · diagnostic engine deployed</span></div>
+        <div><span class="ta">→</span><span class="tk">INFRA &nbsp;&nbsp;&nbsp;</span><span class="tv">Supabase + Vercel + Resend · production-stable stack</span></div>
+        <div><span class="ta">→</span><span class="tk">AI &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">Claude claude-sonnet-4-6 · 14 industry context blocks in production</span></div>
+        <div><span class="ta">→</span><span class="tk">TALENT &nbsp;&nbsp;</span><span class="tv">eevolvv/talent rebrand ✓ complete · marketplace build in progress</span></div>
+        <div><span class="ta">→</span><span class="tk">NEXT &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">enterprise pilot program · eevolvv/talent beta · WhatsApp Phase 1</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 07 GO-TO-MARKET ───────────────── -->
+  <section id="s07">
+    <div class="inner">
+      <div class="marker fi">§ 07 <span>· GO-TO-MARKET</span></div>
+      <h2 class="fi d1">Three waves.<br><span class="it">One compounding flywheel.</span></h2>
+      <div class="rule fi d2"></div>
+
+      <div class="fi d2" style="margin-top:44px;">
+        <div class="tl-item">
+          <div class="tl-ph">WAVE 01<br>NOW → Q4 '26</div>
+          <div>
+            <h3>Direct + Organic</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">eevolvv.com · diagnostic funnel · SEO on transformation keywords · founder-led outbound. Target: Core tier, English-speaking SMBs $500K–$10M.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-ph">WAVE 02<br>Q1–Q3 '27</div>
+          <div>
+            <h3>eevolvv/talent Network Effect</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">Consultants join talent marketplace → refer clients → clients upgrade to Core. Supply-side acquisition compounds demand-side growth. Self-reinforcing loop.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-ph">WAVE 03<br>Q4 '27+</div>
+          <div>
+            <h3>WhatsApp-First Micro Tier</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">25M+ micro-retailers globally. No app download. No desktop. Just WhatsApp. $29–49/mo × massive volume = a new revenue frontier in emerging markets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 08 COMPETITIVE ─────────────────── -->
+  <section id="s08" class="dk">
+    <div class="inner">
+      <div class="marker fi">§ 08 <span>· COMPETITIVE LANDSCAPE</span></div>
+      <h2 class="fi d1">Nobody else is<br><span class="it">doing exactly this.</span></h2>
+      <div class="rule fi d2"></div>
+
+      <div class="matrix-wrap fi d2">
+        <div>
+          <div class="ax" style="margin-bottom:8px;text-align:right;">→ HIGH AFFORDABILITY</div>
+          <div class="matrix">
+            <div class="mc">
+              <div class="mc-name">Generic AI</div>
+              <div class="mc-desc">ChatGPT, Gemini<br>Cheap · no context</div>
+            </div>
+            <div class="mc hi">
+              <div class="mc-name">eevolvv ✦</div>
+              <div class="mc-desc">Affordable + deep context<br>The only player here</div>
+            </div>
+            <div class="mc">
+              <div class="mc-name">SaaS Tools</div>
+              <div class="mc-desc">HubSpot, Salesforce<br>Affordable · no strategy</div>
+            </div>
+            <div class="mc">
+              <div class="mc-name">Consultants</div>
+              <div class="mc-desc">McKinsey, BCG<br>Deep context · unaffordable</div>
+            </div>
+          </div>
+          <div class="ax" style="margin-top:8px;">↑ DEEP BUSINESS CONTEXT</div>
+        </div>
+
+        <div style="flex:1;min-width:240px;">
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:.18em;opacity:.35;margin-bottom:18px;text-transform:uppercase;">Why eevolvv wins</div>
+          <div class="term">
+            <div><span class="ta">→</span><span class="tk">VS McKinsey</span> <span class="tv">↳ 100× cheaper · AI-speed delivery</span></div>
+            <div><span class="ta">→</span><span class="tk">VS ChatGPT </span> <span class="tv">↳ Deep context · continuity · accountability</span></div>
+            <div><span class="ta">→</span><span class="tk">VS HubSpot </span> <span class="tv">↳ Strategy, not just record-keeping</span></div>
+            <div><span class="ta">→</span><span class="tk">MOAT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="tv">↳ Context compounds monthly → forever customer</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 09 TEAM ────────────────────────── -->
+  <section id="s09">
+    <div class="inner">
+      <div class="marker fi">§ 09 <span>· TEAM</span></div>
+      <h2 class="fi d1">Built by someone who<br><span class="it">has lived this problem.</span></h2>
+      <div class="rule fi d2"></div>
+
+      <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start;margin-top:48px;" class="fi d2">
+        <div class="founder">
+          <div class="founder-init">E</div>
+          <div class="founder-name">Eduardo Barbosa</div>
+          <div class="founder-title">Founder &amp; CEO</div>
+          <div class="founder-bio">[Bio placeholder — background in business transformation, AI systems, and SMB markets. Deep conviction that the advice gap is the biggest unsolved problem in global business.]</div>
+          <div class="founder-email">→ eduardocbarbosa1998@gmail.com</div>
+        </div>
+
+        <div style="flex:1;min-width:240px;padding-top:4px;">
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:.18em;opacity:.38;margin-bottom:18px;text-transform:uppercase;">Hiring with this raise</div>
+          <div class="term">
+            <div class="tc">// open seats</div>
+            <div><span class="ta">→</span><span class="tk">CTO / HEAD OF AI</span>  <span class="tv">↳ AI systems · product architecture</span></div>
+            <div><span class="ta">→</span><span class="tk">HEAD OF GTM &nbsp;&nbsp;&nbsp;</span>  <span class="tv">↳ growth · partnerships · PLG</span></div>
+            <div><span class="ta">→</span><span class="tk">[ADVISOR] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  <span class="tv">↳ SMB market · emerging markets</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 10 USE OF FUNDS ────────────────── -->
+  <section id="s10">
+    <div class="inner">
+      <div class="marker fi">§ 10 <span>· USE OF FUNDS</span></div>
+      <h2 class="fi d1">$1M deployed with<br><span class="it">precision and intent.</span></h2>
+      <div class="rule fi d2"></div>
+
+      <div class="g2 fi d2" style="margin-top:48px;align-items:start;">
+        <div>
+          <div class="fund-row">
+            <div class="fund-icon">▓</div>
+            <div class="fund-name">Team &amp; Payroll</div>
+            <div class="fund-amt">$400K</div>
+            <div class="fund-pct">40%</div>
+          </div>
+          <div class="fund-note">CTO / Head of AI · Head of GTM · first customer success hire</div>
+
+          <div class="fund-row">
+            <div class="fund-icon">▓</div>
+            <div class="fund-name">Sales &amp; Client Acquisition</div>
+            <div class="fund-amt">$300K</div>
+            <div class="fund-pct">30%</div>
+          </div>
+          <div class="fund-note">outbound · enterprise pilot program · partnership development · founder-led GTM</div>
+
+          <div class="fund-row">
+            <div class="fund-icon">▓</div>
+            <div class="fund-name">Marketing</div>
+            <div class="fund-amt">$150K</div>
+            <div class="fund-pct">15%</div>
+          </div>
+          <div class="fund-note">SEO · paid acquisition · content · brand · eevolvv/talent launch</div>
+
+          <div class="fund-row">
+            <div class="fund-icon">▓</div>
+            <div class="fund-name">Infrastructure &amp; Runway</div>
+            <div class="fund-amt">$150K</div>
+            <div class="fund-pct">15%</div>
+          </div>
+          <div class="fund-note">equipment · 18+ months runway · legal · ops · contingency</div>
+        </div>
+
+        <div>
+          <div style="border:1px solid var(--rule);padding:30px;">
+            <div style="font-family:var(--font-m);font-size:10px;letter-spacing:.18em;opacity:.38;margin-bottom:18px;text-transform:uppercase;">18-Month Milestones</div>
+            <div style="font-family:var(--font-m);font-size:13px;line-height:2.1;">
+              <div><span style="color:var(--accent);">→</span> homepage-v2 shipped · true AI diagnostic live</div>
+              <div><span style="color:var(--accent);">→</span> eevolvv/talent beta · 50 consultants onboarded</div>
+              <div><span style="color:var(--accent);">→</span> $50K MRR achieved</div>
+              <div><span style="color:var(--accent);">→</span> 3 paying enterprise accounts</div>
+              <div><span style="color:var(--accent);">→</span> Seed round raised · WhatsApp Phase 1 live</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 11 CTA ─────────────────────────── -->
+  <section id="s11">
+    <div class="inner">
+      <div class="marker fi">§ 11 <span>· LET'S BUILD THIS</span></div>
+      <h2 class="fi d1" style="font-size:clamp(44px,8vw,88px);">Join the<br>evolution.</h2>
+      <div class="rule fi d2"></div>
+      <p class="lead fi d2" style="color:rgba(250,247,240,.72);">We're raising $1M to build the world's most accessible business transformation service. If you believe the advice gap is real — and that AI is the mechanism to close it — we'd like to talk.</p>
+
+      <div class="fi d3" style="display:flex;flex-direction:column;align-items:flex-start;">
+        <a href="mailto:hello@eevolvv.com" class="cta-btn">→ &nbsp;Get in touch</a>
+        <a href="https://calendly.com/hello-eevolvv" target="_blank" rel="noopener noreferrer" class="cta-btn">↳ &nbsp;Schedule a call</a>
+      </div>
+
+      <div class="cta-contact fi d4">
+        <div>Eduardo Barbosa · Founder &amp; CEO</div>
+        <div>eduardocbarbosa1998@gmail.com</div>
+        <div style="opacity:.5;margin-top:6px;">eevolvv.com · Q2 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="fc">© 2026 · EEVOLVV · CONFIDENTIAL — NOT FOR DISTRIBUTION</div>
+    <div class="fc">eevolvving forward, together.</div>
+  </footer>
+
+</div><!-- /deck -->
+
+<script>
+  /* ─── Gate ───────────────────────────── */
+  const PASS = 'eevolvv!';
+
+  function unlock(e) {
+    e.preventDefault();
+    const val  = document.getElementById('pw').value;
+    const err  = document.getElementById('gerr');
+    if (val === PASS) {
+      const gate = document.getElementById('gate');
+      const deck = document.getElementById('deck');
+      gate.classList.add('out');
+      setTimeout(() => {
+        gate.style.display = 'none';
+        deck.classList.add('on');
+        initDeck();
+      }, 680);
+    } else {
+      err.textContent = '→ incorrect. try again.';
+      document.getElementById('pw').value = '';
+      document.getElementById('pw').focus();
+      setTimeout(() => { err.textContent = ''; }, 2800);
+    }
+  }
+
+  document.getElementById('pw').addEventListener('keydown', e => {
+    if (e.key === 'Enter') unlock(e);
+  });
+
+  /* gate entrance */
+  (function gateIn() {
+    const gw = document.getElementById('gw');
+    const ge = document.getElementById('ge');
+    const gq = document.getElementById('gq');
+    const gf = document.getElementById('gf');
+    setTimeout(() => { gw.classList.add('g-in-1'); }, 80);
+    setTimeout(() => { ge.classList.add('g-in-2'); }, 220);
+    setTimeout(() => { gq.classList.add('g-in-1'); }, 360);
+    setTimeout(() => { gf.classList.add('g-in-2'); }, 500);
+  })();
+
+  /* ─── Deck init ──────────────────────── */
+  function initDeck() {
+    const sections = document.querySelectorAll('section');
+    const ndots    = document.getElementById('ndots');
+
+    /* build nav dots */
+    sections.forEach((sec, i) => {
+      const d = document.createElement('div');
+      d.className = 'nd';
+      d.title = sec.id.toUpperCase();
+      d.addEventListener('click', () => sec.scrollIntoView({ behavior: 'smooth' }));
+      ndots.appendChild(d);
+    });
+
+    /* fade-in observer */
+    const fiObs = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('vis'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fi').forEach(el => fiObs.observe(el));
+
+    /* active dot observer */
+    const dotObs = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          const idx = Array.from(sections).indexOf(en.target);
+          document.querySelectorAll('.nd').forEach((d, i) => d.classList.toggle('on', i === idx));
+        }
+      });
+    }, { threshold: 0.45 });
+    sections.forEach(s => dotObs.observe(s));
+  }
+</script>
+</body>
+</html>
