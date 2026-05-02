@@ -6,20 +6,26 @@
   <title>EEVOLVV · INVESTOR DECK · 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&family=Instrument+Serif:ital@0;1&family=Press+Start+2P&display=swap" rel="stylesheet" />
   <style>
     :root {
       --paper: #faf7f0;
       --ink:   #141413;
-      --accent: #8C2B1A;
+      --accent: oklch(0.45 0.13 25);
       --rule:  rgba(20,20,19,.14);
       --rule-s: rgba(20,20,19,.30);
-      --font-d: 'Space Grotesk', sans-serif;
-      --font-m: 'JetBrains Mono', monospace;
-      --font-s: 'Newsreader', serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-serif: 'Newsreader', serif;
+      --site-max: 1280px;
+      --site-pad-x: 32px;
+      --anchor-scroll-margin: 72px;
       --max: 1100px;
       --px: clamp(24px, 5vw, 80px);
     }
+
+    ::selection { background: var(--ink); color: var(--paper); }
+    ::-moz-selection { background: var(--ink); color: var(--paper); }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -47,23 +53,51 @@
       z-index: 9999;
       gap: 0;
       padding: var(--px);
-      transition: opacity .65s ease;
+      transition: opacity .65s ease, transform .65s cubic-bezier(0.8, 0, 0.2, 1);
     }
-    #gate.out { opacity: 0; pointer-events: none; }
+    #gate::before {
+      content: ""; position: absolute; inset: -100px 0 0 0; z-index: -1;
+      background-size: 64px 64px;
+      background-image: linear-gradient(to right, rgba(250,247,240,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(250,247,240,0.03) 1px, transparent 1px);
+      animation: gridDrift 20s linear infinite;
+    }
+    #gate.out { opacity: 0; transform: scale(1.05); pointer-events: none; filter: blur(10px); }
 
     .g-wordmark {
-      font-family: var(--font-d);
-      font-size: clamp(36px, 7vw, 64px);
+      position: relative;
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: clamp(44px, 8vw, 76px);
       font-weight: 700;
       letter-spacing: .08em;
-      color: var(--paper);
+      text-transform: uppercase;
+      color: transparent;
+      background: linear-gradient(110deg, var(--paper) 10%, rgba(250,247,240,0.6) 30%, var(--accent) 50%, rgba(250,247,240,0.6) 70%, var(--paper) 90%);
+      background-size: 250% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: epicEntrance 3s cubic-bezier(0.1, 0.9, 0.1, 1) forwards, gradientShift 12s linear infinite, matrixGlitch 7.5s infinite;
+      z-index: 2;
       margin-bottom: 6px;
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity .5s ease, transform .5s ease;
     }
+    .g-wordmark::before {
+      content: attr(data-text);
+      position: absolute; top:0; left:0; right:0; bottom:0;
+      color: transparent;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      filter: blur(14px);
+      z-index: -1;
+      opacity: 0.5;
+      animation: epicGlow 5s infinite, gradientShift 12s linear infinite;
+      pointer-events: none;
+    }
+
     .g-eyebrow {
-      font-family: var(--font-m);
+      font-family: var(--font-mono);
       font-size: 11px;
       letter-spacing: .22em;
       text-transform: uppercase;
@@ -73,11 +107,12 @@
       transition: opacity .5s ease .12s;
     }
     .g-question {
-      font-family: var(--font-d);
-      font-size: clamp(22px, 3.5vw, 34px);
-      font-weight: 500;
-      color: var(--paper);
-      margin-bottom: 32px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
       text-align: center;
       opacity: 0;
       transform: translateY(12px);
@@ -86,43 +121,53 @@
     .g-form {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 12px;
+      align-items: stretch;
+      gap: 16px;
       width: 100%;
-      max-width: 340px;
+      max-width: 360px;
       opacity: 0;
       transition: opacity .5s ease .34s;
+      background: rgba(250,247,240,.03);
+      border: 1px solid rgba(250,247,240,.1);
+      border-left: 3px solid var(--accent);
+      padding: 32px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
     }
+    .g-input-wrap {
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid rgba(250,247,240,.2);
+      padding-bottom: 8px;
+      transition: border-color .2s;
+    }
+    .g-input-wrap:focus-within { border-bottom-color: var(--accent); }
+    .g-input-prompt { color: var(--accent); font-family: var(--font-mono); font-size: 14px; }
+    
     .g-input {
       width: 100%;
       background: transparent;
       border: none;
-      border-bottom: 2px solid rgba(250,247,240,.25);
       color: var(--paper);
-      font-family: var(--font-m);
+      font-family: var(--font-mono);
       font-size: 16px;
-      padding: 12px 4px;
       outline: none;
-      letter-spacing: .1em;
-      text-align: center;
-      transition: border-color .2s;
+      letter-spacing: .2em;
     }
-    .g-input::placeholder { color: rgba(250,247,240,.25); }
-    .g-input:focus { border-bottom-color: var(--accent); }
+    .g-input::placeholder { color: rgba(250,247,240,.2); letter-spacing: .1em; font-size: 13px; }
     .g-error {
-      font-family: var(--font-m);
+      font-family: var(--font-mono);
       font-size: 11px;
       color: var(--accent);
       letter-spacing: .1em;
       min-height: 14px;
-      text-align: center;
+      text-align: left;
     }
     .g-btn {
       width: 100%;
       background: var(--accent);
       color: var(--paper);
       border: none;
-      font-family: var(--font-d);
+      font-family: var(--font-display);
       font-size: 13px;
       font-weight: 600;
       letter-spacing: .14em;
@@ -173,7 +218,7 @@
       image-rendering: crisp-edges;
     }
     .nav-tag {
-      font-family: var(--font-m);
+      font-family: var(--font-mono);
       font-size: 10px;
       letter-spacing: .18em;
       text-transform: uppercase;
@@ -210,25 +255,80 @@
     .inner { max-width: var(--max); margin: 0 auto; width: 100%; }
 
     /* ─────────────────────────────────────────
-       FADE-IN
+       ANIMATIONS & EFFECTS
     ───────────────────────────────────────── */
-    .fi {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity .7s ease, transform .7s ease;
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes fadeUp { 0% { opacity: 0; transform: translateY(24px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes drawLine { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    @keyframes gridDrift { 0% { transform: translateY(0); } 100% { transform: translateY(64px); } }
+
+    @keyframes matrixGlitch {
+      0%, 94%, 100% { transform: translate(0, 0) skewX(0); }
+      95% { transform: translate(-5px, 2px) skewX(15deg); filter: drop-shadow(4px 0 var(--accent)); }
+      96% { transform: translate(4px, -3px) skewX(-15deg); filter: drop-shadow(-4px 0 rgba(250,247,240,0.4)); }
+      97% { transform: translate(-2px, 1px) skewX(5deg); filter: drop-shadow(0 0 0); }
+      98% { transform: translate(0, 0) skewX(0); }
     }
-    .fi.vis { opacity: 1; transform: translateY(0); }
-    .fi.d1 { transition-delay: .1s; }
-    .fi.d2 { transition-delay: .2s; }
-    .fi.d3 { transition-delay: .3s; }
-    .fi.d4 { transition-delay: .4s; }
-    .fi.d5 { transition-delay: .55s; }
+
+    .anim-fade-up { animation: fadeUp 0.9s cubic-bezier(0.2,0.8,0.2,1) forwards; opacity: 0; }
+    .anim-fade-in { animation: fadeIn 1.2s ease forwards; opacity: 0; }
+    .anim-draw-line { animation: drawLine 1.4s cubic-bezier(0.65,0,0.35,1) forwards; transform-origin: left; transform: scaleX(0); }
+    .anim-blink { animation: blink 1.1s steps(1) infinite; }
+
+    .grid-drift {
+      position: absolute; inset: -100px 0 0 0; z-index: -1;
+      background-size: 64px 64px;
+      background-image: linear-gradient(to right, rgba(20,20,19,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(20,20,19,0.03) 1px, transparent 1px);
+      animation: gridDrift 20s linear infinite;
+    }
+    section.dk .grid-drift {
+      background-image: linear-gradient(to right, rgba(250,247,240,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(250,247,240,0.03) 1px, transparent 1px);
+    }
+    
+    .hero-gradient-word {
+      background: linear-gradient(90deg, var(--ink), var(--accent), var(--ink));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 9s ease-in-out infinite;
+    }
+    section.dk .hero-gradient-word {
+      background: linear-gradient(90deg, var(--paper), var(--accent), var(--paper));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn-gradient, .header-cta-gradient {
+      background: linear-gradient(90deg, var(--ink), var(--accent), var(--ink));
+      background-size: 200% auto;
+      color: var(--paper) !important;
+      animation: gradientShift 9s ease-in-out infinite;
+      border: none;
+      transition: transform 0.2s cubic-bezier(0.2,0.8,0.2,1);
+    }
+    .header-cta-gradient { border: 1px solid var(--ink); }
+    .btn-gradient:hover, .header-cta-gradient:hover { transform: translateY(-2px); }
+
+    .fi { opacity: 0; }
+    .fi.vis { animation: fadeUp 0.9s cubic-bezier(0.2,0.8,0.2,1) forwards; }
+    .fi.vis.line { animation: drawLine 1.4s cubic-bezier(0.65,0,0.35,1) forwards; transform-origin: left; transform: scaleX(0); }
+    
+    .fi.d1 { animation-delay: .1s; }
+    .fi.d2 { animation-delay: .2s; }
+    .fi.d3 { animation-delay: .3s; }
+    .fi.d4 { animation-delay: .4s; }
+    .fi.d5 { animation-delay: .55s; }
 
     /* ─────────────────────────────────────────
        TYPOGRAPHY
     ───────────────────────────────────────── */
     .marker {
-      font-family: var(--font-m);
+      font-family: var(--font-mono);
       font-size: 11px;
       letter-spacing: .22em;
       text-transform: uppercase;
@@ -238,27 +338,27 @@
     .marker span { opacity: .45; color: inherit; }
 
     h1 {
-      font-family: var(--font-d);
+      font-family: var(--font-display);
       font-size: clamp(52px, 9vw, 100px);
       font-weight: 700;
       line-height: .95;
       letter-spacing: -.03em;
     }
     h2 {
-      font-family: var(--font-d);
+      font-family: var(--font-display);
       font-size: clamp(34px, 5.5vw, 64px);
       font-weight: 700;
       line-height: 1.05;
       letter-spacing: -.025em;
     }
     h3 {
-      font-family: var(--font-d);
+      font-family: var(--font-display);
       font-size: clamp(18px, 2.5vw, 26px);
       font-weight: 600;
       line-height: 1.25;
     }
-    .it { font-family: var(--font-s); font-style: italic; }
-    .mono { font-family: var(--font-m); }
+    .it { font-family: var(--font-serif); font-style: italic; }
+    .mono { font-family: var(--font-mono); }
     p.lead {
       font-size: clamp(15px, 2vw, 20px);
       line-height: 1.65;
@@ -284,7 +384,7 @@
       padding: 26px;
     }
     .card-lbl {
-      font-family: var(--font-m);
+      font-family: var(--font-mono);
       font-size: 9px;
       letter-spacing: .2em;
       text-transform: uppercase;
@@ -292,7 +392,7 @@
       margin-bottom: 10px;
     }
     .card-val {
-      font-family: var(--font-d);
+      font-family: var(--font-display);
       font-size: clamp(26px, 4vw, 42px);
       font-weight: 700;
       line-height: 1.1;
@@ -307,7 +407,7 @@
       border: 1px solid var(--rule);
       border-left: 3px solid var(--accent);
       padding: 20px 24px;
-      font-family: var(--font-m);
+      font-family: var(--font-mono);
       font-size: 13px;
       line-height: 1.9;
     }
@@ -321,9 +421,9 @@
        PROGRESS
     ───────────────────────────────────────── */
     .pbar-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
-    .pbar-lbl { font-family: var(--font-m); font-size: 11px; opacity: .6; min-width: 60px; }
-    .pbar { font-family: var(--font-m); font-size: 15px; color: var(--accent); flex: 1; letter-spacing: -.02em; }
-    .pbar-pct { font-family: var(--font-m); font-size: 11px; opacity: .45; min-width: 36px; text-align: right; }
+    .pbar-lbl { font-family: var(--font-mono); font-size: 11px; opacity: .6; min-width: 60px; }
+    .pbar { font-family: var(--font-mono); font-size: 15px; color: var(--accent); flex: 1; letter-spacing: -.02em; }
+    .pbar-pct { font-family: var(--font-mono); font-size: 11px; opacity: .45; min-width: 36px; text-align: right; }
 
     /* ─────────────────────────────────────────
        PROBLEM ITEMS
@@ -336,7 +436,7 @@
       border-bottom: 1px solid var(--rule);
       align-items: start;
     }
-    .prob-n { font-family: var(--font-m); font-size: 10px; color: var(--accent); letter-spacing: .1em; padding-top: 5px; }
+    .prob-n { font-family: var(--font-mono); font-size: 10px; color: var(--accent); letter-spacing: .1em; padding-top: 5px; }
 
     /* ─────────────────────────────────────────
        TIMELINE
@@ -349,7 +449,7 @@
       border-bottom: 1px solid var(--rule);
       align-items: start;
     }
-    .tl-ph { font-family: var(--font-m); font-size: 10px; letter-spacing: .16em; color: var(--accent); text-transform: uppercase; padding-top: 4px; line-height: 1.8; }
+    .tl-ph { font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; color: var(--accent); text-transform: uppercase; padding-top: 4px; line-height: 1.8; }
     @media(max-width:600px) { .tl-item { grid-template-columns: 1fr; } }
 
     /* ─────────────────────────────────────────
@@ -374,17 +474,17 @@
     }
     .mc.hi { background: var(--accent); color: var(--paper); border-color: var(--accent); }
     .mc-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
-    .mc-desc { font-size: 11px; opacity: .65; font-family: var(--font-m); line-height: 1.5; }
-    .ax { font-family: var(--font-m); font-size: 9px; letter-spacing: .18em; opacity: .35; text-transform: uppercase; }
+    .mc-desc { font-size: 11px; opacity: .65; font-family: var(--font-mono); line-height: 1.5; }
+    .ax { font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em; opacity: .35; text-transform: uppercase; }
 
     /* ─────────────────────────────────────────
        FUND ROWS
     ───────────────────────────────────────── */
     .fund-row { display: flex; align-items: center; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
-    .fund-icon { font-family: var(--font-m); font-size: 12px; color: var(--accent); min-width: 20px; }
+    .fund-icon { font-family: var(--font-mono); font-size: 12px; color: var(--accent); min-width: 20px; }
     .fund-name { font-weight: 600; flex: 1; font-size: 15px; }
-    .fund-amt  { font-family: var(--font-m); font-size: 13px; opacity: .55; min-width: 72px; text-align: right; }
-    .fund-pct  { font-family: var(--font-m); font-size: 12px; color: var(--accent); min-width: 34px; text-align: right; }
+    .fund-amt  { font-family: var(--font-mono); font-size: 13px; opacity: .55; min-width: 72px; text-align: right; }
+    .fund-pct  { font-family: var(--font-mono); font-size: 12px; color: var(--accent); min-width: 34px; text-align: right; }
     .fund-note { font-size: 13px; opacity: .48; padding: 6px 0 14px 38px; line-height: 1.6; }
 
     /* ─────────────────────────────────────────
@@ -399,16 +499,16 @@
       width: 64px; height: 64px;
       background: var(--accent);
       color: var(--paper);
-      font-family: var(--font-d);
+      font-family: var(--font-display);
       font-size: 24px;
       font-weight: 700;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 22px;
     }
     .founder-name  { font-size: 20px; font-weight: 700; margin-bottom: 3px; }
-    .founder-title { font-family: var(--font-m); font-size: 11px; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 16px; }
+    .founder-title { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 16px; }
     .founder-bio   { font-size: 14px; opacity: .6; line-height: 1.75; }
-    .founder-email { font-family: var(--font-m); font-size: 12px; color: var(--accent); margin-top: 18px; }
+    .founder-email { font-family: var(--font-mono); font-size: 12px; color: var(--accent); margin-top: 18px; }
 
     /* ─────────────────────────────────────────
        § 00 COVER (light hero + evolution graphic)
@@ -452,15 +552,52 @@
       display: block;
       filter: drop-shadow(0 28px 56px rgba(20, 20, 19, 0.07));
     }
-    .cover-ew  { font-family: var(--font-d); font-size: clamp(64px, 12vw, 132px); font-weight: 700; letter-spacing: -.04em; line-height: .9; color: var(--ink); }
+    @keyframes epicEntrance {
+      0% { opacity: 0; transform: scale(1.15) translateY(30px); filter: blur(20px); letter-spacing: .15em; }
+      100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); letter-spacing: -.02em; }
+    }
+    @keyframes epicGlow {
+      0%, 100% { opacity: 0.3; transform: scale(1); filter: blur(16px); }
+      50% { opacity: 0.7; transform: scale(1.02); filter: blur(28px); }
+    }
+
+    .cover-ew {
+      position: relative;
+      display: inline-block;
+      font-family: var(--font-mono); 
+      font-size: clamp(72px, 13vw, 150px); 
+      font-weight: 700; 
+      line-height: .9; 
+      text-transform: uppercase;
+      color: transparent;
+      background: linear-gradient(110deg, var(--ink) 10%, oklch(0.25 0.08 25) 30%, var(--accent) 50%, oklch(0.25 0.08 25) 70%, var(--ink) 90%);
+      background-size: 250% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: epicEntrance 2.2s cubic-bezier(0.1, 0.9, 0.1, 1) forwards, gradientShift 8s linear infinite, matrixGlitch 6.2s infinite;
+      z-index: 2;
+    }
+    .cover-ew::before {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      color: transparent;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      z-index: -1;
+      animation: epicGlow 5s ease-in-out infinite, gradientShift 8s linear infinite;
+      pointer-events: none;
+    }
     #s00 .cover-tag {
-      font-family: var(--font-s); font-style: italic; font-size: clamp(18px, 2.8vw, 30px);
+      font-family: var(--font-serif); font-style: italic; font-size: clamp(18px, 2.8vw, 30px);
       color: rgba(20, 20, 19, 0.56);
       margin-top: 22px;
     }
     .cover-meta { display: flex; gap: 44px; margin-top: 52px; flex-wrap: wrap; }
-    #s00 .cm-lbl { font-family: var(--font-m); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; opacity: .45; margin-bottom: 4px; color: var(--ink); }
-    #s00 .cm-val { font-family: var(--font-d); font-size: 17px; font-weight: 600; color: var(--ink); }
+    #s00 .cm-lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; opacity: .45; margin-bottom: 4px; color: var(--ink); }
+    #s00 .cm-val { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--ink); }
 
     /* ─────────────────────────────────────────
        § 11 CTA
@@ -474,7 +611,7 @@
       gap: 10px;
       background: var(--paper);
       color: var(--accent);
-      font-family: var(--font-d);
+      font-family: var(--font-display);
       font-weight: 600;
       font-size: 13px;
       letter-spacing: .1em;
@@ -485,7 +622,7 @@
     }
     .cta-btn:hover { opacity: .85; }
     .cta-btn + .cta-btn { margin-top: 10px; margin-left: 0; display: inline-flex; }
-    .cta-contact { font-family: var(--font-m); font-size: 13px; opacity: .65; margin-top: 28px; line-height: 1.9; }
+    .cta-contact { font-family: var(--font-mono); font-size: 13px; opacity: .65; margin-top: 28px; line-height: 1.9; }
 
     /* ─────────────────────────────────────────
        FOOTER
@@ -500,7 +637,7 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-    .fc { font-family: var(--font-m); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; opacity: .35; }
+    .fc { font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; opacity: .35; }
 
     /* ─────────────────────────────────────────
        INLINE HELPERS
@@ -508,7 +645,7 @@
     .sep { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
     .pill {
       display: inline-block;
-      font-family: var(--font-m);
+      font-family: var(--font-mono);
       font-size: 10px;
       letter-spacing: .14em;
       text-transform: uppercase;
@@ -528,11 +665,15 @@
 <div id="gate">
   <div class="g-wordmark" id="gw">EEVOLVV</div>
   <div class="g-eyebrow" id="ge">INVESTOR ACCESS · CONFIDENTIAL · 2026</div>
-  <div class="g-question" id="gq">Ready to eevolvv?</div>
+  
   <form class="g-form" id="gf" onsubmit="unlock(event)">
-    <input id="pw" class="g-input" type="password" placeholder="enter password" autocomplete="off" />
+    <div class="g-question" id="gq">// authenticate</div>
+    <div class="g-input-wrap">
+      <span class="g-input-prompt">→</span>
+      <input id="pw" class="g-input" type="password" placeholder="enter key" autocomplete="off" />
+    </div>
     <div id="gerr" class="g-error"></div>
-    <button type="submit" class="g-btn">→ &nbsp;Enter</button>
+    <button type="submit" class="g-btn btn-gradient">↳ &nbsp;DECRYPT</button>
   </form>
 </div>
 
@@ -551,10 +692,11 @@
 
   <!-- ─── § 00 COVER ─────────────────────── -->
   <section id="s00">
+    <div class="grid-drift"></div>
     <div class="inner cover-split">
       <div class="cover-copy">
         <div class="marker fi">00 <span>· INVESTOR DECK · Q2 2026</span></div>
-        <div class="cover-ew fi d1">eevolvv</div>
+        <div class="cover-ew" data-text="EEVOLVV">EEVOLVV</div>
         <div class="cover-tag fi d2">A service, not software.</div>
         <div class="cover-meta fi d3">
           <div><div class="cm-lbl">Round</div><div class="cm-val">Pre-Seed</div></div>
@@ -611,10 +753,11 @@
 
   <!-- ─── § 01 PROBLEM ────────────────────── -->
   <section id="s01">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">01 <span>· THE PROBLEM</span></div>
       <h2 class="fi d1">Businesses are<br><span class="it">drowning in tools,</span><br>not insights.</h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
 
       <div class="fi d2">
         <div class="prob">
@@ -644,10 +787,11 @@
 
   <!-- ─── § 02 SOLUTION ───────────────────── -->
   <section id="s02" class="dk">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">02 <span>· THE SOLUTION</span></div>
       <h2 class="fi d1">McKinsey-grade intelligence.<br><span class="it">Without the McKinsey bill.</span></h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
       <p class="lead fi d2">eevolvv is an AI-native business transformation <em>service</em>. We pair a proprietary diagnostic engine with ongoing AI advisory — giving every SMB access to the insight that was once reserved for Fortune 500s.</p>
 
       <div class="term fi d3" style="margin-top:44px;">
@@ -663,10 +807,11 @@
 
   <!-- ─── § 03 PRODUCT ────────────────────── -->
   <section id="s03">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">03 <span>· PRODUCT</span></div>
       <h2 class="fi d1">The platform.<br><span class="it">Alive and learning.</span></h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
 
       <div class="term fi d2" style="margin-top:44px;">
         <div class="tc">// proprietary_pipeline.log — how we deliver transformation</div>
@@ -723,10 +868,11 @@
 
   <!-- ─── § 04 MARKET ─────────────────────── -->
   <section id="s04" class="dk">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">04 <span>· MARKET SIZE</span></div>
       <h2 class="fi d1">The market isn't<br><span class="it">a niche. It's the world.</span></h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
 
       <div class="g3 fi d2" style="margin-top:48px;">
         <div class="card">
@@ -769,10 +915,11 @@
 
   <!-- ─── § 05 BUSINESS MODEL ─────────────── -->
   <section id="s05">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">05 <span>· BUSINESS MODEL</span></div>
       <h2 class="fi d1">Recurring revenue.<br><span class="it">The forever customer.</span></h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
       <p class="lead fi d2">The AI learns the business so deeply that switching becomes genuinely prohibitive — not through lock-in tactics, but through irreplaceability. Context compounds every month.</p>
 
       <div class="g3 fi d3" style="margin-top:48px;">
@@ -814,10 +961,11 @@
 
   <!-- ─── § 06 TRACTION ───────────────────── -->
   <section id="s06" class="dk">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">06 <span>· TRACTION</span></div>
       <h2 class="fi d1">Early signal.<br><span class="it">Real proof.</span></h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
 
       <div class="g4 fi d2" style="margin-top:48px;">
         <div class="card">
@@ -855,10 +1003,11 @@
 
   <!-- ─── § 07 GO-TO-MARKET ───────────────── -->
   <section id="s07">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">07 <span>· GO-TO-MARKET</span></div>
       <h2 class="fi d1">Three waves.<br><span class="it">One compounding flywheel.</span></h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
 
       <div class="fi d2" style="margin-top:44px;">
         <div class="tl-item">
@@ -889,10 +1038,11 @@
 
   <!-- ─── § 08 COMPETITIVE ─────────────────── -->
   <section id="s08" class="dk">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">08 <span>· COMPETITIVE LANDSCAPE</span></div>
       <h2 class="fi d1">Nobody else is<br><span class="it">doing exactly this.</span></h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
 
       <div class="matrix-wrap fi d2">
         <div>
@@ -934,10 +1084,11 @@
 
   <!-- ─── § 09 TEAM ────────────────────────── -->
   <section id="s09">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">09 <span>· TEAM</span></div>
       <h2 class="fi d1">Built by someone who<br><span class="it">has lived this problem.</span></h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
 
       <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start;margin-top:48px;" class="fi d2">
         <div class="founder">
@@ -963,10 +1114,11 @@
 
   <!-- ─── § 10 USE OF FUNDS ────────────────── -->
   <section id="s10">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">10 <span>· USE OF FUNDS</span></div>
       <h2 class="fi d1">$1M deployed with<br><span class="it">precision and intent.</span></h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
 
       <div class="g2 fi d2" style="margin-top:48px;align-items:start;">
         <div>
@@ -1021,15 +1173,16 @@
 
   <!-- ─── § 11 CTA ─────────────────────────── -->
   <section id="s11">
+    <div class="grid-drift"></div>
     <div class="inner">
       <div class="marker fi">11 <span>· LET'S BUILD THIS</span></div>
       <h2 class="fi d1" style="font-size:clamp(44px,8vw,88px);">Join the<br>evolution.</h2>
-      <div class="rule fi d2"></div>
+      <div class="rule fi line d2"></div>
       <p class="lead fi d2" style="color:rgba(250,247,240,.72);">We're raising $1M to build the world's most accessible business transformation service. If you believe the advice gap is real — and that AI is the mechanism to close it — we'd like to talk.</p>
 
       <div class="fi d3" style="display:flex;flex-direction:column;align-items:flex-start;">
-        <a href="mailto:hello@eevolvv.com" class="cta-btn">→ &nbsp;Get in touch</a>
-        <a href="https://calendly.com/hello-eevolvv" target="_blank" rel="noopener noreferrer" class="cta-btn">↳ &nbsp;Schedule a call</a>
+        <a href="mailto:hello@eevolvv.com" class="cta-btn btn-gradient">→ &nbsp;Get in touch</a>
+        <a href="https://calendly.com/hello-eevolvv" target="_blank" rel="noopener noreferrer" class="cta-btn header-cta-gradient">↳ &nbsp;Schedule a call</a>
       </div>
 
       <div class="cta-contact fi d4">
@@ -1111,6 +1264,41 @@
       setTimeout(() => { ge.classList.add('g-in-2'); }, 220);
       setTimeout(() => { gq.classList.add('g-in-1'); }, 360);
       setTimeout(() => { gf.classList.add('g-in-2'); }, 500);
+
+      /* gate scrambler */
+      if (gw) {
+        const orig = 'EEVOLVV';
+        const mChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>';
+        let gwIter = 0;
+        let gwScramble = setInterval(() => {
+          let t = orig.split('').map((l, i) => {
+            if (i < gwIter) return orig[i];
+            return mChars[Math.floor(Math.random() * mChars.length)];
+          }).join('');
+          gw.innerText = t;
+          gw.setAttribute('data-text', t);
+          if (gwIter >= orig.length) {
+            clearInterval(gwScramble);
+            gw.innerText = orig;
+            gw.setAttribute('data-text', orig);
+            
+            /* glitch loop */
+            setInterval(() => {
+              const rIdx = Math.floor(Math.random() * orig.length);
+              const nChar = mChars[Math.floor(Math.random() * mChars.length)];
+              let arr = orig.split('');
+              arr[rIdx] = nChar;
+              gw.innerText = arr.join('');
+              gw.setAttribute('data-text', arr.join(''));
+              setTimeout(() => { 
+                gw.innerText = orig; 
+                gw.setAttribute('data-text', orig);
+              }, 150);
+            }, 3000);
+          }
+          gwIter += 1/8; /* slightly quicker resolution */
+        }, 70);
+      }
     })();
   }
 
@@ -1144,6 +1332,45 @@
       });
     }, { threshold: 0.45 });
     sections.forEach(s => dotObs.observe(s));
+
+    /* matrix hero scrambler */
+    const heroWord = document.querySelector('.cover-ew');
+    if (heroWord) {
+      const originalText = heroWord.getAttribute('data-text') || 'EEVOLVV';
+      const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>';
+      let iterations = 0;
+      let scrambleInterval = setInterval(() => {
+        let currentText = originalText.split('').map((letter, index) => {
+          if (index < iterations) return originalText[index];
+          return matrixChars[Math.floor(Math.random() * matrixChars.length)];
+        }).join('');
+        
+        heroWord.innerText = currentText;
+        heroWord.setAttribute('data-text', currentText);
+        
+        if (iterations >= originalText.length) {
+          clearInterval(scrambleInterval);
+          heroWord.innerText = originalText;
+          heroWord.setAttribute('data-text', originalText);
+          
+          /* infinite random flicker for terminal effect */
+          setInterval(() => {
+            const randIdx = Math.floor(Math.random() * originalText.length);
+            const newChar = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+            let arr = originalText.split('');
+            arr[randIdx] = newChar;
+            heroWord.innerText = arr.join('');
+            heroWord.setAttribute('data-text', arr.join(''));
+            
+            setTimeout(() => {
+              heroWord.innerText = originalText;
+              heroWord.setAttribute('data-text', originalText);
+            }, 150);
+          }, 3000);
+        }
+        iterations += 1/10; /* slightly quicker resolution */
+      }, 75);
+    }
   }
 </script>
 </body>
