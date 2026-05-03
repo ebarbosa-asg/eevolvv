@@ -891,7 +891,7 @@ function Problem() {
                   }}
                   aria-hidden
                 />
-                <span style={{ fontSize: 10, letterSpacing: '0.2em', color: 'var(--accent)', fontWeight: 600 }}>eevolvv.ai</span>
+                <span style={{ fontSize: 10, letterSpacing: '0.2em', color: 'var(--accent)', fontWeight: 600 }}>eevolvv.com</span>
               </div>
             </div>
             <div style={{ padding: '32px 36px 36px', flexShrink: 0 }}>

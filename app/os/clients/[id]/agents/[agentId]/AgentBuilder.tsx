@@ -523,11 +523,11 @@ export default function AgentBuilder({ agent, client }: { agent: AgentFull; clie
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <input
                         readOnly
-                        value={`https://os.eevolvv.ai/hooks/${agent.id}`}
+                        value={`https://os.eevolvv.com/hooks/${agent.id}`}
                         style={{ ...INPUT, opacity: 0.7, cursor: 'default' }}
                       />
                       <button
-                        onClick={() => navigator.clipboard.writeText(`https://os.eevolvv.ai/hooks/${agent.id}`)}
+                        onClick={() => navigator.clipboard.writeText(`https://os.eevolvv.com/hooks/${agent.id}`)}
                         style={{ ...MONO, fontSize: '11px', color: 'var(--accent)', background: 'none', border: '1px solid var(--accent)', padding: '4px 10px', cursor: 'pointer', borderRadius: '2px', whiteSpace: 'nowrap' }}
                       >
                         copy

@@ -9,7 +9,7 @@ export async function sendRunEmail(params: {
   outputSummary: string
   shareToken: string
 }): Promise<void> {
-  const shareUrl = `https://os.eevolvv.ai/run/${params.shareToken}`
+  const shareUrl = `https://os.eevolvv.com/run/${params.shareToken}`
 
   const html = `<!DOCTYPE html>
 <html>
@@ -39,7 +39,7 @@ export async function sendRunEmail(params: {
       View full brief &rarr;
     </a>
     <p style="font-size:11px;opacity:0.25;margin-top:48px;">
-      eevolvv.ai
+      eevolvv.com
     </p>
   </div>
 </body>

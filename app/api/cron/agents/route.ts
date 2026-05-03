@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://os.eevolvv.ai'
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://os.eevolvv.com'
       const res = await fetch(
         `${baseUrl}/api/os/clients/${agent.client_id}/agents/${agent.id}/run`,
         {
