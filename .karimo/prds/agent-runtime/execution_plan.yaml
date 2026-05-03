@@ -1,0 +1,27 @@
+waves:
+  - wave: 1
+    tasks: [T01, T02]
+    note: "Foundation — DB migration and bug fix run in parallel, no dependencies"
+
+  - wave: 2
+    tasks: [T03, T04]
+    note: "Core — execution engine (T03) and OS run panel (T04) run in parallel, both depend on T01"
+
+  - wave: 3
+    tasks: [T05, T06]
+    note: "Delivery — share page (T05) and cron dispatch (T06) run in parallel, both depend on T03"
+
+  - wave: 4
+    tasks: [T07]
+    note: "Email — depends on execution engine (T03) and cron (T06) for full trigger coverage"
+
+longest_chains:
+  - "T01 → T03 → T05 (client-facing delivery path)"
+  - "T01 → T03 → T06 → T07 (scheduled email path)"
+
+total_tasks: 7
+total_complexity_points: 22
+wave_count: 4
+model_distribution:
+  sonnet: 7
+  opus: 0

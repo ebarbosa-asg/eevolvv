@@ -1,0 +1,269 @@
+tasks:
+  - id: T01
+    title: "DB: Create agent_runs table + share_token column"
+    wave: 1
+    priority: must
+    complexity: 2
+    model: sonnet
+    depends_on: []
+    description: |
+      Apply two Supabase migrations:
+
+      Migration 1 — agent_runs table:
+        id             uuid primary key default gen_random_uuid()
+        agent_id       uuid not null references agents(id) on delete cascade
+        client_id      uuid not null references clients(id) on delete cascade
+        status         text not null default 'pending'  -- pending / running / success / error
+        triggered_by   text not null default 'manual'   -- manual / schedule / share_page
+        input_context  jsonb
+        output         text
+        output_summary text
+        input_tokens   integer
+        output_tokens  integer
+        latency_ms     integer
+        created_at     timestamptz not null default now()
+
+      Migration 2 — agents table:
+        Add column: share_token uuid not null default gen_random_uuid()
+        Add column: last_run_at timestamptz
+        (run_count and error_count already exist per AgentBuilder type definition)
+
+      No RLS needed (service role key used server-side).
+
+  - id: T02
+    title: "Fix: Persist webhook token/secret to Supabase"
+    wave: 1
+    priority: must
+    complexity: 2
+    model: sonnet
+    depends_on: []
+    description: |
+      File: app/os/clients/[id]/agents/[agentId]/AgentBuilder.tsx
+
+      Current bug: saveStep() case for step 4 sends:
+        { trigger_type: triggerType, trigger_config: { auth: webhookConfig.auth } }
+      Missing: webhookToken and webhookSecret are held only in useState and never saved.
+
+      Fix: update the step 4 PATCH body to include the full trigger_config:
+        {
+          trigger_type: triggerType,
+          trigger_config: {
+            auth: webhookConfig.auth,
+            token: webhookToken,
+            secret: webhookSecret,
+            method: webhookConfig.method,
+          }
+        }
+
+      Also verify: app/api/os/clients/[id]/agents/route.ts POST handler — ensure share_token
+      is NOT manually set (DB default gen_random_uuid() handles it). No change needed if
+      the insert omits the field.
+
+  - id: T03
+    title: "API: Agent execution engine"
+    wave: 2
+    priority: must
+    complexity: 5
+    model: sonnet
+    depends_on: [T01]
+    description: |
+      Create two new route files:
+
+      --- POST /api/os/clients/[id]/agents/[agentId]/run ---
+      File: app/api/os/clients/[id]/agents/[agentId]/run/route.ts
+
+      Flow:
+      1. Guard: check supabase, validate agentId belongs to clientId
+      2. Insert agent_runs row: { agent_id, client_id, status: 'pending', triggered_by: body.triggeredBy ?? 'manual' }
+         Capture runId from .select().single()
+      3. Update run status to 'running'
+      4. Fetch client: id, name, company, industry, notes from clients table
+      5. Fetch tasks: title, description, status, category from tasks table WHERE client_id=clientId
+      6. Build input_context JSONB: { client: { name, company, industry, notes }, tasks: [...] }
+      7. Build system prompt: agent.instructions (with prompt caching) + structured context block
+      8. const startMs = Date.now()
+      9. Call anthropic.messages.create({
+           model: 'claude-sonnet-4-6',
+           max_tokens: 4000,
+           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+           messages: [{ role: 'user', content: contextUserMessage }]
+         })
+      10. const latencyMs = Date.now() - startMs
+      11. Extract text from message.content[0]
+      12. Update agent_runs: { status: 'success', output: fullText, output_summary: fullText.slice(0, 500),
+            input_tokens: message.usage.input_tokens, output_tokens: message.usage.output_tokens, latency_ms: latencyMs,
+            input_context: inputContext }
+      13. Update agents: { last_run_at: new Date().toISOString(), run_count: agent.run_count + 1 }
+      14. Return: { runId, output: fullText, outputSummary, inputTokens, outputTokens, latencyMs }
+
+      On any error: update agent_runs status='error', increment agent.error_count, return 500.
+
+      Accept optional body field: { triggeredBy: 'manual' | 'schedule' | 'share_page' }
+
+      --- GET /api/os/clients/[id]/agents/[agentId]/runs ---
+      File: app/api/os/clients/[id]/agents/[agentId]/runs/route.ts
+
+      Query agent_runs WHERE agent_id=agentId AND client_id=clientId
+      ORDER BY created_at DESC LIMIT 20
+      Return array of run records.
+
+  - id: T04
+    title: "UI: Run panel in AgentBuilder step 6"
+    wave: 2
+    priority: must
+    complexity: 3
+    model: sonnet
+    depends_on: [T01, T03]
+    description: |
+      File: app/os/clients/[id]/agents/[agentId]/AgentBuilder.tsx
+
+      In the step 6 render section, add ABOVE the existing DEV/STAGING/LIVE promotion cards:
+
+      Section 1 — Run Now:
+        - "Run agent" button (inline style, var(--accent) background, white text, JetBrains Mono)
+        - On click: POST to /api/os/clients/${client.id}/agents/${agent.id}/run
+        - Loading state: button text changes to "Running..." disabled
+        - On success: display output in a <pre> block (JetBrains Mono, var(--paper) bg, overflow auto, max-height 400px)
+        - On error: show error message in red
+
+      Section 2 — Run History:
+        - On step 6 mount: GET /api/os/clients/${client.id}/agents/${agent.id}/runs
+        - Render table/list of last 10 runs:
+          - Status badge: success=#4ade80, error=#ef4444, running=#f59e0b (dot + text)
+          - triggered_by label (JetBrains Mono, 10px)
+          - latency_ms formatted as "1.2s"
+          - input_tokens + output_tokens as "123 / 456 tok"
+          - created_at formatted as relative time ("2h ago")
+          - output_summary truncated to 80 chars with "..." expand toggle
+        - Expand toggle shows full output in <pre>
+
+      Use existing inline style constants: CARD, MONO, MONO_LABEL, INPUT from the file.
+      No new dependencies — fetch with native fetch().
+
+  - id: T05
+    title: "Feature: Shareable client run page /run/[shareToken]"
+    wave: 3
+    priority: must
+    complexity: 4
+    model: sonnet
+    depends_on: [T03]
+    description: |
+      Create two new files:
+
+      --- app/run/[shareToken]/page.tsx (server component) ---
+      - Look up agent by share_token (SELECT * FROM agents WHERE share_token = params.shareToken)
+      - If not found: notFound()
+      - Fetch latest run: SELECT * FROM agent_runs WHERE agent_id = agent.id ORDER BY created_at DESC LIMIT 1
+      - Pass agent + latestRun to client component
+
+      --- app/run/[shareToken]/RunPage.tsx (client component, 'use client') ---
+      Design: clean, not OS-branded. Space Grotesk body font, dark background (#0a0a0a), white text.
+
+      Layout:
+        - Header: agent.name (large, Space Grotesk 700), subtle "powered by eevolvv" (10px, opacity 0.4)
+        - If latestRun exists:
+          - Last run timestamp (relative: "Updated 2 hours ago")
+          - View toggle: "Brief" | "Raw" — two pill buttons, Brief selected by default
+          - Brief view: render output as markdown using a simple inline renderer
+            (split on \n\n for paragraphs, # for headings — no external markdown lib)
+          - Raw view: <pre> monospace, same output
+        - "Run now" button: POST to /api/run/[shareToken]
+        - Loading state: "Running your agent..." with animated dots
+        - After run: replace displayed output with new result, update timestamp
+
+      --- app/api/run/[shareToken]/route.ts (POST, public endpoint) ---
+      - Look up agent by share_token
+      - If not found: 404
+      - Call same execution logic as T03 (extract to shared function or call internal endpoint)
+      - triggered_by: 'share_page'
+      - Return { output, outputSummary, latencyMs, inputTokens, outputTokens }
+
+      Note: no auth on this endpoint — share_token UUID is the auth mechanism.
+
+  - id: T06
+    title: "Feature: Cron dispatch for scheduled agents"
+    wave: 3
+    priority: must
+    complexity: 3
+    model: sonnet
+    depends_on: [T03]
+    description: |
+      File: app/api/cron/agents/route.ts
+
+      export async function GET(req: NextRequest) {
+        // Verify CRON_SECRET
+        const authHeader = req.headers.get('authorization')
+        if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+          return new Response('Unauthorized', { status: 401 })
+        }
+
+        // Query all live scheduled agents
+        const { data: agents } = await supabase
+          .from('agents')
+          .select('id, client_id, trigger_type, trigger_config, status')
+          .eq('trigger_type', 'schedule')
+          .eq('status', 'live')
+
+        // For each agent, check day-of-week filter from trigger_config.schedule.days
+        // If trigger_config.schedule.days is set, only fire if today matches
+        // Otherwise fire every day
+
+        // Call POST /api/os/clients/[id]/agents/[agentId]/run for each eligible agent
+        // with triggeredBy: 'schedule'
+        // Run sequentially to avoid rate limits
+
+        return NextResponse.json({ fired: n, skipped: m })
+      }
+
+      Update vercel.json (or create if missing):
+      {
+        "crons": [
+          {
+            "path": "/api/cron/agents",
+            "schedule": "0 9 * * *"
+          }
+        ]
+      }
+
+      Add to .env.local (comment/docs only, not actual value):
+      CRON_SECRET=<generate with: openssl rand -hex 32>
+
+  - id: T07
+    title: "Feature: Email delivery via Resend after run"
+    wave: 4
+    priority: should
+    complexity: 3
+    model: sonnet
+    depends_on: [T03, T06]
+    description: |
+      File: lib/email.ts
+
+      import { Resend } from 'resend'
+      const resend = new Resend(process.env.RESEND_API_KEY)
+
+      export async function sendRunEmail(params: {
+        clientEmail: string
+        clientName: string
+        agentName: string
+        outputSummary: string
+        shareToken: string
+      }) {
+        const shareUrl = `https://os.eevolvv.ai/run/${params.shareToken}`
+        await resend.emails.send({
+          from: 'eevolvv Intelligence <hello@eevolvv.ai>',
+          to: params.clientEmail,
+          subject: `${params.agentName} — Your brief is ready`,
+          html: `...` // simple HTML: agentName heading, outputSummary paragraph, CTA button linking to shareUrl
+        })
+      }
+
+      Also check clients table for email field. If missing, add to the T01 migration:
+        ALTER TABLE clients ADD COLUMN IF NOT EXISTS email text;
+
+      Integration in execution engine (T03):
+      After successful run, if triggeredBy === 'schedule' || triggeredBy === 'share_page':
+        - Fetch client email + share_token
+        - Call sendRunEmail(...)
+        - Fire-and-forget (don't await, don't block response)
+
+      RESEND_API_KEY must be set in Vercel environment variables.
