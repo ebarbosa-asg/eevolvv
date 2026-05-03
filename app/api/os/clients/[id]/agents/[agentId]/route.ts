@@ -3,6 +3,18 @@ import { supabase } from '@/lib/supabase'
 
 // TODO: add session auth
 
+export async function GET(_req: NextRequest, { params }: { params: { id: string; agentId: string } }) {
+  if (!supabase) return NextResponse.json({ error: 'DB unavailable' }, { status: 503 })
+  const { data, error } = await supabase
+    .from('agents')
+    .select('*')
+    .eq('id', params.agentId)
+    .eq('client_id', params.id)
+    .single()
+  if (error) return NextResponse.json({ error: error.message }, { status: 404 })
+  return NextResponse.json(data)
+}
+
 export async function PATCH(req: NextRequest, { params }: { params: { id: string; agentId: string } }) {
   if (!supabase) return NextResponse.json({ error: 'DB unavailable' }, { status: 503 })
   const body = await req.json()
