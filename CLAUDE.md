@@ -1,8 +1,12 @@
 # eevolvv — Working Memory
 
+> **Brand & Virality Playbook** (always pull this for any marketing, copy, or content work):
+> → `memory/brand-virality.md` — category positioning, voice rules, 6 virality loops, content templates, copy checklist
+
 ## The Business
 eevolvv is an AI-native business transformation service. Tagline: **"A service, not software."**
 Core brand truth: **"eevolvving forward, together."**
+Category we own: **Business Evolution** (not "AI automation" — see brand-virality.md)
 Owner: E (Eduardo Barbosa) — eduardocbarbosa1998@gmail.com
 
 ## Contact / Infrastructure
@@ -227,6 +231,7 @@ eevolvv/
 | `NEXT_PUBLIC_CALENDLY_URL` | ✅ Set → https://calendly.com/hello-eevolvv — **always include in every eevolvv project** |
 
 → Full project details: memory/projects/
+→ **Brand & Virality Playbook: memory/brand-virality.md** ← pull this for ALL marketing/copy/content work
 → Strategy docs: docs/eevolvv_Global_Expansion_Strategy.docx, docs/eevolvv_AI_Audit_Review.docx
 → Investor materials: _investor/
 
