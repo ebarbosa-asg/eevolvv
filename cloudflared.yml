@@ -1,0 +1,21 @@
+# Cloudflare Tunnel — local webhook dev
+#
+# Setup (one-time):
+#   brew install cloudflared
+#   cloudflared tunnel login
+#   cloudflared tunnel create eevolvv-dev
+#   cloudflared tunnel route dns eevolvv-dev dev.eevolvv.com
+#
+# Then run:
+#   cloudflared tunnel --config cloudflared.yml run
+#
+# This exposes localhost:3004 at https://dev.eevolvv.com
+# Use https://dev.eevolvv.com/api/... as the webhook URL in HubSpot, Stripe, etc.
+
+tunnel: eevolvv-dev
+credentials-file: ~/.cloudflared/<YOUR-TUNNEL-ID>.json
+
+ingress:
+  - hostname: dev.eevolvv.com
+    service: http://localhost:3004
+  - service: http_status:404

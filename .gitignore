@@ -36,9 +36,17 @@ next-env.d.ts
 .gstack/
 
 # local only
-memory/
+memory/projects/
 docs/*.docx
 .DS_Store
 
 # KARIMO worktree directories
 .karimo/.worktrees/
+
+# Tool configs — local only
+.claude/
+.obsidian/
+tsconfig.tsbuildinfo
+
+# KARIMO worktrees
+eevolvv/

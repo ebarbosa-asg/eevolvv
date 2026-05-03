@@ -1,0 +1,49 @@
+version: '3.8'
+
+# Langfuse LLM observability stack — run with:
+#   docker compose -f docker-compose.langfuse.yml up -d
+#
+# Then open http://localhost:3001, create an account, grab your
+# LANGFUSE_SECRET_KEY and LANGFUSE_PUBLIC_KEY, add them to .env.local
+
+services:
+  langfuse:
+    image: langfuse/langfuse:latest
+    ports:
+      - '3001:3000'
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@langfuse-db:5432/langfuse
+      NEXTAUTH_SECRET: changeme-local-only
+      SALT: changeme-local-salt
+      NEXTAUTH_URL: http://localhost:3001
+      TELEMETRY_ENABLED: 'false'
+      REDIS_CONNECTION_STRING: redis://langfuse-redis:6379
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+      langfuse-redis:
+        condition: service_started
+    restart: unless-stopped
+
+  langfuse-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  langfuse-redis:
+    image: redis:7-alpine
+    volumes:
+      - langfuse_redis:/data
+    restart: unless-stopped
+
+volumes:
+  langfuse_db:
+  langfuse_redis:
