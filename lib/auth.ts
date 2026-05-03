@@ -8,7 +8,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     signIn({ user }) {
-      return user.email === 'hello@eevolvv.com'
+      return user.email === 'hello@eevolvv.com' || user.email === 'eduardocbarbosa1998@gmail.com'
     },
   },
 })

@@ -1,16 +1,24 @@
+import { auth } from '@/lib/auth'
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export default auth(function middleware(req) {
   // Talent subdomain rewrite — talent.eevolvv.com/* → /talent/*
-  const host = request.headers.get('host') || ''
+  const host = req.headers.get('host') || ''
   if (host.startsWith('talent.')) {
-    const url = request.nextUrl.clone()
+    const url = req.nextUrl.clone()
     const pathname = url.pathname
     url.pathname = pathname === '/' ? '/talent' : `/talent${pathname}`
     return NextResponse.rewrite(url)
   }
-}
+
+  // Protect /os/** — redirect unauthenticated users to sign-in
+  if (req.nextUrl.pathname.startsWith('/os')) {
+    if (!req.auth) {
+      const signInUrl = new URL('/signin', req.url)
+      return NextResponse.redirect(signInUrl)
+    }
+  }
+})
 
 export const config = {
   matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
