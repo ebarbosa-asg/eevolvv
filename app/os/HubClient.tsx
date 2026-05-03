@@ -2,6 +2,7 @@
 
 import { Fragment, useState, useEffect, useCallback, useRef } from 'react'
 import { signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Submission, GitHubCommit } from './page'
 
@@ -214,6 +215,7 @@ function saveState(key: string, value: unknown) {
 }
 
 export default function HubClient({ submissions, commits }: { submissions: Submission[]; commits: GitHubCommit[] }) {
+  const router = useRouter()
   // Clock
   const [clock, setClock] = useState('')
   useEffect(() => {
@@ -481,7 +483,8 @@ export default function HubClient({ submissions, commits }: { submissions: Submi
                 </thead>
                 <tbody>
                   {clients.map(c => (
-                    <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                    <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
+                      onClick={() => router.push(`/os/clients/${c.id}`)}
                       onMouseEnter={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.03)' }}
                       onMouseLeave={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent' }}>
                       <td style={{ padding: '12px 16px', fontWeight: 600, fontSize: '14px' }}>{c.company}</td>
@@ -521,7 +524,8 @@ export default function HubClient({ submissions, commits }: { submissions: Submi
                 </thead>
                 <tbody>
                   {allAgents.map(a => (
-                    <tr key={a.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                    <tr key={a.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: a.client_id ? 'pointer' : 'default' }}
+                      onClick={() => a.client_id && router.push(`/os/clients/${a.client_id}/agents/${a.id}`)}
                       onMouseEnter={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'rgba(255,255,255,0.03)' }}
                       onMouseLeave={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent' }}>
                       <td style={{ padding: '12px 16px', fontWeight: 600, fontSize: '14px' }}>{a.name}</td>
