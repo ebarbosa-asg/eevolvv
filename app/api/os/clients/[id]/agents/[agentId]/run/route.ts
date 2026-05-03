@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { supabase } from '@/lib/supabase'
 import { sendRunEmail } from '@/lib/email'
+import { traceAgentRun } from '@/lib/langfuse'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -92,6 +93,22 @@ export async function POST(
       last_run_at: new Date().toISOString(),
       run_count: (agent.run_count ?? 0) + 1,
     }).eq('id', params.agentId)
+
+    // Fire-and-forget Langfuse trace
+    traceAgentRun({
+      runId,
+      agentId: params.agentId,
+      agentName: agent.name ?? 'agent',
+      clientId: params.id,
+      triggeredBy,
+      model: 'claude-sonnet-4-6',
+      systemPrompt,
+      userMessage,
+      output,
+      inputTokens,
+      outputTokens,
+      latencyMs,
+    }).catch(() => {})
 
     // Fire-and-forget email for scheduled and share_page runs
     if (triggeredBy === 'schedule' || triggeredBy === 'share_page') {

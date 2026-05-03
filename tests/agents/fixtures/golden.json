@@ -1,0 +1,222 @@
+[
+  {
+    "id": "tc-001",
+    "name": "Dental practice — insurance billing ghost work",
+    "client": {
+      "name": "Sarah Chen",
+      "company": "Pacific Dental Group",
+      "business_type": "dental practice",
+      "notes": "5-location dental practice, 45 staff. Insurance billing reconciliation done manually every Tuesday by the billing manager — 4 hours per week per location. New patient intake still on paper forms."
+    },
+    "tasks": [
+      { "title": "Insurance reconciliation", "description": "Manual EOB matching against Dentrix every Tuesday", "status": "open", "category": "finance" },
+      { "title": "New patient digital intake", "description": "Still using paper forms, staff re-keys into system", "status": "open", "category": "ops" },
+      { "title": "Recall appointment reminders", "description": "MA calls patients manually for 6-month recalls", "status": "in_progress", "category": "patient-comms" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["billing", "reconciliation", "insurance", "hours", "intake"],
+      "banned_words": ["cutting-edge", "seamless", "leverage", "synergies", "unlock", "state-of-the-art"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  },
+  {
+    "id": "tc-002",
+    "name": "Manufacturing — QA compliance ghost work",
+    "client": {
+      "name": "Marcus Rivera",
+      "company": "Precision Parts Co.",
+      "business_type": "metal parts manufacturing",
+      "notes": "ISO 9001 certified. QA manager spends 12 hours/week manually compiling inspection reports into Excel for audit. CAPA tracking done in a shared Google Sheet."
+    },
+    "tasks": [
+      { "title": "ISO 9001 audit prep", "description": "Manual report compilation for external auditor", "status": "open", "category": "compliance" },
+      { "title": "CAPA tracking", "description": "Corrective action log in Google Sheets, no automation", "status": "open", "category": "quality" },
+      { "title": "Supplier scorecards", "description": "Monthly manual emails to 40+ suppliers", "status": "open", "category": "procurement" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["ISO", "audit", "compliance", "CAPA", "hours", "inspection"],
+      "banned_words": ["cutting-edge", "seamless", "leverage", "synergies"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  },
+  {
+    "id": "tc-003",
+    "name": "Sales team — CRM logging ghost work",
+    "client": {
+      "name": "Jordan Kim",
+      "company": "Apex Revenue Partners",
+      "business_type": "B2B sales consulting",
+      "notes": "12-person sales team. Reps manually log every call and email into Salesforce — 90 minutes per rep per day. No automation between email (Outlook) and CRM."
+    },
+    "tasks": [
+      { "title": "CRM data entry automation", "description": "Reps manually log all activity — 1.5 hrs/day per rep", "status": "open", "category": "sales-ops" },
+      { "title": "Proposal generation", "description": "Each proposal built from scratch in Word", "status": "open", "category": "sales" },
+      { "title": "Pipeline reporting", "description": "Weekly pipeline report assembled manually by VP", "status": "open", "category": "reporting" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["CRM", "Salesforce", "logging", "pipeline", "hours", "reps"],
+      "banned_words": ["cutting-edge", "seamless", "leverage"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  },
+  {
+    "id": "tc-004",
+    "name": "Restaurant group — inventory ghost work",
+    "client": {
+      "name": "Priya Nair",
+      "company": "Nair Hospitality Group",
+      "business_type": "restaurant group (4 locations)",
+      "notes": "4 locations, 80 staff. Each GM does manual weekly inventory count — 6 hours each. Food cost variance tracked in spreadsheets. Scheduling done by hand in Excel."
+    },
+    "tasks": [
+      { "title": "Inventory automation", "description": "Manual weekly counts at all 4 locations", "status": "open", "category": "ops" },
+      { "title": "Food cost variance tracking", "description": "Spreadsheet-based, reconciled monthly", "status": "open", "category": "finance" },
+      { "title": "Staff scheduling", "description": "Manager manually builds schedule in Excel weekly", "status": "open", "category": "hr" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["inventory", "food cost", "scheduling", "hours", "locations"],
+      "banned_words": ["cutting-edge", "seamless", "leverage"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  },
+  {
+    "id": "tc-005",
+    "name": "Staffing agency — payroll ghost work",
+    "client": {
+      "name": "Diane Foster",
+      "company": "Foster Staffing Solutions",
+      "business_type": "staffing agency",
+      "notes": "Places 200+ contractors per month. Payroll processing done manually — timesheet collection via email, data entry into ADP by hand. Onboarding paperwork mailed and faxed."
+    },
+    "tasks": [
+      { "title": "Payroll data entry", "description": "Manual timesheet → ADP entry for 200+ contractors/month", "status": "open", "category": "finance" },
+      { "title": "Contractor onboarding", "description": "Paper-based, fax/mail, 3-week average time-to-start", "status": "open", "category": "hr" },
+      { "title": "Placement tracking", "description": "Placement status tracked in shared Excel workbook", "status": "open", "category": "ops" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["payroll", "timesheet", "onboarding", "contractors", "hours"],
+      "banned_words": ["cutting-edge", "seamless", "leverage"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  },
+  {
+    "id": "tc-006",
+    "name": "Real estate — lease tracking ghost work",
+    "client": {
+      "name": "Tom Weston",
+      "company": "Weston Commercial RE",
+      "business_type": "commercial real estate management",
+      "notes": "Manages 120 commercial leases. Lease renewal tracking in a spreadsheet, manually checked monthly. CAM reconciliation done by hand annually — takes 3 weeks."
+    },
+    "tasks": [
+      { "title": "Lease renewal tracking", "description": "120 leases tracked in Excel, monthly manual review", "status": "open", "category": "property-mgmt" },
+      { "title": "CAM reconciliation", "description": "Annual manual process, 3 weeks per property", "status": "open", "category": "finance" },
+      { "title": "Tenant communication", "description": "Renewal notices sent manually via email", "status": "open", "category": "ops" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["lease", "CAM", "renewal", "reconciliation", "manual"],
+      "banned_words": ["cutting-edge", "seamless", "leverage"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  },
+  {
+    "id": "tc-007",
+    "name": "Healthcare — revenue cycle ghost work",
+    "client": {
+      "name": "Angela Brooks",
+      "company": "Brooks Family Medicine",
+      "business_type": "primary care medical practice",
+      "notes": "8 providers, 3,000 patients. Claims submitted manually in batches. Denial management done by one billing staff member — 30+ hours/week on manual follow-up. A/R days at 58."
+    },
+    "tasks": [
+      { "title": "Claims denial management", "description": "30+ hrs/week manual follow-up on denied claims", "status": "open", "category": "billing" },
+      { "title": "Prior authorizations", "description": "Staff calls insurance manually for every auth", "status": "open", "category": "clinical-ops" },
+      { "title": "Patient balance follow-up", "description": "Manual statement mailing and phone calls", "status": "open", "category": "billing" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["claims", "denial", "billing", "authorization", "A/R", "hours"],
+      "banned_words": ["cutting-edge", "seamless", "leverage"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  },
+  {
+    "id": "tc-008",
+    "name": "Finance — month-end close ghost work",
+    "client": {
+      "name": "Chris Okafor",
+      "company": "Okafor Capital Advisory",
+      "business_type": "financial advisory firm",
+      "notes": "15-person firm. Month-end close takes 12 business days — mostly manual GL entries, bank reconciliations across 6 entities, and inter-company eliminations in Excel."
+    },
+    "tasks": [
+      { "title": "Month-end GL close", "description": "12-day close process, mostly manual journal entries", "status": "open", "category": "finance" },
+      { "title": "Multi-entity bank recon", "description": "6 entities reconciled manually each month", "status": "open", "category": "finance" },
+      { "title": "Management reporting", "description": "P&L and balance sheet built manually in Excel monthly", "status": "open", "category": "reporting" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["close", "reconciliation", "GL", "journal", "entities", "days"],
+      "banned_words": ["cutting-edge", "seamless", "leverage"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  },
+  {
+    "id": "tc-009",
+    "name": "Construction — compliance ghost work",
+    "client": {
+      "name": "Luis Mendez",
+      "company": "Mendez General Contracting",
+      "business_type": "general contractor",
+      "notes": "45 employees, 8 active projects. OSHA compliance documentation done by the PM manually. Subcontractor COIs tracked in a binder. Certified payroll reports completed by hand weekly."
+    },
+    "tasks": [
+      { "title": "OSHA compliance docs", "description": "PM manually completes and files safety documentation", "status": "open", "category": "compliance" },
+      { "title": "Subcontractor COI tracking", "description": "Insurance certs tracked in a physical binder", "status": "open", "category": "risk" },
+      { "title": "Certified payroll reports", "description": "Hand-completed weekly for prevailing wage projects", "status": "open", "category": "hr" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["OSHA", "compliance", "payroll", "subcontractor", "COI", "manual"],
+      "banned_words": ["cutting-edge", "seamless", "leverage"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  },
+  {
+    "id": "tc-010",
+    "name": "E-commerce — order operations ghost work",
+    "client": {
+      "name": "Keisha Thompson",
+      "company": "Bloom Beauty Supply",
+      "business_type": "e-commerce beauty supply",
+      "notes": "$3.2M revenue. Order data manually copied from Shopify to QuickBooks daily. Returns processed by hand, 45-minute average per return. Inventory reorder points checked manually weekly."
+    },
+    "tasks": [
+      { "title": "Shopify → QuickBooks sync", "description": "Daily manual order data entry", "status": "open", "category": "finance" },
+      { "title": "Returns processing", "description": "45 min average per return, fully manual", "status": "open", "category": "ops" },
+      { "title": "Inventory reorder management", "description": "Weekly manual check of 400+ SKUs", "status": "open", "category": "inventory" }
+    ],
+    "assertions": {
+      "min_length": 300,
+      "must_mention_any": ["Shopify", "QuickBooks", "returns", "inventory", "orders", "manual"],
+      "banned_words": ["cutting-edge", "seamless", "leverage"],
+      "must_have_number": true,
+      "max_latency_ms": 30000
+    }
+  }
+]
