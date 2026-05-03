@@ -30,8 +30,8 @@ export type GitHubCommit = {
 }
 
 export default async function OSPage() {
-  const session = await auth()
-  if (!session) redirect('/signin?callbackUrl=/os')
+  // const session = await auth()
+  // if (!session) redirect('/signin?callbackUrl=/os')
 
   let submissions: Submission[] = []
   if (supabase) {

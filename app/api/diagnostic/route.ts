@@ -6,6 +6,7 @@ import { supabase, saveSubmission, markEmailSent } from '@/lib/supabase'
 import { checkRateLimit } from '@/lib/rateLimit'
 import { render } from '@react-email/render'
 import { EvolutionReportEmail } from '@/emails/EvolutionReport'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
@@ -43,6 +44,9 @@ export async function POST(req: NextRequest) {
   const ip = getClientIp(req)
   const { allowed, remaining } = await checkRateLimitDb(ip)
   if (!allowed) {
+    const phRateLimit = getPostHogClient()
+    phRateLimit.capture({ distinctId: ip, event: 'diagnostic_rate_limited', properties: { ip } })
+    await phRateLimit.shutdown()
     return NextResponse.json(
       { error: 'Too many requests. You can generate up to 3 reports per hour. Please try again later.' },
       { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
@@ -173,6 +177,22 @@ Generate their eevolvv report now.`
       }
     })()
   }
+
+  const ph = getPostHogClient()
+  ph.identify({ distinctId: email, properties: { email, name, business_name: businessName, business_type: businessType, industry, tier } })
+  ph.capture({
+    distinctId: email,
+    event: 'diagnostic_report_generated',
+    properties: {
+      business_name: businessName || businessType,
+      business_type: businessType,
+      industry,
+      tier,
+      duration_ms: durationMs,
+      submission_id: submissionId,
+    },
+  })
+  await ph.shutdown()
 
   return NextResponse.json(
     {

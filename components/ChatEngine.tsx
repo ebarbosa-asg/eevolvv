@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
+import posthog from 'posthog-js'
 
 type Phase = 'chatting' | 'extracting' | 'report' | 'error'
 type Msg = { role: 'user' | 'ai'; text: string; id: number }
@@ -196,12 +197,17 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
     const trimmed = text.trim()
     if (!trimmed || isStreaming) return
 
+    const isFirstMessage = !hasInteracted.current
     hasInteracted.current = true
     const userId = msgIdRef.current++
     const nextApiMsgs: ApiMsg[] = [...apiMsgs, { role: 'user', content: trimmed }]
     setApiMsgs(nextApiMsgs)
     setMessages(m => [...m, { role: 'user', text: trimmed, id: userId }])
     setUserMsgCount(c => c + 1)
+
+    if (isFirstMessage) {
+      posthog.capture('diagnostic_chat_started', { tier: defaultTier })
+    }
     setInput('')
     setIsStreaming(true)
     setStreamText('')
@@ -247,13 +253,16 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
       setApiMsgs(nextWithAssistant)
 
       if (isReady) {
+        posthog.capture('diagnostic_intake_completed', { tier: defaultTier, message_count: userMsgCount + 1 })
         setPhase('extracting')
         await generateReport(nextWithAssistant)
       }
     } catch (err) {
       setIsStreaming(false)
       setStreamText('')
-      setErrorMsg(err instanceof Error ? err.message : 'Connection failed. Please try again.')
+      const errMsg = err instanceof Error ? err.message : 'Connection failed. Please try again.'
+      posthog.capture('diagnostic_error', { stage: 'chat', error: errMsg })
+      setErrorMsg(errMsg)
       setPhase('error')
     }
   }
@@ -269,6 +278,19 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
       if (res.status === 429) throw new Error("You've generated 3 reports this hour — your limit resets in 60 minutes.")
       if (!res.ok) throw new Error(data.error || `Report generation failed (${res.status})`)
       if (data.success && data.report) {
+        if (data.email) {
+          posthog.identify(data.email, {
+            email: data.email,
+            name: data.name,
+            business_name: data.businessName,
+            tier: data.tier,
+          })
+        }
+        posthog.capture('diagnostic_report_viewed', {
+          business_name: data.businessName,
+          tier: data.tier,
+          submission_id: data.submissionId,
+        })
         setReport({ text: data.report, businessName: data.businessName })
         setExtractPct(100)
         setTimeout(() => setPhase('report'), 700)
@@ -276,7 +298,9 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
         throw new Error(data.error || 'Report generation failed')
       }
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Report generation failed. Please try again.')
+      const errMsg = err instanceof Error ? err.message : 'Report generation failed. Please try again.'
+      posthog.capture('diagnostic_error', { stage: 'report_generation', error: errMsg })
+      setErrorMsg(errMsg)
       setPhase('error')
     }
   }
@@ -484,6 +508,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
             rel="noopener noreferrer"
             className="mono btn-gradient"
             style={{ padding: '16px 28px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, whiteSpace: 'nowrap', display: 'inline-block' }}
+            onClick={() => posthog.capture('diagnostic_cta_clicked', { cta: 'book_strategy_call', business_name: report?.businessName })}
           >
             BOOK STRATEGY CALL →
           </a>

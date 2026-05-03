@@ -191,7 +191,7 @@ border: 1px solid rgba(255,255,255,0.055);
 | `lib/rateLimit.ts` | IP-based rate limiting (3/hr, also checked against Supabase) |
 | `lib/supabase.ts` | DB client + saveSubmission / markEmailSent helpers |
 | `public/mascot.png` | Evolution strip logo (monkey mascot) |
-| `eevolvv-service-agreement.docx` | Client service agreement template (root level) |
+| `docs/eevolvv-service-agreement.docx` | Client service agreement template |
 | `_investor/pitch.html` | Password-gated investor pitch deck (pw: eevolvv!) |
 | `_investor/investor-strategy.md` | Option A investor strategy + action items |
 

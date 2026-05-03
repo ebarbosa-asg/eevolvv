@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
@@ -25,6 +26,15 @@ export async function POST(req: NextRequest) {
     subject: `Contact form: ${name}`,
     text: `Name: ${name}\nEmail: ${email}\n${smsLine}\n\nMessage:\n${message}`,
   })
+
+  const ph = getPostHogClient()
+  ph.identify({ distinctId: email, properties: { email, name } })
+  ph.capture({
+    distinctId: email,
+    event: 'contact_received',
+    properties: { has_phone: !!phone, sms_consent: smsConsent === true },
+  })
+  await ph.shutdown()
 
   return NextResponse.json({ ok: true })
 }

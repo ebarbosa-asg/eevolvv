@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import posthog from 'posthog-js'
 
 export default function ContactPage() {
   const [fields, setFields] = useState({ name: '', email: '', phone: '', message: '' })
@@ -20,7 +21,16 @@ export default function ContactPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...fields, smsConsent: smsConsent === true }),
       })
-      setStatus(res.ok ? 'done' : 'error')
+      if (res.ok) {
+        posthog.identify(fields.email, { email: fields.email, name: fields.name })
+        posthog.capture('contact_form_submitted', {
+          has_phone: !!fields.phone.trim(),
+          sms_consent: smsConsent === true,
+        })
+        setStatus('done')
+      } else {
+        setStatus('error')
+      }
     } catch {
       setStatus('error')
     }
