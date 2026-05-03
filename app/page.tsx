@@ -14,6 +14,12 @@ const HERO_PHRASES = [
 
 /** Rotating hero strip — evolution-wordplay variants + rally cries + attributions. */
 const HERO_TICKER_QUOTES = [
+  `"Ghost work is everywhere in your business. You just can't see it yet." — eevolvv`,
+  `"You hired great people. Right now, some of them are copying and pasting." — eevolvv`,
+  `"Natural selection doesn't give warnings." — Charles Darwin`,
+  `"The businesses that didn't eevolvv aren't struggling. They're gone." — eevolvv`,
+  `"Day 1 we diagnose. Day 60 your operation looks nothing like it did." — eevolvv`,
+  `"We don't sell software. We become your AI operations team." — eevolvv`,
   `"It is not the strongest of the species that survives, but the one most responsive to change." — Charles Darwin (on eevolvvtion)`,
   `"Nothing in biology makes sense except in the light of eevolvvtion." — Theodosius Dobzhansky`,
   `"Eevolvvtion is not a force but a process; not a cause but a law." — John Morley`,
@@ -129,11 +135,11 @@ const STATS = [
 ]
 
 const PROCESS_STEPS = [
-  { day: 'Day 01', title: 'Intake',     desc: 'You tell us how your business runs. Ten minutes, all questions.' },
-  { day: 'Day 07', title: 'Your Report',desc: 'AI-generated eevolvv report delivered. Every automation opportunity mapped.' },
-  { day: 'Day 14', title: 'First Win',  desc: 'First automation goes live. You feel the difference immediately.' },
-  { day: 'Day 45', title: 'Transformed',desc: 'Full build complete. Your business runs differently.' },
-  { day: 'Day 60', title: '60-Day Audit', desc: 'Structured review of metrics vs. plan—wins logged and next priorities set.' },
+  { day: 'Day 01', title: 'Diagnose',    desc: 'We map every workflow. Find every ghost. Every task that shouldn\'t exist gets named.' },
+  { day: 'Day 07', title: 'The Report',  desc: 'Your Ghost Work Audit arrives. Every hour recovered, every dollar at stake, ranked by impact.' },
+  { day: 'Day 14', title: 'First Win',   desc: 'First ghost eliminated. First automation live. You feel the difference immediately.' },
+  { day: 'Day 45', title: 'Transformed', desc: 'Full build complete. The ghost work is gone. Your team does human work now.' },
+  { day: 'Day 60', title: 'Locked In',   desc: 'Structured audit. Wins logged. The AI compounds from here — context builds every month.' },
 ]
 
 const INDUSTRIES_LIST = [
@@ -168,19 +174,19 @@ const EXAMPLES = [
 ]
 
 const PAIN_POINTS = [
-  'Manual data entry eating hours every week.',
-  'Customer follow-ups falling through the cracks.',
-  'Reports built by hand that should auto-generate.',
-  'Scheduling chaos that tools can solve in seconds.',
-  "Knowledge trapped in people's heads, not systems.",
+  'Someone on your team copies data between systems. Every single day.',
+  'Invoices re-keyed by hand because nobody set up the integration.',
+  'Reports assembled manually every week that a machine could run in seconds.',
+  'Follow-ups that fall through cracks because no one automated the sequence.',
+  'Work that exists because it always has — never because it should.',
 ]
 
 const LOADING_NARRATIVE = [
-  { label: 'SCANNING',  message: 'Reading your business intake…',          detail: 'Parsing operational data across all inputs.' },
-  { label: 'MAPPING',   message: 'Mapping your workflow architecture…',    detail: 'Identifying process gaps and dependencies.' },
-  { label: 'ANALYZING', message: 'Calculating automation opportunities…',  detail: 'Running ROI models against your revenue range.' },
-  { label: 'BUILDING',  message: 'Generating your automation roadmap…',    detail: 'Sequencing by impact-to-effort ratio.' },
-  { label: 'WRITING',   message: 'Compiling your eevolvv report…',       detail: 'Formatting recommendations for your team.' },
+  { label: 'SCANNING',  message: 'Scanning for ghost work…',               detail: 'Reading every workflow you described.' },
+  { label: 'MAPPING',   message: 'Mapping where the hours disappear…',     detail: 'Identifying tasks that shouldn\'t be human jobs.' },
+  { label: 'ANALYZING', message: 'Calculating the cost of your ghosts…',   detail: 'Running ROI models against your revenue and team size.' },
+  { label: 'BUILDING',  message: 'Building your exorcism roadmap…',        detail: 'Sequencing eliminations by impact-to-effort ratio.' },
+  { label: 'WRITING',   message: 'Writing your Ghost Work Audit…',         detail: 'Formatting every finding for your team.' },
 ]
 
 // ─── Chat questions ───────────────────────────────────────────────────────────
@@ -197,7 +203,7 @@ interface ChatQ {
 
 const CHAT_QUESTIONS: ChatQ[] = [
   { key: 'name',            type: 'text',     placeholder: 'Your name',          validate: v => v.trim().length > 0,
-    ask: "Hi! I'm the eevolvv AI. I'll map your business and find every automation win inside it.\n\nWhat's your name?" },
+    ask: "Hi — I'm the eevolvv AI. I'm going to map your operation and find every ghost work drain hiding in it.\n\nEvery business has them. Most owners have no idea how much they cost.\n\nLet's start: what's your name?" },
   { key: 'email',           type: 'email',    placeholder: 'you@business.com',   validate: v => /\S+@\S+\.\S+/.test(v),
     ask: f => `Nice to meet you, ${f.name.split(' ')[0]}. What email should I send your report to?` },
   { key: 'businessName',    type: 'text',     placeholder: 'Business name',      validate: v => v.trim().length > 0,
@@ -219,7 +225,7 @@ const CHAT_QUESTIONS: ChatQ[] = [
   { key: 'customerJourney', type: 'textarea', placeholder: 'e.g. Customer finds us on Instagram → messages us → we manually check availability…', validate: v => v.trim().length > 5,
     ask: 'Walk me through your customer journey — from first contact to completed sale.' },
   { key: 'hoursFreed',      type: 'textarea', placeholder: 'e.g. Land 3 more enterprise clients, actually take weekends off…', validate: v => v.trim().length > 5,
-    ask: f => `Last one. If we freed up 20 hours a week for ${f.businessName || 'your business'}, what would you do with that time?` },
+    ask: f => `Last one. When we eliminate the ghost work at ${f.businessName || 'your business'} — and we will — what do you do with those 20+ hours a week?` },
 ]
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -304,7 +310,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
                 className="header-brand-sub mono hidden md:inline"
                 style={{ fontSize: 10, letterSpacing: '0.12em', fontWeight: 600, color: 'var(--accent)', whiteSpace: 'nowrap' }}
               >
-                AI Transformation
+                Ghost Work Exorcists
               </span>
             </div>
           </a>
@@ -712,17 +718,17 @@ function Hero({ onCTA }: { onCTA: () => void }) {
 
         <div className="grid mt-10 anim-fade-up hero-body-grid" style={{ gridTemplateColumns: '1.1fr 0.9fr', gap: 56, animationDelay: '0.4s', marginTop: 56, alignItems: 'end' }}>
           <p style={{ fontSize: 18, lineHeight: 1.55, maxWidth: 560, color: 'color-mix(in oklab, var(--ink) 78%, transparent)', margin: 0 }}>
-            We don&apos;t sell software. We become your AI operations team — mapping your workflows, deploying automations, and rebuilding how your business runs.
-            <span style={{ display: 'block', marginTop: 16, opacity: 0.6 }}>From your corner store to your enterprise. eevolvving forward, together.</span>
+            Every business has ghost work — the invisible, habitual tasks nobody questions. It&apos;s costing you 23 hours a week. We find it, eliminate it, and build AI that runs it instead.
+            <span style={{ display: 'block', marginTop: 16, opacity: 0.6 }}>Permanently. We don&apos;t sell software — we become your AI operations team.</span>
           </p>
           <div className="flex items-end gap-3 hero-cta-row" style={{ alignSelf: 'end', justifySelf: 'end', flexWrap: 'wrap' }}>
-            <button onClick={onCTA} className="btn-gradient" style={{ padding: '18px 30px', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>GET YOUR FREE AI AUDIT →</button>
+            <button onClick={onCTA} className="btn-gradient" style={{ padding: '18px 30px', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>FIND MY GHOST WORK →</button>
             <a href="#how" style={{ background: 'transparent', color: 'var(--ink)', padding: '18px 30px', border: '1px solid var(--ink)', cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em', textDecoration: 'none' }}>SEE HOW IT WORKS</a>
           </div>
         </div>
 
         <div className="anim-fade-in" style={{ animationDelay: '1.2s', marginTop: 80 }}>
-          <DimensionLine label="MEASURED TWICE · SHIPPED ONCE" />
+          <DimensionLine label="FIND THE GHOSTS · ELIMINATE THEM · COMPOUND FOREVER" />
         </div>
       </div>
     </section>
@@ -807,11 +813,11 @@ function Problem() {
   return (
     <section style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="01" eyebrow="THE PROBLEM" title="Your team is doing work AI should be doing." note="DIAGNOSIS" />
+        <SectionHeader number="01" eyebrow="THE GHOST WORK AUDIT" title="Your business is haunted. We find the ghosts." note="DIAGNOSIS" />
         <div className="grid problem-grid" style={{ gridTemplateColumns: 'minmax(0, 1fr) minmax(340px, 1.22fr)', gap: 72, marginTop: 56, alignItems: 'stretch' }}>
           <div>
             <p style={{ fontSize: 18, lineHeight: 1.55, color: 'rgba(20,20,19,0.78)', marginBottom: 32 }}>
-              Most businesses lose <strong>23 hours a week</strong> to tasks that AI can do faster, cheaper, and without errors. The damage is invisible until you measure it.
+              Ghost work is the invisible, habitual labor haunting every business. Tasks everyone does because nobody ever stopped to ask if they should. It&apos;s costing you <strong>23 hours a week</strong>. We find it. We name it. Then we eliminate it.
             </p>
             <div style={{ borderTop: '1px solid var(--ink)' }}>
               {PAIN_POINTS.map((p, i) => (
@@ -871,7 +877,7 @@ function Problem() {
                   textOverflow: 'ellipsis',
                 }}
               >
-                business_audit.log
+                ghost_work_audit.log
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 128, justifyContent: 'flex-end' }}>
                 <span
@@ -889,17 +895,17 @@ function Problem() {
               </div>
             </div>
             <div style={{ padding: '32px 36px 36px', flexShrink: 0 }}>
-              <div style={{ opacity: 0.5 }}>→ scanning workflows…</div>
-              <div>→ manual invoicing detected <span style={{ color: 'var(--accent)' }}>[6hrs/wk]</span></div>
-              <div>→ customer follow-up gaps <span style={{ color: 'var(--accent)' }}>[12 missed/mo]</span></div>
-              <div>→ manual reporting found <span style={{ color: 'var(--accent)' }}>[$3,200/mo labor]</span></div>
-              <div>→ scheduling inefficiency <span style={{ color: 'var(--accent)' }}>[8hrs/wk]</span></div>
-              <div>→ no CRM automation <span style={{ color: 'var(--accent)' }}>[30% lead loss]</span></div>
+              <div style={{ opacity: 0.5 }}>→ scanning for ghost work…</div>
+              <div>→ <span style={{ color: 'var(--accent)' }}>GHOST:</span> manual invoicing <span style={{ color: 'var(--accent)' }}>[6 hrs/wk · $11,400/yr]</span></div>
+              <div>→ <span style={{ color: 'var(--accent)' }}>GHOST:</span> data re-keyed between systems <span style={{ color: 'var(--accent)' }}>[4 hrs/wk]</span></div>
+              <div>→ <span style={{ color: 'var(--accent)' }}>GHOST:</span> follow-ups done by hand <span style={{ color: 'var(--accent)' }}>[12 missed/mo]</span></div>
+              <div>→ <span style={{ color: 'var(--accent)' }}>GHOST:</span> reports assembled manually <span style={{ color: 'var(--accent)' }}>[$3,200/mo labor]</span></div>
+              <div>→ <span style={{ color: 'var(--accent)' }}>GHOST:</span> scheduling via email chains <span style={{ color: 'var(--accent)' }}>[5 hrs/wk]</span></div>
               <div style={{ marginTop: 22, paddingTop: 22, borderTop: '1px solid rgba(244,241,234,0.16)' }}>
-                <span style={{ opacity: 0.5 }}>→ total recoverable value: </span>
-                <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 18 }}>$87,400/yr</span>
+                <div style={{ opacity: 0.5 }}>→ total ghost hours: <span style={{ color: 'var(--accent)', fontWeight: 600 }}>23 hrs/wk</span></div>
+                <div style={{ marginTop: 6 }}><span style={{ opacity: 0.5 }}>→ annual cost of ghost work: </span><span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 18 }}>$87,400/yr</span></div>
               </div>
-              <div style={{ opacity: 0.72, marginTop: 10, fontSize: 13 }}>→ automation readiness: CRITICAL ▓▓▓▓▓▓▓▓░░ 80%</div>
+              <div style={{ opacity: 0.72, marginTop: 10, fontSize: 13 }}>→ exorcism readiness: ▓▓▓▓▓▓▓▓░░ <span style={{ color: 'var(--accent)' }}>READY</span></div>
             </div>
           </div>
         </div>
@@ -914,7 +920,7 @@ function Process() {
   return (
     <section id="how" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="02" eyebrow="THE PROCESS" title="From intake to transformed in 60 days." note="N=5 STEPS" />
+        <SectionHeader number="02" eyebrow="THE EXORCISM PROCESS" title="Day 1 we diagnose. Day 60 you look nothing like you did." note="N=5 STEPS" />
         <div className="grid mt-14" style={{ gridTemplateColumns: 'repeat(5,1fr)', gap: 0, marginTop: 64, border: '1px solid var(--ink)' }}>
           {PROCESS_STEPS.map((step, i) => (
             <div key={i} className="status-cell" style={{ padding: 28, borderRight: i < PROCESS_STEPS.length - 1 ? '1px solid var(--ink)' : 'none' }}>
@@ -970,7 +976,7 @@ function WhoItsFor() {
   return (
     <section id="who" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="04" eyebrow="WHO WE EVOLVE" title="Any business. Any program. Every industry." note={`N=${EXAMPLES.length}`} />
+        <SectionHeader number="04" eyebrow="WHO WE EVOLVE" title="Ghost work haunts every industry. We exorcise all of it." note={`N=${EXAMPLES.length}`} />
         <div
           className="who-we-evolve-grid grid mt-12"
           style={{
