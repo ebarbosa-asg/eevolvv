@@ -1,0 +1,18 @@
+{
+  "configured_at": "2026-05-03T04:00:00.000Z",
+  "orchestration_version": 2,
+  "orchestration": {
+    "integration": { "cadence": "worktree", "auto_merge_on_green": true },
+    "review": { "trigger": "on-umbrella", "scope": "pr-diff", "skip_if_diff_under": 0, "on_findings": "halt" },
+    "gates": { "model": "pause", "auto_place": false, "placements": [] }
+  },
+  "models": {
+    "default": "sonnet",
+    "complexity_threshold": 7,
+    "force_opus_tasks": ["T05"],
+    "force_sonnet_tasks": [],
+    "escalation": { "after_failures": 1, "triggers": ["architectural_issues"] }
+  },
+  "max_revision_loops": 3,
+  "allow_bypass": { "future_work_overlap": true, "false_positive_factual": true }
+}

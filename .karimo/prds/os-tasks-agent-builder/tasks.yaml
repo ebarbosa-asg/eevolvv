@@ -1,0 +1,126 @@
+version: 1
+slug: os-tasks-agent-builder
+
+tasks:
+  - id: T01
+    title: "DB — Extend agents table with builder fields"
+    description: |
+      Apply ALTER TABLE migrations to add 8 new columns to the agents table:
+      trigger_type TEXT DEFAULT 'manual', trigger_config JSONB,
+      instructions TEXT, estimated_output TEXT, config JSONB,
+      version INTEGER DEFAULT 1, run_count INTEGER DEFAULT 0, error_count INTEGER DEFAULT 0.
+      Apply via Supabase MCP (project qmdygiumftesoqzqmsqe).
+    complexity: 2
+    wave: 1
+    model: sonnet
+    dependencies: []
+    files_to_create: []
+    files_to_modify: []
+
+  - id: T02
+    title: "DB — Extend service_tasks table with delivery fields"
+    description: |
+      Apply ALTER TABLE migrations to add 5 new columns to service_tasks:
+      agent_id UUID REFERENCES agents(id) ON DELETE SET NULL,
+      category TEXT DEFAULT 'general',
+      assignee TEXT,
+      estimated_hrs NUMERIC(5,1),
+      blocked_reason TEXT.
+      Apply via Supabase MCP (project qmdygiumftesoqzqmsqe).
+    complexity: 2
+    wave: 1
+    model: sonnet
+    dependencies: []
+    files_to_create: []
+    files_to_modify: []
+
+  - id: T03
+    title: "API — Add GET single agent route + update TypeScript types"
+    description: |
+      Add GET handler to app/api/os/clients/[id]/agents/[agentId]/route.ts
+      (currently only PATCH + DELETE exist). Fetches agent by id + client_id, returns full row.
+      Also update the Agent type in ClientWorkspace.tsx and any shared types to include
+      the 8 new agents fields from T01.
+    complexity: 2
+    wave: 2
+    model: sonnet
+    dependencies: [T01]
+    files_to_modify:
+      - app/api/os/clients/[id]/agents/[agentId]/route.ts
+      - app/os/clients/[id]/ClientWorkspace.tsx
+
+  - id: T04
+    title: "UI — Upgrade service tasks section in ClientWorkspace"
+    description: |
+      Upgrade the existing § B SERVICE TASKS section in app/os/clients/[id]/ClientWorkspace.tsx:
+      - Add category badge (research/build/qa/review/deploy/comms) to task rows and add/edit forms
+      - Add agent_id selector in add/edit form (select from client's agents), show as pill badge on row
+      - Add estimated_hrs input to add/edit form
+      - Add blocked_reason textarea (only shown when status = 'blocked')
+      - Add delete button per task row (call DELETE /api/os/clients/[id]/tasks/[taskId])
+      - Move + add task button to TOP of section (currently at bottom)
+      Update Task type to include new fields from T02.
+    complexity: 4
+    wave: 2
+    model: sonnet
+    dependencies: [T02]
+    files_to_modify:
+      - app/os/clients/[id]/ClientWorkspace.tsx
+
+  - id: T05
+    title: "Agent Builder — page + 6-step wizard"
+    description: |
+      Create the agent builder at app/os/clients/[id]/agents/[agentId]/:
+
+      page.tsx (server component):
+      - Fetch agent by id (uses new GET route from T03)
+      - Fetch client data for breadcrumb + context
+      - Render AgentBuilder client component
+
+      AgentBuilder.tsx (client component — main deliverable, complexity is here):
+      6-step wizard with fixed left-rail step navigator:
+
+      Step 1 IDENTITY: name input, type select (same options as existing), description textarea
+      Step 2 INSTRUCTIONS: full-width monospace textarea (~12 rows), char counter, code-editor styling
+        (background: rgba(10,10,10,0.6), JetBrains Mono, border accent-left)
+      Step 3 INTEGRATIONS: inline chip multi-select palette. Chips: HubSpot, Slack, GitHub,
+        Supabase, Notion, Linear, Resend, Stripe, Airtable, Google Sheets, Zapier, Twilio,
+        Salesforce, Shopify, Custom Webhook. Selected = accent border + faint accent background.
+        Lock icon on unauthenticated (decorative only, no block).
+      Step 4 TRIGGER: 3-card picker (Manual / Schedule / Webhook). Each card expands config:
+        - Manual: confirm card, no extra fields
+        - Schedule: frequency dropdown → time/day pickers → "Next 3 runs" preview (compute from cron)
+        - Webhook: auto-generate UUID-based URL, method select, auth type (None/Bearer/HMAC),
+          auto-generate token with reveal toggle
+      Step 5 REVIEW: read-only two-column grid of all choices. Synthesized sentence:
+        "This agent will {trigger description} using {integrations} to {description}."
+        Edit links back to each step.
+      Step 6 DEPLOY: 3 horizontal stage cards DEV → STAGING → LIVE.
+        Left-border: DEV=#6366f1 indigo, STAGING=#f59e0b amber, LIVE=#4ade80 green.
+        Promote button only when current stage active. Promote to LIVE shows confirmation modal.
+        Save on each promote via PATCH /api/os/clients/[id]/agents/[agentId] updating status.
+
+      Topbar breadcrumb: eevolvv / os / {Company} / {Agent Name}
+      All saves via PATCH /api/os/clients/[id]/agents/[agentId] with new fields.
+      Follow all design tokens: var(--ink), var(--paper), var(--accent), JetBrains Mono labels.
+    complexity: 7
+    wave: 3
+    model: opus
+    dependencies: [T03]
+    files_to_create:
+      - app/os/clients/[id]/agents/[agentId]/page.tsx
+      - app/os/clients/[id]/agents/[agentId]/AgentBuilder.tsx
+
+  - id: T06
+    title: "ClientWorkspace — wire build links on agent cards"
+    description: |
+      In app/os/clients/[id]/ClientWorkspace.tsx, add a "→ build" link to each agent card
+      in the § A AGENTS section. Link to /os/clients/{clientId}/agents/{agentId}.
+      Also add a "→ build" link next to agent pill badges in task rows (if agent_id is set).
+      Reuse Link from next/link.
+    complexity: 2
+    wave: 4
+    model: sonnet
+    dependencies: [T05]
+    files_to_modify:
+      - app/os/clients/[id]/ClientWorkspace.tsx
