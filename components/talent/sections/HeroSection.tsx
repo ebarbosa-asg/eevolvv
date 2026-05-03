@@ -71,7 +71,7 @@ function HeroLever() {
           className="anim-fade-up"
           style={{ fontSize: 18, lineHeight: 1.5, color: "rgba(20,20,19,0.78)", marginTop: 32, maxWidth: 480, animationDelay: "0.3s" }}
         >
-          Tasks pay. One match when the fit is real.
+          One scope. One operator, matched by hand. Pay clears on delivery.
         </p>
         <div className="flex items-center gap-3 anim-fade-up" style={{ marginTop: 32, animationDelay: "0.5s" }}>
           <Link

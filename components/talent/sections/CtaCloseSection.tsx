@@ -19,7 +19,10 @@ export function CtaCloseSection() {
           We bring the{" "}
           <em className="serif" style={{ fontStyle: "italic" }}>work.</em>
         </h2>
-        <div className="cta-close-actions" style={{ marginTop: 56 }}>
+        <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 13, letterSpacing: "0.18em", textTransform: "uppercase", opacity: 0.55, marginTop: 32 }}>
+          Time to eevolvv. →
+        </p>
+        <div className="cta-close-actions" style={{ marginTop: 32 }}>
           <Link
             href="/join"
             style={{

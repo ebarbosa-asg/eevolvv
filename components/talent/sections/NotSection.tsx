@@ -6,7 +6,7 @@ const NOT_ITEMS = [
   ["NOT AN ALGORITHM", "No black box that decides you're an 82% fit for a job you'd hate."],
   ["NOT A NETWORK", "We will not ask you to congratulate your seventh-grade lab partner on her work anniversary."],
   ["NOT A FUNNEL", "There is no 47-question application. There is no take-home. There is no \"final round\" with five strangers."],
-  ["NOT FOR EVERYONE", "If you don't fit, we'll say so. The kindest answer is the honest one."],
+  ["NOT FOR EVERYONE", "We'd rather leave your spot open than fill it wrong."],
 ];
 
 export function NotSection() {

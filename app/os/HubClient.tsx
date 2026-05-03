@@ -82,6 +82,25 @@ function relativeTime(dateStr: string): string {
   return `${Math.floor(diff / 86400)}d ago`
 }
 
+function GhostLogo({ size = 28 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 1.1} viewBox="0 0 28 31" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <path
+        d="M14 1C7.37 1 2 6.37 2 13V27Q3.5 24.5 5 27Q6.5 29.5 8 27Q9.5 24.5 11 27Q12.5 29.5 14 27Q15.5 24.5 17 27Q18.5 29.5 20 27Q21.5 24.5 23 27Q24.5 29.5 26 27V13C26 6.37 20.63 1 14 1Z"
+        fill="rgba(250,247,240,0.92)"
+        stroke="rgba(250,247,240,0.15)"
+        strokeWidth="0.5"
+      />
+      <ellipse cx="10" cy="13" rx="3" ry="3.5" fill="white" />
+      <ellipse cx="18" cy="13" rx="3" ry="3.5" fill="white" />
+      <circle cx="11.2" cy="13.8" r="1.6" fill="#141413" />
+      <circle cx="19.2" cy="13.8" r="1.6" fill="#141413" />
+      <circle cx="11.8" cy="13.2" r="0.55" fill="rgba(250,247,240,0.9)" />
+      <circle cx="19.8" cy="13.2" r="0.55" fill="rgba(250,247,240,0.9)" />
+    </svg>
+  )
+}
+
 function SectionMarker({ n, label, noMargin }: { n: string; label: string; noMargin?: boolean }) {
   return (
     <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: noMargin ? 0 : '24px' }}>
@@ -301,7 +320,11 @@ export default function HubClient({ submissions, commits }: { submissions: Submi
 
       {/* Topbar */}
       <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(20,20,19,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: '52px' }}>
-        <span className="brand-wordmark" style={{ fontSize: '18px', color: 'var(--paper)' }}>eevolvv</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <GhostLogo size={24} />
+          <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600, fontSize: '15px', letterSpacing: '-0.02em', color: 'var(--paper)' }}>Agents Desk</span>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.35, paddingLeft: '4px' }}>by eevolvv</span>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <span className="os-topbar-clock" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', opacity: 0.6 }}>{clock}</span>
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent)', border: '1px solid var(--accent)', padding: '3px 8px' }}>INTERNAL</span>
