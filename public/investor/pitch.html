@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="EEVOLVV confidential investor deck — pre-seed Q2 2026. AI-native business transformation for SMBs." />
+  <meta property="og:title" content="EEVOLVV · INVESTOR DECK · 2026" />
+  <meta property="og:description" content="Confidential pre-seed investor deck. Service, not software." />
+  <title>EEVOLVV · INVESTOR DECK · 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&family=Instrument+Serif:ital@0;1&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #faf7f0;
+      --ink:   #141413;
+      --accent: oklch(0.45 0.13 25);
+      --rule:  rgba(20,20,19,.14);
+      --rule-s: rgba(20,20,19,.30);
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-serif: 'Newsreader', serif;
+      --site-max: 1280px;
+      --site-pad-x: 32px;
+      --anchor-scroll-margin: 72px;
+      --max: 1100px;
+      --px: clamp(24px, 5vw, 80px);
+    }
+
+    ::selection { background: var(--ink); color: var(--paper); }
+    ::-moz-selection { background: var(--ink); color: var(--paper); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─────────────────────────────────────────
+       PASSWORD GATE
+    ───────────────────────────────────────── */
+    #gate {
+      position: fixed; inset: 0;
+      background: var(--ink);
+      color: var(--paper);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      gap: 0;
+      padding: var(--px);
+      transition: opacity .65s ease, transform .65s cubic-bezier(0.8, 0, 0.2, 1);
+    }
+    #gate::before {
+      content: ""; position: absolute; inset: -100px 0 0 0; z-index: -1;
+      background-size: 64px 64px;
+      background-image: linear-gradient(to right, rgba(250,247,240,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(250,247,240,0.03) 1px, transparent 1px);
+      animation: gridDrift 20s linear infinite;
+    }
+    #gate.out { opacity: 0; transform: scale(1.05); pointer-events: none; filter: blur(10px); }
+
+    .g-wordmark {
+      position: relative;
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: clamp(44px, 8vw, 76px);
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: transparent;
+      background: linear-gradient(110deg, var(--paper) 10%, rgba(250,247,240,0.6) 30%, var(--accent) 50%, rgba(250,247,240,0.6) 70%, var(--paper) 90%);
+      background-size: 250% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: epicEntrance 3s cubic-bezier(0.1, 0.9, 0.1, 1) forwards, gradientShift 12s linear infinite, matrixGlitch 7.5s infinite;
+      z-index: 2;
+      margin-bottom: 6px;
+    }
+    .g-wordmark::before {
+      content: attr(data-text);
+      position: absolute; top:0; left:0; right:0; bottom:0;
+      color: transparent;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      filter: blur(14px);
+      z-index: -1;
+      opacity: 0.5;
+      animation: epicGlow 5s infinite, gradientShift 12s linear infinite;
+      pointer-events: none;
+    }
+
+    .g-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(250,247,240,.35);
+      margin-bottom: 48px;
+      opacity: 0;
+      transition: opacity .5s ease .12s;
+    }
+    .g-question {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .5s ease .22s, transform .5s ease .22s;
+    }
+    .g-form {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+      width: 100%;
+      max-width: 360px;
+      opacity: 0;
+      transition: opacity .5s ease .34s;
+      background: rgba(250,247,240,.03);
+      border: 1px solid rgba(250,247,240,.1);
+      border-left: 3px solid var(--accent);
+      padding: 32px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
+    }
+    .g-input-wrap {
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid rgba(250,247,240,.2);
+      padding-bottom: 8px;
+      transition: border-color .2s;
+    }
+    .g-input-wrap:focus-within { border-bottom-color: var(--accent); }
+    .g-input-prompt { color: var(--accent); font-family: var(--font-mono); font-size: 14px; }
+    
+    .g-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--paper);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      outline: none;
+      letter-spacing: .2em;
+    }
+    .g-input::placeholder { color: rgba(250,247,240,.2); letter-spacing: .1em; font-size: 13px; }
+    .g-error {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: .1em;
+      min-height: 14px;
+      text-align: left;
+    }
+    .g-btn {
+      width: 100%;
+      background: var(--accent);
+      color: var(--paper);
+      border: none;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity .2s;
+    }
+    .g-btn:hover { opacity: .82; }
+
+    /* gate entrance animations */
+    .g-in-1 { opacity: 1 !important; transform: translateY(0) !important; }
+    .g-in-2 { opacity: 1 !important; }
+
+    /* ─────────────────────────────────────────
+       DECK WRAPPER
+    ───────────────────────────────────────── */
+    #deck { display: none; }
+    #deck.on { display: block; }
+
+    /* ─────────────────────────────────────────
+       NAV
+    ───────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px var(--px);
+      background: rgba(250,247,240,.93);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      line-height: 0;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .nav-logo img {
+      height: clamp(30px, 4.2vw, 40px);
+      width: auto;
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    .nav-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      opacity: .35;
+    }
+    .nav-dots { display: flex; gap: 7px; align-items: center; }
+    .nd {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(20,20,19,.25);
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+    .nd.on { background: var(--accent); transform: scale(1.5); }
+
+    /* ─────────────────────────────────────────
+       SECTIONS
+    ───────────────────────────────────────── */
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px var(--px) 80px;
+      border-bottom: 1px solid var(--rule);
+      position: relative;
+      scroll-margin-top: var(--anchor-scroll-margin);
+    }
+    section.dk {
+      background: var(--ink);
+      color: var(--paper);
+      --rule: rgba(250,247,240,.12);
+      --rule-s: rgba(250,247,240,.28);
+    }
+    .inner { max-width: var(--max); margin: 0 auto; width: 100%; }
+
+    /* ─────────────────────────────────────────
+       ANIMATIONS & EFFECTS
+    ───────────────────────────────────────── */
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes fadeUp { 0% { opacity: 0; transform: translateY(24px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes drawLine { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    @keyframes gridDrift { 0% { transform: translateY(0); } 100% { transform: translateY(64px); } }
+
+    @keyframes matrixGlitch {
+      0%, 94%, 100% { transform: translate(0, 0) skewX(0); }
+      95% { transform: translate(-5px, 2px) skewX(15deg); filter: drop-shadow(4px 0 var(--accent)); }
+      96% { transform: translate(4px, -3px) skewX(-15deg); filter: drop-shadow(-4px 0 rgba(250,247,240,0.4)); }
+      97% { transform: translate(-2px, 1px) skewX(5deg); filter: drop-shadow(0 0 0); }
+      98% { transform: translate(0, 0) skewX(0); }
+    }
+
+    .anim-fade-up { animation: fadeUp 0.9s cubic-bezier(0.2,0.8,0.2,1) forwards; opacity: 0; }
+    .anim-fade-in { animation: fadeIn 1.2s ease forwards; opacity: 0; }
+    .anim-draw-line { animation: drawLine 1.4s cubic-bezier(0.65,0,0.35,1) forwards; transform-origin: left; transform: scaleX(0); }
+    .anim-blink { animation: blink 1.1s steps(1) infinite; }
+
+    .grid-drift {
+      position: absolute; inset: -100px 0 0 0; z-index: -1;
+      background-size: 64px 64px;
+      background-image: linear-gradient(to right, rgba(20,20,19,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(20,20,19,0.03) 1px, transparent 1px);
+      animation: gridDrift 20s linear infinite;
+    }
+    section.dk .grid-drift {
+      background-image: linear-gradient(to right, rgba(250,247,240,0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(250,247,240,0.03) 1px, transparent 1px);
+    }
+    
+    .hero-gradient-word {
+      background: linear-gradient(90deg, var(--ink), var(--accent), var(--ink));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 9s ease-in-out infinite;
+    }
+    section.dk .hero-gradient-word {
+      background: linear-gradient(90deg, var(--paper), var(--accent), var(--paper));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn-gradient, .header-cta-gradient {
+      background: linear-gradient(90deg, var(--ink), var(--accent), var(--ink));
+      background-size: 200% auto;
+      color: var(--paper) !important;
+      animation: gradientShift 9s ease-in-out infinite;
+      border: none;
+      transition: transform 0.2s cubic-bezier(0.2,0.8,0.2,1);
+    }
+    .header-cta-gradient { border: 1px solid var(--ink); }
+    .btn-gradient:hover, .header-cta-gradient:hover { transform: translateY(-2px); }
+
+    .fi { opacity: 0; }
+    .fi.vis { animation: fadeUp 0.9s cubic-bezier(0.2,0.8,0.2,1) forwards; }
+    .fi.vis.line { animation: drawLine 1.4s cubic-bezier(0.65,0,0.35,1) forwards; transform-origin: left; transform: scaleX(0); }
+    
+    .fi.d1 { animation-delay: .1s; }
+    .fi.d2 { animation-delay: .2s; }
+    .fi.d3 { animation-delay: .3s; }
+    .fi.d4 { animation-delay: .4s; }
+    .fi.d5 { animation-delay: .55s; }
+
+    /* ─────────────────────────────────────────
+       TYPOGRAPHY
+    ───────────────────────────────────────── */
+    .marker {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+    .marker span { opacity: .45; color: inherit; }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 9vw, 100px);
+      font-weight: 700;
+      line-height: .95;
+      letter-spacing: -.03em;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: clamp(34px, 5.5vw, 64px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -.025em;
+    }
+    h3 {
+      font-family: var(--font-display);
+      font-size: clamp(18px, 2.5vw, 26px);
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    .it { font-family: var(--font-serif); font-style: italic; }
+    .mono { font-family: var(--font-mono); }
+    p.lead {
+      font-size: clamp(15px, 2vw, 20px);
+      line-height: 1.65;
+      opacity: .7;
+      max-width: 620px;
+      margin-top: 20px;
+    }
+    .rule { width: 44px; height: 2px; background: var(--accent); margin: 24px 0; }
+
+    /* ─────────────────────────────────────────
+       GRID
+    ───────────────────────────────────────── */
+    .g2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 28px; }
+    .g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+    @media(max-width:768px) { .g2,.g3,.g4 { grid-template-columns: 1fr; } }
+
+    /* ─────────────────────────────────────────
+       CARD
+    ───────────────────────────────────────── */
+    .card {
+      border: 1px solid var(--rule);
+      padding: 26px;
+    }
+    .card-lbl {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      opacity: .38;
+      margin-bottom: 10px;
+    }
+    .card-val {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 4vw, 42px);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .card-sub { font-size: 12px; opacity: .45; margin-top: 5px; }
+
+    /* ─────────────────────────────────────────
+       TERMINAL
+    ───────────────────────────────────────── */
+    .term {
+      background: rgba(20,20,19,.055);
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--accent);
+      padding: 20px 24px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.9;
+    }
+    section.dk .term { background: rgba(250,247,240,.055); }
+    .tc { opacity: .3; }
+    .tk { color: var(--accent); }
+    .tv { opacity: .68; }
+    .ta { color: var(--accent); margin-right: 8px; }
+
+    /* ─────────────────────────────────────────
+       PROGRESS
+    ───────────────────────────────────────── */
+    .pbar-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .pbar-lbl { font-family: var(--font-mono); font-size: 11px; opacity: .6; min-width: 60px; }
+    .pbar { font-family: var(--font-mono); font-size: 15px; color: var(--accent); flex: 1; letter-spacing: -.02em; }
+    .pbar-pct { font-family: var(--font-mono); font-size: 11px; opacity: .45; min-width: 36px; text-align: right; }
+
+    /* ─────────────────────────────────────────
+       PROBLEM ITEMS
+    ───────────────────────────────────────── */
+    .prob {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 18px;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--rule);
+      align-items: start;
+    }
+    .prob-n { font-family: var(--font-mono); font-size: 10px; color: var(--accent); letter-spacing: .1em; padding-top: 5px; }
+
+    /* ─────────────────────────────────────────
+       TIMELINE
+    ───────────────────────────────────────── */
+    .tl-item {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 24px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--rule);
+      align-items: start;
+    }
+    .tl-ph { font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; color: var(--accent); text-transform: uppercase; padding-top: 4px; line-height: 1.8; }
+    @media(max-width:600px) { .tl-item { grid-template-columns: 1fr; } }
+
+    /* ─────────────────────────────────────────
+       MATRIX
+    ───────────────────────────────────────── */
+    .matrix-wrap { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; margin-top: 48px; }
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 2px;
+      max-width: 460px;
+      flex-shrink: 0;
+    }
+    .mc {
+      padding: 22px;
+      border: 1px solid var(--rule);
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .mc.hi { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+    .mc-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+    .mc-desc { font-size: 11px; opacity: .65; font-family: var(--font-mono); line-height: 1.5; }
+    .ax { font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em; opacity: .35; text-transform: uppercase; }
+
+    /* ─────────────────────────────────────────
+       FUND ROWS
+    ───────────────────────────────────────── */
+    .fund-row { display: flex; align-items: center; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+    .fund-icon { font-family: var(--font-mono); font-size: 12px; color: var(--accent); min-width: 20px; }
+    .fund-name { font-weight: 600; flex: 1; font-size: 15px; }
+    .fund-amt  { font-family: var(--font-mono); font-size: 13px; opacity: .55; min-width: 72px; text-align: right; }
+    .fund-pct  { font-family: var(--font-mono); font-size: 12px; color: var(--accent); min-width: 34px; text-align: right; }
+    .fund-note { font-size: 13px; opacity: .48; padding: 6px 0 14px 38px; line-height: 1.6; }
+
+    /* ─────────────────────────────────────────
+       FOUNDER
+    ───────────────────────────────────────── */
+    .founder {
+      border: 1px solid var(--rule);
+      padding: 36px;
+      max-width: 460px;
+    }
+    .founder-init {
+      width: 64px; height: 64px;
+      margin-bottom: 22px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .founder-init img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .founder-name  { font-size: 20px; font-weight: 700; margin-bottom: 3px; }
+    .founder-title { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 16px; }
+    .founder-bio   { font-size: 14px; opacity: .6; line-height: 1.75; }
+    .founder-email { font-family: var(--font-mono); font-size: 12px; color: var(--accent); margin-top: 18px; }
+
+    /* ─────────────────────────────────────────
+       § 00 COVER (light hero + evolution graphic)
+    ───────────────────────────────────────── */
+    #s00 {
+             background:
+               radial-gradient(ellipse 90% 75% at 88% 12%, rgba(140, 43, 26, 0.09), transparent 58%),
+               radial-gradient(ellipse 55% 45% at 8% 88%, rgba(20, 20, 19, 0.045), transparent 55%),
+               linear-gradient(180deg, #fdfcf8 0%, var(--paper) 38%, #f5f1ea 100%);
+             color: var(--ink);
+             justify-content: center;
+             padding-top: 108px;
+             padding-bottom: 96px;
+             overflow: hidden;
+           }
+    #s00 .cover-split {
+      display: grid;
+      grid-template-columns: 1fr minmax(260px, 42%);
+      gap: clamp(32px, 5vw, 72px);
+      align-items: center;
+    }
+    @media (max-width: 860px) {
+      #s00 .cover-split { grid-template-columns: 1fr; }
+      #s00 .cover-art {
+        order: -1;
+        margin: 0 auto 8px;
+        max-width: min(400px, 100%);
+      }
+    }
+    .cover-art {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      margin-left: auto;
+      pointer-events: none;
+      user-select: none;
+    }
+    .cover-art svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 28px 56px rgba(20, 20, 19, 0.07));
+    }
+    @keyframes epicEntrance {
+      0% { opacity: 0; transform: scale(1.15) translateY(30px); filter: blur(20px); letter-spacing: .15em; }
+      100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); letter-spacing: -.02em; }
+    }
+    @keyframes epicGlow {
+      0%, 100% { opacity: 0.3; transform: scale(1); filter: blur(16px); }
+      50% { opacity: 0.7; transform: scale(1.02); filter: blur(28px); }
+    }
+
+    .cover-ew {
+      position: relative;
+      display: inline-block;
+      font-family: var(--font-mono); 
+      font-size: clamp(72px, 13vw, 150px); 
+      font-weight: 700; 
+      line-height: .9; 
+      text-transform: uppercase;
+      color: transparent;
+      background: linear-gradient(110deg, var(--ink) 10%, oklch(0.25 0.08 25) 30%, var(--accent) 50%, oklch(0.25 0.08 25) 70%, var(--ink) 90%);
+      background-size: 250% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: epicEntrance 2.2s cubic-bezier(0.1, 0.9, 0.1, 1) forwards, gradientShift 8s linear infinite, matrixGlitch 6.2s infinite;
+      z-index: 2;
+    }
+    .cover-ew::before {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      color: transparent;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      z-index: -1;
+      animation: epicGlow 5s ease-in-out infinite, gradientShift 8s linear infinite;
+      pointer-events: none;
+    }
+    #s00 .cover-tag {
+      font-family: var(--font-serif); font-style: italic; font-size: clamp(18px, 2.8vw, 30px);
+      color: rgba(20, 20, 19, 0.56);
+      margin-top: 22px;
+    }
+    .cover-meta { display: flex; gap: 44px; margin-top: 52px; flex-wrap: wrap; }
+    #s00 .cm-lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; opacity: .45; margin-bottom: 4px; color: var(--ink); }
+    #s00 .cm-val { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--ink); }
+
+    /* ─────────────────────────────────────────
+       § 11 CTA
+    ───────────────────────────────────────── */
+    #s11 { background: var(--accent); color: var(--paper); }
+    #s11 .marker { color: rgba(250,247,240,.55); }
+    #s11 .rule { background: rgba(250,247,240,.45); }
+    /* Do not combine .cta-btn with .btn-gradient / .header-cta-gradient here — shared gradient
+       utilities use light text; .cta-btn uses a paper fill → invisible labels. */
+    #s11 .cta-btn--outline {
+      background: transparent !important;
+      color: var(--paper) !important;
+      -webkit-text-fill-color: var(--paper) !important;
+      border: 1px solid rgba(250,247,240,.45);
+      animation: none;
+    }
+    #s11 .cta-btn--outline:hover {
+      opacity: 1;
+      background: rgba(250,247,240,.12) !important;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--paper);
+      color: var(--accent);
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: .1em;
+      padding: 14px 28px;
+      margin-top: 32px;
+      text-decoration: none;
+      transition: opacity .2s;
+    }
+    .cta-btn:hover { opacity: .85; }
+    .cta-btn + .cta-btn { margin-top: 10px; margin-left: 0; display: inline-flex; }
+    .cta-contact { font-family: var(--font-mono); font-size: 13px; opacity: .65; margin-top: 28px; line-height: 1.9; }
+
+    /* ─────────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────────── */
+    footer {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 22px var(--px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .fc { font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; opacity: .35; }
+
+    /* ─────────────────────────────────────────
+       INLINE HELPERS
+    ───────────────────────────────────────── */
+    .sep { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
+    .pill {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid var(--rule);
+      opacity: .55;
+      margin-top: 14px;
+    }
+    .pill.live { border-color: var(--accent); color: var(--accent); opacity: 1; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     PASSWORD GATE
+═══════════════════════════════════════ -->
+<div id="gate">
+  <div class="g-wordmark" id="gw" data-text="EEVOLVV">EEVOLVV</div>
+  <div class="g-eyebrow" id="ge">INVESTOR ACCESS · CONFIDENTIAL · 2026</div>
+  
+  <form class="g-form" id="gf" onsubmit="unlock(event)">
+    <div class="g-question" id="gq">// authenticate</div>
+    <div class="g-input-wrap">
+      <span class="g-input-prompt">→</span>
+      <input id="pw" class="g-input" type="password" placeholder="enter key" autocomplete="off" aria-label="Investor access passphrase" inputmode="text" />
+    </div>
+    <div id="gerr" class="g-error"></div>
+    <button type="submit" class="g-btn btn-gradient">↳ &nbsp;DECRYPT</button>
+  </form>
+</div>
+
+<!-- ═══════════════════════════════════════
+     INVESTOR DECK
+═══════════════════════════════════════ -->
+<div id="deck">
+
+  <nav>
+    <a class="nav-logo" href="https://eevolvv.com" target="_blank" rel="noopener noreferrer" title="eevolvv">
+      <img src="logo.png" width="1024" height="528" alt="eevolvv" />
+    </a>
+    <div class="nav-dots" id="ndots"></div>
+    <div class="nav-tag">CONFIDENTIAL · PRE-SEED · 2026</div>
+  </nav>
+
+  <!-- ─── § 00 COVER ─────────────────────── -->
+  <section id="s00">
+    <div class="grid-drift"></div>
+    <div class="inner cover-split">
+      <div class="cover-copy">
+        <div class="marker fi">00 <span>· INVESTOR DECK · Q2 2026</span></div>
+        <div class="cover-ew" data-text="EEVOLVV">EEVOLVV</div>
+        <div class="cover-tag fi d2">A service, not software.</div>
+        <div class="cover-meta fi d3">
+          <div><div class="cm-lbl">Round</div><div class="cm-val">Pre-Seed</div></div>
+          <div><div class="cm-lbl">Raising</div><div class="cm-val">$1,000,000</div></div>
+          <div><div class="cm-lbl">Stage</div><div class="cm-val">MVP · Live</div></div>
+          <div><div class="cm-lbl">Date</div><div class="cm-val">Q2 2026</div></div>
+        </div>
+      </div>
+
+      <div class="cover-art fi d2" aria-hidden="true">
+        <svg viewBox="0 0 440 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="cvOrb" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#8C2B1A" stop-opacity="0.14"/>
+              <stop offset="55%" stop-color="#8C2B1A" stop-opacity="0.05"/>
+              <stop offset="100%" stop-color="#141413" stop-opacity="0.04"/>
+            </linearGradient>
+            <linearGradient id="cvStroke" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#8C2B1A" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#8C2B1A" stop-opacity="0.3"/>
+            </linearGradient>
+          </defs>
+
+          <circle cx="308" cy="102" r="124" fill="url(#cvOrb)"/>
+
+          <path d="M 76 418 C 76 310 124 268 182 218 C 214 194 242 178 268 168 C 296 152 322 122 340 96" stroke="url(#cvStroke)" stroke-width="2.5" stroke-linecap="round" fill="none" stroke-dasharray="3 10"/>
+
+          <g>
+            <circle cx="76" cy="418" r="21" stroke="#141413" stroke-width="2" stroke-dasharray="4.5 5" fill="#fdfcf8"/>
+            <text x="76" y="423" text-anchor="middle" fill="#141413" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="11" font-weight="600" letter-spacing=".14em">01</text>
+          </g>
+
+          <g>
+            <circle cx="182" cy="218" r="23" stroke="#8C2B1A" stroke-width="2.5" fill="none"/>
+            <circle cx="182" cy="218" r="6.5" fill="#8C2B1A"/>
+            <text x="182" y="258" text-anchor="middle" fill="rgba(20,20,19,.4)" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="8.5" letter-spacing=".22em">MAP</text>
+          </g>
+
+          <g>
+            <circle cx="268" cy="168" r="25" fill="#141413"/>
+            <circle cx="268" cy="168" r="10" fill="#fdfcf8"/>
+            <text x="268" y="212" text-anchor="middle" fill="rgba(20,20,19,.4)" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="8.5" letter-spacing=".18em">BUILD</text>
+          </g>
+
+          <g>
+            <circle cx="340" cy="96" r="32" stroke="#8C2B1A" stroke-width="1.75" fill="none" opacity=".5"/>
+            <path d="M 340 68 L350 90 L374 90 L356 104 L364 128 L340 112 L316 128 L324 104 L306 90 L330 90 Z" fill="#8C2B1A"/>
+            <text x="340" y="144" text-anchor="middle" fill="rgba(20,20,19,.4)" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="8.5" letter-spacing=".14em">GROWTH</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 01 PROBLEM ────────────────────── -->
+  <section id="s01">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">01 <span>· THE PROBLEM</span></div>
+      <h2 class="fi d1">Businesses are <br><span class="it">drowning in tools,</span> <br>not insights.</h2>
+      <div class="rule fi line d2"></div>
+
+      <div class="fi d2">
+        <div class="prob">
+          <div class="prob-n">N=01</div>
+          <div>
+            <h3>Software ≠ Strategy</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">CRMs, ERPs, project managers — none diagnose. They record symptoms, never cure them. The average SMB runs 6+ disconnected tools and still can't answer "why are we stuck?"</p>
+          </div>
+        </div>
+        <div class="prob">
+          <div class="prob-n">N=02</div>
+          <div>
+            <h3>Consulting Is Out of Reach</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">McKinsey charges $500K+ per engagement. The 99% of SMBs that need transformation most are permanently priced out. The advice gap is widening, not closing.</p>
+          </div>
+        </div>
+        <div class="prob">
+          <div class="prob-n">N=03</div>
+          <div>
+            <h3>Generic AI Has No Context</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">Asking ChatGPT for business strategy is like asking a stranger for a health diagnosis. No continuity, no accountability, no institutional memory. Context is everything.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 02 SOLUTION ───────────────────── -->
+  <section id="s02" class="dk">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">02 <span>· THE SOLUTION</span></div>
+      <h2 class="fi d1">Program-specific AI agents. <br><span class="it">Deployed, not pitched.</span></h2>
+      <div class="rule fi line d2"></div>
+      <p class="lead fi d2">eevolvv builds and deploys AI agents for structured business programs — QA, financial audit, compliance, and beyond. Mid-market companies spend $50K–$500K/yr running these programs on consultant labor. We replace that engagement at $2K–$10K/mo. Simultaneously, our diagnostic engine serves SMBs at scale — the brand that funds the long game.</p>
+
+      <div class="term fi d3" style="margin-top:44px;">
+        <div class="tc">// proprietary_pipeline.log — eevolvv service delivery</div>
+        <div><span class="ta">→</span><span class="tk">DIAGNOSE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">↳ AI-led conversation · maps business health across 12 nodes · outputs Evolution Report</span></div>
+        <div><span class="ta">→</span><span class="tk">ONBOARD &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">↳ Scope agreement · access provisioned · integrations mapped · pilot program defined</span></div>
+        <div><span class="ta">→</span><span class="tk">DEPLOY PROGRAM AGENTS</span> <span class="tv">&nbsp;&nbsp;&nbsp;↳ QA · finance audit · compliance · IT security · revenue cycle · and more</span></div>
+        <div><span class="ta">→</span><span class="tk">MAINTAIN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">↳ Ongoing advisory · monitoring · quarterly re-calibration · context compounds monthly</span></div>
+        <div class="tc" style="margin-top:6px;">// result: irreplaceable AI infrastructure inside every client · the forever customer</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 03 PRODUCT ────────────────────── -->
+  <section id="s03">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">03 <span>· PRODUCT</span></div>
+      <h2 class="fi d1">The platform. <br><span class="it">Alive and learning.</span></h2>
+      <div class="rule fi line d2"></div>
+
+      <div class="term fi d2" style="margin-top:44px;">
+        <div class="tc">// proprietary_pipeline.log — how we deliver transformation</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;margin-top:8px;">
+          <div>
+            <div style="margin-bottom:4px;"><span class="ta">→</span><span class="tk" style="font-size:12px;letter-spacing:.12em;">N=01 · DIAGNOSE</span></div>
+            <div style="padding-left:20px;margin-bottom:18px;opacity:.65;font-size:12px;line-height:1.8;">AI-led conversation maps business health across 12 nodes. Outputs ranked Evolution Report with automation opportunities.</div>
+          </div>
+          <div>
+            <div style="margin-bottom:4px;"><span class="ta">→</span><span class="tk" style="font-size:12px;letter-spacing:.12em;">N=02 · ONBOARD</span></div>
+            <div style="padding-left:20px;margin-bottom:18px;opacity:.65;font-size:12px;line-height:1.8;">Scope agreement, access provisioned, integrations mapped. Pilot program defined before we build a single thing.</div>
+          </div>
+          <div>
+            <div style="margin-bottom:4px;"><span class="ta">→</span><span class="tk" style="font-size:12px;letter-spacing:.12em;">N=03 · BUILD TASK AGENTS &amp; INTEGRATION</span></div>
+            <div style="padding-left:20px;margin-bottom:18px;opacity:.65;font-size:12px;line-height:1.8;">Custom AI task agents built per workflow. Plugged into existing CRM, ERP, QA, and finance tools — no rip-and-replace.</div>
+          </div>
+          <div>
+            <div style="margin-bottom:4px;"><span class="ta">→</span><span class="tk" style="font-size:12px;letter-spacing:.12em;">N=04 · MAINTAIN</span></div>
+            <div style="padding-left:20px;margin-bottom:18px;opacity:.65;font-size:12px;line-height:1.8;">Ongoing advisory, monitoring, quarterly re-calibration. Context compounds monthly — the forever customer is born here.</div>
+          </div>
+        </div>
+        <div class="tc">// result: irreplaceable AI infrastructure inside every client · switching cost compounds</div>
+      </div>
+
+      <div class="g2 fi d3" style="margin-top:44px;">
+        <div class="card">
+          <div class="card-lbl">CORE · LIVE NOW</div>
+          <h3>Diagnostic Engine</h3>
+          <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">AI-powered conversation that maps business health across 12 dimensions. No forms. No jargon. A real conversation that produces a real Evolution Report.</p>
+          <div class="pill live" style="margin-top:18px;">▓▓▓▓▓▓▓░░░ &nbsp;LIVE</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">CORE · LIVE NOW</div>
+          <h3>Evolution Report</h3>
+          <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Post-diagnostic report delivered within minutes. Industry-benchmarked, actionable, specific — the first thing most owners have received that actually fits their business.</p>
+          <p style="margin-top:14px;font-size:12px;opacity:.45;line-height:1.6;font-family:var(--font-mono);letter-spacing:.06em;">Redacted sample available on request — proof artifact for diligence.</p>
+          <div class="pill live" style="margin-top:18px;">▓▓▓▓▓▓▓░░░ &nbsp;LIVE</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">IN DEVELOPMENT</div>
+          <h3>eevolvv/talent</h3>
+          <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Micro-contracting marketplace for vetted consultants and specialists. Bridge from AI diagnosis to human execution. Rebranding from Archimedes.</p>
+          <div class="pill" style="margin-top:18px;">▓▓▓░░░░░░░ &nbsp;IN BUILD</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">ROADMAP · Q3 2026+</div>
+          <h3>WhatsApp/Telegram Integration</h3>
+          <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Delivery for the Micro tier. Reaching 25M+ corner stores, kirana shops, sari-sari stores, and bodegas where they already operate — no app required.</p>
+          <div class="pill" style="margin-top:18px;">▓░░░░░░░░░ &nbsp;PLANNED</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 04 MARKET ─────────────────────── -->
+  <section id="s04" class="dk">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">04 <span>· MARKET SIZE</span></div>
+      <h2 class="fi d1">The market isn't <br><span class="it">a niche. It's the world.</span></h2>
+      <div class="rule fi line d2"></div>
+
+      <div class="g3 fi d2" style="margin-top:48px;">
+        <div class="card">
+          <div class="card-lbl">TAM · SMB + ENTERPRISE AI SERVICES</div>
+          <div class="card-val">$340B+</div>
+          <div class="card-sub">Global SMB advisory + AI automation</div>
+          <div style="margin-top:18px;">
+            <div class="pbar-row"><div class="pbar-lbl">Global</div><div class="pbar">▓▓▓▓▓▓▓▓▓▓</div><div class="pbar-pct">100%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">SAM · SMB AI AUTOMATION (2033)</div>
+          <div class="card-val">$124B</div>
+          <div class="card-sub">$68.3B today → $124.5B by 2033</div>
+          <div style="margin-top:18px;">
+            <div class="pbar-row"><div class="pbar-lbl">SAM</div><div class="pbar">▓▓░░░░░░░░</div><div class="pbar-pct">~36%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">SOM · 36-MONTH TARGET</div>
+          <div class="card-val">$18M</div>
+          <div class="card-sub">Enterprise + Core + Micro combined</div>
+          <div style="margin-top:18px;">
+            <div class="pbar-row"><div class="pbar-lbl">Yr 1–3</div><div class="pbar">▓░░░░░░░░░</div><div class="pbar-pct">0.01%</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="term fi d3" style="margin-top:40px;">
+        <div class="tc">// program_agent_markets.log — the boring programs that pay the bills</div>
+        <div><span class="ta">→</span><span class="tk">QA PROGRAMS &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">$28.1B → $55.2B by 2028 · 14.5% CAGR · ISO 9001 / Six Sigma / CMMI · $50K–$200K/yr consultant spend</span></div>
+        <div><span class="ta">→</span><span class="tk">FINANCE AUDIT &nbsp;&nbsp;</span><span class="tv">$1.4B → $8.7B by 2033 · 22.8% CAGR · SOX / internal audit · 1 in 2 CFOs still in pilot phase</span></div>
+        <div><span class="ta">→</span><span class="tk">IT SECURITY COMP</span><span class="tv">$18.3B by 2027 · SOC 2 / ISO 27001 / HIPAA · cyber insurance driving mandatory compliance</span></div>
+        <div><span class="ta">→</span><span class="tk">ESG / ENVIRO &nbsp;&nbsp;&nbsp;</span><span class="tv">$1.1B → $3.4B by 2028 · CSRD / SEC climate rules · every mid-market company in scope</span></div>
+        <div><span class="ta">→</span><span class="tk">HEALTHCARE RCM &nbsp;</span><span class="tv">$63B market · 15% CAGR · medical billing / coding compliance / denial mgmt · deeply manual</span></div>
+        <div><span class="ta">→</span><span class="tk">FOOD SAFETY &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">&gt;$5B · HACCP / FDA 21 CFR / SQF · every manufacturer in scope · recurring audit cycles</span></div>
+        <div><span class="ta">→</span><span class="tk">HR COMPLIANCE &nbsp;&nbsp;</span><span class="tv">FLSA / I-9 / ACA / benefits reconciliation · labor law enforcement creating urgency</span></div>
+        <div class="tc" style="margin-top:6px;">// shared profile: structured process · regulatory deadline · $50K–$500K/yr consultant dependency · too small for Big 4</div>
+        <div style="margin-top:10px;"><span class="ta">→</span><span class="tk">SMB ADVISORY &nbsp;&nbsp;&nbsp;</span><span class="tv">$340B+ TAM · 400M SMBs · &lt;1% with professional advisory access · diagnostic engine = brand flywheel</span></div>
+        <div><span class="ta">→</span><span class="tk">MICRO GLOBAL &nbsp;&nbsp;&nbsp;</span><span class="tv">25M+ micro-retailers · Phase 2 WhatsApp/Telegram-first · India / LatAm / Philippines</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 05 BUSINESS MODEL ─────────────── -->
+  <section id="s05">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">05 <span>· BUSINESS MODEL</span></div>
+      <h2 class="fi d1">Programs pay the bills. <br><span class="it">SMB builds the brand.</span></h2>
+      <div class="rule fi line d2"></div>
+      <p class="lead fi d2">Both engines run simultaneously. Program agents generate enterprise-grade revenue from day one — three clients equals $50K MRR. The SMB platform builds brand at scale, cheaply. Together they compound into a data flywheel that makes eevolvv irreplaceable inside every client.</p>
+
+      <div class="g3 fi d3" style="margin-top:48px;">
+        <div class="card" style="border-top:3px solid var(--ink);">
+          <div class="card-lbl">ENGINE 01 · PROGRAM AGENTS · REVENUE NOW</div>
+          <div class="card-val">$2K<span style="font-size:16px;font-weight:400;opacity:.45;">–10K/mo</span></div>
+          <p style="margin-top:14px;font-size:14px;opacity:.6;line-height:1.7;">AI agents deployed for QA, finance audit, IT compliance, ESG, healthcare revenue cycle, food safety, HR compliance, and more. Replaces $50K–$500K/yr in consultant labor per client. Motivated buyers sign fast — they have regulatory deadlines.</p>
+          <div style="margin-top:16px;font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:.12em;">3 clients → $50K+ MRR</div>
+        </div>
+        <div class="card" style="border-top:3px solid var(--accent);">
+          <div class="card-lbl">ENGINE 02 · CORE SMB · BRAND + SCALE</div>
+          <div class="card-val">$299<span style="font-size:16px;font-weight:400;opacity:.45;">/mo</span></div>
+          <p style="margin-top:14px;font-size:14px;opacity:.6;line-height:1.7;">SMBs $0.5M–$10M revenue. Full diagnostic, Evolution Report, ongoing AI advisory, quarterly reviews. Low CAC through organic diagnostic funnel. Builds brand recognition and data flywheel while program agents carry the revenue.</p>
+          <div style="margin-top:16px;font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:.12em;">High-volume · inbound-driven · compounds</div>
+        </div>
+        <div class="card" style="border-top:3px solid rgba(20,20,19,.18);">
+          <div class="card-lbl">ENGINE 03 · MICRO GLOBAL · PHASE 2</div>
+          <div class="card-val">$29<span style="font-size:16px;font-weight:400;opacity:.45;">–49/mo</span></div>
+          <p style="margin-top:14px;font-size:14px;opacity:.6;line-height:1.7;">Corner stores, kirana, sari-sari, bodegas. WhatsApp/Telegram-first. 25M+ micro-retailers globally who have never accessed professional advisory. The long-range vision — volume at scale in emerging markets.</p>
+          <div style="margin-top:16px;font-family:var(--font-mono);font-size:10px;opacity:.45;letter-spacing:.12em;">Phase 2 · Q4 2027+</div>
+        </div>
+      </div>
+
+      <div class="fi d4" style="margin-top:28px;">
+        <div class="term">
+          <div class="tc">// program_portfolio.log — the boring programs that pay the bills (Year 1 targets)</div>
+          <div><span class="ta">→</span><span class="tk">QA PROGRAMS &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">↳ ISO 9001 / Six Sigma / CMMI / IATF 16949 · $28.1B → $55.2B by 2028 · $50K–$200K/yr out the door</span></div>
+          <div><span class="ta">→</span><span class="tk">FINANCE AUDIT &nbsp;&nbsp;</span><span class="tv">↳ SOX / internal audit / reconciliation · $1.4B → $8.7B by 2033 · 1 in 2 CFOs still in pilot phase</span></div>
+          <div><span class="ta">→</span><span class="tk">IT SECURITY COMP</span><span class="tv">↳ SOC 2 / ISO 27001 / HIPAA · $18.3B by 2027 · cyber insurance = mandatory buy signal</span></div>
+          <div><span class="ta">→</span><span class="tk">ESG / ENVIRO &nbsp;&nbsp;&nbsp;</span><span class="tv">↳ CSRD / SEC climate rules / GHG reporting · $1.1B → $3.4B by 2028 · new regulatory urgency</span></div>
+          <div><span class="ta">→</span><span class="tk">HEALTHCARE RCM &nbsp;</span><span class="tv">↳ Medical billing / denial mgmt / coding compliance · $63B market · deeply manual · 15% CAGR</span></div>
+          <div><span class="ta">→</span><span class="tk">FOOD SAFETY &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">↳ HACCP / FDA 21 CFR / SQF · every food manufacturer in scope · recurring audit cycles</span></div>
+          <div><span class="ta">→</span><span class="tk">HR COMPLIANCE &nbsp;&nbsp;</span><span class="tv">↳ FLSA / I-9 / ACA / benefits rec · labor law enforcement creating urgency for mid-market</span></div>
+          <div class="tc" style="margin-top:6px;">// shared profile across all targets: structured process · regulatory deadline · $50K–$500K/yr consultant dependency · no good AI solution exists yet</div>
+        </div>
+      </div>
+
+      <div class="fi d5" style="margin-top:28px;padding:26px;border:1px solid var(--rule);border-left:3px solid var(--accent);">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;color:var(--accent);margin-bottom:14px;text-transform:uppercase;">The Forever Customer Model</div>
+        <p style="font-size:15px;opacity:.65;line-height:1.75;">Program agents aren't one-time builds — they run monthly, quarterly, annually. Every cycle the AI ingests more data, tightens its model of the business, and becomes harder to remove. Context compounds. Switching cost rises. eevolvv becomes the institutional memory of the program — and eventually, the company.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 06 TRACTION ───────────────────── -->
+  <section id="s06" class="dk">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">06 <span>· TRACTION</span></div>
+      <h2 class="fi d1">Early signal. <br><span class="it">Real proof.</span></h2>
+      <div class="rule fi line d2"></div>
+
+      <div class="g4 fi d2" style="margin-top:48px;">
+        <div class="card">
+          <div class="card-lbl">AI ENGINE</div>
+          <div class="card-val">Live</div>
+          <div class="card-sub">eevolvv.com deployed</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">INDUSTRIES TRAINED</div>
+          <div class="card-val">14</div>
+          <div class="card-sub">Industry context blocks</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">STAGE</div>
+          <div class="card-val" style="font-size:28px;">Pre-seed</div>
+          <div class="card-sub">Q2 2026 · Building pipeline</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">MRR TARGET</div>
+          <div class="card-val">$50K</div>
+          <div class="card-sub">By Q4 2026</div>
+        </div>
+      </div>
+
+      <div class="term fi d3" style="margin-top:40px;">
+        <div class="tc">// business_audit.log — Q2 2026</div>
+        <div><span class="ta">→</span><span class="tk">PRODUCT &nbsp;</span><span class="tv">eevolvv.com live · homepage-v2 shipped · diagnostic engine deployed</span></div>
+        <div><span class="ta">→</span><span class="tk">INFRA &nbsp;&nbsp;&nbsp;</span><span class="tv">Supabase + Vercel + Resend · production-stable stack</span></div>
+        <div><span class="ta">→</span><span class="tk">AI &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">Claude claude-sonnet-4-6 · 14 industry context blocks in production</span></div>
+        <div><span class="ta">→</span><span class="tk">TALENT &nbsp;&nbsp;</span><span class="tv">eevolvv/talent rebrand ✓ complete · marketplace build in progress</span></div>
+        <div><span class="ta">→</span><span class="tk">NEXT &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="tv">enterprise pilot program · eevolvv/talent beta · WhatsApp/Telegram Phase 1</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 07 GO-TO-MARKET ───────────────── -->
+  <section id="s07">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">07 <span>· GO-TO-MARKET</span></div>
+      <h2 class="fi d1">Three engines. <br><span class="it">One compounding flywheel.</span></h2>
+      <div class="rule fi line d2"></div>
+
+      <div class="fi d2" style="margin-top:44px;">
+        <div class="tl-item">
+          <div class="tl-ph">ENGINE 01<br>NOW → Q4 '26</div>
+          <div>
+            <h3>Enterprise Program Agents — Direct Revenue</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">Founder-led outbound to QA, compliance, and financial audit buyers at companies $5M–$50M. These are pragmatic, ROI-driven buyers with regulatory deadlines — they don't need convincing, they need a solution. Target: 3–5 signed program agent contracts generating $50K+ MRR. This is the path to profit.</p>
+            <div style="margin-top:14px;font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.1em;">→ QA programs · finance audit · IT compliance · ESG · healthcare RCM · food safety · HR compliance</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-ph">ENGINE 02<br>NOW → Q3 '27</div>
+          <div>
+            <h3>SMB Diagnostic Funnel — Brand + Scale</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">eevolvv.com diagnostic engine runs simultaneously — free AI diagnostic converts to $299/mo Core subscriptions. SEO on transformation keywords, founder-led content, eevolvv/talent network effect (consultants refer clients). Low CAC, high volume. Builds the data flywheel and brand recognition that makes the global expansion viable.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-ph">ENGINE 03<br>Q4 '27+</div>
+          <div>
+            <h3>WhatsApp/Telegram-First Micro Tier</h3>
+            <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">25M+ micro-retailers globally. No app download. No desktop. Just WhatsApp/Telegram — where everyone talks to agents. $29–49/mo × massive volume = a new revenue frontier in emerging markets.</p>
+            <p style="margin-top:12px;font-size:13px;opacity:.5;line-height:1.75;font-style:italic;">The long-range proof: density in India, LatAm, and the Philippines meets penetration that already lives on every phone — first-contact AI for businesses that conventional software never reached.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 08 COMPETITIVE ─────────────────── -->
+  <section id="s08" class="dk">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">08 <span>· COMPETITIVE LANDSCAPE</span></div>
+      <h2 class="fi d1">Nobody else is <br><span class="it">doing exactly this.</span></h2>
+      <div class="rule fi line d2"></div>
+
+      <div class="matrix-wrap fi d2">
+        <div>
+          <div class="ax" style="margin-bottom:8px;text-align:right;">→ HIGH AFFORDABILITY</div>
+          <div class="matrix">
+            <div class="mc">
+              <div class="mc-name">Generic AI</div>
+              <div class="mc-desc">ChatGPT, Gemini<br>Cheap · no context</div>
+            </div>
+            <div class="mc hi">
+              <div class="mc-name">eevolvv ✦</div>
+              <div class="mc-desc">Affordable + deep context<br>From SMB brand to QA / finance audit</div>
+            </div>
+            <div class="mc">
+              <div class="mc-name">SaaS Tools</div>
+              <div class="mc-desc">HubSpot, Salesforce<br>Affordable · no strategy</div>
+            </div>
+            <div class="mc">
+              <div class="mc-name">Consultants</div>
+              <div class="mc-desc">McKinsey, BCG<br>Deep context · unaffordable</div>
+            </div>
+          </div>
+          <div class="ax" style="margin-top:8px;">↑ DEEP BUSINESS CONTEXT</div>
+        </div>
+
+        <div style="flex:1;min-width:240px;">
+          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;opacity:.35;margin-bottom:18px;text-transform:uppercase;">Why eevolvv wins</div>
+          <div class="term">
+            <div><span class="ta">→</span><span class="tk">VS McKinsey</span> <span class="tv">↳ 100× cheaper · AI-speed delivery</span></div>
+            <div><span class="ta">→</span><span class="tk">VS ChatGPT </span> <span class="tv">↳ Deep context · continuity · accountability</span></div>
+            <div><span class="ta">→</span><span class="tk">VS HubSpot </span> <span class="tv">↳ Strategy, not just record-keeping</span></div>
+            <div><span class="ta">→</span><span class="tk">ENTERPRISE</span> <span class="tv">↳ AI diagnostic + audit narrative · not generic RPA or ticketing</span></div>
+            <div><span class="ta">→</span><span class="tk">MOAT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="tv">↳ Context compounds monthly → forever customer</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 09 TEAM ────────────────────────── -->
+  <section id="s09">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">09 <span>· TEAM</span></div>
+      <h2 class="fi d1">Built by someone who <br><span class="it">has lived this problem.</span></h2>
+      <div class="rule fi line d2"></div>
+
+      <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start;margin-top:48px;" class="fi d2">
+        <div class="founder">
+          <div class="founder-init">
+            <img src="founder-photo.png" width="1024" height="1024" alt="Eduardo Barbosa, Founder &amp; CEO of Eevolvv" />
+          </div>
+          <div class="founder-name">Eduardo Barbosa</div>
+          <div class="founder-title">Founder &amp; CEO</div>
+          <div class="founder-bio">Human, Veteran, Artist. From submarines to rockets to brain-computer interfaces — with a professional cage fighting stint in between. Eduardo has operated in the highest-stakes environments on earth and emerged with one conviction: leadership is grown, not given. His biggest venture yet, and the one he's building to last, is Eevolvv.</div>
+          <div class="founder-email">→ hello@eevolvv.com</div>
+        </div>
+
+        <div style="flex:1;min-width:240px;padding-top:4px;">
+          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;opacity:.38;margin-bottom:18px;text-transform:uppercase;">Hiring with this raise</div>
+          <div class="term">
+            <div class="tc">// open seats</div>
+            <div><span class="ta">→</span><span class="tk">CTO / HEAD OF AI</span>  <span class="tv">↳ AI systems · product architecture</span></div>
+            <div><span class="ta">→</span><span class="tk">HEAD OF GTM &nbsp;&nbsp;&nbsp;</span>  <span class="tv">↳ growth · partnerships · PLG</span></div>
+            <div><span class="ta">→</span><span class="tk">[ADVISOR] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>  <span class="tv">↳ SMB market · emerging markets</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 10 USE OF FUNDS ────────────────── -->
+  <section id="s10">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">10 <span>· USE OF FUNDS</span></div>
+      <h2 class="fi d1">$1M deployed with <br><span class="it">precision and intent.</span></h2>
+      <div class="rule fi line d2"></div>
+
+      <div class="g2 fi d2" style="margin-top:48px;align-items:start;">
+        <div>
+          <div class="fund-row">
+            <div class="fund-icon">▓</div>
+            <div class="fund-name">Team &amp; Payroll</div>
+            <div class="fund-amt">$400K</div>
+            <div class="fund-pct">40%</div>
+          </div>
+          <div class="fund-note">CTO / Head of AI · Head of GTM · first customer success hire</div>
+
+          <div class="fund-row">
+            <div class="fund-icon">▓</div>
+            <div class="fund-name">Sales &amp; Client Acquisition</div>
+            <div class="fund-amt">$300K</div>
+            <div class="fund-pct">30%</div>
+          </div>
+          <div class="fund-note">outbound · enterprise pilot program · partnership development · founder-led GTM</div>
+
+          <div class="fund-row">
+            <div class="fund-icon">▓</div>
+            <div class="fund-name">Marketing</div>
+            <div class="fund-amt">$150K</div>
+            <div class="fund-pct">15%</div>
+          </div>
+          <div class="fund-note">SEO · paid acquisition · content · brand · eevolvv/talent launch</div>
+
+          <div class="fund-row">
+            <div class="fund-icon">▓</div>
+            <div class="fund-name">Infrastructure &amp; Runway</div>
+            <div class="fund-amt">$150K</div>
+            <div class="fund-pct">15%</div>
+          </div>
+          <div class="fund-note">equipment · 18+ months runway · legal · ops · contingency</div>
+        </div>
+
+        <div>
+          <div style="border:1px solid var(--rule);padding:30px;">
+            <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;opacity:.38;margin-bottom:18px;text-transform:uppercase;">18-Month Milestones</div>
+            <div style="font-family:var(--font-mono);font-size:13px;line-height:2.1;">
+              <div><span style="color:var(--accent);">→</span> homepage-v2 shipped · true AI diagnostic live</div>
+              <div><span style="color:var(--accent);">→</span> eevolvv/talent beta · 50 consultants onboarded</div>
+              <div><span style="color:var(--accent);">→</span> $50K MRR achieved</div>
+              <div><span style="color:var(--accent);">→</span> 3 paying enterprise accounts</div>
+              <div><span style="color:var(--accent);">→</span> Seed round raised · WhatsApp/Telegram Phase 1 live</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── § 11 CTA ─────────────────────────── -->
+  <section id="s11">
+    <div class="grid-drift"></div>
+    <div class="inner">
+      <div class="marker fi">11 <span>· LET'S BUILD THIS</span></div>
+      <h2 class="fi d1" style="font-size:clamp(44px,8vw,88px);">Join the <br>evolution.</h2>
+      <div class="rule fi line d2"></div>
+      <p class="lead fi d2" style="color:rgba(250,247,240,.72);">We're raising $1M to build the world's most accessible business transformation service. If you believe the advice gap is real — and that AI is the mechanism to close it — we'd like to talk.</p>
+
+      <div class="fi d3" style="display:flex;flex-direction:column;align-items:flex-start;">
+        <a href="mailto:hello@eevolvv.com" class="cta-btn">→ &nbsp;Get in touch</a>
+        <a href="https://calendly.com/hello-eevolvv" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn--outline">↳ &nbsp;Schedule a call</a>
+      </div>
+
+      <div class="cta-contact fi d4">
+        <div>Eduardo Barbosa · Founder &amp; CEO</div>
+        <div>hello@eevolvv.com</div>
+        <div style="opacity:.5;margin-top:6px;">eevolvv.com · Q2 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="fc">© 2026 · EEVOLVV · CONFIDENTIAL — NOT FOR DISTRIBUTION</div>
+    <div class="fc">eevolvving forward, together.</div>
+  </footer>
+
+</div><!-- /deck -->
+
+<script>
+  /* Local preview: open with #dev or ?dev=1 on file:// or localhost to skip the gate. */
+  const __DEV_DECK = (function () {
+    const local =
+      location.protocol === 'file:' ||
+      /^localhost$/i.test(location.hostname) ||
+      /^127\.0\.0\.1$/.test(location.hostname);
+    if (!local) return false;
+    if (location.hash === '#dev') return true;
+    try {
+      return new URLSearchParams(location.search).get('dev') === '1';
+    } catch {
+      return false;
+    }
+  })();
+
+  if (__DEV_DECK) {
+    const g = document.getElementById('gate');
+    const d = document.getElementById('deck');
+    if (g) g.style.display = 'none';
+    if (d) d.classList.add('on');
+  }
+
+  /* ─── Gate ───────────────────────────── */
+  const PASS = 'eevolvv!';
+
+  function unlock(e) {
+    e.preventDefault();
+    const val  = document.getElementById('pw').value;
+    const err  = document.getElementById('gerr');
+    if (val === PASS) {
+      const gate = document.getElementById('gate');
+      const deck = document.getElementById('deck');
+      gate.classList.add('out');
+      setTimeout(() => {
+        gate.style.display = 'none';
+        deck.classList.add('on');
+        initDeck();
+      }, 680);
+    } else {
+      err.textContent = '→ incorrect. try again.';
+      document.getElementById('pw').value = '';
+      document.getElementById('pw').focus();
+      setTimeout(() => { err.textContent = ''; }, 2800);
+    }
+  }
+
+  /* Enter is handled by form submit — do not also bind keydown or unlock/initDeck runs twice. */
+
+  /* gate entrance */
+  if (__DEV_DECK) {
+    initDeck();
+  } else {
+    (function gateIn() {
+      const gw = document.getElementById('gw');
+      const ge = document.getElementById('ge');
+      const gq = document.getElementById('gq');
+      const gf = document.getElementById('gf');
+      setTimeout(() => { gw.classList.add('g-in-1'); }, 80);
+      setTimeout(() => { ge.classList.add('g-in-2'); }, 220);
+      setTimeout(() => { gq.classList.add('g-in-1'); }, 360);
+      setTimeout(() => { gf.classList.add('g-in-2'); }, 500);
+
+      /* gate scrambler */
+      if (gw) {
+        const orig = 'EEVOLVV';
+        const mChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>';
+        let gwIter = 0;
+        let gwScramble = setInterval(() => {
+          let t = orig.split('').map((l, i) => {
+            if (i < gwIter) return orig[i];
+            return mChars[Math.floor(Math.random() * mChars.length)];
+          }).join('');
+          gw.innerText = t;
+          gw.setAttribute('data-text', t);
+          if (gwIter >= orig.length) {
+            clearInterval(gwScramble);
+            gw.innerText = orig;
+            gw.setAttribute('data-text', orig);
+            
+            /* glitch loop */
+            setInterval(() => {
+              const rIdx = Math.floor(Math.random() * orig.length);
+              const nChar = mChars[Math.floor(Math.random() * mChars.length)];
+              let arr = orig.split('');
+              arr[rIdx] = nChar;
+              gw.innerText = arr.join('');
+              gw.setAttribute('data-text', arr.join(''));
+              setTimeout(() => { 
+                gw.innerText = orig; 
+                gw.setAttribute('data-text', orig);
+              }, 150);
+            }, 3000);
+          }
+          gwIter += 1/8; /* slightly quicker resolution */
+        }, 70);
+      }
+    })();
+  }
+
+  /* ─── Deck init ──────────────────────── */
+  let __deckInited = false;
+  function initDeck() {
+    if (__deckInited) return;
+    __deckInited = true;
+    const sections = document.querySelectorAll('section');
+    const ndots    = document.getElementById('ndots');
+
+    /* build nav dots */
+    sections.forEach((sec, i) => {
+      const d = document.createElement('div');
+      d.className = 'nd';
+      d.title = sec.id.toUpperCase();
+      d.addEventListener('click', () => sec.scrollIntoView({ behavior: 'smooth' }));
+      ndots.appendChild(d);
+    });
+
+    /* fade-in observer */
+    const fiObs = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('vis'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fi').forEach(el => fiObs.observe(el));
+
+    /* active dot observer */
+    const dotObs = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          const idx = Array.from(sections).indexOf(en.target);
+          document.querySelectorAll('.nd').forEach((d, i) => d.classList.toggle('on', i === idx));
+        }
+      });
+    }, { threshold: 0.45 });
+    sections.forEach(s => dotObs.observe(s));
+
+    /* matrix hero scrambler */
+    const heroWord = document.querySelector('.cover-ew');
+    if (heroWord) {
+      const originalText = heroWord.getAttribute('data-text') || 'EEVOLVV';
+      const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>';
+      let iterations = 0;
+      let scrambleInterval = setInterval(() => {
+        let currentText = originalText.split('').map((letter, index) => {
+          if (index < iterations) return originalText[index];
+          return matrixChars[Math.floor(Math.random() * matrixChars.length)];
+        }).join('');
+        
+        heroWord.innerText = currentText;
+        heroWord.setAttribute('data-text', currentText);
+        
+        if (iterations >= originalText.length) {
+          clearInterval(scrambleInterval);
+          heroWord.innerText = originalText;
+          heroWord.setAttribute('data-text', originalText);
+          
+          /* infinite random flicker for terminal effect */
+          setInterval(() => {
+            const randIdx = Math.floor(Math.random() * originalText.length);
+            const newChar = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+            let arr = originalText.split('');
+            arr[randIdx] = newChar;
+            heroWord.innerText = arr.join('');
+            heroWord.setAttribute('data-text', arr.join(''));
+            
+            setTimeout(() => {
+              heroWord.innerText = originalText;
+              heroWord.setAttribute('data-text', originalText);
+            }, 150);
+          }, 3000);
+        }
+        iterations += 1/10; /* slightly quicker resolution */
+      }, 75);
+    }
+  }
+</script>
+</body>
+</html>
