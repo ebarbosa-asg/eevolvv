@@ -7,6 +7,7 @@ import { HealthDot, StagePipeline, StatusBadge } from '../../HubClient'
 const STAGES = ['diagnose', 'onboard', 'build', 'maintain'] as const
 const AGENT_TYPES = ['qa-automation', 'finance-audit', 'data-sync', 'reporting', 'notification', 'custom']
 const TASK_STATUSES = ['todo', 'in_progress', 'done', 'blocked'] as const
+const TASK_CATEGORIES = ['research', 'build', 'qa', 'review', 'deploy', 'comms', 'general'] as const
 
 const CARD = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', padding: '20px', borderRadius: '2px' } as const
 const MONO = { fontFamily: 'JetBrains Mono, monospace' } as const
@@ -34,6 +35,11 @@ type Task = {
   status: 'todo' | 'in_progress' | 'done' | 'blocked'
   due_date: string | null; priority: 'high' | 'normal' | 'low'
   created_at: string; updated_at: string
+  agent_id: string | null
+  category: 'research' | 'build' | 'qa' | 'review' | 'deploy' | 'comms' | 'general' | null
+  assignee: string | null
+  estimated_hrs: number | null
+  blocked_reason: string | null
 }
 
 type ActivityEntry = {
@@ -163,7 +169,7 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
 
   // --- Tasks ---
   const [showAddTask, setShowAddTask] = useState(false)
-  const [taskForm, setTaskForm] = useState({ title: '', priority: 'normal', due_date: '' })
+  const [taskForm, setTaskForm] = useState({ title: '', priority: 'normal', due_date: '', category: 'general', agent_id: '', estimated_hrs: '' })
   const [expandedTask, setExpandedTask] = useState<string | null>(null)
   const [editTaskForm, setEditTaskForm] = useState<Partial<Task>>({})
 
@@ -171,13 +177,20 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
     if (!taskForm.title) return
     const res = await fetch(`/api/os/clients/${client.id}/tasks`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: taskForm.title, priority: taskForm.priority, due_date: taskForm.due_date || null }),
+      body: JSON.stringify({
+        title: taskForm.title,
+        priority: taskForm.priority,
+        due_date: taskForm.due_date || null,
+        category: taskForm.category || 'general',
+        agent_id: taskForm.agent_id || null,
+        estimated_hrs: taskForm.estimated_hrs ? parseFloat(taskForm.estimated_hrs) : null,
+      }),
     })
     if (res.ok) {
       const newTask = await res.json() as Task
       setTasks(prev => [newTask, ...prev])
       setShowAddTask(false)
-      setTaskForm({ title: '', priority: 'normal', due_date: '' })
+      setTaskForm({ title: '', priority: 'normal', due_date: '', category: 'general', agent_id: '', estimated_hrs: '' })
     }
   }
 
@@ -389,7 +402,50 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
 
             {/* SERVICE TASKS */}
             <div className="ws-section">
-              <SectionLabel n="B" label="SERVICE TASKS" />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <SectionLabel n="B" label="SERVICE TASKS" />
+                <button className="ws-btn" onClick={() => setShowAddTask(v => !v)} style={{ color: 'var(--accent)', background: 'none', border: '1px solid var(--accent)', padding: '3px 8px' }}>+ add task</button>
+              </div>
+
+              {showAddTask && (
+                <div style={{ ...CARD, marginBottom: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <div style={MONO_LABEL}>Title</div>
+                    <input value={taskForm.title} onChange={e => setTaskForm(f => ({ ...f, title: e.target.value }))} placeholder="Task title…" style={INPUT} onKeyDown={e => e.key === 'Enter' && submitTask()} autoFocus />
+                  </div>
+                  <div>
+                    <div style={MONO_LABEL}>Priority</div>
+                    <select value={taskForm.priority} onChange={e => setTaskForm(f => ({ ...f, priority: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                      {['high','normal','low'].map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <div style={MONO_LABEL}>Due date</div>
+                    <input type="date" value={taskForm.due_date} onChange={e => setTaskForm(f => ({ ...f, due_date: e.target.value }))} style={INPUT} />
+                  </div>
+                  <div>
+                    <div style={MONO_LABEL}>Category</div>
+                    <select value={taskForm.category} onChange={e => setTaskForm(f => ({ ...f, category: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                      {TASK_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <div style={MONO_LABEL}>Agent</div>
+                    <select value={taskForm.agent_id} onChange={e => setTaskForm(f => ({ ...f, agent_id: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                      <option value="">— no agent —</option>
+                      {agents.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <div style={MONO_LABEL}>Est hrs</div>
+                    <input type="number" min="0" step="0.5" value={taskForm.estimated_hrs} onChange={e => setTaskForm(f => ({ ...f, estimated_hrs: e.target.value }))} placeholder="0" style={INPUT} />
+                  </div>
+                  <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                    <button onClick={() => setShowAddTask(false)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>cancel</button>
+                    <button onClick={submitTask} style={{ ...MONO, fontSize: '11px', textTransform: 'uppercase', color: 'var(--paper)', background: 'var(--accent)', border: 'none', padding: '4px 12px', cursor: 'pointer', borderRadius: '2px' }}>add</button>
+                  </div>
+                </div>
+              )}
 
               {[
                 { label: 'IN PROGRESS', items: inProgress },
@@ -400,11 +456,39 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
                   <div style={{ ...MONO_LABEL, marginBottom: '8px' }}>{label}</div>
                   {items.map(t => (
                     <div key={t.id}>
-                      <div className="task-row" onClick={() => { setExpandedTask(expandedTask === t.id ? null : t.id); setEditTaskForm({ title: t.title, description: t.description, due_date: t.due_date, priority: t.priority, status: t.status }) }}>
+                      <div className="task-row" onClick={() => { setExpandedTask(expandedTask === t.id ? null : t.id); setEditTaskForm({ title: t.title, description: t.description, due_date: t.due_date, priority: t.priority, status: t.status, agent_id: t.agent_id, category: t.category, estimated_hrs: t.estimated_hrs, blocked_reason: t.blocked_reason }) }}>
                         <PriorityDot priority={t.priority} />
                         <span style={{ flex: 1, fontSize: '14px' }}>{t.title}</span>
+                        {t.category && t.category !== 'general' && (
+                          <span style={{ ...MONO, fontSize: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '2px', padding: '1px 5px', opacity: 0.7 }}>
+                            {t.category}
+                          </span>
+                        )}
+                        {t.agent_id && (() => {
+                          const agent = agents.find(a => a.id === t.agent_id)
+                          if (!agent) return null
+                          return (
+                            <Link
+                              href={`/os/clients/${client.id}/agents/${t.agent_id}`}
+                              onClick={e => e.stopPropagation()}
+                              style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '10px', color: 'var(--accent)', border: '1px solid var(--accent)', borderRadius: '10px', padding: '1px 8px', textDecoration: 'none', opacity: 0.8 }}
+                            >
+                              {agent.name}
+                            </Link>
+                          )
+                        })()}
                         {t.due_date && <span style={{ ...MONO, fontSize: '10px', opacity: 0.4 }}>{t.due_date}</span>}
                         <button onClick={e => { e.stopPropagation(); cycleTaskStatus(t) }} style={{ ...MONO, fontSize: '10px', border: `1px solid ${taskBadgeColor(t.status)}`, color: taskBadgeColor(t.status), background: 'none', padding: '1px 6px', borderRadius: '4px', cursor: 'pointer' }}>{t.status.replace('_',' ')}</button>
+                        <button
+                          onClick={async e => {
+                            e.stopPropagation()
+                            if (!window.confirm(`Delete "${t.title}"?`)) return
+                            const res = await fetch(`/api/os/clients/${client.id}/tasks/${t.id}`, { method: 'DELETE' })
+                            if (res.ok) setTasks(prev => prev.filter(task => task.id !== t.id))
+                          }}
+                          style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.3)', background: 'none', border: 'none', cursor: 'pointer', padding: '0 4px' }}
+                          title="Delete task"
+                        >✕</button>
                       </div>
                       {expandedTask === t.id && (
                         <div style={{ ...CARD, marginBottom: '8px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -432,6 +516,30 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
                               {TASK_STATUSES.map(s => <option key={s} value={s}>{s.replace('_',' ')}</option>)}
                             </select>
                           </div>
+                          <div>
+                            <div style={MONO_LABEL}>Category</div>
+                            <select value={editTaskForm.category ?? 'general'} onChange={e => setEditTaskForm(f => ({ ...f, category: e.target.value as Task['category'] }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                              {TASK_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                          </div>
+                          <div>
+                            <div style={MONO_LABEL}>Agent</div>
+                            <select value={editTaskForm.agent_id ?? ''} onChange={e => setEditTaskForm(f => ({ ...f, agent_id: e.target.value || null }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                              <option value="">— no agent —</option>
+                              {agents.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                            </select>
+                          </div>
+                          {editTaskForm.status === 'blocked' && (
+                            <div style={{ gridColumn: '1 / -1' }}>
+                              <div style={MONO_LABEL}>Blocked reason</div>
+                              <textarea
+                                value={editTaskForm.blocked_reason ?? ''}
+                                onChange={e => setEditTaskForm(f => ({ ...f, blocked_reason: e.target.value }))}
+                                placeholder="Why is this blocked?"
+                                style={{ ...INPUT, resize: 'vertical', minHeight: '60px' }}
+                              />
+                            </div>
+                          )}
                           <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                             <button onClick={() => setExpandedTask(null)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>cancel</button>
                             <button onClick={() => saveTaskEdit(t.id)} style={{ ...MONO, fontSize: '11px', textTransform: 'uppercase', color: 'var(--paper)', background: 'var(--accent)', border: 'none', padding: '4px 12px', cursor: 'pointer', borderRadius: '2px' }}>save</button>
@@ -456,33 +564,8 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
                 </div>
               )}
 
-              {tasks.length === 0 && (
+              {tasks.length === 0 && !showAddTask && (
                 <div style={{ ...MONO, fontSize: '12px', opacity: 0.35, padding: '16px 0' }}>No tasks yet</div>
-              )}
-
-              {showAddTask ? (
-                <div style={{ ...CARD, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '12px' }}>
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <div style={MONO_LABEL}>Title</div>
-                    <input value={taskForm.title} onChange={e => setTaskForm(f => ({ ...f, title: e.target.value }))} placeholder="Task title…" style={INPUT} onKeyDown={e => e.key === 'Enter' && submitTask()} autoFocus />
-                  </div>
-                  <div>
-                    <div style={MONO_LABEL}>Priority</div>
-                    <select value={taskForm.priority} onChange={e => setTaskForm(f => ({ ...f, priority: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
-                      {['high','normal','low'].map(p => <option key={p} value={p}>{p}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <div style={MONO_LABEL}>Due date</div>
-                    <input type="date" value={taskForm.due_date} onChange={e => setTaskForm(f => ({ ...f, due_date: e.target.value }))} style={INPUT} />
-                  </div>
-                  <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                    <button onClick={() => setShowAddTask(false)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>cancel</button>
-                    <button onClick={submitTask} style={{ ...MONO, fontSize: '11px', textTransform: 'uppercase', color: 'var(--paper)', background: 'var(--accent)', border: 'none', padding: '4px 12px', cursor: 'pointer', borderRadius: '2px' }}>add</button>
-                  </div>
-                </div>
-              ) : (
-                <button onClick={() => setShowAddTask(true)} style={{ ...MONO, fontSize: '11px', color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', marginTop: '8px' }}>+ add task</button>
               )}
             </div>
           </div>
