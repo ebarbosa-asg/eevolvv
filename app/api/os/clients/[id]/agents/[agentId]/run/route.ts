@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { supabase } from '@/lib/supabase'
+import { sendRunEmail } from '@/lib/email'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -91,6 +92,25 @@ export async function POST(
       last_run_at: new Date().toISOString(),
       run_count: (agent.run_count ?? 0) + 1,
     }).eq('id', params.agentId)
+
+    // Fire-and-forget email for scheduled and share_page runs
+    if (triggeredBy === 'schedule' || triggeredBy === 'share_page') {
+      const { data: clientData } = await supabase
+        .from('clients')
+        .select('name, email')
+        .eq('id', params.id)
+        .single()
+
+      if (clientData?.email && agent.share_token) {
+        sendRunEmail({
+          clientEmail: clientData.email,
+          clientName: clientData.name ?? '',
+          agentName: agent.name ?? 'Your Agent',
+          outputSummary,
+          shareToken: agent.share_token,
+        }).catch(err => console.error('[email] sendRunEmail failed:', err))
+      }
+    }
 
     return NextResponse.json({ runId, output, outputSummary, inputTokens, outputTokens, latencyMs })
 
