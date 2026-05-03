@@ -107,7 +107,7 @@ export default function AgentBuilder({ agent, client }: { agent: AgentFull; clie
       trigger_config: triggerType === 'schedule'
         ? { freq: scheduleFreq, time: scheduleTime, tz: scheduleTz, days: scheduleDays, cron: customCron }
         : triggerType === 'webhook'
-        ? { method: webhookMethod, auth: webhookAuth }
+        ? { method: webhookMethod, auth: webhookAuth, token: webhookToken, secret: webhookSecret }
         : {},
     }
     if (step === 5) { setSaving(false); setStep(6); return }
