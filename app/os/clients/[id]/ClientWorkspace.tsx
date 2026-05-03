@@ -27,6 +27,15 @@ type Agent = {
   integrations: string[] | null; repo_url: string | null; deploy_url: string | null
   last_run_at: string | null; health: 'green' | 'yellow' | 'red'; notes: string | null
   created_at: string; updated_at: string
+  // Builder fields (added by T01 migration)
+  trigger_type: 'manual' | 'schedule' | 'webhook' | null
+  trigger_config: Record<string, unknown> | null
+  instructions: string | null
+  estimated_output: string | null
+  config: Record<string, unknown> | null
+  version: number
+  run_count: number
+  error_count: number
 }
 
 type Task = {
