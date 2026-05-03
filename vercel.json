@@ -1,3 +1,9 @@
 {
-  "ignoreCommand": "[[ \"$VERCEL_GIT_COMMIT_REF\" =~ ^feature/|-[0-9]+[a-z]?$ ]] && exit 0 || exit 1"
+  "ignoreCommand": "[[ \"$VERCEL_GIT_COMMIT_REF\" =~ ^feature/|-[0-9]+[a-z]?$ ]] && exit 0 || exit 1",
+  "crons": [
+    {
+      "path": "/api/cron/agents",
+      "schedule": "0 9 * * *"
+    }
+  ]
 }
