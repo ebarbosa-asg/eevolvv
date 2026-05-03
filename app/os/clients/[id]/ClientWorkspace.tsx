@@ -394,6 +394,7 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
                         <div style={{ display: 'flex', gap: '8px' }}>
                           <button onClick={() => { setEditingAgent(a.id); setEditAgentForm({}) }} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>✎</button>
                           <button onClick={() => deleteAgent(a.id, a.name)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.3)', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
+                          <Link href={`/os/clients/${client.id}/agents/${a.id}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: 'var(--accent)', textDecoration: 'none', opacity: 0.8 }}>→ build</Link>
                         </div>
                       </div>
                       {a.description && <div style={{ fontSize: '13px', opacity: 0.6, marginBottom: '8px' }}>{a.description}</div>}
