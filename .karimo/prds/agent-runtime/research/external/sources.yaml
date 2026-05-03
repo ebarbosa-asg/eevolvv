@@ -1,0 +1,70 @@
+sources:
+  - id: anthropic-streaming-docs
+    title: "Streaming Messages — Anthropic API Docs"
+    url: "https://platform.claude.com/docs/en/api/streaming"
+    accessed: "2026-05-02"
+    relevance: high
+    notes: "TypeScript stream() pattern, finalMessage() for token counts"
+
+  - id: vercel-cron-overview
+    title: "Cron Jobs — Vercel Docs"
+    url: "https://vercel.com/docs/cron-jobs"
+    accessed: "2026-05-02"
+    relevance: high
+    notes: "Cron expression format, how Vercel makes HTTP GET to /api/cron route"
+
+  - id: vercel-cron-quickstart
+    title: "Getting Started with Cron Jobs — Vercel Docs"
+    url: "https://vercel.com/docs/cron-jobs/quickstart"
+    accessed: "2026-05-02"
+    relevance: high
+    notes: "vercel.json crons config, App Router GET handler pattern, deploy requirement"
+
+  - id: vercel-cron-pricing
+    title: "Cron Jobs Usage & Pricing — Vercel Docs"
+    url: "https://vercel.com/docs/cron-jobs/usage-and-pricing"
+    accessed: "2026-05-02"
+    relevance: high
+    notes: "Hobby: once/day only. Pro: once/minute. 100 crons max any plan."
+
+  - id: hookdeck-hmac
+    title: "How to Implement SHA256 Webhook Signature Verification — Hookdeck"
+    url: "https://hookdeck.com/webhooks/guides/how-to-implement-sha256-webhook-signature-verification"
+    accessed: "2026-05-02"
+    relevance: high
+    notes: "HMAC-SHA256 with timingSafeEqual, raw body requirement"
+
+  - id: github-webhook-validation
+    title: "Validating Webhook Deliveries — GitHub Docs"
+    url: "https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries"
+    accessed: "2026-05-02"
+    relevance: medium
+    notes: "X-Hub-Signature-256 header convention, reference implementation"
+
+  - id: patronus-llm-observability
+    title: "LLM Observability: Tutorial & Best Practices — Patronus AI"
+    url: "https://www.patronus.ai/llm-testing/llm-observability"
+    accessed: "2026-05-02"
+    relevance: medium
+    notes: "What fields to log per run trace"
+
+  - id: relevance-share-agent
+    title: "Share Your Agent — Relevance AI"
+    url: "https://relevanceai.com/docs/agent/share-your-agent"
+    accessed: "2026-05-02"
+    relevance: medium
+    notes: "Shareable link + iframe embed delivery model"
+
+  - id: relevance-chat-embed
+    title: "Chat Embed — Relevance AI"
+    url: "https://relevanceai.com/chat-embed"
+    accessed: "2026-05-02"
+    relevance: medium
+    notes: "Pop-up chat widget, script tag embed"
+
+  - id: zapier-agents
+    title: "Build AI Teammates with Zapier Agents"
+    url: "https://zapier.com/agents"
+    accessed: "2026-05-02"
+    relevance: low
+    notes: "Competitive reference for agent delivery patterns"
