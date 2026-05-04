@@ -1,0 +1,16 @@
+prd: os-dashboard-redesign
+strategy: parallel_waves
+total_waves: 2
+
+waves:
+  - wave: 1
+    tasks: [T01, T02]
+    rationale: "No dependencies — layout and shared components built first"
+
+  - wave: 2
+    tasks: [T03, T04, T05, T06, T07, T08]
+    rationale: "All 6 page builds + 2 rebuilds run in parallel once layout/shared are ready"
+
+longest_chain: "T01 → T03 (or any wave 2 task)"
+critical_path_length: 2
+max_parallel_in_wave_2: 6

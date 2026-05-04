@@ -1,0 +1,56 @@
+{
+  "configured_at": "2026-05-03T22:30:00Z",
+  "orchestration_version": 2,
+  "orchestration": {
+    "integration": {
+      "cadence": "worktree",
+      "auto_merge_on_green": true
+    },
+    "review": {
+      "trigger": "per-task",
+      "scope": "pr-diff",
+      "skip_if_diff_under": 0,
+      "on_findings": "halt",
+      "providers": {
+        "greptile": { "fire_at": [], "on_findings": "halt" },
+        "code-review": { "fire_at": [], "on_findings": "halt" }
+      }
+    },
+    "gates": {
+      "model": "pause",
+      "auto_place": true,
+      "max_waves_per_gate": 8,
+      "conditions": {
+        "require_tests_pass": true,
+        "require_build_pass": true,
+        "max_critical_findings": 0
+      },
+      "placements": [
+        { "after_wave": 1, "label": "Validate shared infrastructure (Sidebar, OSTopbar, shared components)" }
+      ]
+    }
+  },
+  "models": {
+    "default": "sonnet",
+    "complexity_threshold": 5,
+    "force_opus_tasks": [],
+    "force_sonnet_tasks": [],
+    "escalation": {
+      "after_failures": 1,
+      "triggers": ["architectural_issues", "type_system_issues"]
+    }
+  },
+  "slicing": {
+    "enabled": true,
+    "slice_count": 2,
+    "gates": [
+      { "after_wave": 1, "label": "Validate shared infrastructure (Sidebar, OSTopbar, shared components)" }
+    ],
+    "auto_pause_at_gates": true
+  },
+  "max_revision_loops": 3,
+  "allow_bypass": {
+    "future_work_overlap": true,
+    "false_positive_factual": true
+  }
+}
