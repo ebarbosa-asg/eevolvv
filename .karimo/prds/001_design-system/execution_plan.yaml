@@ -1,0 +1,19 @@
+prd: design-system
+strategy: parallel_waves
+total_waves: 3
+
+waves:
+  - wave: 1
+    tasks: [T01, T02]
+    rationale: "No dependencies — Tailwind fix and docs can run in parallel"
+
+  - wave: 2
+    tasks: [T03]
+    rationale: "Primitive components require T01 (tokens) to be in place"
+
+  - wave: 3
+    tasks: [T04]
+    rationale: "Brand components build on T03 primitives"
+
+longest_chain: "T01 → T03 → T04"
+critical_path_length: 3

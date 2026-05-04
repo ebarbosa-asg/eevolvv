@@ -1,0 +1,97 @@
+prd: design-system
+total_complexity: 10
+total_tasks: 4
+
+tasks:
+  - id: T01
+    title: "Fix tailwind.config.js — replace stale tokens with real design system"
+    complexity: 1
+    priority: must
+    depends_on: []
+    files:
+      - tailwind.config.js
+    description: >
+      Remove the stale dark-mode color set (void, carbon, graphite, smoke, steel,
+      mist, ghost, pure, signal, signal-dim, signal-glow, pulse, pulse-dim, electric)
+      and add paper, ink, accent, rule as Tailwind color tokens using CSS variables.
+      Retain font family tokens (display, body, mono). Verify npm run build passes.
+    acceptance:
+      - Stale colors removed from tailwind.config.js
+      - paper/ink/accent/rule added as CSS variable references
+      - Font family tokens retained
+      - npm run build passes
+
+  - id: T02
+    title: "Write components/ds/README.md and update CLAUDE.md design system section"
+    complexity: 1
+    priority: must
+    depends_on: []
+    files:
+      - components/ds/README.md
+      - CLAUDE.md
+    description: >
+      Create components/ds/README.md documenting all 13 components with usage examples,
+      token reference, font stack, and the 3-file portability instructions.
+      Update CLAUDE.md with a ## Design System section containing a short rule
+      (use ds/ components, never raw Tailwind) and a pointer to the README.
+    acceptance:
+      - components/ds/README.md exists with all 13 components documented
+      - CLAUDE.md has ## Design System section
+      - README includes 3-file portability instructions
+      - README includes token reference table
+
+  - id: T03
+    title: "Build primitive components — Button, Card, Badge, Input, Sidebar"
+    complexity: 4
+    priority: must
+    depends_on: [T01]
+    files:
+      - components/ds/Button.tsx
+      - components/ds/Card.tsx
+      - components/ds/Badge.tsx
+      - components/ds/StatusPill.tsx
+      - components/ds/Input.tsx
+      - components/ds/Textarea.tsx
+      - components/ds/Label.tsx
+      - components/ds/Sidebar.tsx
+      - components/ds/index.ts
+    description: >
+      Build 9 primitive components in components/ds/. All components must use CSS
+      variables (--paper, --ink, --accent, --rule) — no hardcoded hex values.
+      TypeScript with exported prop types. Button primary variant uses btn-gradient
+      class from globals.css. Input focus ring uses --accent. Badge/StatusPill use
+      JetBrains Mono 11px. Sidebar is collapsible left nav with icon+label rows,
+      active state uses accent tint. Export all from components/ds/index.ts.
+    acceptance:
+      - All 9 components exist and export named prop types
+      - No hardcoded hex values — all CSS variables
+      - Button gradient animation works
+      - Input focus ring uses accent
+      - Badge uses mono 11px
+      - Sidebar collapses to icon-only
+      - index.ts exports all components
+
+  - id: T04
+    title: "Build eevolvv-specific components — SectionMarker, TerminalBlock, KPIStat, DataRow"
+    complexity: 3
+    priority: must
+    depends_on: [T03]
+    files:
+      - components/ds/SectionMarker.tsx
+      - components/ds/TerminalBlock.tsx
+      - components/ds/KPIStat.tsx
+      - components/ds/DataRow.tsx
+    description: >
+      Build 4 brand-specific components in components/ds/ that encode the eevolvv
+      visual language. SectionMarker renders "§ {num} · {label}" in JetBrains Mono
+      11px uppercase 0.2em tracking, accent color. TerminalBlock renders an array
+      of lines with → (primary) or ↳ (sub) prefix in the terminal log block style
+      from globals.css. KPIStat renders a large display-size number + small mono
+      label underneath. DataRow renders a horizontal mono label + value pair.
+      Export all from components/ds/index.ts.
+    acceptance:
+      - SectionMarker renders § N · LABEL correctly
+      - TerminalBlock renders → and ↳ prefixed lines in mono style
+      - KPIStat renders large number + small label
+      - DataRow renders horizontal mono label + value pair
+      - All exported from index.ts
