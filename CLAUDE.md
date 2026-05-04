@@ -173,6 +173,39 @@ border: 1px solid rgba(255,255,255,0.055);
 
 ---
 
+## Design System Components
+
+**Rule: Always use `components/ds/` — never build UI from raw Tailwind classes.**
+
+→ Full reference: `components/ds/README.md`
+
+### Tokens (CSS variables — use these, not hex values)
+| Token | Value | Role |
+|---|---|---|
+| `--paper` | `#faf7f0` | Page background |
+| `--ink` | `#141413` | Primary text |
+| `--accent` | `oklch(0.45 0.13 25)` | Brick red — CTAs, markers |
+| `--rule` | `rgba(20,20,19,.14)` | Borders, dividers |
+
+### Tailwind tokens
+`bg-paper`, `text-ink`, `text-accent`, `border-rule` — map directly to CSS variables.
+
+### Component quick-ref
+| Need | Use |
+|---|---|
+| Button | `<Button variant="primary|secondary|ghost|danger">` |
+| Container | `<Card>`, `<CardHeader>`, `<CardContent>` |
+| Status tag | `<Badge variant="success|warning|danger|neutral">` |
+| Text input | `<Input>`, `<Textarea>` |
+| Field label | `<Label>` |
+| Nav | `<Sidebar>` |
+| Section header | `<SectionMarker num="01" label="OVERVIEW" />` |
+| Log block | `<TerminalBlock lines={[...]} />` |
+| Metric | `<KPIStat value="87" label="SCORE" />` |
+| Data pair | `<DataRow label="STATUS" value="Active" />` |
+
+---
+
 ## Tech Stack (eevolvv.com)
 | Layer | What |
 |-------|------|

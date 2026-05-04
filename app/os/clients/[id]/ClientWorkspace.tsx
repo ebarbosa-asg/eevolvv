@@ -2,17 +2,20 @@
 
 import { useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
-import { HealthDot, StagePipeline, StatusBadge } from '../../HubClient'
+import { Badge, Button, Input, Textarea, Label, SectionMarker, StatusPill } from '@/components/ds'
+import type { BadgeVariant } from '@/components/ds'
+import { OSBreadcrumb } from '@/app/os/components/OSBreadcrumb'
+import { HealthDot } from '@/app/os/components/shared'
 
 const STAGES = ['diagnose', 'onboard', 'build', 'maintain'] as const
 const AGENT_TYPES = ['qa-automation', 'finance-audit', 'data-sync', 'reporting', 'notification', 'custom']
 const TASK_STATUSES = ['todo', 'in_progress', 'done', 'blocked'] as const
 const TASK_CATEGORIES = ['research', 'build', 'qa', 'review', 'deploy', 'comms', 'general'] as const
 
-const CARD = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', padding: '20px', borderRadius: '2px' } as const
-const MONO = { fontFamily: 'JetBrains Mono, monospace' } as const
-const MONO_LABEL = { fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', textTransform: 'uppercase' as const, letterSpacing: '0.12em', opacity: 0.4, marginBottom: '6px' }
-const INPUT = { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '2px', color: 'var(--paper)', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', padding: '7px 10px', outline: 'none', width: '100%' } as const
+// Dark-context overrides for ds/ Input/Textarea
+const DARK_INPUT = 'bg-white/6 text-paper border-white/10 placeholder:text-paper/30 focus:border-accent'
+const DARK_TEXTAREA = 'bg-transparent text-paper border-paper/10 placeholder:text-paper/30 focus:border-accent resize-y min-h-[80px]'
+const DARK_SELECT = 'w-full border border-white/10 rounded px-3 py-2 text-sm bg-white/6 text-paper cursor-pointer focus:outline-none focus:border-accent'
 
 function relativeTime(dateStr: string): string {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
@@ -28,7 +31,6 @@ type Agent = {
   integrations: string[] | null; repo_url: string | null; deploy_url: string | null
   last_run_at: string | null; health: 'green' | 'yellow' | 'red'; notes: string | null
   created_at: string; updated_at: string
-  // Builder fields (added by T01 migration)
   trigger_type: 'manual' | 'schedule' | 'webhook' | null
   trigger_config: Record<string, unknown> | null
   instructions: string | null
@@ -69,33 +71,21 @@ type SubmissionBrief = {
   business_type: string; tier: string | null; created_at: string
 }
 
-const WORKSPACE_CSS = `
-  .ws-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
-  .ws-section { margin-bottom: 32px; border-left: 3px solid var(--accent); padding-left: 16px; }
-  .ws-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); padding: 20px; transition: background 0.15s; }
-  .ws-card:hover { background: rgba(255,255,255,0.06); }
-  .ws-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; color: var(--paper); font-family: JetBrains Mono, monospace; font-size: 12px; padding: 7px 10px; outline: none; width: 100%; }
-  .ws-btn { font-family: JetBrains Mono, monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; border-radius: 2px; }
-  .task-row { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; cursor: pointer; }
-  .task-row:last-child { border-bottom: none; }
-  .task-row:hover { background: rgba(255,255,255,0.02); }
-  .agent-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); padding: 16px; margin-bottom: 10px; transition: background 0.15s; }
-  .agent-card:hover { background: rgba(255,255,255,0.06); }
-  .chip { font-family: JetBrains Mono, monospace; font-size: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; padding: 1px 5px; opacity: 0.7; }
-  @media (max-width: 900px) { .ws-grid { grid-template-columns: 1fr; } }
-`
-
-function SectionLabel({ n, label }: { n: string; label: string }) {
-  return (
-    <div style={{ ...MONO, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: '16px' }}>
-      § {n} · {label}
-    </div>
-  )
+function agentStatusToVariant(status: string): BadgeVariant {
+  if (status === 'live') return 'success'
+  if (status === 'staging') return 'warning'
+  if (status === 'error') return 'danger'
+  return 'neutral'
 }
 
 function PriorityDot({ priority }: { priority: string }) {
   const color = priority === 'high' ? 'var(--accent)' : priority === 'low' ? 'rgba(250,247,240,0.2)' : 'rgba(250,247,240,0.45)'
-  return <span style={{ display: 'inline-block', width: '7px', height: '7px', borderRadius: '50%', background: color, flexShrink: 0 }} title={priority} />
+  return (
+    <span
+      style={{ display: 'inline-block', width: '7px', height: '7px', borderRadius: '50%', background: color, flexShrink: 0 }}
+      title={priority}
+    />
+  )
 }
 
 export default function ClientWorkspace({ client: initialClient, allSubmissions }: { client: ClientFull; allSubmissions: SubmissionBrief[] }) {
@@ -253,54 +243,87 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
   const blocked = tasks.filter(t => t.status === 'blocked')
   const [showDone, setShowDone] = useState(false)
 
-  const taskBadgeColor = (status: string) => {
-    const map: Record<string, string> = { todo: 'rgba(250,247,240,0.35)', in_progress: '#f59e0b', done: '#4ade80', blocked: 'var(--accent)' }
-    return map[status] ?? 'rgba(250,247,240,0.35)'
+  const taskBadgeVariant = (status: string) => {
+    if (status === 'done') return 'success' as const
+    if (status === 'in_progress') return 'warning' as const
+    if (status === 'blocked') return 'danger' as const
+    return 'neutral' as const
   }
 
   return (
     <div style={{ background: 'var(--ink)', color: 'var(--paper)', minHeight: '100vh', fontFamily: 'Space Grotesk, sans-serif' }}>
-      <style>{WORKSPACE_CSS}</style>
 
-      {/* Topbar */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(20,20,19,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', padding: '0 24px', height: '52px', gap: '8px' }}>
-        <Link href="/os" style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.45)', textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '0.1em' }}>eevolvv</Link>
-        <span style={{ opacity: 0.25, ...MONO, fontSize: '11px' }}>/</span>
-        <Link href="/os" style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.45)', textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '0.1em' }}>os</Link>
-        <span style={{ opacity: 0.25, ...MONO, fontSize: '11px' }}>/</span>
-        <span style={{ ...MONO, fontSize: '11px', color: 'var(--paper)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{client.company}</span>
+      {/* Topbar breadcrumb */}
+      <div
+        style={{
+          position: 'sticky', top: 0, zIndex: 100,
+          background: 'rgba(20,20,19,0.95)', backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+        }}
+      >
+        <OSBreadcrumb
+          crumbs={[
+            { label: 'os', href: '/os' },
+            { label: 'clients', href: '/os/clients' },
+            { label: client.company },
+          ]}
+        />
       </div>
 
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '40px 32px' }}>
+      <div className="max-w-[1280px] mx-auto px-8 py-10">
 
         {/* Client header */}
-        <div style={{ marginBottom: '40px', paddingBottom: '32px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-          <Link href="/os" style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'inline-block', marginBottom: '16px' }}>← os</Link>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <div className="mb-10 pb-8 border-b border-white/[0.07]">
+          <Link href="/os/clients" className="mono text-[11px] text-paper/40 no-underline uppercase tracking-[0.1em] inline-block mb-4">
+            ← clients
+          </Link>
+          <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
-              <h1 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, fontSize: '2rem', lineHeight: 1.1, margin: '0 0 6px' }}>{client.company}</h1>
-              <div style={{ opacity: 0.6, fontSize: '14px' }}>{client.name}{client.email ? ` · ${client.email}` : ''}</div>
+              <h1 className="font-bold text-[2rem] leading-none m-0 mb-1.5">{client.company}</h1>
+              <div className="text-paper/60 text-sm">{client.name}{client.email ? ` · ${client.email}` : ''}</div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <div className="flex items-center gap-3 flex-wrap">
               {client.contract_value && (
-                <span style={{ ...MONO, fontSize: '13px', border: '1px solid var(--accent)', color: 'var(--accent)', padding: '4px 10px', borderRadius: '2px' }}>
+                <span className="mono text-[13px] border border-accent text-accent px-2.5 py-1 rounded-sm">
                   ${client.contract_value.toLocaleString()}
                 </span>
               )}
               {/* Health selector */}
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {(['green','yellow','red'] as const).map(h => (
-                  <button key={h} onClick={() => patchClient({ health: h }, `Health changed to ${h}`)} style={{ width: '16px', height: '16px', borderRadius: '50%', background: h === 'green' ? '#4ade80' : h === 'yellow' ? '#f59e0b' : 'var(--accent)', border: client.health === h ? '2px solid var(--paper)' : '2px solid transparent', cursor: 'pointer', padding: 0 }} title={h} />
+              <div className="flex gap-1.5">
+                {(['green', 'yellow', 'red'] as const).map(h => (
+                  <button
+                    key={h}
+                    type="button"
+                    onClick={() => patchClient({ health: h }, `Health changed to ${h}`)}
+                    title={h}
+                    style={{
+                      width: '16px', height: '16px', borderRadius: '50%',
+                      background: h === 'green' ? '#4ade80' : h === 'yellow' ? '#f59e0b' : 'var(--accent)',
+                      border: client.health === h ? '2px solid var(--paper)' : '2px solid transparent',
+                      cursor: 'pointer', padding: 0,
+                    }}
+                  />
                 ))}
               </div>
               {/* Stage selector */}
-              <div style={{ display: 'flex', gap: '0' }}>
+              <div className="flex">
                 {STAGES.map((s, i) => {
                   const active = STAGES.indexOf(client.stage)
                   const isCurrent = s === client.stage
                   const isPast = i < active
                   return (
-                    <button key={s} onClick={() => patchClient({ stage: s }, `Stage changed to ${s}`)} style={{ ...MONO, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 10px', background: isCurrent ? 'var(--accent)' : isPast ? 'rgba(var(--accent-rgb, 140,43,26),0.3)' : 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRight: i < STAGES.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.1)', color: isCurrent ? 'var(--paper)' : 'rgba(250,247,240,0.5)', cursor: 'pointer' }}>
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => patchClient({ stage: s }, `Stage changed to ${s}`)}
+                      className="mono text-[10px] uppercase tracking-[0.08em] px-2.5 py-1 cursor-pointer"
+                      style={{
+                        background: isCurrent ? 'var(--accent)' : isPast ? 'rgba(140,43,26,0.3)' : 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRight: i < STAGES.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                        color: isCurrent ? 'var(--paper)' : 'rgba(250,247,240,0.5)',
+                      }}
+                    >
                       {s}
                     </button>
                   )
@@ -310,99 +333,157 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
           </div>
         </div>
 
-        <div className="ws-grid">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 items-start">
+
           {/* LEFT COLUMN */}
           <div>
+
             {/* AGENTS */}
-            <div className="ws-section">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <SectionLabel n="A" label="AGENTS" />
-                <button className="ws-btn" onClick={() => setShowAddAgent(v => !v)} style={{ color: 'var(--accent)', background: 'none', border: '1px solid var(--accent)', padding: '3px 8px' }}>+ add agent</button>
+            <div className="mb-8 pl-4 border-l-[3px] border-accent">
+              <div className="flex items-center justify-between mb-4">
+                <SectionMarker num="A" label="AGENTS" />
+                <Button variant="ghost" size="sm" onClick={() => setShowAddAgent(v => !v)}>
+                  + add agent
+                </Button>
               </div>
 
               {showAddAgent && (
-                <div style={{ ...CARD, marginBottom: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div className="mb-4 p-5 bg-white/[0.04] border border-white/[0.07] rounded-sm grid grid-cols-1 md:grid-cols-2 gap-3">
                   {([
-                    { k: 'name', l: 'Name', p: 'QA Bot' },
-                    { k: 'description', l: 'Description', p: 'Automates test runs' },
-                    { k: 'repo_url', l: 'Repo URL', p: 'https://github.com/...' },
-                    { k: 'deploy_url', l: 'Deploy URL', p: 'https://...' },
-                    { k: 'integrations', l: 'Integrations (comma-sep)', p: 'Slack, GitHub' },
-                  ] as const).map(({ k, l, p }) => (
-                    <div key={k} style={{ gridColumn: k === 'integrations' ? '1 / -1' : undefined }}>
-                      <div style={MONO_LABEL}>{l}</div>
-                      <input value={agentForm[k as keyof typeof agentForm]} onChange={e => setAgentForm(f => ({ ...f, [k]: e.target.value }))} placeholder={p} style={INPUT} />
+                    { k: 'name' as const, l: 'Name', p: 'QA Bot' },
+                    { k: 'description' as const, l: 'Description', p: 'Automates test runs' },
+                    { k: 'repo_url' as const, l: 'Repo URL', p: 'https://github.com/...' },
+                    { k: 'deploy_url' as const, l: 'Deploy URL', p: 'https://...' },
+                    { k: 'integrations' as const, l: 'Integrations (comma-sep)', p: 'Slack, GitHub' },
+                  ]).map(({ k, l, p }) => (
+                    <div key={k} className={k === 'integrations' ? 'md:col-span-2' : ''}>
+                      <Label className="text-paper/40">{l}</Label>
+                      <Input
+                        value={agentForm[k]}
+                        onChange={e => setAgentForm(f => ({ ...f, [k]: e.target.value }))}
+                        placeholder={p}
+                        className={DARK_INPUT}
+                      />
                     </div>
                   ))}
                   <div>
-                    <div style={MONO_LABEL}>Type</div>
-                    <select value={agentForm.type} onChange={e => setAgentForm(f => ({ ...f, type: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                    <Label className="text-paper/40">Type</Label>
+                    <select
+                      value={agentForm.type}
+                      onChange={e => setAgentForm(f => ({ ...f, type: e.target.value }))}
+                      className={DARK_SELECT}
+                    >
                       {AGENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                   <div>
-                    <div style={MONO_LABEL}>Status</div>
-                    <select value={agentForm.status} onChange={e => setAgentForm(f => ({ ...f, status: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
-                      {['dev','staging','live','paused','error'].map(s => <option key={s} value={s}>{s}</option>)}
+                    <Label className="text-paper/40">Status</Label>
+                    <select
+                      value={agentForm.status}
+                      onChange={e => setAgentForm(f => ({ ...f, status: e.target.value }))}
+                      className={DARK_SELECT}
+                    >
+                      {['dev', 'staging', 'live', 'paused', 'error'].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
-                  <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '10px', justifyContent: 'flex-end', paddingTop: '4px' }}>
-                    <button onClick={() => setShowAddAgent(false)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>cancel</button>
-                    <button onClick={submitAgent} disabled={agentSubmitting} style={{ ...MONO, fontSize: '11px', textTransform: 'uppercase', color: 'var(--paper)', background: 'var(--accent)', border: 'none', padding: '5px 14px', cursor: 'pointer', borderRadius: '2px' }}>{agentSubmitting ? 'saving…' : 'add agent'}</button>
+                  <div className="md:col-span-2 flex gap-2 justify-end pt-1">
+                    <Button variant="ghost" size="sm" onClick={() => setShowAddAgent(false)}>cancel</Button>
+                    <Button variant="primary" size="sm" onClick={submitAgent} disabled={agentSubmitting}>
+                      {agentSubmitting ? 'saving…' : 'add agent'}
+                    </Button>
                   </div>
                 </div>
               )}
 
               {agents.length === 0 && !showAddAgent && (
-                <div style={{ ...MONO, fontSize: '12px', opacity: 0.35, padding: '20px 0' }}>No agents yet</div>
+                <p className="mono text-[12px] text-paper/35 py-5">No agents yet</p>
               )}
 
               {agents.map(a => (
-                <div key={a.id} className="agent-card">
+                <div key={a.id} className="bg-white/[0.03] border border-white/[0.07] p-4 mb-2.5 hover:bg-white/[0.06] transition-colors rounded-sm">
                   {editingAgent === a.id ? (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                      {(['name','type','status','repo_url','deploy_url'] as const).map(k => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {(['name', 'type', 'status', 'repo_url', 'deploy_url'] as const).map(k => (
                         <div key={k}>
-                          <div style={MONO_LABEL}>{k.replace('_',' ')}</div>
+                          <Label className="text-paper/40">{k.replace('_', ' ')}</Label>
                           {k === 'type' ? (
-                            <select value={(editAgentForm[k] ?? a[k]) as string} onChange={e => setEditAgentForm(f => ({ ...f, [k]: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                            <select
+                              value={(editAgentForm[k] ?? a[k]) as string}
+                              onChange={e => setEditAgentForm(f => ({ ...f, [k]: e.target.value }))}
+                              className={DARK_SELECT}
+                            >
                               {AGENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                             </select>
                           ) : k === 'status' ? (
-                            <select value={(editAgentForm[k] ?? a[k]) as string} onChange={e => setEditAgentForm(f => ({ ...f, [k]: e.target.value as Agent['status'] }))} style={{ ...INPUT, cursor: 'pointer' }}>
-                              {['dev','staging','live','paused','error'].map(s => <option key={s} value={s}>{s}</option>)}
+                            <select
+                              value={(editAgentForm[k] ?? a[k]) as string}
+                              onChange={e => setEditAgentForm(f => ({ ...f, [k]: e.target.value as Agent['status'] }))}
+                              className={DARK_SELECT}
+                            >
+                              {['dev', 'staging', 'live', 'paused', 'error'].map(s => <option key={s} value={s}>{s}</option>)}
                             </select>
                           ) : (
-                            <input value={(editAgentForm[k] ?? a[k] ?? '') as string} onChange={e => setEditAgentForm(f => ({ ...f, [k]: e.target.value }))} style={INPUT} />
+                            <Input
+                              value={(editAgentForm[k] ?? a[k] ?? '') as string}
+                              onChange={e => setEditAgentForm(f => ({ ...f, [k]: e.target.value }))}
+                              className={DARK_INPUT}
+                            />
                           )}
                         </div>
                       ))}
-                      <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '8px', justifyContent: 'flex-end', paddingTop: '4px' }}>
-                        <button onClick={() => setEditingAgent(null)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>cancel</button>
-                        <button onClick={() => saveAgentEdit(a.id)} style={{ ...MONO, fontSize: '11px', textTransform: 'uppercase', color: 'var(--paper)', background: 'var(--accent)', border: 'none', padding: '4px 12px', cursor: 'pointer', borderRadius: '2px' }}>save</button>
+                      <div className="md:col-span-2 flex gap-2 justify-end pt-1">
+                        <Button variant="ghost" size="sm" onClick={() => setEditingAgent(null)}>cancel</Button>
+                        <Button variant="primary" size="sm" onClick={() => saveAgentEdit(a.id)}>save</Button>
                       </div>
                     </div>
                   ) : (
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <span style={{ fontWeight: 600, fontSize: '14px' }}>{a.name}</span>
-                          {a.type && <span style={{ ...MONO, fontSize: '10px', opacity: 0.5 }}>{a.type}</span>}
-                          <StatusBadge status={a.status} />
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2.5">
+                          <span className="font-semibold text-sm">{a.name}</span>
+                          {a.type && <span className="mono text-[10px] text-paper/50">{a.type}</span>}
+                          <StatusPill variant={agentStatusToVariant(a.status)}>{a.status}</StatusPill>
                           <HealthDot health={a.health} />
                         </div>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button onClick={() => { setEditingAgent(a.id); setEditAgentForm({}) }} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>✎</button>
-                          <button onClick={() => deleteAgent(a.id, a.name)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.3)', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
-                          <Link href={`/os/clients/${client.id}/agents/${a.id}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: 'var(--accent)', textDecoration: 'none', opacity: 0.8 }}>→ build</Link>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => { setEditingAgent(a.id); setEditAgentForm({}) }}
+                            className="mono text-[11px] text-paper/40 bg-none border-none cursor-pointer hover:text-paper/70 transition-colors"
+                          >
+                            ✎
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteAgent(a.id, a.name)}
+                            className="mono text-[11px] text-paper/30 bg-none border-none cursor-pointer hover:text-paper/60 transition-colors"
+                          >
+                            ✕
+                          </button>
+                          <Link
+                            href={`/os/clients/${client.id}/agents/${a.id}`}
+                            className="mono text-[11px] text-accent no-underline opacity-80 hover:opacity-100"
+                          >
+                            → build
+                          </Link>
                         </div>
                       </div>
-                      {a.description && <div style={{ fontSize: '13px', opacity: 0.6, marginBottom: '8px' }}>{a.description}</div>}
-                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-                        {(a.integrations ?? []).map(i => <span key={i} className="chip">{i}</span>)}
-                        {a.repo_url && <a href={a.repo_url} target="_blank" rel="noopener noreferrer" style={{ ...MONO, fontSize: '11px', color: 'var(--accent)', marginLeft: '4px' }}>repo →</a>}
-                        {a.deploy_url && <a href={a.deploy_url} target="_blank" rel="noopener noreferrer" style={{ ...MONO, fontSize: '11px', color: 'var(--accent)' }}>deploy →</a>}
-                        {a.last_run_at && <span style={{ ...MONO, fontSize: '10px', opacity: 0.35, marginLeft: 'auto' }}>last run {relativeTime(a.last_run_at)}</span>}
+                      {a.description && <p className="text-[13px] text-paper/60 mb-2">{a.description}</p>}
+                      <div className="flex gap-1.5 items-center flex-wrap">
+                        {(a.integrations ?? []).map(i => (
+                          <span key={i} className="mono text-[10px] bg-white/[0.06] border border-white/10 rounded-sm px-1 py-0.5 opacity-70">
+                            {i}
+                          </span>
+                        ))}
+                        {a.repo_url && (
+                          <a href={a.repo_url} target="_blank" rel="noopener noreferrer" className="mono text-[11px] text-accent ml-1">repo →</a>
+                        )}
+                        {a.deploy_url && (
+                          <a href={a.deploy_url} target="_blank" rel="noopener noreferrer" className="mono text-[11px] text-accent">deploy →</a>
+                        )}
+                        {a.last_run_at && (
+                          <span className="mono text-[10px] text-paper/35 ml-auto">last run {relativeTime(a.last_run_at)}</span>
+                        )}
                       </div>
                     </div>
                   )}
@@ -411,48 +492,82 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
             </div>
 
             {/* SERVICE TASKS */}
-            <div className="ws-section">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <SectionLabel n="B" label="SERVICE TASKS" />
-                <button className="ws-btn" onClick={() => setShowAddTask(v => !v)} style={{ color: 'var(--accent)', background: 'none', border: '1px solid var(--accent)', padding: '3px 8px' }}>+ add task</button>
+            <div className="mb-8 pl-4 border-l-[3px] border-accent">
+              <div className="flex items-center justify-between mb-4">
+                <SectionMarker num="B" label="SERVICE TASKS" />
+                <Button variant="ghost" size="sm" onClick={() => setShowAddTask(v => !v)}>
+                  + add task
+                </Button>
               </div>
 
               {showAddTask && (
-                <div style={{ ...CARD, marginBottom: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <div style={MONO_LABEL}>Title</div>
-                    <input value={taskForm.title} onChange={e => setTaskForm(f => ({ ...f, title: e.target.value }))} placeholder="Task title…" style={INPUT} onKeyDown={e => e.key === 'Enter' && submitTask()} autoFocus />
+                <div className="mb-4 p-5 bg-white/[0.04] border border-white/[0.07] rounded-sm grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="md:col-span-2">
+                    <Label className="text-paper/40">Title</Label>
+                    <Input
+                      value={taskForm.title}
+                      onChange={e => setTaskForm(f => ({ ...f, title: e.target.value }))}
+                      placeholder="Task title…"
+                      className={DARK_INPUT}
+                      onKeyDown={e => e.key === 'Enter' && submitTask()}
+                      autoFocus
+                    />
                   </div>
                   <div>
-                    <div style={MONO_LABEL}>Priority</div>
-                    <select value={taskForm.priority} onChange={e => setTaskForm(f => ({ ...f, priority: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
-                      {['high','normal','low'].map(p => <option key={p} value={p}>{p}</option>)}
+                    <Label className="text-paper/40">Priority</Label>
+                    <select
+                      value={taskForm.priority}
+                      onChange={e => setTaskForm(f => ({ ...f, priority: e.target.value }))}
+                      className={DARK_SELECT}
+                    >
+                      {['high', 'normal', 'low'].map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
                   </div>
                   <div>
-                    <div style={MONO_LABEL}>Due date</div>
-                    <input type="date" value={taskForm.due_date} onChange={e => setTaskForm(f => ({ ...f, due_date: e.target.value }))} style={INPUT} />
+                    <Label className="text-paper/40">Due date</Label>
+                    <Input
+                      type="date"
+                      value={taskForm.due_date}
+                      onChange={e => setTaskForm(f => ({ ...f, due_date: e.target.value }))}
+                      className={DARK_INPUT}
+                    />
                   </div>
                   <div>
-                    <div style={MONO_LABEL}>Category</div>
-                    <select value={taskForm.category} onChange={e => setTaskForm(f => ({ ...f, category: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                    <Label className="text-paper/40">Category</Label>
+                    <select
+                      value={taskForm.category}
+                      onChange={e => setTaskForm(f => ({ ...f, category: e.target.value }))}
+                      className={DARK_SELECT}
+                    >
                       {TASK_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
-                    <div style={MONO_LABEL}>Agent</div>
-                    <select value={taskForm.agent_id} onChange={e => setTaskForm(f => ({ ...f, agent_id: e.target.value }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                    <Label className="text-paper/40">Agent</Label>
+                    <select
+                      value={taskForm.agent_id}
+                      onChange={e => setTaskForm(f => ({ ...f, agent_id: e.target.value }))}
+                      className={DARK_SELECT}
+                    >
                       <option value="">— no agent —</option>
                       {agents.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <div style={MONO_LABEL}>Est hrs</div>
-                    <input type="number" min="0" step="0.5" value={taskForm.estimated_hrs} onChange={e => setTaskForm(f => ({ ...f, estimated_hrs: e.target.value }))} placeholder="0" style={INPUT} />
+                    <Label className="text-paper/40">Est hrs</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      value={taskForm.estimated_hrs}
+                      onChange={e => setTaskForm(f => ({ ...f, estimated_hrs: e.target.value }))}
+                      placeholder="0"
+                      className={DARK_INPUT}
+                    />
                   </div>
-                  <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                    <button onClick={() => setShowAddTask(false)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>cancel</button>
-                    <button onClick={submitTask} style={{ ...MONO, fontSize: '11px', textTransform: 'uppercase', color: 'var(--paper)', background: 'var(--accent)', border: 'none', padding: '4px 12px', cursor: 'pointer', borderRadius: '2px' }}>add</button>
+                  <div className="md:col-span-2 flex gap-2 justify-end">
+                    <Button variant="ghost" size="sm" onClick={() => setShowAddTask(false)}>cancel</Button>
+                    <Button variant="primary" size="sm" onClick={submitTask}>add</Button>
                   </div>
                 </div>
               )}
@@ -462,15 +577,21 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
                 { label: 'BLOCKED', items: blocked },
                 { label: 'TODO', items: todo },
               ].map(({ label, items }) => items.length > 0 && (
-                <div key={label} style={{ marginBottom: '20px' }}>
-                  <div style={{ ...MONO_LABEL, marginBottom: '8px' }}>{label}</div>
+                <div key={label} className="mb-5">
+                  <p className="mono text-[11px] uppercase tracking-[0.12em] text-paper/40 mb-2">{label}</p>
                   {items.map(t => (
                     <div key={t.id}>
-                      <div className="task-row" onClick={() => { setExpandedTask(expandedTask === t.id ? null : t.id); setEditTaskForm({ title: t.title, description: t.description, due_date: t.due_date, priority: t.priority, status: t.status, agent_id: t.agent_id, category: t.category, estimated_hrs: t.estimated_hrs, blocked_reason: t.blocked_reason }) }}>
+                      <div
+                        className="flex items-center gap-2.5 py-2.5 border-b border-white/[0.05] last:border-0 cursor-pointer hover:bg-white/[0.02] transition-colors"
+                        onClick={() => {
+                          setExpandedTask(expandedTask === t.id ? null : t.id)
+                          setEditTaskForm({ title: t.title, description: t.description, due_date: t.due_date, priority: t.priority, status: t.status, agent_id: t.agent_id, category: t.category, estimated_hrs: t.estimated_hrs, blocked_reason: t.blocked_reason })
+                        }}
+                      >
                         <PriorityDot priority={t.priority} />
-                        <span style={{ flex: 1, fontSize: '14px' }}>{t.title}</span>
+                        <span className="flex-1 text-sm">{t.title}</span>
                         {t.category && t.category !== 'general' && (
-                          <span style={{ ...MONO, fontSize: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '2px', padding: '1px 5px', opacity: 0.7 }}>
+                          <span className="mono text-[10px] bg-white/[0.06] border border-white/10 rounded-sm px-1 py-0.5 opacity-70">
                             {t.category}
                           </span>
                         )}
@@ -481,78 +602,89 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
                             <Link
                               href={`/os/clients/${client.id}/agents/${t.agent_id}`}
                               onClick={e => e.stopPropagation()}
-                              style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '10px', color: 'var(--accent)', border: '1px solid var(--accent)', borderRadius: '10px', padding: '1px 8px', textDecoration: 'none', opacity: 0.8 }}
+                              className="mono text-[10px] text-accent border border-accent rounded-full px-2 py-0.5 no-underline opacity-80"
                             >
                               {agent.name}
                             </Link>
                           )
                         })()}
-                        {t.due_date && <span style={{ ...MONO, fontSize: '10px', opacity: 0.4 }}>{t.due_date}</span>}
-                        <button onClick={e => { e.stopPropagation(); cycleTaskStatus(t) }} style={{ ...MONO, fontSize: '10px', border: `1px solid ${taskBadgeColor(t.status)}`, color: taskBadgeColor(t.status), background: 'none', padding: '1px 6px', borderRadius: '4px', cursor: 'pointer' }}>{t.status.replace('_',' ')}</button>
+                        {t.due_date && <span className="mono text-[10px] text-paper/40">{t.due_date}</span>}
                         <button
+                          type="button"
+                          onClick={e => { e.stopPropagation(); cycleTaskStatus(t) }}
+                          className="cursor-pointer"
+                        >
+                          <Badge variant={taskBadgeVariant(t.status)}>
+                            {t.status.replace('_', ' ')}
+                          </Badge>
+                        </button>
+                        <button
+                          type="button"
                           onClick={async e => {
                             e.stopPropagation()
                             if (!window.confirm(`Delete "${t.title}"?`)) return
                             const res = await fetch(`/api/os/clients/${client.id}/tasks/${t.id}`, { method: 'DELETE' })
                             if (res.ok) setTasks(prev => prev.filter(task => task.id !== t.id))
                           }}
-                          style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.3)', background: 'none', border: 'none', cursor: 'pointer', padding: '0 4px' }}
+                          className="mono text-sm text-paper/30 hover:text-paper/60 transition-colors px-1"
                           title="Delete task"
-                        >✕</button>
+                        >
+                          ×
+                        </button>
                       </div>
                       {expandedTask === t.id && (
-                        <div style={{ ...CARD, marginBottom: '8px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                          <div style={{ gridColumn: '1 / -1' }}>
-                            <div style={MONO_LABEL}>Title</div>
-                            <input value={editTaskForm.title ?? ''} onChange={e => setEditTaskForm(f => ({ ...f, title: e.target.value }))} style={INPUT} />
+                        <div className="p-5 mb-2 bg-white/[0.04] border border-white/[0.07] rounded-sm grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="md:col-span-2">
+                            <Label className="text-paper/40">Title</Label>
+                            <Input value={editTaskForm.title ?? ''} onChange={e => setEditTaskForm(f => ({ ...f, title: e.target.value }))} className={DARK_INPUT} />
                           </div>
-                          <div style={{ gridColumn: '1 / -1' }}>
-                            <div style={MONO_LABEL}>Description</div>
-                            <textarea value={editTaskForm.description ?? ''} onChange={e => setEditTaskForm(f => ({ ...f, description: e.target.value }))} style={{ ...INPUT, resize: 'vertical', minHeight: '60px' }} />
-                          </div>
-                          <div>
-                            <div style={MONO_LABEL}>Due date</div>
-                            <input type="date" value={editTaskForm.due_date ?? ''} onChange={e => setEditTaskForm(f => ({ ...f, due_date: e.target.value }))} style={INPUT} />
+                          <div className="md:col-span-2">
+                            <Label className="text-paper/40">Description</Label>
+                            <Textarea value={editTaskForm.description ?? ''} onChange={e => setEditTaskForm(f => ({ ...f, description: e.target.value }))} className={DARK_TEXTAREA} />
                           </div>
                           <div>
-                            <div style={MONO_LABEL}>Priority</div>
-                            <select value={editTaskForm.priority ?? 'normal'} onChange={e => setEditTaskForm(f => ({ ...f, priority: e.target.value as Task['priority'] }))} style={{ ...INPUT, cursor: 'pointer' }}>
-                              {['high','normal','low'].map(p => <option key={p} value={p}>{p}</option>)}
+                            <Label className="text-paper/40">Due date</Label>
+                            <Input type="date" value={editTaskForm.due_date ?? ''} onChange={e => setEditTaskForm(f => ({ ...f, due_date: e.target.value }))} className={DARK_INPUT} />
+                          </div>
+                          <div>
+                            <Label className="text-paper/40">Priority</Label>
+                            <select value={editTaskForm.priority ?? 'normal'} onChange={e => setEditTaskForm(f => ({ ...f, priority: e.target.value as Task['priority'] }))} className={DARK_SELECT}>
+                              {['high', 'normal', 'low'].map(p => <option key={p} value={p}>{p}</option>)}
                             </select>
                           </div>
                           <div>
-                            <div style={MONO_LABEL}>Status</div>
-                            <select value={editTaskForm.status ?? 'todo'} onChange={e => setEditTaskForm(f => ({ ...f, status: e.target.value as Task['status'] }))} style={{ ...INPUT, cursor: 'pointer' }}>
-                              {TASK_STATUSES.map(s => <option key={s} value={s}>{s.replace('_',' ')}</option>)}
+                            <Label className="text-paper/40">Status</Label>
+                            <select value={editTaskForm.status ?? 'todo'} onChange={e => setEditTaskForm(f => ({ ...f, status: e.target.value as Task['status'] }))} className={DARK_SELECT}>
+                              {TASK_STATUSES.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
                             </select>
                           </div>
                           <div>
-                            <div style={MONO_LABEL}>Category</div>
-                            <select value={editTaskForm.category ?? 'general'} onChange={e => setEditTaskForm(f => ({ ...f, category: e.target.value as Task['category'] }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                            <Label className="text-paper/40">Category</Label>
+                            <select value={editTaskForm.category ?? 'general'} onChange={e => setEditTaskForm(f => ({ ...f, category: e.target.value as Task['category'] }))} className={DARK_SELECT}>
                               {TASK_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                           </div>
                           <div>
-                            <div style={MONO_LABEL}>Agent</div>
-                            <select value={editTaskForm.agent_id ?? ''} onChange={e => setEditTaskForm(f => ({ ...f, agent_id: e.target.value || null }))} style={{ ...INPUT, cursor: 'pointer' }}>
+                            <Label className="text-paper/40">Agent</Label>
+                            <select value={editTaskForm.agent_id ?? ''} onChange={e => setEditTaskForm(f => ({ ...f, agent_id: e.target.value || null }))} className={DARK_SELECT}>
                               <option value="">— no agent —</option>
                               {agents.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                             </select>
                           </div>
                           {editTaskForm.status === 'blocked' && (
-                            <div style={{ gridColumn: '1 / -1' }}>
-                              <div style={MONO_LABEL}>Blocked reason</div>
-                              <textarea
+                            <div className="md:col-span-2">
+                              <Label className="text-paper/40">Blocked reason</Label>
+                              <Textarea
                                 value={editTaskForm.blocked_reason ?? ''}
                                 onChange={e => setEditTaskForm(f => ({ ...f, blocked_reason: e.target.value }))}
                                 placeholder="Why is this blocked?"
-                                style={{ ...INPUT, resize: 'vertical', minHeight: '60px' }}
+                                className={DARK_TEXTAREA}
                               />
                             </div>
                           )}
-                          <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                            <button onClick={() => setExpandedTask(null)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>cancel</button>
-                            <button onClick={() => saveTaskEdit(t.id)} style={{ ...MONO, fontSize: '11px', textTransform: 'uppercase', color: 'var(--paper)', background: 'var(--accent)', border: 'none', padding: '4px 12px', cursor: 'pointer', borderRadius: '2px' }}>save</button>
+                          <div className="md:col-span-2 flex gap-2 justify-end">
+                            <Button variant="ghost" size="sm" onClick={() => setExpandedTask(null)}>cancel</Button>
+                            <Button variant="primary" size="sm" onClick={() => saveTaskEdit(t.id)}>save</Button>
                           </div>
                         </div>
                       )}
@@ -562,86 +694,122 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
               ))}
 
               {done.length > 0 && (
-                <div style={{ marginBottom: '20px' }}>
-                  <button onClick={() => setShowDone(v => !v)} style={{ ...MONO_LABEL, background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(250,247,240,0.4)' }}>DONE ({done.length}) {showDone ? '▲' : '▼'}</button>
+                <div className="mb-5">
+                  <button
+                    type="button"
+                    onClick={() => setShowDone(v => !v)}
+                    className="mono text-[11px] uppercase tracking-[0.12em] text-paper/40 bg-transparent border-none cursor-pointer"
+                  >
+                    DONE ({done.length}) {showDone ? '▲' : '▼'}
+                  </button>
                   {showDone && done.map(t => (
-                    <div key={t.id} className="task-row" style={{ opacity: 0.5 }}>
+                    <div key={t.id} className="flex items-center gap-2.5 py-2.5 border-b border-white/[0.05] last:border-0 opacity-50">
                       <PriorityDot priority={t.priority} />
-                      <span style={{ flex: 1, fontSize: '14px', textDecoration: 'line-through' }}>{t.title}</span>
-                      <span style={{ ...MONO, fontSize: '10px', color: '#4ade80', border: '1px solid #4ade80', borderRadius: '4px', padding: '1px 6px' }}>done</span>
+                      <span className="flex-1 text-sm line-through">{t.title}</span>
+                      <Badge variant="success">done</Badge>
                     </div>
                   ))}
                 </div>
               )}
 
               {tasks.length === 0 && !showAddTask && (
-                <div style={{ ...MONO, fontSize: '12px', opacity: 0.35, padding: '16px 0' }}>No tasks yet</div>
+                <p className="mono text-[12px] text-paper/35 py-4">No tasks yet</p>
               )}
             </div>
           </div>
 
           {/* RIGHT COLUMN */}
           <div>
+
             {/* LINKED DIAGNOSTIC */}
-            <div className="ws-section">
-              <SectionLabel n="C" label="LINKED DIAGNOSTIC" />
+            <div className="mb-8 pl-4 border-l-[3px] border-accent">
+              <SectionMarker num="C" label="LINKED DIAGNOSTIC" className="mb-4" />
               {linkedSub ? (
-                <div style={{ ...CARD }}>
-                  <div style={{ ...MONO, fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>{linkedSub.business_name ?? linkedSub.name ?? 'Submission'}</div>
-                  <div style={{ ...MONO, fontSize: '11px', opacity: 0.5, marginBottom: '4px' }}>{linkedSub.business_type} · {linkedSub.tier ?? '—'}</div>
-                  <div style={{ ...MONO, fontSize: '11px', opacity: 0.4 }}>{relativeTime(linkedSub.created_at)}</div>
-                  <button onClick={() => patchClient({ submission_id: null })} style={{ ...MONO, fontSize: '10px', color: 'rgba(250,247,240,0.3)', background: 'none', border: 'none', cursor: 'pointer', marginTop: '10px' }}>unlink</button>
+                <div className="p-5 bg-white/[0.04] border border-white/[0.07] rounded-sm">
+                  <div className="mono text-[13px] font-semibold mb-1.5">{linkedSub.business_name ?? linkedSub.name ?? 'Submission'}</div>
+                  <div className="mono text-[11px] text-paper/50 mb-1">{linkedSub.business_type} · {linkedSub.tier ?? '—'}</div>
+                  <div className="mono text-[11px] text-paper/40">{relativeTime(linkedSub.created_at)}</div>
+                  <button
+                    type="button"
+                    onClick={() => patchClient({ submission_id: null })}
+                    className="mono text-[10px] text-paper/30 bg-transparent border-none cursor-pointer mt-2.5 hover:text-paper/60 transition-colors"
+                  >
+                    unlink
+                  </button>
                 </div>
               ) : linkingSubmission ? (
-                <div style={{ ...CARD }}>
-                  <div style={MONO_LABEL}>Select submission</div>
-                  <select value={selectedSubmission} onChange={e => setSelectedSubmission(e.target.value)} style={{ ...INPUT, marginBottom: '10px', cursor: 'pointer' }}>
+                <div className="p-5 bg-white/[0.04] border border-white/[0.07] rounded-sm">
+                  <Label className="text-paper/40">Select submission</Label>
+                  <select
+                    value={selectedSubmission}
+                    onChange={e => setSelectedSubmission(e.target.value)}
+                    className={`${DARK_SELECT} mb-2.5`}
+                  >
                     <option value="">— choose —</option>
-                    {allSubmissions.map(s => <option key={s.id} value={s.id}>{s.business_name ?? s.name ?? s.email} · {relativeTime(s.created_at)}</option>)}
+                    {allSubmissions.map(s => (
+                      <option key={s.id} value={s.id}>
+                        {s.business_name ?? s.name ?? s.email} · {relativeTime(s.created_at)}
+                      </option>
+                    ))}
                   </select>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setLinkingSubmission(false)} style={{ ...MONO, fontSize: '11px', color: 'rgba(250,247,240,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>cancel</button>
-                    <button onClick={linkSubmission} style={{ ...MONO, fontSize: '11px', textTransform: 'uppercase', color: 'var(--paper)', background: 'var(--accent)', border: 'none', padding: '4px 12px', cursor: 'pointer', borderRadius: '2px' }}>link</button>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => setLinkingSubmission(false)}>cancel</Button>
+                    <Button variant="primary" size="sm" onClick={linkSubmission}>link</Button>
                   </div>
                 </div>
               ) : (
-                <div style={{ ...MONO, fontSize: '12px', opacity: 0.35, padding: '12px 0' }}>
+                <p className="mono text-[12px] text-paper/35 py-3">
                   No linked diagnostic —{' '}
-                  <button onClick={() => setLinkingSubmission(true)} style={{ ...MONO, fontSize: '12px', color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>link submission</button>
-                </div>
+                  <button
+                    type="button"
+                    onClick={() => setLinkingSubmission(true)}
+                    className="mono text-[12px] text-accent bg-transparent border-none cursor-pointer underline"
+                  >
+                    link submission
+                  </button>
+                </p>
               )}
             </div>
 
             {/* NOTES */}
-            <div className="ws-section">
-              <SectionLabel n="D" label="NOTES" />
-              <div style={{ background: 'rgba(20,20,19,0.55)', border: '1px solid rgba(255,255,255,0.07)', borderLeft: '3px solid var(--accent)', padding: '14px' }}>
-                <textarea
+            <div className="mb-8 pl-4 border-l-[3px] border-accent">
+              <SectionMarker num="D" label="NOTES" className="mb-4" />
+              <div className="bg-ink/55 border border-white/[0.07] border-l-[3px] border-l-accent p-3.5">
+                <Textarea
                   value={client.notes ?? ''}
                   onChange={e => handleNotesChange(e.target.value)}
                   placeholder="Client notes…"
-                  style={{ width: '100%', background: 'transparent', border: 'none', color: 'var(--paper)', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', lineHeight: 1.9, outline: 'none', resize: 'vertical', minHeight: '120px' }}
+                  className="w-full bg-transparent border-none text-paper mono text-[13px] leading-[1.9] outline-none resize-y min-h-[120px] placeholder:text-paper/30 focus:outline-none"
                 />
               </div>
             </div>
 
             {/* ACTIVITY LOG */}
-            <div className="ws-section">
-              <SectionLabel n="E" label="ACTIVITY LOG" />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px', maxHeight: '280px', overflowY: 'auto' }}>
-                {activity.length === 0 && <div style={{ ...MONO, fontSize: '11px', opacity: 0.3 }}>No activity yet</div>}
+            <div className="mb-8 pl-4 border-l-[3px] border-accent">
+              <SectionMarker num="E" label="ACTIVITY LOG" className="mb-4" />
+              <div className="flex flex-col gap-2 mb-3.5 max-h-[280px] overflow-y-auto">
+                {activity.length === 0 && (
+                  <p className="mono text-[11px] text-paper/30">No activity yet</p>
+                )}
                 {activity.map(e => (
-                  <div key={e.id} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                    <span style={{ ...MONO, fontSize: '10px', opacity: 0.35, flexShrink: 0, paddingTop: '2px' }}>{relativeTime(e.created_at)}</span>
-                    <span style={{ fontSize: '13px', opacity: 0.8 }}>{e.action}</span>
+                  <div key={e.id} className="flex gap-2.5 items-start">
+                    <span className="mono text-[10px] text-paper/35 flex-shrink-0 pt-0.5">{relativeTime(e.created_at)}</span>
+                    <span className="text-[13px] text-paper/80">{e.action}</span>
                   </div>
                 ))}
               </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input value={manualLog} onChange={e => setManualLog(e.target.value)} onKeyDown={e => e.key === 'Enter' && submitManualLog()} placeholder="+ log entry…" style={{ ...INPUT, flex: 1 }} />
-                <button onClick={submitManualLog} style={{ ...MONO, fontSize: '11px', color: 'var(--accent)', background: 'none', border: '1px solid var(--accent)', padding: '4px 10px', cursor: 'pointer', borderRadius: '2px' }}>log</button>
+              <div className="flex gap-2">
+                <Input
+                  value={manualLog}
+                  onChange={e => setManualLog(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && submitManualLog()}
+                  placeholder="+ log entry…"
+                  className={`flex-1 ${DARK_INPUT}`}
+                />
+                <Button variant="ghost" size="sm" onClick={submitManualLog}>log</Button>
               </div>
             </div>
+
           </div>
         </div>
       </div>

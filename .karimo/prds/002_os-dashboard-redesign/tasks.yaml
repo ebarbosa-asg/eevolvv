@@ -1,0 +1,241 @@
+prd: os-dashboard-redesign
+total_complexity: 25
+total_tasks: 8
+
+tasks:
+  - id: T01
+    title: "OS Layout — dark Sidebar + OSTopbar + layout wrapper"
+    complexity: 3
+    priority: must
+    depends_on: []
+    files:
+      - app/os/layout.tsx
+      - app/os/components/OSLayout.tsx
+      - app/os/components/OSTopbar.tsx
+    description: >
+      Create app/os/layout.tsx as the shared Next.js layout for all /os routes.
+      It renders a full-height two-column shell: dark left sidebar (using <Sidebar>
+      from components/ds/) + content slot. Sidebar items are the 9 section routes
+      with live count badges fetched from /api/os/clients, /api/os/company-tasks,
+      /api/os/agents, /api/os/pipeline, /api/os/investors. Sidebar is collapsible.
+      OSTopbar is a dark bg-ink bar (h-12) showing current page title and sign-out
+      button. The layout wrapper passes the active route to OSTopbar for the title.
+      Design: sidebar bg-ink text-paper, content area bg-paper.
+    acceptance:
+      - app/os/layout.tsx exists and wraps all /os/* routes
+      - Sidebar uses <Sidebar> from components/ds/ with bg-ink
+      - Sidebar items link to all 9 section routes
+      - Live count badges appear on tasks, clients, agents, pipeline, investors items
+      - OSTopbar shows current section title + sign out
+      - Collapsible to icon-only on narrow viewports
+
+  - id: T02
+    title: "Shared OS components — OSBreadcrumb, HealthDot, StagePipeline, EmptyState"
+    complexity: 2
+    priority: must
+    depends_on: []
+    files:
+      - app/os/components/OSBreadcrumb.tsx
+      - app/os/components/shared.tsx
+    description: >
+      Create app/os/components/OSBreadcrumb.tsx — a mono uppercase breadcrumb
+      component that renders a trail of links (e.g. "eevolvv / os / {company}").
+      Create app/os/components/shared.tsx — exports HealthDot (8px colored dot,
+      green/yellow/accent for health states), StagePipeline (4-dot progress trail
+      for diagnose/onboard/build/maintain stages), and EmptyState (centered mono
+      uppercase message for empty lists). These extract the sub-components currently
+      defined inside HubClient.tsx so ClientWorkspace and AgentBuilder can import
+      them without the cross-file coupling to HubClient.
+    acceptance:
+      - app/os/components/OSBreadcrumb.tsx exists and renders crumb trail
+      - app/os/components/shared.tsx exports HealthDot, StagePipeline, EmptyState
+      - Components use CSS variables / Tailwind tokens, no hardcoded hex
+
+  - id: T03
+    title: "/os overview page — KPI summary dashboard"
+    complexity: 2
+    priority: must
+    depends_on: [T01, T02]
+    files:
+      - app/os/page.tsx
+    description: >
+      Replace the current app/os/page.tsx (which rendered HubClient with all 8 sections)
+      with an overview page showing 4 KPI cards. Fetch data from existing API routes:
+      open task count from /api/os/company-tasks, MRR from /api/os/finance,
+      active client count from /api/os/clients, total pipeline value from /api/os/pipeline.
+      Render each as a <KPIStat> from components/ds/ inside a <Card>. Use a 2x2 grid
+      layout on desktop, stacked on mobile. Add <SectionMarker num="00" label="OVERVIEW" />.
+      Keep the auth guard (const session = await auth(); redirect if !session).
+    acceptance:
+      - /os renders 4 KPIStat cards (open tasks, MRR, clients, pipeline value)
+      - Data fetched from existing API routes
+      - Auth guard preserved
+      - Uses <Card>, <KPIStat>, <SectionMarker> from ds/
+      - No inline style={} patterns
+
+  - id: T04
+    title: "6 section pages — tasks, feed, agents, pipeline, investors, links"
+    complexity: 5
+    priority: must
+    depends_on: [T01, T02]
+    files:
+      - app/os/tasks/page.tsx
+      - app/os/feed/page.tsx
+      - app/os/agents/page.tsx
+      - app/os/pipeline/page.tsx
+      - app/os/investors/page.tsx
+      - app/os/links/page.tsx
+    description: >
+      Extract 6 sections from HubClient.tsx into individual page files.
+      Each page is a 'use client' component that fetches its own data and renders
+      its section using ds/ components exclusively.
+
+      /os/tasks: company tasks with category filter tabs, task rows (click-to-cycle
+      status), inline add form. Uses <Badge> for status, <Button> for actions,
+      <Input>/<Label> for forms, <SectionMarker>.
+
+      /os/feed: diagnostic submissions table (total/completed/error stats as <KPIStat>),
+      expandable rows showing report content as <TerminalBlock>, PostHog funnel metrics
+      bar. Uses <Card>, <Badge>, <KPIStat>, <SectionMarker>.
+
+      /os/agents: all-agents table with <StatusPill> for status, <HealthDot> from
+      shared.tsx, integrations as <Badge> chips. Uses <Card>, <SectionMarker>.
+
+      /os/pipeline: deals list with click-to-cycle <Badge> stage pills, total value
+      <KPIStat>, inline add form with <Input>/<Label>/<Button>. Uses <SectionMarker>.
+
+      /os/investors: investor rows with <Badge> stage pills, raise progress bar
+      (simple div with accent fill), $1M target <KPIStat>. Inline add form.
+
+      /os/links: two grids — quick links (18 items as <Card> with hover) and
+      internal docs (4 items as <Card>). Uses <SectionMarker>.
+
+      All pages: no inline style={} anywhere, no injected <style> tags,
+      Tailwind responsive classes for breakpoints.
+    acceptance:
+      - All 6 page files exist at their routes
+      - Each fetches its own data from existing API routes
+      - All use ds/ components exclusively
+      - No inline style={} patterns
+      - No injected <style> tags
+      - <SectionMarker> used for all section headers
+      - Responsive via Tailwind classes
+
+  - id: T05
+    title: "/os/clients list page"
+    complexity: 2
+    priority: must
+    depends_on: [T01, T02]
+    files:
+      - app/os/clients/page.tsx
+    description: >
+      Create app/os/clients/page.tsx as the clients list section (was § 02 inside
+      HubClient). Fetches from /api/os/clients and renders a table of clients with
+      company name, contact, <StagePipeline> from shared.tsx, <HealthDot> from
+      shared.tsx, agent count <Badge>, contract value, and a link to /os/clients/[id].
+      Inline add-client form with <Input>/<Label>/<Button> from ds/.
+      Note: app/os/clients/[id]/page.tsx already exists — do not touch it.
+    acceptance:
+      - /os/clients renders client list (not the detail page)
+      - Uses <HealthDot> and <StagePipeline> from app/os/components/shared.tsx
+      - Uses <Card>, <Badge>, <Button>, <Input>, <Label> from ds/
+      - Links to /os/clients/[id] for each client
+      - Inline add form works
+      - No inline style={}
+
+  - id: T06
+    title: "/os/finance page"
+    complexity: 3
+    priority: must
+    depends_on: [T01, T02]
+    files:
+      - app/os/finance/page.tsx
+    description: >
+      Create app/os/finance/page.tsx (was § 05 inside HubClient). Fetches from
+      /api/os/finance and /api/os/state. Renders: MRR, ARR, customer count as
+      <KPIStat> cards in a row. Bank balance as an editable <KPIStat> — click to
+      edit, saves via POST /api/os/state. Recent charges as a list of <DataRow>
+      items inside a <Card>. <StatusPill variant="success">live stripe</StatusPill>
+      label when Stripe is connected, <Badge variant="neutral">manual</Badge> when
+      not. Quick links to Mercury/Stripe/Wave as <Button variant="ghost">.
+      <SectionMarker num="05" label="FINANCE" />.
+    acceptance:
+      - /os/finance renders MRR/ARR/customers as KPIStat cards
+      - Bank balance is editable inline
+      - Recent charges use <DataRow> inside <Card>
+      - <StatusPill> and <Badge> for source labels
+      - No inline style={}
+
+  - id: T07
+    title: "Rebuild ClientWorkspace.tsx with ds/ components"
+    complexity: 4
+    priority: must
+    depends_on: [T01, T02]
+    files:
+      - app/os/clients/[id]/ClientWorkspace.tsx
+    description: >
+      Rebuild app/os/clients/[id]/ClientWorkspace.tsx using ds/ components.
+      Fix the cross-import: currently imports HealthDot, StagePipeline, StatusBadge
+      from ../../HubClient — change to import from app/os/components/shared.tsx.
+      Replace all inline style={} with ds/ components and Tailwind classes.
+      Remove injected <style>{WORKSPACE_CSS}</style> tag.
+
+      Specific replacements:
+      - Local SectionLabel → <SectionMarker> from ds/
+      - Topbar breadcrumb div → <OSBreadcrumb> from app/os/components/
+      - .ws-card, .agent-card divs → <Card><CardContent>
+      - <input style={INPUT}> → <Input> from ds/
+      - <textarea style={INPUT}> → <Textarea> from ds/
+      - <div style={MONO_LABEL}> labels → <Label> from ds/
+      - Task status badge buttons → <Badge> with variant mapped from status
+      - Activity log entries → <DataRow label={relativeTime} value={action}>
+      - Form submit buttons → <Button variant="primary" size="sm">
+      - Cancel buttons → <Button variant="ghost" size="sm">
+
+      Preserve all data fetching, state management, and business logic exactly.
+      Only the presentation layer changes.
+    acceptance:
+      - No imports from HubClient.tsx (all shared components from app/os/components/shared.tsx)
+      - No inline style={} patterns remaining
+      - No injected <style> tag
+      - All ds/ component replacements applied per replacement-map.md
+      - All existing functionality preserved (CRUD, optimistic updates, autosave)
+      - Build passes
+
+  - id: T08
+    title: "Rebuild AgentBuilder.tsx with ds/ components + light wizard rail"
+    complexity: 4
+    priority: must
+    depends_on: [T01, T02]
+    files:
+      - app/os/clients/[id]/agents/[agentId]/AgentBuilder.tsx
+    description: >
+      Rebuild app/os/clients/[id]/agents/[agentId]/AgentBuilder.tsx using ds/ components.
+      The left rail step navigator (200px fixed div) becomes a LIGHT wizard variant —
+      not the dark <Sidebar> from ds/. It should use bg-paper, border-r border-rule,
+      with step items showing number + label. Active step uses text-accent font-semibold.
+      Completed steps show a checkmark. This signals "wizard" not "nav".
+
+      Topbar breadcrumb div → <OSBreadcrumb>.
+      <input style={INPUT}> → <Input> from ds/.
+      <textarea style={INPUT}> → <Textarea> from ds/.
+      <div style={MONO_LABEL}> labels → <Label> from ds/.
+      CARD constant divs (review sections) → <Card><CardContent>.
+      Next-runs preview block → <TerminalBlock lines={nextRuns.map(r => ({ type: 'primary', value: r }))} />.
+      Run output <pre> block → <TerminalBlock>.
+      Deploy environment cards → <Card> with style={{ borderLeft: '3px solid var(--accent)' }}.
+      Run history rows → <Card><CardContent> + <StatusPill variant="success|danger">.
+      "Save & Continue →" → <Button variant="primary">Save & Continue →</Button>.
+      "← Back" → <Button variant="ghost">← Back</Button>.
+      Step header § pattern → <SectionMarker>.
+
+      Preserve all wizard state, step navigation, Claude API run logic, and run history.
+    acceptance:
+      - Left rail is light wizard variant (bg-paper, border-r border-rule)
+      - Active step uses text-accent
+      - All ds/ component replacements applied
+      - No inline style={} remaining
+      - <TerminalBlock> used for next-runs preview and run output
+      - <StatusPill> used for run history status
+      - All wizard functionality preserved
+      - Build passes
