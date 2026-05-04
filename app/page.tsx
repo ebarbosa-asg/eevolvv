@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import ChatEngine from '@/components/ChatEngine'
+import { VolvvE } from '@/components/VolvvE'
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -1645,7 +1646,21 @@ function AgentsSection() {
     <section id="agents" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
       <div className="mx-auto site-rail">
         <SectionHeader number="06" eyebrow="EEVOLVV / AGENTS" title="Agents we build to optimize how you operate." note="12 DEPLOYABLE" />
-        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 720, marginTop: 24 }}>
+        {/* volvv-e hero intro */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 48, marginTop: 56, marginBottom: 0, padding: '40px 48px', background: 'var(--ink)', color: 'var(--paper)', borderLeft: '4px solid var(--accent)' }}>
+          <VolvvE state="idle" scale={7} style={{ flexShrink: 0 }} />
+          <div>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>MEET VOLVV-E</div>
+            <h3 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15, margin: '0 0 14px', color: 'var(--paper)' }}>
+              The agent that ties<br />them all together.
+            </h3>
+            <p style={{ fontSize: 15, lineHeight: 1.7, opacity: 0.7, maxWidth: 540, margin: 0, color: 'var(--paper)' }}>
+              volvv-e is eevolvv's AI operations character — deployed inside your business to orchestrate the agents below, watch for drift, and surface what your team shouldn't have to chase. Every eevolvv client gets one.
+            </p>
+          </div>
+        </div>
+
+        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 720, marginTop: 40 }}>
           These are the kinds of AI agents eevolvv can ship for your business — narrow, reliable automations that tighten ops, protect revenue, and free your team for judgment work. Pick what fits; we scope and integrate each one to your stack.
         </p>
         <div className="agents-grid mt-12" style={{ marginTop: 48 }}>
