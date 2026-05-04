@@ -15,37 +15,41 @@ export interface VolvvEProps {
 }
 
 // ── Pixel maps ────────────────────────────────────────────────────────
-// 13 cols × 15 rows  |  0 = transparent  1 = body(red)  2 = white feature
+// 19 cols × 18 rows  |  0 = transparent  1 = body(red)  2 = white feature
 
 const BODY: number[][] = [
-  [0,0,0,0,1,1,1,1,1,0,0,0,0], //  0 – head top
-  [0,0,0,1,1,1,1,1,1,1,0,0,0], //  1
-  [0,0,1,1,1,1,1,1,1,1,1,0,0], //  2
-  [0,1,1,1,1,1,1,1,1,1,1,1,0], //  3
-  [0,1,1,2,2,1,1,1,2,2,1,1,0], //  4 – eyes
-  [0,1,1,2,2,1,1,1,2,2,1,1,0], //  5 – eyes
-  [0,1,1,1,1,1,1,1,1,1,1,1,0], //  6
-  [0,1,1,1,2,2,2,2,2,1,1,1,0], //  7 – smile (idle)
-  [0,1,1,1,1,1,1,1,1,1,1,1,0], //  8
-  [1,1,1,1,1,1,1,1,1,1,1,1,1], //  9 – widest row
-  [1,1,0,1,1,0,1,1,0,1,1,0,1], // 10 – tentacle base
-  [1,1,0,1,1,0,1,1,0,1,1,0,1], // 11 – tentacles
-  [1,0,0,1,0,0,1,0,0,1,0,0,0], // 12 – tentacles narrow
-  [1,0,0,0,0,0,1,0,0,0,0,0,0], // 13 – tips
+  [0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0], //  0 head top
+  [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0], //  1
+  [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0], //  2
+  [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0], //  3
+  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0], //  4
+  [0,1,1,2,2,2,1,1,1,1,1,1,1,2,2,2,1,1,0], //  5 eyes
+  [0,1,1,2,2,2,1,1,1,1,1,1,1,2,2,2,1,1,0], //  6 eyes
+  [0,1,1,2,2,2,1,1,1,1,1,1,1,2,2,2,1,1,0], //  7 eyes
+  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0], //  8
+  [0,1,1,1,1,1,1,2,2,2,2,2,1,1,1,1,1,1,0], //  9 smile (idle)
+  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0], // 10
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], // 11 arms extend full width
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], // 12
+  [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0], // 13
+  [0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0], // 14 tentacle base (6 pairs)
+  [0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0], // 15
+  [0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0], // 16 tentacles narrow
+  [0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0], // 17 tips (3 remain)
 ]
 
-const COLS = 13
-const ROWS = 14
+const COLS = 19
+const ROWS = 18
 
 // Feature pixel positions
-const EYE_COLS_L = [3, 4]
-const EYE_COLS_R = [8, 9]
-const EYE_ROWS   = [4, 5]
-const SMILE_ROW  = 7
-const SMILE_COLS = [4, 5, 6, 7, 8]          // 5-wide idle smile
-const BIG_SMILE  = [3, 4, 5, 6, 7, 8, 9]   // 7-wide done smile
-const FROWN_TOP  = [[7,4],[7,8]]             // frown top corners
-const FROWN_BOT  = [[8,5],[8,6],[8,7]]       // frown bottom arc
+const EYE_COLS_L = [3, 4, 5]
+const EYE_COLS_R = [13, 14, 15]
+const EYE_ROWS   = [5, 6, 7]
+const SMILE_ROW  = 9
+const SMILE_COLS = [7, 8, 9, 10, 11]         // 5-wide idle smile
+const BIG_SMILE  = [5, 6, 7, 8, 9, 10, 11, 12, 13]  // 9-wide done smile
+const FROWN_TOP  = [[8,7],[8,8],[8,9],[8,10],[8,11]]  // frown inner arch
+const FROWN_BOT  = [[9,6],[9,12]]             // frown outer corners
 
 const ACCENT = 'oklch(0.45 0.13 25)'        // matches var(--accent) for SVG fills
 
@@ -98,13 +102,11 @@ export function VolvvE({ state = 'idle', scale = 4, showBg = false, className, s
       // ── Eyes ──
       if (isEye) {
         if (blink) {
-          // fully closed = red (skip white, body shows through… but body val=2 here, so we draw red)
           if (!blinkHalf) push(ri, ci, ACCENT, `e-${ri}-${ci}`)
-          else if (ri === 5) push(ri, ci, '#ffffff', `e-${ri}-${ci}`) // half-blink: only bottom row shows
+          else if (ri === 7) push(ri, ci, '#ffffff', `e-${ri}-${ci}`) // half-blink: only bottom row shows
         } else if (state === 'thinking') {
           // squint: only bottom row of eye shows
-          if (ri === 5) push(ri, ci, '#ffffff', `e-${ri}-${ci}`)
-          // top row: draw red (squinted)
+          if (ri === 7) push(ri, ci, '#ffffff', `e-${ri}-${ci}`)
           else push(ri, ci, ACCENT, `e-${ri}-${ci}`)
         } else {
           push(ri, ci, '#ffffff', `e-${ri}-${ci}`)
@@ -143,7 +145,7 @@ export function VolvvE({ state = 'idle', scale = 4, showBg = false, className, s
     ? [0, 1, 2].map(i => (
         <rect
           key={`td-${i}`}
-          x={(9 + i * 2) * s} y={(-3 + i * -1) * s + (i === 1 ? -s : 0)}
+          x={(12 + i * 2) * s} y={(-3 + i * -1) * s + (i === 1 ? -s : 0)}
           width={s} height={s}
           fill={ACCENT}
           shapeRendering="crispEdges"
@@ -254,15 +256,26 @@ export function VolvvECorner({ state = 'idle', side = 'right' }: { state?: Ghost
       <VolvvE state={state} scale={5} />
       <span style={{
         fontFamily: 'JetBrains Mono, monospace',
-        fontSize: 8,
+        fontSize: 9,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        color: ACCENT,
+        fontWeight: 600,
+      }}>
+        volvv-e
+      </span>
+      <span style={{
+        fontFamily: 'JetBrains Mono, monospace',
+        fontSize: 7,
         letterSpacing: '0.18em',
         textTransform: 'uppercase',
         color: ACCENT,
-        opacity: 0.55,
+        opacity: 0.45,
+        marginTop: -3,
       }}>
-        {state === 'idle'     ? '◈ ONLINE'    :
-         state === 'thinking' ? '▷ WORKING'   :
-         state === 'done'     ? '★ DONE'      : '! ERROR'}
+        {state === 'idle'     ? '◈ online'    :
+         state === 'thinking' ? '▷ working'   :
+         state === 'done'     ? '★ done'      : '! error'}
       </span>
     </div>
   )
