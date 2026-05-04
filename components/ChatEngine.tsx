@@ -1,8 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import posthog from 'posthog-js'
+import { VolvvE, VolvvEAvatar, type GhostState } from '@/components/VolvvE'
 
 type Phase = 'chatting' | 'extracting' | 'report' | 'error'
 type Msg = { role: 'user' | 'ai'; text: string; id: number }
@@ -24,21 +24,12 @@ const ACTIVITY_LINES = [
 
 const APPROX_QUESTIONS = 10
 
-function ChatMark() {
-  return (
-    <div style={{
-      width: 28, height: 28, minWidth: 28, flexShrink: 0,
-      marginTop: 2, position: 'relative', overflow: 'hidden',
-      border: '1px solid var(--ink)', background: 'var(--paper)',
-    }}>
-      <Image
-        src="/mascot.png"
-        alt="eevolvv"
-        width={338} height={338} sizes="28px"
-        style={{ width: '100%', height: '100%', objectFit: 'contain', imageRendering: 'pixelated' }}
-      />
-    </div>
-  )
+/** Returns the ghost state based on chat phase + streaming */
+function resolveGhostState(phase: Phase, isStreaming: boolean): GhostState {
+  if (phase === 'error')     return 'error'
+  if (phase === 'report')    return 'done'
+  if (phase === 'extracting' || isStreaming) return 'thinking'
+  return 'idle'
 }
 
 function formatReport(text: string): string {
@@ -114,6 +105,9 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
   const [report, setReport] = useState<{ text: string; businessName?: string } | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [userMsgCount, setUserMsgCount] = useState(0)
+
+  // Ghost state (derived — no extra useState needed)
+  const ghostState: GhostState = resolveGhostState(phase, isStreaming)
 
   // Extraction
   const [typedLines, setTypedLines] = useState<string[]>([])
@@ -569,8 +563,8 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
             style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 20 }}
           >
             {msg.role === 'ai' && (
-              <div style={{ display: 'flex', gap: 14, maxWidth: '82%' }}>
-                <ChatMark />
+              <div style={{ display: 'flex', gap: 14, maxWidth: '82%', alignItems: 'flex-start' }}>
+                <VolvvEAvatar state="idle" scale={4} />
                 <div style={{ fontSize: 15, lineHeight: 1.65, color: 'var(--ink)', whiteSpace: 'pre-line', paddingTop: 4 }}>
                   {msg.text}
                 </div>
@@ -585,12 +579,12 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
         ))}
 
         {isStreaming && (
-          <div className="diagnostic-msg-in" style={{ display: 'flex', gap: 14, maxWidth: '82%', marginBottom: 20 }}>
-            <ChatMark />
+          <div className="diagnostic-msg-in" style={{ display: 'flex', gap: 14, maxWidth: '82%', marginBottom: 20, alignItems: 'flex-start' }}>
+            <VolvvEAvatar state="thinking" scale={4} />
             {streamText ? (
               <div style={{ fontSize: 15, lineHeight: 1.65, color: 'var(--ink)', whiteSpace: 'pre-line', paddingTop: 4 }}>{streamText}</div>
             ) : (
-              <div style={{ display: 'flex', gap: 5, alignItems: 'center', paddingTop: 10 }}>
+              <div style={{ display: 'flex', gap: 5, alignItems: 'center', paddingTop: 14 }}>
                 {[0, 1, 2].map(i => (
                   <div key={i} style={{ width: 6, height: 6, background: 'var(--ink)', borderRadius: '50%', animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }} />
                 ))}
