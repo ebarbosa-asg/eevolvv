@@ -4,20 +4,18 @@ import { useState, useEffect, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { PanelLeftClose, PanelLeft } from 'lucide-react'
-import type { Client } from './HubClient'
 
 const SECTIONS = [
-  { n: '01', label: 'DIAGNOSTIC FEED', anchor: 'diagnostic-feed' },
-  { n: '02', label: 'FUNNEL METRICS', anchor: 'funnel-metrics' },
-  { n: '03', label: 'ACTIVE CLIENTS', anchor: 'active-clients' },
-  { n: '04', label: 'AGENT REGISTRY', anchor: 'agent-registry' },
-  { n: '05', label: 'PIPELINE', anchor: 'pipeline' },
-  { n: '06', label: 'FINANCE', anchor: 'finance' },
-  { n: '07', label: 'ENGINEERING', anchor: 'engineering' },
-  { n: '08', label: 'INVESTOR', anchor: 'investor' },
-  { n: '09', label: 'QUICK LINKS', anchor: 'quick-links' },
-  { n: '10', label: 'INTERNAL DOCS', anchor: 'internal-docs' },
-]
+  { n: '00', label: 'OVERVIEW', route: '/os' },
+  { n: '01', label: 'TASKS', route: '/os/tasks' },
+  { n: '02', label: 'FEED', route: '/os/feed' },
+  { n: '03', label: 'CLIENTS', route: '/os/clients' },
+  { n: '04', label: 'AGENTS', route: '/os/agents' },
+  { n: '05', label: 'PIPELINE', route: '/os/pipeline' },
+  { n: '06', label: 'FINANCE', route: '/os/finance' },
+  { n: '07', label: 'INVESTORS', route: '/os/investors' },
+  { n: '08', label: 'LINKS', route: '/os/links' },
+] as const
 
 const MONO = { fontFamily: 'JetBrains Mono, ui-monospace, monospace' } as const
 
@@ -47,7 +45,7 @@ function SectionRule({ children }: { children: React.ReactNode }) {
           fontSize: 10,
           letterSpacing: '0.22em',
           opacity: 0.38,
-          textTransform: 'uppercase',
+          textTransform: 'uppercase' as const,
           flexShrink: 0,
         }}
       >
@@ -67,20 +65,65 @@ function SectionRule({ children }: { children: React.ReactNode }) {
 
 export default function OSSidebar({ collapsed, onToggleCollapse, width: SIDEBAR_W }: OSSidebarProps) {
   const pathname = usePathname()
-  const isOsRoot = pathname === '/os'
-  const [clients, setClients] = useState<Client[]>([])
+
+  const [taskCount, setTaskCount] = useState<number | null>(null)
+  const [clientCount, setClientCount] = useState<number | null>(null)
+  const [agentCount, setAgentCount] = useState<number | null>(null)
+  const [pipelineCount, setPipelineCount] = useState<number | null>(null)
+  const [investorCount, setInvestorCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch('/api/os/company-tasks')
+      .then((r) => r.json())
+      .then((d: Array<{ status?: string }>) => {
+        const open = d.filter((t) => t.status !== 'done').length
+        setTaskCount(open)
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     fetch('/api/os/clients')
       .then((r) => r.json())
-      .then((d: Client[]) => setClients(d))
+      .then((d: unknown[]) => setClientCount(d.length))
       .catch(() => {})
   }, [])
 
-  const scrollTo = (anchor: string) => {
-    if (!isOsRoot) return
-    const el = document.getElementById(anchor)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  useEffect(() => {
+    fetch('/api/os/agents')
+      .then((r) => r.json())
+      .then((d: unknown[]) => setAgentCount(d.length))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/os/pipeline')
+      .then((r) => r.json())
+      .then((d: unknown[]) => setPipelineCount(d.length))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/os/investors')
+      .then((r) => r.json())
+      .then((d: unknown[]) => setInvestorCount(d.length))
+      .catch(() => {})
+  }, [])
+
+  function isActive(route: string): boolean {
+    if (route === '/os') return pathname === '/os'
+    return pathname === route || pathname.startsWith(route + '/')
+  }
+
+  function getBadge(route: string): number | null {
+    switch (route) {
+      case '/os/tasks': return taskCount
+      case '/os/clients': return clientCount
+      case '/os/agents': return agentCount
+      case '/os/pipeline': return pipelineCount
+      case '/os/investors': return investorCount
+      default: return null
+    }
   }
 
   const railShadow = collapsed
@@ -124,7 +167,8 @@ export default function OSSidebar({ collapsed, onToggleCollapse, width: SIDEBAR_
           bottom: 0,
           width: SIDEBAR_W,
           zIndex: 92,
-          background: 'linear-gradient(165deg, rgba(24,24,23,0.98) 0%, rgba(14,14,13,0.99) 48%, rgba(12,12,11,1) 100%)',
+          background:
+            'linear-gradient(165deg, rgba(24,24,23,0.98) 0%, rgba(14,14,13,0.99) 48%, rgba(12,12,11,1) 100%)',
           borderRight: '1px solid rgba(255,255,255,0.07)',
           backdropFilter: 'blur(16px) saturate(1.1)',
           WebkitBackdropFilter: 'blur(16px) saturate(1.1)',
@@ -146,7 +190,8 @@ export default function OSSidebar({ collapsed, onToggleCollapse, width: SIDEBAR_
             display: 'flex',
             alignItems: 'center',
             gap: 10,
-            background: 'linear-gradient(180deg, rgba(255,255,255,0.045) 0%, transparent 100%)',
+            background:
+              'linear-gradient(180deg, rgba(255,255,255,0.045) 0%, transparent 100%)',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
             position: 'relative',
           }}
@@ -203,131 +248,69 @@ export default function OSSidebar({ collapsed, onToggleCollapse, width: SIDEBAR_
           </button>
         </div>
 
-        {isOsRoot && (
-          <div style={{ padding: '20px 0 12px' }}>
-            <SectionRule>Navigation</SectionRule>
-            <nav aria-label="OS sections">
-              {SECTIONS.map((s) => (
-                <button
+        {/* Route-based navigation */}
+        <div style={{ padding: '20px 0 12px', flex: 1 }}>
+          <SectionRule>Navigation</SectionRule>
+          <nav aria-label="OS sections">
+            {SECTIONS.map((s) => {
+              const active = isActive(s.route)
+              const badge = getBadge(s.route)
+              return (
+                <Link
                   key={s.n}
-                  type="button"
-                  onClick={() => scrollTo(s.anchor)}
+                  href={s.route}
                   style={{
                     display: 'flex',
                     alignItems: 'baseline',
                     gap: 10,
-                    width: 'calc(100% - 20px)',
                     margin: '0 10px 3px',
-                    textAlign: 'left',
-                    background: 'rgba(255,255,255,0.02)',
-                    border: '1px solid transparent',
-                    borderRadius: 10,
                     padding: '10px 14px',
-                    cursor: 'pointer',
+                    borderRadius: 10,
+                    textDecoration: 'none',
                     ...MONO,
                     fontSize: 10,
                     fontWeight: 500,
-                    textTransform: 'uppercase',
+                    textTransform: 'uppercase' as const,
                     letterSpacing: '0.1em',
-                    color: 'rgba(250,247,240,0.52)',
-                    transition: 'background 0.15s ease, border-color 0.15s ease, color 0.15s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    const b = e.currentTarget
-                    b.style.color = 'var(--paper)'
-                    b.style.background = 'rgba(255,255,255,0.06)'
-                    b.style.borderColor = 'rgba(255,255,255,0.06)'
-                  }}
-                  onMouseLeave={(e) => {
-                    const b = e.currentTarget
-                    b.style.color = 'rgba(250,247,240,0.52)'
-                    b.style.background = 'rgba(255,255,255,0.02)'
-                    b.style.borderColor = 'transparent'
+                    color: active ? 'var(--paper)' : 'rgba(250,247,240,0.52)',
+                    background: active ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.02)',
+                    border: active
+                      ? '1px solid rgba(255,255,255,0.08)'
+                      : '1px solid transparent',
+                    borderLeft: active
+                      ? '3px solid var(--accent)'
+                      : '3px solid transparent',
+                    transition:
+                      'background 0.15s ease, border-color 0.15s ease, color 0.15s ease',
                   }}
                 >
-                  <span style={{ color: 'var(--accent)', opacity: 0.95, fontVariantNumeric: 'tabular-nums' }}>§{s.n}</span>
-                  <span style={{ letterSpacing: '0.08em' }}>{s.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
-        )}
-
-        <div
-          style={{
-            padding: '18px 0 20px',
-            marginTop: 'auto',
-            borderTop: isOsRoot ? '1px solid rgba(255,255,255,0.06)' : undefined,
-            background: isOsRoot ? 'linear-gradient(0deg, rgba(255,255,255,0.02) 0%, transparent 120px)' : undefined,
-          }}
-        >
-          <SectionRule>Clients</SectionRule>
-          {clients.length === 0 && (
-            <div style={{ ...MONO, fontSize: 11, opacity: 0.28, padding: '6px 18px 10px', letterSpacing: '0.06em' }}>
-              No active clients
-            </div>
-          )}
-          {clients.map((c) => (
-            <Link
-              key={c.id}
-              href={`/os/clients/${c.id}`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                margin: '0 10px 4px',
-                padding: '9px 14px',
-                borderRadius: 10,
-                textDecoration: 'none',
-                ...MONO,
-                fontSize: 11,
-                letterSpacing: '0.04em',
-                color: pathname === `/os/clients/${c.id}` ? 'var(--paper)' : 'rgba(250,247,240,0.55)',
-                background:
-                  pathname === `/os/clients/${c.id}` ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.02)',
-                border:
-                  pathname === `/os/clients/${c.id}`
-                    ? '1px solid rgba(255,255,255,0.08)'
-                    : '1px solid transparent',
-                borderLeft:
-                  pathname === `/os/clients/${c.id}` ? '3px solid var(--accent)' : '3px solid transparent',
-                transition: 'background 0.12s ease, color 0.12s ease, border-color 0.12s ease',
-              }}
-            >
-              <span
-                style={{
-                  width: 7,
-                  height: 7,
-                  borderRadius: '50%',
-                  background:
-                    c.health === 'green' ? '#4ade80' : c.health === 'yellow' ? '#f59e0b' : 'var(--accent)',
-                  flexShrink: 0,
-                  boxShadow: '0 0 10px rgba(0,0,0,0.35)',
-                }}
-              />
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.company}</span>
-            </Link>
-          ))}
-          <Link
-            href="/os"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              margin: '12px 18px 0',
-              padding: '8px 0',
-              ...MONO,
-              fontSize: 10,
-              fontWeight: 500,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'var(--accent)',
-              textDecoration: 'none',
-              opacity: 0.85,
-              gap: 6,
-            }}
-          >
-            <span style={{ fontSize: 14, opacity: 0.9 }}>+</span> New client
-          </Link>
+                  <span
+                    style={{
+                      color: 'var(--accent)',
+                      opacity: 0.95,
+                      fontVariantNumeric: 'tabular-nums',
+                    }}
+                  >
+                    §{s.n}
+                  </span>
+                  <span style={{ letterSpacing: '0.08em', flex: 1 }}>{s.label}</span>
+                  {badge !== null && (
+                    <span
+                      style={{
+                        ...MONO,
+                        fontSize: 9,
+                        color: active ? 'var(--accent)' : 'rgba(250,247,240,0.3)',
+                        fontVariantNumeric: 'tabular-nums',
+                        marginLeft: 'auto',
+                      }}
+                    >
+                      {badge}
+                    </span>
+                  )}
+                </Link>
+              )
+            })}
+          </nav>
         </div>
       </aside>
 
