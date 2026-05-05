@@ -4,7 +4,11 @@ const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#faf7f0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="description" content="eevolvv — AI-native business transformation. A service, not software." />
   <meta property="og:title" content="EEVOLVV — We become your AI operations team." />
   <meta property="og:description" content="Ghost Locker. Internal OS. Diagnostic Engine. A service, not software. — eevolvv.com/yc" />
@@ -20,7 +24,7 @@ const html = `<!DOCTYPE html>
   <title>EEVOLVV · OVERVIEW · 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&family=Instrument+Serif:ital@0;1&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Newsreader:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&amp;family=Space+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet" />
   <style>
     :root {
       --paper: #faf7f0;
@@ -48,31 +52,53 @@ const html = `<!DOCTYPE html>
       font-size: 16px;
       line-height: 1.6;
       overflow-x: hidden;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ─────────────────────────────────────────
        NAV
     ───────────────────────────────────────── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
       z-index: 100;
-      display: flex;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
       align-items: center;
-      justify-content: space-between;
-      padding: 14px var(--px);
+      gap: clamp(10px, 2.5vw, 22px);
+      padding: calc(10px + env(safe-area-inset-top, 0px))
+        max(var(--px), env(safe-area-inset-right, 0px))
+        12px
+        max(var(--px), env(safe-area-inset-left, 0px));
       background: rgba(250,247,240,.93);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--rule);
+    }
+    /* Two columns when label hidden on narrow phones */
+    @media (max-width: 580px) {
+      nav {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+      .nav-tag { display: none; }
     }
     .nav-logo {
       display: flex;
       align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      min-width: 44px;
+      padding: 4px 8px 4px 0;
+      margin: -4px 0 -4px -4px;
       line-height: 0;
       text-decoration: none;
       flex-shrink: 0;
     }
     .nav-logo img {
-      height: clamp(30px, 4.2vw, 40px);
+      height: clamp(28px, 4.2vw, 40px);
       width: auto;
       display: block;
       image-rendering: pixelated;
@@ -80,33 +106,124 @@ const html = `<!DOCTYPE html>
     }
     .nav-tag {
       font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: .18em;
+      font-size: clamp(9px, 2.2vw, 10px);
+      letter-spacing: .16em;
       text-transform: uppercase;
       opacity: .35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: min(148px, 22vw);
+      justify-self: end;
+      text-align: right;
     }
-    .nav-dots { display: flex; gap: 7px; align-items: center; }
+    /* Horizontal swipe for slide dots — no wrapping jungle on phones */
+    .nav-dots-scroll {
+      justify-self: center;
+      width: 100%;
+      max-width: min(620px, 100%);
+      min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      mask-image: linear-gradient(90deg, transparent, #000 10px, #000 calc(100% - 10px), transparent);
+      mask-size: 100% 100%;
+    }
+    .nav-dots-scroll::-webkit-scrollbar { display: none; }
+    .nav-dots {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      width: max-content;
+      max-width: none;
+      padding: 4px 0;
+    }
+    /* 44×44px minimum tap target (WCAG advisory); dot drawn in ::after */
     .nd {
-      width: 6px; height: 6px;
+      scroll-snap-align: center;
+      width: 44px;
+      height: 44px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nd::after {
+      content: '';
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: rgba(20,20,19,.25);
-      cursor: pointer;
       transition: background .2s, transform .2s;
     }
-    .nd.on { background: var(--accent); transform: scale(1.5); }
+    .nd.on::after {
+      background: var(--accent);
+      transform: scale(1.5);
+    }
+
+    /* GTM “four channels” tiles — stack on narrow phones */
+    .channel-subgrid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 640px) {
+      .channel-subgrid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .fi.vis, .fi.vis.line,
+      .hero-gradient-word,
+      .cover-ew,
+      .cover-ew::before,
+      .btn-gradient,
+      .grid-drift {
+        animation: none !important;
+      }
+      .cover-ghost-wrap,
+      .ghost-eye {
+        animation: none !important;
+      }
+      .mascot-track {
+        animation: none !important;
+        transform: none !important;
+      }
+      .cover-ew { filter: none !important; }
+    }
 
     /* ─────────────────────────────────────────
        SECTIONS
     ───────────────────────────────────────── */
     section {
-      min-height: 100vh;
+      min-height: 100vh; /* fallback */
+      min-height: 100dvh; /* avoids mobile browser chrome clipping full-bleed sections */
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 120px var(--px) 80px;
+      padding:
+        clamp(96px, 22vw, 124px)
+        max(var(--px), env(safe-area-inset-left, 0px))
+        clamp(52px, 12vw, 88px)
+        max(var(--px), env(safe-area-inset-right, 0px));
       border-bottom: 1px solid var(--rule);
       position: relative;
-      scroll-margin-top: 60px;
+      scroll-margin-top: max(72px, calc(env(safe-area-inset-top, 0px) + 56px));
     }
     section.dk {
       background: var(--ink);
@@ -220,6 +337,12 @@ const html = `<!DOCTYPE html>
        CARD
     ───────────────────────────────────────── */
     .card { border: 1px solid var(--rule); padding: 26px; }
+    @media (max-width: 480px) {
+      .card { padding: 20px 18px; }
+      .founder { padding: 24px 20px; }
+      .gl-step { padding: 18px 14px; }
+      .term { font-size: 12px; line-height: 1.85; padding: 16px 18px; }
+    }
     .card-lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: .2em; text-transform: uppercase; opacity: .38; margin-bottom: 10px; }
     .card-val { font-family: var(--font-display); font-size: clamp(26px, 4vw, 42px); font-weight: 700; line-height: 1.1; }
     .card-sub { font-size: 12px; opacity: .45; margin-top: 5px; }
@@ -235,6 +358,8 @@ const html = `<!DOCTYPE html>
       font-family: var(--font-mono);
       font-size: 13px;
       line-height: 1.9;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     section.dk .term { background: rgba(250,247,240,.055); }
     .tc { opacity: .3; }
@@ -254,6 +379,9 @@ const html = `<!DOCTYPE html>
        PROBLEM ITEMS
     ───────────────────────────────────────── */
     .prob { display: grid; grid-template-columns: 52px 1fr; gap: 18px; padding: 26px 0; border-bottom: 1px solid var(--rule); align-items: start; }
+    @media (max-width: 380px) {
+      .prob { grid-template-columns: 40px 1fr; gap: 14px; padding: 20px 0; }
+    }
     .prob-n { font-family: var(--font-mono); font-size: 10px; color: var(--accent); letter-spacing: .1em; padding-top: 5px; }
 
     /* ─────────────────────────────────────────
@@ -266,8 +394,25 @@ const html = `<!DOCTYPE html>
     /* ─────────────────────────────────────────
        MATRIX
     ───────────────────────────────────────── */
-    .matrix-wrap { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; margin-top: 48px; }
-    .matrix { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; max-width: 460px; flex-shrink: 0; }
+    .matrix-wrap { display: flex; gap: clamp(28px, 5vw, 40px); align-items: flex-start; flex-wrap: wrap; margin-top: 48px; }
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 2px;
+      max-width: min(460px, 100%);
+      flex-shrink: 0;
+    }
+    @media (max-width: 520px) {
+      .matrix-wrap { flex-direction: column; }
+      .matrix {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        width: 100%;
+        max-width: 100%;
+      }
+      .mc { min-height: 0; }
+    }
     .mc { padding: 22px; border: 1px solid var(--rule); min-height: 130px; display: flex; flex-direction: column; justify-content: flex-end; }
     .mc.hi { background: var(--accent); color: var(--paper); border-color: var(--accent); }
     .mc-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
@@ -299,27 +444,37 @@ const html = `<!DOCTYPE html>
       justify-content: center;
       padding-top: 108px;
       padding-bottom: 96px;
-      overflow: hidden;
+      overflow-x: clip;
+      overflow-y: visible;
     }
     #s00 .cover-split {
       display: grid;
-      grid-template-columns: 1fr minmax(260px, 42%);
+      grid-template-columns: 1fr minmax(220px, 42%);
       gap: clamp(32px, 5vw, 72px);
       align-items: center;
     }
-    @media (max-width: 860px) {
+    @media (max-width: 1024px) {
       #s00 .cover-split { grid-template-columns: 1fr; }
       #s00 .cover-art { order: -1; margin: 0 auto 8px; max-width: min(400px, 100%); }
     }
     .cover-art { position: relative; width: 100%; max-width: 440px; margin-left: auto; pointer-events: none; user-select: none; }
+    @media (max-width: 1024px) {
+      .cover-art { margin-right: auto; }
+    }
     .cover-art svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 28px 56px rgba(20, 20, 19, 0.07)); }
+    #s00 .cover-copy {
+      min-width: 0;
+      max-width: 100%;
+    }
     .cover-ew {
       position: relative;
       display: inline-block;
+      max-width: 100%;
       font-family: var(--font-mono);
-      font-size: clamp(72px, 13vw, 150px);
+      font-size: clamp(40px, min(13vw, 15vh), 150px);
       font-weight: 700;
       line-height: .9;
+      letter-spacing: -0.065em;
       text-transform: uppercase;
       color: transparent;
       background: linear-gradient(110deg, var(--ink) 10%, oklch(0.25 0.08 25) 30%, var(--accent) 50%, oklch(0.25 0.08 25) 70%, var(--ink) 90%);
@@ -343,7 +498,7 @@ const html = `<!DOCTYPE html>
       pointer-events: none;
     }
     #s00 .cover-tag { font-family: var(--font-serif); font-style: italic; font-size: clamp(18px, 2.8vw, 30px); color: rgba(20, 20, 19, 0.56); margin-top: 22px; }
-    .cover-meta { display: flex; gap: 44px; margin-top: 52px; flex-wrap: wrap; }
+    .cover-meta { display: flex; gap: clamp(24px, 5vw, 44px); margin-top: clamp(36px, 8vw, 52px); flex-wrap: wrap; }
     #s00 .cm-lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; opacity: .45; margin-bottom: 4px; color: var(--ink); }
     #s00 .cm-val { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--ink); }
 
@@ -357,7 +512,7 @@ const html = `<!DOCTYPE html>
       margin-top: 40px;
     }
     @media(max-width:900px) { .gl-pipeline { grid-template-columns: repeat(3, 1fr); } }
-    @media(max-width:600px) { .gl-pipeline { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:600px) { .gl-pipeline { grid-template-columns: 1fr; } }
     .gl-step {
       padding: 22px 18px;
       border: 1px solid var(--rule);
@@ -379,6 +534,7 @@ const html = `<!DOCTYPE html>
       margin-top: 32px;
     }
     @media(max-width:768px) { .os-routes { grid-template-columns: repeat(2, 1fr); } }
+    @media(max-width:480px) { .os-routes { grid-template-columns: 1fr; } }
     .os-route {
       padding: 14px 16px;
       border: 1px solid var(--rule);
@@ -389,22 +545,50 @@ const html = `<!DOCTYPE html>
     .os-route-desc { opacity: .5; font-size: 10px; letter-spacing: .04em; }
 
     /* ─────────────────────────────────────────
-       § 10 CTA
+       § 12 CTA
     ───────────────────────────────────────── */
-    #s10 { background: var(--accent); color: var(--paper); }
-    #s10 .marker { color: rgba(250,247,240,.55); }
-    #s10 .rule { background: rgba(250,247,240,.45); }
-    #s10 .cta-btn--outline {
+    #s12 .marker { color: rgba(250,247,240,.55); }
+    #s12 .rule { background: rgba(250,247,240,.45); }
+    #s12 {
+      padding-bottom: max(clamp(52px, 12vw, 88px), calc(12px + env(safe-area-inset-bottom, 0px)));
+    }
+    #s12 .cta-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 28px;
+    }
+    #s12 .cta-actions .cta-btn {
+      margin-top: 0 !important;
+    }
+    @media (max-width: 560px) {
+      #s12 .cta-actions {
+        align-items: stretch;
+        width: 100%;
+        max-width: 440px;
+      }
+      #s12 .cta-actions .cta-btn {
+        justify-content: center;
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+        box-sizing: border-box;
+      }
+    }
+    #s12 .cta-btn--outline {
       background: transparent !important;
       color: var(--paper) !important;
       -webkit-text-fill-color: var(--paper) !important;
       border: 1px solid rgba(250,247,240,.45);
       animation: none;
     }
-    #s10 .cta-btn--outline:hover { background: rgba(250,247,240,.12) !important; }
+    #s12 .cta-btn--outline:hover { background: rgba(250,247,240,.12) !important; }
     .cta-btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
+      min-height: 44px;
       gap: 10px;
       background: var(--paper);
       color: var(--accent);
@@ -418,6 +602,14 @@ const html = `<!DOCTYPE html>
       transition: opacity .2s;
     }
     .cta-btn:hover { opacity: .85; }
+    .cta-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    #s12 .cta-btn:focus-visible {
+      outline-color: var(--paper);
+      outline-offset: 3px;
+    }
     .cta-contact { font-family: var(--font-mono); font-size: 13px; opacity: .65; margin-top: 28px; line-height: 1.9; }
 
     /* ─────────────────────────────────────────
@@ -426,7 +618,9 @@ const html = `<!DOCTYPE html>
     footer {
       background: var(--ink);
       color: var(--paper);
-      padding: 22px var(--px);
+      padding: 22px max(var(--px), env(safe-area-inset-right, 0px))
+        max(22px, env(safe-area-inset-bottom, 0px))
+        max(var(--px), env(safe-area-inset-left, 0px));
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -445,6 +639,15 @@ const html = `<!DOCTYPE html>
     /* ─────────────────────────────────────────
        VOLVV-E HERO GHOST
     ───────────────────────────────────────── */
+    #hero-ghost {
+      display: block;
+      width: 100%;
+      max-width: min(340px, 92vw);
+      height: auto;
+      aspect-ratio: 380 / 360;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
     .cover-ghost-wrap {
       display: flex;
       align-items: center;
@@ -495,12 +698,14 @@ const html = `<!DOCTYPE html>
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="https://eevolvv.com" target="_blank" rel="noopener noreferrer" title="eevolvv">
-    <img src="/logo.png" width="1024" height="528" alt="eevolvv" />
+<nav aria-label="Overview">
+  <a class="nav-logo" href="https://eevolvv.com" target="_blank" rel="noopener noreferrer" title="eevolvv · home">
+    <img src="/logo.png" width="1024" height="528" alt="eevolvv" decoding="async" fetchpriority="high" sizes="160px" />
   </a>
-  <div class="nav-dots" id="ndots"></div>
-  <div class="nav-tag">OVERVIEW · 2026</div>
+  <div class="nav-dots-scroll" aria-label="Jump to slide" role="group">
+    <div class="nav-dots" id="ndots"></div>
+  </div>
+  <div class="nav-tag" aria-hidden="true">OVERVIEW · 2026</div>
 </nav>
 
 <!-- ─── § 00 COVER ─────────────────────── -->
@@ -521,7 +726,7 @@ const html = `<!DOCTYPE html>
 
     <div class="fi d2" aria-hidden="true" style="display:flex;align-items:center;justify-content:center;padding:20px 0;">
       <div class="cover-ghost-wrap">
-        <svg id="hero-ghost" xmlns="http://www.w3.org/2000/svg" width="380" height="360" viewBox="0 0 380 360" style="display:block;image-rendering:pixelated;"></svg>
+        <svg id="hero-ghost" xmlns="http://www.w3.org/2000/svg" width="380" height="360" viewBox="0 0 380 360" aria-hidden="true"></svg>
       </div>
     </div>
   </div>
@@ -530,7 +735,7 @@ const html = `<!DOCTYPE html>
 <!-- ─── MASCOT SCROLL STRIP ───────────────── -->
 <div class="mascot-strip" aria-hidden="true">
   <div class="mascot-track">
-    <img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" />
+    <img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" /><img src="/mascot.png" alt="" width="120" height="36" decoding="async" loading="lazy" />
   </div>
 </div>
 
@@ -847,7 +1052,7 @@ const html = `<!DOCTYPE html>
         <div>
           <h3>SMB Diagnostic Funnel — Brand at Zero CAC</h3>
           <p style="margin-top:10px;font-size:14px;opacity:.6;line-height:1.75;">eevolvv.com diagnostic engine runs 24/7. Free AI diagnostic converts to $299/mo Core subscriptions. Four acquisition channels running simultaneously:</p>
-          <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="channel-subgrid">
             <div style="padding:16px;border:1px solid rgba(250,247,240,.12);border-left:2px solid var(--accent);">
               <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;color:var(--accent);margin-bottom:8px;">SEO</div>
               <p style="font-size:13px;opacity:.65;line-height:1.65;">Transformation + AI automation keywords. Long-tail business pain queries — "ghost work," "AI operations," "business audit AI." Content written to be found, not performed.</p>
@@ -1041,9 +1246,9 @@ const html = `<!DOCTYPE html>
     <div class="rule fi line d2" style="background:rgba(250,247,240,.45);"></div>
     <p class="lead fi d2" style="color:rgba(250,247,240,.72);max-width:580px;">We're building the infrastructure layer for AI-native business transformation — starting with the programs and businesses that need it most. If you see what we see, or want to understand it better, we'd like to talk.</p>
 
-    <div class="fi d3" style="display:flex;flex-direction:column;align-items:flex-start;">
+    <div class="cta-actions fi d3">
       <a href="mailto:hello@eevolvv.com" class="cta-btn">→ &nbsp;hello@eevolvv.com</a>
-      <a href="https://calendly.com/hello-eevolvv" target="_blank" rel="noopener noreferrer" class="cta-btn" style="background:transparent;color:var(--paper);border:1px solid rgba(250,247,240,.45);margin-top:10px;">↳ &nbsp;Schedule a conversation</a>
+      <a href="https://calendly.com/hello-eevolvv" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn--outline">↳ &nbsp;Schedule a conversation</a>
     </div>
 
     <div class="cta-contact fi d4">
@@ -1100,18 +1305,26 @@ const html = `<!DOCTYPE html>
     });
   })();
 
+  const prefersReducedMotion =
+    typeof matchMedia !== 'undefined' &&
+    matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const smoothScroll = prefersReducedMotion ? 'auto' : 'smooth';
+
   const sections = document.querySelectorAll('section');
   const ndots    = document.getElementById('ndots');
 
-  /* build nav dots */
-  sections.forEach((sec, i) => {
-    const d = document.createElement('div');
-    d.className = 'nd';
-    d.title = sec.id.toUpperCase();
-    d.addEventListener('click', () => sec.scrollIntoView({ behavior: 'smooth' }));
-    ndots.appendChild(d);
-  });
-
+  if (ndots && sections.length) {
+    sections.forEach((sec) => {
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.className = 'nd';
+      d.title = sec.id.toUpperCase();
+      d.setAttribute('aria-label', 'Go to slide ' + sec.id);
+      d.addEventListener('click', () =>
+        sec.scrollIntoView({ behavior: smoothScroll, block: 'start' }));
+      ndots.appendChild(d);
+    });
+  }
   /* fade-in observer */
   const fiObs = new IntersectionObserver(entries => {
     entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('vis'); });
@@ -1119,11 +1332,16 @@ const html = `<!DOCTYPE html>
   document.querySelectorAll('.fi').forEach(el => fiObs.observe(el));
 
   /* active dot observer */
+  const dotTray = document.querySelector('.nav-dots-scroll');
   const dotObs = new IntersectionObserver(entries => {
     entries.forEach(en => {
       if (en.isIntersecting) {
         const idx = Array.from(sections).indexOf(en.target);
-        document.querySelectorAll('.nd').forEach((d, i) => d.classList.toggle('on', i === idx));
+        const dots = document.querySelectorAll('.nd');
+        dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+        const activeDot = dots[idx];
+        if (dotTray && activeDot)
+          activeDot.scrollIntoView({ behavior: smoothScroll, inline: 'center', block: 'nearest' });
       }
     });
   }, { threshold: 0.45 });
@@ -1131,11 +1349,11 @@ const html = `<!DOCTYPE html>
 
   /* cover hero scrambler */
   const heroWord = document.querySelector('.cover-ew');
-  if (heroWord) {
+  if (heroWord && !prefersReducedMotion) {
     const originalText = heroWord.getAttribute('data-text') || 'EEVOLVV';
     const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#\$%&*<>';
     let iterations = 0;
-    let scrambleInterval = setInterval(() => {
+    const scrambleInterval = setInterval(() => {
       let currentText = originalText.split('').map((letter, index) => {
         if (index < iterations) return originalText[index];
         return matrixChars[Math.floor(Math.random() * matrixChars.length)];
