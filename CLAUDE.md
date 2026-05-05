@@ -25,6 +25,7 @@ Owner: E (Eduardo Barbosa) — eduardocbarbosa1998@gmail.com
 | **homepage-v2** | Full page redesign + true AI chat engine | ✅ DONE |
 | **archimedes-rebrand** | Rename archimedes.ai → eevolvv/talent | ✅ DONE — talent lives at /talent in main app only. Standalone talent/ app deleted. |
 | **investor-pitch** | Password-gated pitch deck + investor strategy doc | 🔄 IN PROGRESS — see `_investor/` |
+| **ghost-locker** | Internal agent builder — intake to deploy pipeline | ✅ LIVE — see `ghost-locker/` + `.claude/skills/ghost-locker/` |
 | **micro-tier** | Corner store / global micro-retail expansion | LONG-TERM PLANNED |
 | **global-expansion** | 25M+ micro-retailers worldwide, WhatsApp-first | LONG-TERM PLANNED |
 
@@ -288,3 +289,21 @@ Autonomous agent orchestration for eevolvv feature development.
 - `/karimo:merge --prd <slug>` → final PR to main
 - `/karimo:doctor` → health check
 <!-- KARIMO:END -->
+
+## GHOST LOCKER
+
+Internal agent manufacturing pipeline — takes a client from "we have a problem" to "you have a deployed, documented AI agent."
+
+### Location
+- Skill: `.claude/skills/ghost-locker/SKILL.md`
+- Roster: `ghost-locker/GHOST.md`
+- Clients: `ghost-locker/clients/{codename}/`
+
+### Usage
+- `/ghost:intake <codename>` → Start client discovery (7-section intake)
+- `/ghost:blueprint <codename>` → Design agent architecture (pattern + tools + deployment)
+- `/ghost:build <codename>` → Build agent (system prompt + tools.json + config + deploy instructions)
+- `/ghost:eval <codename>` → Run test suite (≥80% pass rate required)
+- `/ghost:lock <codename>` → Deploy + generate client docs + runbook
+- `/ghost:status` → View all active builds
+- `/ghost:doctor` → Health check
