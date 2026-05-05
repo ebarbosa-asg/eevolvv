@@ -441,6 +441,56 @@ const html = `<!DOCTYPE html>
     .sep { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
     .pill { display: inline-block; font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; padding: 4px 10px; border: 1px solid var(--rule); opacity: .55; margin-top: 14px; }
     .pill.live { border-color: var(--accent); color: var(--accent); opacity: 1; }
+
+    /* ─────────────────────────────────────────
+       VOLVV-E HERO GHOST
+    ───────────────────────────────────────── */
+    .cover-ghost-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: ghostFloat 3.4s ease-in-out infinite;
+    }
+    @keyframes ghostFloat {
+      0%, 100% { transform: translateY(0px);   filter: drop-shadow(0 10px 28px rgba(140,43,26,.18)); }
+      50%       { transform: translateY(-22px); filter: drop-shadow(0 32px 52px rgba(140,43,26,.38)); }
+    }
+    .ghost-eye { animation: eyeBlink 4.8s ease-in-out infinite; }
+    @keyframes eyeBlink {
+      0%, 84%, 100% { opacity: 1; }
+      89%           { opacity: 0; }
+    }
+
+    /* ─────────────────────────────────────────
+       MASCOT SCROLL STRIP
+    ───────────────────────────────────────── */
+    .mascot-strip {
+      overflow: hidden;
+      height: 68px;
+      background: var(--ink);
+      border-top: 1px solid rgba(250,247,240,.06);
+      border-bottom: 1px solid rgba(250,247,240,.06);
+      display: flex;
+      align-items: center;
+    }
+    .mascot-track {
+      display: flex;
+      align-items: center;
+      gap: 56px;
+      animation: mascotScroll 22s linear infinite;
+      flex-shrink: 0;
+    }
+    .mascot-track img {
+      height: 36px;
+      width: auto;
+      opacity: .28;
+      filter: invert(1);
+      flex-shrink: 0;
+    }
+    @keyframes mascotScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
   </style>
 </head>
 <body>
@@ -469,44 +519,20 @@ const html = `<!DOCTYPE html>
       </div>
     </div>
 
-    <div class="cover-art fi d2" aria-hidden="true">
-      <svg viewBox="0 0 440 520" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="cvOrb" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#8C2B1A" stop-opacity="0.14"/>
-            <stop offset="55%" stop-color="#8C2B1A" stop-opacity="0.05"/>
-            <stop offset="100%" stop-color="#141413" stop-opacity="0.04"/>
-          </linearGradient>
-          <linearGradient id="cvStroke" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#8C2B1A" stop-opacity="0.85"/>
-            <stop offset="100%" stop-color="#8C2B1A" stop-opacity="0.3"/>
-          </linearGradient>
-        </defs>
-        <circle cx="308" cy="102" r="124" fill="url(#cvOrb)"/>
-        <path d="M 76 418 C 76 310 124 268 182 218 C 214 194 242 178 268 168 C 296 152 322 122 340 96" stroke="url(#cvStroke)" stroke-width="2.5" stroke-linecap="round" fill="none" stroke-dasharray="3 10"/>
-        <g>
-          <circle cx="76" cy="418" r="21" stroke="#141413" stroke-width="2" stroke-dasharray="4.5 5" fill="#fdfcf8"/>
-          <text x="76" y="423" text-anchor="middle" fill="#141413" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" letter-spacing=".14em">01</text>
-        </g>
-        <g>
-          <circle cx="182" cy="218" r="23" stroke="#8C2B1A" stroke-width="2.5" fill="none"/>
-          <circle cx="182" cy="218" r="6.5" fill="#8C2B1A"/>
-          <text x="182" y="258" text-anchor="middle" fill="rgba(20,20,19,.4)" font-family="'JetBrains Mono', monospace" font-size="8.5" letter-spacing=".22em">MAP</text>
-        </g>
-        <g>
-          <circle cx="268" cy="168" r="25" fill="#141413"/>
-          <circle cx="268" cy="168" r="10" fill="#fdfcf8"/>
-          <text x="268" y="212" text-anchor="middle" fill="rgba(20,20,19,.4)" font-family="'JetBrains Mono', monospace" font-size="8.5" letter-spacing=".18em">BUILD</text>
-        </g>
-        <g>
-          <circle cx="340" cy="96" r="32" stroke="#8C2B1A" stroke-width="1.75" fill="none" opacity=".5"/>
-          <path d="M 340 68 L350 90 L374 90 L356 104 L364 128 L340 112 L316 128 L324 104 L306 90 L330 90 Z" fill="#8C2B1A"/>
-          <text x="340" y="144" text-anchor="middle" fill="rgba(20,20,19,.4)" font-family="'JetBrains Mono', monospace" font-size="8.5" letter-spacing=".14em">GROWTH</text>
-        </g>
-      </svg>
+    <div class="fi d2" aria-hidden="true" style="display:flex;align-items:center;justify-content:center;padding:20px 0;">
+      <div class="cover-ghost-wrap">
+        <svg id="hero-ghost" xmlns="http://www.w3.org/2000/svg" width="380" height="360" viewBox="0 0 380 360" style="display:block;image-rendering:pixelated;"></svg>
+      </div>
     </div>
   </div>
 </section>
+
+<!-- ─── MASCOT SCROLL STRIP ───────────────── -->
+<div class="mascot-strip" aria-hidden="true">
+  <div class="mascot-track">
+    <img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" /><img src="/mascot.png" alt="" />
+  </div>
+</div>
 
 <!-- ─── § 01 PROBLEM ────────────────────── -->
 <section id="s01">
@@ -570,7 +596,7 @@ const html = `<!DOCTYPE html>
     <h2 class="fi d1">The stack. <br><span class="it">All of it live.</span></h2>
     <div class="rule fi line d2"></div>
 
-    <div class="g3 fi d2" style="margin-top:44px;">
+    <div class="g2 fi d2" style="margin-top:44px;">
       <div class="card">
         <div class="card-lbl">CORE · LIVE NOW</div>
         <h3>Diagnostic Engine</h3>
@@ -583,8 +609,14 @@ const html = `<!DOCTYPE html>
         <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Post-diagnostic report delivered by AI within minutes. Industry-benchmarked, actionable, specific — the first thing most business owners have ever received that actually fits their operation.</p>
         <div class="pill live" style="margin-top:18px;">▓▓▓▓▓▓▓░░░ &nbsp;LIVE</div>
       </div>
+      <div class="card" style="border-left:3px solid var(--accent);">
+        <div class="card-lbl">PROPRIETARY · LIVE NOW</div>
+        <h3>Ghost Locker</h3>
+        <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">AI agent manufacturing pipeline — from client intake to deployed, tested, documented agent. Five quality-gated phases: Intake → Blueprint → Build → Eval → Lock. Complete agents in hours. The operational moat competitors cannot buy off the shelf.</p>
+        <div class="pill live" style="margin-top:18px;">▓▓▓▓▓▓▓▓░░ &nbsp;LIVE</div>
+      </div>
       <div class="card">
-        <div class="card-lbl">CORE · LIVE NOW</div>
+        <div class="card-lbl">CORE · LIVE · BETA</div>
         <h3>eevolvv/talent</h3>
         <p style="margin-top:12px;font-size:14px;opacity:.6;line-height:1.7;">Micro-contracting marketplace for vetted consultants and specialists. When AI identifies the ghost work, eevolvv/talent finds the human operator to manage the transition. Bridge from diagnosis to execution.</p>
         <div class="pill live" style="margin-top:18px;">▓▓▓▓▓▓░░░░ &nbsp;LIVE · BETA</div>
@@ -1028,6 +1060,46 @@ const html = `<!DOCTYPE html>
 </footer>
 
 <script>
+  /* ── volvv-e hero ghost ── */
+  (function () {
+    const G = [
+      [0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+      [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+      [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+      [1,1,1,2,2,2,1,1,1,1,1,1,2,2,2,1,1,1,1],
+      [1,1,1,2,2,2,1,1,1,1,1,1,2,2,2,1,1,1,1],
+      [1,1,1,2,2,2,1,1,1,1,1,1,2,2,2,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,3,3,3,3,3,3,3,3,1,1,1,1,1,1],
+      [1,1,1,1,1,1,3,3,3,3,3,3,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1],
+      [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    ];
+    const S = 20, ns = 'http://www.w3.org/2000/svg';
+    const svg = document.getElementById('hero-ghost');
+    if (!svg) return;
+    G.forEach(function (row, ri) {
+      row.forEach(function (cell, ci) {
+        if (!cell) return;
+        var r = document.createElementNS(ns, 'rect');
+        r.setAttribute('x', ci * S);
+        r.setAttribute('y', ri * S);
+        r.setAttribute('width', S);
+        r.setAttribute('height', S);
+        r.setAttribute('fill', cell === 1 ? '#141413' : cell === 2 ? '#8C2B1A' : '#8C2B1A');
+        if (cell === 2) r.classList.add('ghost-eye');
+        svg.appendChild(r);
+      });
+    });
+  })();
+
   const sections = document.querySelectorAll('section');
   const ndots    = document.getElementById('ndots');
 
