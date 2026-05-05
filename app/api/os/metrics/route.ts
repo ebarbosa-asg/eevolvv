@@ -20,7 +20,8 @@ async function queryEvent(eventName: string, days: number): Promise<number> {
     body: JSON.stringify({
       query: {
         kind: 'HogQLQuery',
-        query: `SELECT count() FROM events WHERE event = '${eventName}' AND timestamp >= now() - INTERVAL ${days} DAY`,
+        query: `SELECT count() FROM events WHERE event = {eventName} AND timestamp >= now() - INTERVAL {days} DAY`,
+        values: { eventName, days },
       },
     }),
     cache: 'no-store',
