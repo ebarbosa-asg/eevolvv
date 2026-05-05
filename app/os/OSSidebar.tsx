@@ -10,11 +10,10 @@ const SECTIONS = [
   { n: '01', label: 'TASKS', route: '/os/tasks' },
   { n: '02', label: 'FEED', route: '/os/feed' },
   { n: '03', label: 'CLIENTS', route: '/os/clients' },
-  { n: '04', label: 'AGENTS', route: '/os/agents' },
-  { n: '05', label: 'PIPELINE', route: '/os/pipeline' },
-  { n: '06', label: 'FINANCE', route: '/os/finance' },
-  { n: '07', label: 'INVESTORS', route: '/os/investors' },
-  { n: '08', label: 'LINKS', route: '/os/links' },
+  { n: '04', label: 'PIPELINE', route: '/os/pipeline' },
+  { n: '05', label: 'FINANCE', route: '/os/finance' },
+  { n: '06', label: 'INVESTORS', route: '/os/investors' },
+  { n: '07', label: 'LINKS', route: '/os/links' },
 ] as const
 
 const MONO = { fontFamily: 'JetBrains Mono, ui-monospace, monospace' } as const
@@ -68,7 +67,6 @@ export default function OSSidebar({ collapsed, onToggleCollapse, width: SIDEBAR_
 
   const [taskCount, setTaskCount] = useState<number | null>(null)
   const [clientCount, setClientCount] = useState<number | null>(null)
-  const [agentCount, setAgentCount] = useState<number | null>(null)
   const [pipelineCount, setPipelineCount] = useState<number | null>(null)
   const [investorCount, setInvestorCount] = useState<number | null>(null)
 
@@ -86,13 +84,6 @@ export default function OSSidebar({ collapsed, onToggleCollapse, width: SIDEBAR_
     fetch('/api/os/clients')
       .then((r) => r.json())
       .then((d: unknown[]) => setClientCount(d.length))
-      .catch(() => {})
-  }, [])
-
-  useEffect(() => {
-    fetch('/api/os/agents')
-      .then((r) => r.json())
-      .then((d: unknown[]) => setAgentCount(d.length))
       .catch(() => {})
   }, [])
 
@@ -119,7 +110,6 @@ export default function OSSidebar({ collapsed, onToggleCollapse, width: SIDEBAR_
     switch (route) {
       case '/os/tasks': return taskCount
       case '/os/clients': return clientCount
-      case '/os/agents': return agentCount
       case '/os/pipeline': return pipelineCount
       case '/os/investors': return investorCount
       default: return null
