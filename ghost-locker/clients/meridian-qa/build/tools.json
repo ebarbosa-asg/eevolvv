@@ -1,0 +1,128 @@
+[
+  {
+    "name": "fetch_defect_data",
+    "description": "Fetch all defect log rows from Meridian's production database for a given date. Returns raw defect records joined with line names.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "description": "ISO date string (YYYY-MM-DD) for the shift date to query"
+        }
+      },
+      "required": ["date"]
+    }
+  },
+  {
+    "name": "compute_statistics",
+    "description": "Compute per-line defect statistics from raw defect rows. Returns mean, stddev, critical count, and 7-day rolling average for each production line.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "defect_rows": {
+          "type": "array",
+          "description": "Array of defect log rows returned by fetch_defect_data"
+        }
+      },
+      "required": ["defect_rows"]
+    }
+  },
+  {
+    "name": "detect_outliers",
+    "description": "Flag production lines where today's defect count exceeds N standard deviations above the 7-day mean.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "stats_by_line": {
+          "type": "object",
+          "description": "Per-line statistics object from compute_statistics"
+        },
+        "sigma_threshold": {
+          "type": "number",
+          "description": "Number of standard deviations above mean to flag as outlier. Default: 3"
+        }
+      },
+      "required": ["stats_by_line"]
+    }
+  },
+  {
+    "name": "generate_report",
+    "description": "Generate the HTML email body for the QA defect report.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "description": "Report date (YYYY-MM-DD)"
+        },
+        "stats_by_line": {
+          "type": "object",
+          "description": "Per-line statistics from compute_statistics"
+        },
+        "outlier_flags": {
+          "type": "array",
+          "description": "Outlier flags from detect_outliers (may be empty)"
+        }
+      },
+      "required": ["date", "stats_by_line", "outlier_flags"]
+    }
+  },
+  {
+    "name": "send_email",
+    "description": "Send the QA report email to the Meridian shift supervisor distribution list via Resend.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "description": "Email subject line"
+        },
+        "html_body": {
+          "type": "string",
+          "description": "Full HTML email body from generate_report"
+        },
+        "recipients": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Recipient email addresses. Must match approved list only."
+        }
+      },
+      "required": ["subject", "html_body", "recipients"]
+    }
+  },
+  {
+    "name": "log_run",
+    "description": "Log the agent run result to eevolvv's agent_runs table in Supabase. Always call this, even on failure.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "partial", "failure"],
+          "description": "Run outcome"
+        },
+        "rows_processed": {
+          "type": "number",
+          "description": "Number of defect rows processed"
+        },
+        "lines_reported": {
+          "type": "number",
+          "description": "Number of production lines included in report"
+        },
+        "outliers_flagged": {
+          "type": "number",
+          "description": "Number of outlier lines flagged"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if status is failure or partial"
+        },
+        "tokens_used": {
+          "type": "number",
+          "description": "Total tokens consumed by this run"
+        }
+      },
+      "required": ["status"]
+    }
+  }
+]
