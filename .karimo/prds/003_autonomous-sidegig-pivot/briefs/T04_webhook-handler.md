@@ -153,10 +153,8 @@ import {
   handleSubscriptionDeleted,
 } from '@/lib/webhook-handlers'
 
-// IMPORTANT: Disable body parsing — Stripe requires raw body for signature verification
-export const config = {
-  api: { bodyParser: false },
-}
+// App Router: use req.text() to get the raw body — no bodyParser config needed
+// (export const config with api.bodyParser is a Pages Router pattern and has no effect here)
 
 export async function POST(req: NextRequest) {
   if (!stripe) {

@@ -42,6 +42,7 @@ waves:
     estimated_effort: "medium"
     notes:
       - "T04 has hardcoded stub for createClientRecord() that will be implemented in T06 (Wave 3) — the handler must exist first so T06 can implement into it"
+      - "T08 creates lib/email-helpers.ts (sendWelcomeEmail, sendOnboardingEmail). T06 (Wave 3) imports these — T08 must complete before T06 can execute."
       - "T08 template functions will exist but won't fire until T06 calls them"
 
   - wave: 3
@@ -78,8 +79,9 @@ waves:
       - "T22"
     task_count: 6
     complexity_points: 18
-    rationale: "With the core pipeline running and verified at GATE-1, add the full subscription lifecycle layer. Build notification emails (T17) depend on OS build queue (T16, Wave 3). Dunning and churn webhook handlers (T18) depend on T04/T05 (Waves 1-2). Upgrade (T19) and cancel (T20) flows depend on T04/T05/T15 (Waves 1-3). Monthly report cron (T21) depends on T05/T06/T08 (Waves 1-3). Churn detection cron (T22) depends on T05/T06/T09/T15 (Waves 1-3). All six can build in parallel within Wave 4."
+    rationale: "With the core pipeline running and verified at GATE-1, add the full subscription lifecycle layer. Build notification emails (T17) depend on OS build queue (T16, Wave 3). Dunning and churn webhook handlers (T18) depend on T04/T05 (Waves 1-2). Upgrade (T19) and cancel (T20) flows depend on T04/T05/T15 (Waves 1-3). Monthly report cron (T21) depends on T05/T06/T08 (Waves 1-3). Churn detection cron (T22) depends on T05/T06/T09/T15/T21 (Waves 1-4) — T22 must run after T21 to prevent parallel writes to vercel.json. T17, T18, T19, T20, T21 can build in parallel; T22 must start after T21 completes."
     can_parallelize: true
+    parallelization_notes: "T17, T18, T19, T20, T21 can start immediately. T22 waits on T21 completion (sequential vercel.json writes)."
     estimated_effort: "medium"
 
   - wave: 5
@@ -119,9 +121,9 @@ dependency_matrix:
   T03: ["T01", "T02"]
   T04: ["T01", "T05"]
   T05: []
-  T06: ["T04", "T05"]
+  T06: ["T04", "T05", "T08"]
   T07: ["T02", "T03"]
-  T08: ["T04", "T06"]
+  T08: ["T04"]
   T09: ["T05", "T06"]
   T10: ["T02"]
   T11: ["T02", "T10"]
@@ -135,7 +137,7 @@ dependency_matrix:
   T19: ["T04", "T05", "T15"]
   T20: ["T04", "T05", "T15"]
   T21: ["T05", "T06", "T08"]
-  T22: ["T05", "T06", "T09", "T15"]
+  T22: ["T05", "T06", "T09", "T15", "T21"]
   T23: ["T06", "T08"]
   T24: ["T07", "T09", "T16"]
 

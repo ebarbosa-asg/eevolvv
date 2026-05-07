@@ -279,23 +279,19 @@ export async function GET(req: NextRequest) {
 }
 ```
 
-7. Update `vercel.json` — add follow-up cron entry:
+7. Update `vercel.json` — add follow-up cron entry (append-only):
+
+Read the current vercel.json, then ADD the following cron entry to the existing crons array.
+Do NOT replace the file — merge your new entry with the existing ones:
 
 ```json
 {
-  "ignoreCommand": "[[ \"$VERCEL_GIT_COMMIT_REF\" =~ ^feature/|-[0-9]+[a-z]?$ ]] && exit 0 || exit 1",
-  "crons": [
-    {
-      "path": "/api/cron/agents",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/followup",
-      "schedule": "0 9 * * *"
-    }
-  ]
+  "path": "/api/cron/follow-up",
+  "schedule": "0 9 * * *"
 }
 ```
+
+The final crons array must contain ALL existing entries plus this new one.
 
 ---
 
@@ -339,7 +335,7 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 - [ ] Sequence 3 sent at 168h+ window (sentAt.length = 2)
 - [ ] Sequence stops once lead email found in `clients`
 - [ ] `followup_sent_at` updated on each successful send
-- [ ] `vercel.json` updated with new cron entry
+- [ ] `vercel.json` updated with new cron entry (append-only — existing entries preserved)
 - [ ] `npm run build` passes
 
 ---

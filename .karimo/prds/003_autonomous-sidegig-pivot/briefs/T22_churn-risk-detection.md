@@ -121,20 +121,39 @@ export async function GET(req: NextRequest) {
   const risks: ChurnRisk[] = []
   const flaggedIds = new Set<string>()
 
-  // Signal 1: No onboarding >7 days post-payment
-  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
-  const { data: noOnboarding } = await supabase
-    .from('clients')
-    .select(`
-      id, email, name, tier, created_at,
-      onboarding_tokens!inner(completed_at),
-      subscriptions!inner(status)
-    `)
-    .lt('created_at', sevenDaysAgo)
-    .is('onboarding_tokens.completed_at', null)
-    .eq('subscriptions.status', 'active')
+  // CORRECT APPROACH: separate queries, not nested column filters
+  // (PostgREST / Supabase JS client does not support .is() or .eq() on joined table columns
+  //  e.g. .is('onboarding_tokens.completed_at', null) is NOT valid syntax)
 
-  for (const c of noOnboarding ?? []) {
+  // Signal 1: No onboarding >7 days post-payment
+  // Query 1a: clients with active subscriptions
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const { data: activeClients } = await supabase
+    .from('subscriptions')
+    .select('client_id, created_at, status')
+    .eq('status', 'active')
+
+  const activeClientIds = (activeClients ?? []).map(s => s.client_id)
+
+  // Query 1b: onboarding not completed >7 days post-payment
+  const { data: incompleteOnboarding } = await supabase
+    .from('onboarding_tokens')
+    .select('client_id, completed_at, created_at')
+    .is('completed_at', null)
+    .lt('created_at', sevenDaysAgo)
+
+  const noOnboardingClientIds = new Set(
+    (incompleteOnboarding ?? [])
+      .filter(t => activeClientIds.includes(t.client_id))
+      .map(t => t.client_id)
+  )
+
+  // Fetch client details for flagged ids
+  const { data: noOnboardingClients } = noOnboardingClientIds.size > 0
+    ? await supabase.from('clients').select('id, email, name, tier, created_at').in('id', Array.from(noOnboardingClientIds))
+    : { data: [] }
+
+  for (const c of noOnboardingClients ?? []) {
     if (!flaggedIds.has(c.id)) {
       flaggedIds.add(c.id)
       risks.push({
@@ -146,15 +165,13 @@ export async function GET(req: NextRequest) {
   }
 
   // Signal 2: No portal visit >30 days (exclude clients created within 30 days)
+  // Query 2: clients with active subscriptions, created >30 days ago, no recent portal visit
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
   const { data: noPortalVisit } = await supabase
     .from('clients')
-    .select(`
-      id, email, name, tier, last_portal_visit_at, created_at,
-      subscriptions!inner(status)
-    `)
+    .select('id, email, name, tier, last_portal_visit_at, created_at')
     .lt('created_at', thirtyDaysAgo)
-    .eq('subscriptions.status', 'active')
+    .in('id', activeClientIds)
     .or(`last_portal_visit_at.is.null,last_portal_visit_at.lt.${thirtyDaysAgo}`)
 
   for (const c of noPortalVisit ?? []) {
@@ -239,11 +256,21 @@ export async function GET(req: NextRequest) {
 }
 ```
 
-3. Update `vercel.json` — add churn-detection cron:
+3. Update `vercel.json` — add churn-detection cron entry (append-only):
+
+Read the current vercel.json, then ADD the following cron entry to the existing crons array.
+Do NOT replace the file:
 
 ```json
-{ "path": "/api/cron/churn-detection", "schedule": "0 9 * * 1" }
+{
+  "path": "/api/cron/churn-detection",
+  "schedule": "0 7 * * 1"
+}
 ```
+
+The final crons array must contain ALL existing entries plus this new one.
+
+Note: schedule is 0 7 * * 1 (Monday 7am) — offset from T21's 0 8 1 * * to avoid simultaneous execution.
 
 ---
 
@@ -285,7 +312,7 @@ if (flaggedIds.size > 0) {
 - [ ] No duplicate alerts for same client (deduplication by client ID)
 - [ ] Returns `{ detected, flagged, signals }` in response
 - [ ] `supabase/migrations/008_churn_tracking.sql` created (safety net)
-- [ ] `vercel.json` updated with `0 9 * * 1` schedule
+- [ ] `vercel.json` updated with churn-detection cron entry (append-only — existing entries preserved)
 - [ ] `npm run build` passes
 
 ---
@@ -305,3 +332,4 @@ if (flaggedIds.size > 0) {
 - Do not reset `churn_risk = false` in this task — that requires a separate manual action by E
 - Do not add a `POST` handler — Vercel crons use `GET`
 - Do not query the `submissions` table — that's for diagnostic leads, not paying clients
+- Do NOT use `.is()`, `.eq()`, `.not()` etc. on related/joined table column names (e.g. `.is('onboarding_tokens.completed_at', null)`) — these are NOT valid in the Supabase JS client. Use separate sequential queries and combine results in JavaScript instead.

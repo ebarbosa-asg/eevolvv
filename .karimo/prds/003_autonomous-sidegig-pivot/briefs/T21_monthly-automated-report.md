@@ -290,18 +290,19 @@ export async function GET(req: NextRequest) {
 }
 ```
 
-4. Update `vercel.json` — add monthly-report cron entry:
+4. Update `vercel.json` — add monthly-report cron entry (append-only):
+
+Read the current vercel.json, then ADD the following cron entry to the existing crons array.
+Do NOT replace the file:
 
 ```json
 {
-  "ignoreCommand": "[[ \"$VERCEL_GIT_COMMIT_REF\" =~ ^feature/|-[0-9]+[a-z]?$ ]] && exit 0 || exit 1",
-  "crons": [
-    { "path": "/api/cron/agents", "schedule": "0 9 * * *" },
-    { "path": "/api/cron/followup", "schedule": "0 9 * * *" },
-    { "path": "/api/cron/monthly-report", "schedule": "0 8 1 * *" }
-  ]
+  "path": "/api/cron/monthly-report",
+  "schedule": "0 8 1 * *"
 }
 ```
+
+The final crons array must contain ALL existing entries plus this new one.
 
 ---
 
@@ -346,7 +347,7 @@ try { result = await send() } catch { failed++ }
 - [ ] Sends sequentially with 100ms delay between emails
 - [ ] Failed individual sends logged — batch continues
 - [ ] Returns `{ sent, failed, total, month }` on completion
-- [ ] `vercel.json` updated with `0 8 1 * *` schedule for `/api/cron/monthly-report`
+- [ ] `vercel.json` updated with `0 8 1 * *` schedule for `/api/cron/monthly-report` (append-only — existing entries preserved)
 - [ ] `npm run build` passes
 
 ---

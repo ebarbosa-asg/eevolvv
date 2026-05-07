@@ -282,3 +282,6 @@ export function BuildStartedEmail({ ... }: Props) {
 - Do not send emails for status transitions other than the 3 specified
 - Do not use CSS vars in email templates — hex values only
 - Do not add new status transitions to `VALID_TRANSITIONS` — T16 owns that
+- Do NOT modify T16's VALID_TRANSITIONS map or the status update/validation logic in `app/api/builds/update-status/route.ts`
+- Only APPEND the email-sending block after the successful Supabase update — do not refactor, rename, or restructure T16's code
+- If T16's file structure differs from what's described in this brief, adapt the email trigger to fit T16's actual structure rather than rewriting T16's code

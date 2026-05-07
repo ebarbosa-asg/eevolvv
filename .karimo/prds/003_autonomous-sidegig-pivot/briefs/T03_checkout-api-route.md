@@ -42,6 +42,7 @@ Build `app/api/stripe/checkout/route.ts` — a POST endpoint that accepts a `pri
 ### Files to Create
 
 - `app/api/stripe/checkout/route.ts` — POST handler
+- `app/onboard/success/page.tsx` — Simple success page shown after Stripe checkout. Content: "Payment confirmed! Check your email for your onboarding link." Styled with eevolvv design system (paper/ink/accent). No dynamic data needed — the actual onboarding link is sent via welcome email (T08/T06).
 
 ### Files to Modify
 
@@ -170,6 +171,7 @@ console.error('[stripe/checkout] session creation error:', err)
 - [ ] Returns 503 if Stripe client is not configured
 - [ ] Returns 500 with user-friendly message on Stripe API errors
 - [ ] Does not throw uncaught exceptions — all errors caught and returned as JSON
+- [ ] `app/onboard/success/page.tsx` created and renders the payment confirmation message
 - [ ] `npm run build` passes
 
 ---
@@ -181,6 +183,7 @@ console.error('[stripe/checkout] session creation error:', err)
 | `POST /api/stripe/checkout` endpoint | T07 (payment wall CTA), T10 (pricing page CTA) |
 | `success_url` pattern with `session_id` | T04 (webhook), T09 (onboarding page) |
 | `subscription_data.metadata.tier` | T06 (client creation fulfillment) |
+| `app/onboard/success/page.tsx` | Stripe checkout redirect target |
 
 ---
 
@@ -191,3 +194,16 @@ console.error('[stripe/checkout] session creation error:', err)
 - Do not use `stripe.paymentIntents` — this is subscription mode only, use `stripe.checkout.sessions`
 - Do not expose raw Stripe errors to the client — log and return generic message
 - Do not touch `lib/stripe.ts` or `lib/stripe-prices.ts`
+
+---
+
+## Human Gate
+
+HUMAN GATE — Runtime acceptance criteria cannot be verified until E has:
+1. Created all 6 Stripe products in the Stripe dashboard (T02)
+2. Populated STRIPE_PRICE_* env vars in .env.local
+
+Build and type-check CAN be verified independently. Runtime smoke tests
+(calling POST /api/stripe/checkout with a real priceId) require real Stripe
+price IDs. Mark build/lint passing as the acceptance criteria for this task's
+PR; runtime testing is a human gate before Wave 3 execution begins.

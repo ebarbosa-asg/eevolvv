@@ -22,8 +22,8 @@ Build `app/onboard/[token]/page.tsx` — a token-validated server component that
 - `clients`, `builds` tables exist with required columns (T05 complete)
 - `sendWelcomeEmail()` exists (T08 complete — for reference only, not called here)
 
-**Token pattern to follow — `app/run/[shareToken]/` (if exists) or `app/os/ghost-locker/[codename]/page.tsx`:**
-The OS already has token-validated pages. Check `app/os/ghost-locker/[codename]/page.tsx` for the server component validation pattern.
+**Token pattern to follow — `app/os/ghost-locker/[codename]/page.tsx`:**
+The OS already has token-validated pages. Check `app/os/ghost-locker/[codename]/page.tsx` for the server component validation pattern. This is the correct existing pattern — do not look for or reference `app/run/[shareToken]/` which does not exist in the codebase.
 
 **Existing design system (`components/ds/`):**
 Available components: `Button`, `Card`, `CardHeader`, `CardContent`, `Input`, `Textarea`, `Label`, `Badge`, `SectionMarker`, `TerminalBlock`, `DataRow`, `KPIStat`
@@ -435,6 +435,10 @@ export function OnboardingForm({ token, clientId, tier, defaultName }: Onboardin
 ## Code Patterns to Follow
 
 ```tsx
+// Token-validated server component pattern (from app/os/ghost-locker/[codename]/page.tsx)
+// Server component validates token against DB, returns error state inline if invalid.
+// Pass validated data as props to the client component — never expose raw DB IDs in URL.
+
 // Server component Supabase query (from app/api/diagnostic/route.ts)
 const { data, error } = await supabase.from('table').select('...').eq('column', value).maybeSingle()
 

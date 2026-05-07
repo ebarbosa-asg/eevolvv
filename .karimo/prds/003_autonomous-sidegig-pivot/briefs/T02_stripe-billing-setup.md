@@ -293,6 +293,7 @@ All 6 price ID env vars were added to `.env.example` in T01. After E creates pro
 - [ ] Annual prices exactly equal 10 × monthly price (2 months free)
 - [ ] `docs/stripe-products.md` documents all product/price IDs and lookup keys
 - [ ] `npm run build` passes with no type errors
+- [ ] HUMAN PREREQUISITE: E has logged into Stripe dashboard, created all 6 products (Seed Monthly $99, Seed Annual $950, Core Monthly $499, Core Annual $4,790, Evolve Monthly $1,999, Evolve Annual $19,190), and populated STRIPE_PRICE_SEED_MONTHLY, STRIPE_PRICE_SEED_ANNUAL, STRIPE_PRICE_CORE_MONTHLY, STRIPE_PRICE_CORE_ANNUAL, STRIPE_PRICE_EVOLVE_MONTHLY, STRIPE_PRICE_EVOLVE_ANNUAL in .env.local AND in the Vercel project environment variables. This is a BLOCKING GATE before Wave 2 runtime tests.
 
 ---
 

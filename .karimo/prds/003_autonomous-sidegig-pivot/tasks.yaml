@@ -56,6 +56,7 @@ tasks:
       - "customer_email pre-filled from request body"
     files_affected:
       - "app/api/stripe/checkout/route.ts"
+      - "app/onboard/success/page.tsx"
     model: sonnet
 
   - id: "T04"
@@ -107,6 +108,7 @@ tasks:
     depends_on:
       - "T04"
       - "T05"
+      - "T08"
     acceptance_criteria:
       - "Idempotent — second call for same session ID is a no-op (check stripe_subscription_id uniqueness)"
       - "Creates clients record with email, tier derived from price ID, Stripe customer ID"
@@ -151,7 +153,6 @@ tasks:
     wave: 2
     depends_on:
       - "T04"
-      - "T06"
     acceptance_criteria:
       - "WelcomeEmail.tsx subject: 'Welcome to eevolvv — your [Tier] build is confirmed', includes tier, what happens next (3 steps), eevolvv branding"
       - "OnboardingEmail.tsx subject: 'Complete your onboarding — [Tier] build starts when you do', includes onboarding link /onboard/[token], 5-minute time estimate"
@@ -468,6 +469,7 @@ tasks:
       - "T06"
       - "T09"
       - "T15"
+      - "T21"
     acceptance_criteria:
       - "Vercel cron at 0 9 * * 1 triggers app/api/cron/churn-detection/route.ts"
       - "Signal 1: onboarding not completed >7 days post-payment (onboarding_tokens.completed_at IS NULL AND clients.created_at < NOW() - INTERVAL '7 days')"

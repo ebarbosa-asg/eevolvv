@@ -28,9 +28,9 @@ supabase/migrations/005_os_pipeline_investors_tasks.sql
 
 Your file must be named `006_subscriptions_builds.sql` — the next in sequence.
 
-**Existing OS `clients` table:** The OS (app/os/) already has a `clients` table (created in migration 005). The PRD tasks.yaml specifies the schema for the NEW clients table columns needed for the subscription pipeline. Read migration 005 first to understand what columns already exist, then add to existing table or clarify the relationship.
+**Existing `clients` table:** The clients table exists in the production database (created before the tracked migration set — not in any migration file in the repo). It has columns: name, company, email, phone, business_type, contract_value, stage, health, notes, submission_id, created_at, updated_at. Migration 006 extends it with subscription pipeline columns using ALTER TABLE ... ADD COLUMN IF NOT EXISTS.
 
-**IMPORTANT:** Migration 005 created a `clients` table for the OS/internal CRM use. The subscription pipeline also needs client records. Rather than creating a duplicate, add the subscription-related columns to the existing `clients` table if it exists, or create a `subscribers` table if the existing one conflicts. Read `005_os_pipeline_investors_tasks.sql` to determine the right approach before writing SQL.
+**IMPORTANT:** Do NOT attempt to CREATE the clients table — it already exists in the database. Only use ALTER TABLE ... ADD COLUMN IF NOT EXISTS to add the new subscription pipeline columns. Read `005_os_pipeline_investors_tasks.sql` to check if any target columns were already added there before writing SQL.
 
 **RLS pattern:** Service role bypasses RLS by default. Apply `USING (false)` for anon role to block public access. Grant full access to `service_role`.
 
@@ -50,7 +50,7 @@ None.
 
 ### Step-by-Step
 
-1. Read `supabase/migrations/005_os_pipeline_investors_tasks.sql` to check if `clients` table already exists and what columns it has.
+1. Read `supabase/migrations/005_os_pipeline_investors_tasks.sql` to check if any of the target subscription columns were already added there. The clients table itself exists in production (pre-migration-set) with columns: name, company, email, phone, business_type, contract_value, stage, health, notes, submission_id, created_at, updated_at. Do NOT create the table — only ALTER TABLE to add missing columns.
 
 2. Create `supabase/migrations/006_subscriptions_builds.sql` with the following structure:
 
@@ -65,8 +65,10 @@ None.
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- ── Add subscription columns to existing clients table ────────
--- (clients table created in migration 005 for OS/CRM)
--- These columns extend it for subscription pipeline use.
+-- The clients table exists in the production database (pre-migration-set).
+-- Existing columns: name, company, email, phone, business_type, contract_value,
+--   stage, health, notes, submission_id, created_at, updated_at.
+-- These ALTER TABLE statements add subscription pipeline columns only.
 ALTER TABLE clients
   ADD COLUMN IF NOT EXISTS email           text,
   ADD COLUMN IF NOT EXISTS stripe_customer_id text,

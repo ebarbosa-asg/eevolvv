@@ -394,3 +394,13 @@ No new env vars needed. The component calls `/api/stripe/checkout` which reads `
 - Do not hardcode price IDs — import from `lib/stripe-prices.ts`
 - Do not add raw Tailwind classes (`text-red-500`, `flex`, etc.) — use CSS custom properties
 - Do not block rendering while the checkout fetch is in flight — only disable the clicked button
+
+---
+
+## Human Gate
+
+HUMAN GATE — The "Start Building →" button calls POST /api/stripe/checkout
+with a priceId from lib/stripe-prices.ts. This will fail at runtime until E
+populates the STRIPE_PRICE_* env vars (requires T02's manual Stripe dashboard
+step to be complete). Build and type-check pass without real price IDs.
+Runtime click-through testing requires E to complete T02 first.

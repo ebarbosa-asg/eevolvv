@@ -249,11 +249,21 @@ export async function GET(req: NextRequest) {
 }
 ```
 
-4. Update `vercel.json`:
+4. Update `vercel.json` — add quarterly-recalibration cron entry (append-only):
+
+Read the current vercel.json, then ADD the following cron entry to the existing crons array.
+Do NOT replace the file:
 
 ```json
-{ "path": "/api/cron/quarterly-recalibration", "schedule": "0 10 * * *" }
+{
+  "path": "/api/cron/recalibration",
+  "schedule": "0 6 * * 3"
+}
 ```
+
+The final crons array must contain ALL existing entries plus this new one.
+
+Note: path is /api/cron/recalibration (short form), schedule is 0 6 * * 3 (Wednesday 6am) — offset from other cron jobs to avoid simultaneous execution.
 
 ---
 
@@ -290,7 +300,7 @@ const ninetyOneDaysAgo = new Date(Date.now() - 91 * 24 * 60 * 60 * 1000).toISOSt
 - [ ] Seed/Core tiers: email includes link to `/diagnostic?recalibration=true&client_id={id}`
 - [ ] `emails/QuarterlyRecalibration.tsx` created with tier-aware content
 - [ ] `sendQuarterlyRecalibration()` added to `lib/email-helpers.ts`
-- [ ] `vercel.json` updated with `0 10 * * *` schedule
+- [ ] `vercel.json` updated with quarterly-recalibration cron entry (append-only — existing entries preserved)
 - [ ] Sequential sends with 100ms delay
 - [ ] Returns `{ sent, failed, total }` on completion
 - [ ] `npm run build` passes
