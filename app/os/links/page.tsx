@@ -3,7 +3,6 @@ import { OSTopbar } from '../components/OSTopbar'
 
 const QUICK_LINKS = [
   { name: 'eevolvv.com', tag: 'Live site', url: 'https://eevolvv.com' },
-  { name: 'eevolvv/talent', tag: 'Talent platform', url: 'https://talent.eevolvv.com' },
   { name: 'HubSpot', tag: 'CRM + pipeline', url: 'https://app.hubspot.com' },
   { name: 'Linear', tag: 'Engineering', url: 'https://linear.app' },
   { name: 'Notion', tag: 'Knowledge base', url: 'https://notion.so' },

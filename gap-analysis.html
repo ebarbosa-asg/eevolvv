@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eevolvv — Gap Analysis · May 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #faf7f0;
+    --ink: #141413;
+    --accent: #8C2B1A;
+    --accent-light: rgba(140,43,26,0.10);
+    --rule: rgba(20,20,19,.14);
+    --green: #2d6a4f;
+    --green-bg: rgba(45,106,79,0.08);
+    --red: #8C2B1A;
+    --red-bg: rgba(140,43,26,0.08);
+    --amber: #7a5c00;
+    --amber-bg: rgba(122,92,0,0.08);
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-serif: 'Newsreader', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-display);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    padding: 48px 40px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 1.5px solid var(--ink);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+    gap: 24px;
+  }
+  .header-left {}
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+  .wordmark span { color: var(--accent); }
+  .doc-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+  .header-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(20,20,19,0.4);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* ── Score strip ── */
+  .score-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .score-card {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .score-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 3px;
+    height: 100%;
+  }
+  .score-card.green::after { background: #4ade80; }
+  .score-card.amber::after { background: #f59e0b; }
+  .score-card.red::after { background: var(--accent); }
+  .score-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.5;
+    margin-bottom: 8px;
+  }
+  .score-value {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .score-card.green .score-value { color: #4ade80; }
+  .score-card.amber .score-value { color: #f59e0b; }
+  .score-card.red .score-value { color: #ff6b6b; }
+  .score-sub {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 6px;
+  }
+
+  /* ── Section marker ── */
+  .section-marker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-marker::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* ── Two-col grid ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  /* ── Status blocks ── */
+  .status-block {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .status-block-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .status-block.green .status-block-header { background: var(--green-bg); }
+  .status-block.red .status-block-header { background: var(--red-bg); }
+  .status-block.amber .status-block-header { background: var(--amber-bg); }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .green .status-dot { background: #4ade80; }
+  .red .status-dot { background: var(--accent); }
+  .amber .status-dot { background: #f59e0b; }
+  .status-block-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+  }
+  .green .status-block-label { color: var(--green); }
+  .red .status-block-label { color: var(--red); }
+  .amber .status-block-label { color: var(--amber); }
+  .status-block-body { padding: 16px; }
+  .item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13.5px;
+    line-height: 1.4;
+  }
+  .item-row:last-child { border-bottom: none; }
+  .item-arrow {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 12px;
+  }
+  .item-text { color: var(--ink); }
+  .item-sub {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(20,20,19,0.45);
+    margin-top: 2px;
+  }
+  .item-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tag-live { background: rgba(74,222,128,0.15); color: var(--green); }
+  .tag-gap { background: var(--red-bg); color: var(--red); }
+  .tag-urgent { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+  /* ── Revenue path ── */
+  .revenue-path {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    padding: 32px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .revenue-path::before {
+    content: 'PATH TO PROFITABILITY';
+    position: absolute;
+    top: 18px; right: 24px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.2;
+  }
+  .revenue-title {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-family: var(--font-mono);
+    margin-bottom: 20px;
+  }
+  .mrr-track {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 24px;
+  }
+  .mrr-step {
+    flex: 1;
+    padding: 16px 18px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+  }
+  .mrr-step:last-child { border-right: none; }
+  .mrr-step.active { background: rgba(255,255,255,0.06); border-radius: 3px; }
+  .mrr-step-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.4;
+    margin-bottom: 8px;
+  }
+  .mrr-value {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .mrr-step:nth-child(1) .mrr-value { color: #ff6b6b; }
+  .mrr-step:nth-child(2) .mrr-value { color: #f59e0b; }
+  .mrr-step:nth-child(3) .mrr-value { color: #4ade80; }
+  .mrr-step:nth-child(4) .mrr-value { color: #60a5fa; }
+  .mrr-note {
+    font-size: 12px;
+    opacity: 0.5;
+  }
+  .mrr-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    color: var(--accent);
+    font-size: 18px;
+    opacity: 0.6;
+  }
+  .formula-line {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    opacity: 0.6;
+    padding: 12px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    gap: 32px;
+  }
+  .formula-line span { opacity: 0.4; }
+  .formula-highlight { color: #4ade80; opacity: 1 !important; }
+
+  /* ── Build priority ── */
+  .build-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .build-card {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 18px;
+    position: relative;
+  }
+  .build-card.p0 { border-color: var(--accent); border-left-width: 3px; }
+  .build-card.p1 { border-color: #f59e0b; border-left-width: 3px; }
+  .build-card.p2 { border-left: 3px solid rgba(20,20,19,0.15); }
+  .build-priority {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 8px;
+  }
+  .p0 .build-priority { color: var(--accent); }
+  .p1 .build-priority { color: #b45309; }
+  .p2 .build-priority { color: rgba(20,20,19,0.4); }
+  .build-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .build-desc {
+    font-size: 12px;
+    color: rgba(20,20,19,0.6);
+    line-height: 1.5;
+  }
+  .build-impact {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+  }
+
+  /* ── Timeline ── */
+  .timeline {
+    margin-bottom: 40px;
+  }
+  .timeline-track {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    position: relative;
+    gap: 0;
+  }
+  .timeline-track::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 5%;
+    right: 5%;
+    height: 1px;
+    background: var(--rule);
+    z-index: 0;
+  }
+  .timeline-phase {
+    padding: 0 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .phase-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    margin: 15px auto 14px;
+    position: relative;
+  }
+  .timeline-phase.active .phase-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .phase-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(20,20,19,0.4);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .timeline-phase.active .phase-label { color: var(--accent); }
+  .phase-items {
+    background: rgba(20,20,19,0.035);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 12px 14px;
+  }
+  .timeline-phase.active .phase-items {
+    background: rgba(140,43,26,0.06);
+    border-color: rgba(140,43,26,0.25);
+  }
+  .phase-item {
+    font-size: 12px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.35;
+  }
+  .phase-item:last-child { border-bottom: none; }
+  .phase-item-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .phase-mrr {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  /* ── Critical gaps ── */
+  .critical-row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13.5px;
+  }
+  .critical-row:last-child { border-bottom: none; }
+  .critical-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .critical-severity {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .sev-critical { background: rgba(140,43,26,0.12); color: var(--accent); }
+  .sev-high { background: rgba(245,158,11,0.12); color: #92400e; }
+  .sev-medium { background: rgba(20,20,19,0.06); color: rgba(20,20,19,0.5); }
+
+  /* ── Footer ── */
+  .doc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(20,20,19,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  /* progress bar */
+  .progress-bar {
+    display: flex;
+    gap: 2px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  .section-mb { margin-bottom: 40px; }
+
+  @media print {
+    body { padding: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-left">
+    <div class="wordmark">ee<span>v</span>olvv</div>
+    <div class="doc-title">§ Gap Analysis · Business State · May 2026</div>
+  </div>
+  <div class="header-meta">
+    <div>PREPARED BY: E · CLAUDE</div>
+    <div>DATE: MAY 4, 2026</div>
+    <div>STATUS: PRE-REVENUE · SEED STAGE</div>
+    <div>TARGET: $50K MRR · Q4 2026</div>
+  </div>
+</div>
+
+<!-- ── SCORE STRIP ── -->
+<div class="score-strip">
+  <div class="score-card red">
+    <div class="score-label">Current MRR</div>
+    <div class="score-value">$0</div>
+    <div class="score-sub">No paying clients yet</div>
+  </div>
+  <div class="score-card amber">
+    <div class="score-label">Build Progress</div>
+    <div class="score-value">35%</div>
+    <div class="score-sub">Foundation done · Revenue engine missing</div>
+  </div>
+  <div class="score-card amber">
+    <div class="score-label">Go-to-Market</div>
+    <div class="score-value">10%</div>
+    <div class="score-sub">Strategy documented · Not executing</div>
+  </div>
+  <div class="score-card green">
+    <div class="score-label">Foundation</div>
+    <div class="score-value">90%</div>
+    <div class="score-sub">Entity · Stack · Brand · Strategy</div>
+  </div>
+</div>
+
+<!-- ── WHAT'S GOOD ── -->
+<div class="section-marker">§ 01 · WHAT'S WORKING — THE GOODS</div>
+<div class="two-col section-mb">
+  <div class="status-block green">
+    <div class="status-block-header">
+      <div class="status-dot"></div>
+      <div class="status-block-label">Infrastructure & Legal</div>
+    </div>
+    <div class="status-block-body">
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Delaware C Corp formed via Stripe Atlas <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Mercury banking <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Stripe payments configured <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Business email hello@eevolvv.com <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Calendly booking link live <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Client service agreement template drafted <span class="item-tag tag-live">live</span></div></div>
+    </div>
+  </div>
+  <div class="status-block green">
+    <div class="status-block-header">
+      <div class="status-dot"></div>
+      <div class="status-block-label">Product & Tech</div>
+    </div>
+    <div class="status-block-body">
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Homepage v2 — full redesign <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">AI Diagnostic chat engine (ChatEngine.tsx) <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Supabase DB + submission capture <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Resend email — Evolution Report delivery <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">eevolvv/talent section (Archimedes rebrand) <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Design system (ds/) — full component library <span class="item-tag tag-live">live</span></div></div>
+    </div>
+  </div>
+  <div class="status-block green">
+    <div class="status-block-header">
+      <div class="status-dot"></div>
+      <div class="status-block-label">Brand & Strategy</div>
+    </div>
+    <div class="status-block-body">
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Brand & Virality Playbook — documented + ready <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">ICP defined: $5M–$50M, QA/finance/compliance <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Investor pitch deck (pitch.html) built <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Investor strategy doc (Option A) written <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Ghost Work positioning — distinctive, ownable <span class="item-tag tag-live">live</span></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Program agent portfolio mapped (QA → ESG) <span class="item-tag tag-live">live</span></div></div>
+    </div>
+  </div>
+  <div class="status-block green">
+    <div class="status-block-header">
+      <div class="status-dot"></div>
+      <div class="status-block-label">Market Position</div>
+    </div>
+    <div class="status-block-body">
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Clear gap: too small for Big 4, too complex for SaaS</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Regulatory urgency = fast sales cycle (SOX, ISO 9001)</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Defined ROI: $50K–$500K/yr consultant displacement</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Forever customer model = compounding switching cost</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Dual engine: Program agents fund SMB build</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">TAM well-documented (QA: $55B, Finance AI: $8.7B)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── THE GAPS ── -->
+<div class="section-marker">§ 02 · THE GAPS — WHAT'S MISSING</div>
+<div class="section-mb">
+  <div class="status-block red">
+    <div class="status-block-header">
+      <div class="status-dot"></div>
+      <div class="status-block-label">Critical Gaps — Blocking Revenue</div>
+    </div>
+    <div class="status-block-body" style="padding:0">
+      <div class="critical-row">
+        <div class="critical-num">01</div>
+        <div><strong>$0 MRR — zero paying clients</strong><div class="item-sub">The business exists, the strategy is solid, the machine is built. But nobody is paying. This is the only gap that matters.</div></div>
+        <div class="critical-severity sev-critical">Critical</div>
+      </div>
+      <div class="critical-row">
+        <div class="critical-num">02</div>
+        <div><strong>No enterprise outbound happening</strong><div class="item-sub">CFO/QA Director outreach not started. LinkedIn DMs, cold email sequences — all documented in playbook, none executing. The plan is written. The plays aren't running.</div></div>
+        <div class="critical-severity sev-critical">Critical</div>
+      </div>
+      <div class="critical-row">
+        <div class="critical-num">03</div>
+        <div><strong>Shareable Evolution Report card not built</strong><div class="item-sub">Playbook calls this the single highest-leverage feature. Every diagnostic completion should auto-generate a branded 1200×630px score card. K-factor sits at ~0.05 until this ships.</div></div>
+        <div class="critical-severity sev-critical">Critical</div>
+      </div>
+      <div class="critical-row">
+        <div class="critical-num">04</div>
+        <div><strong>No case studies / traction metrics</strong><div class="item-sub">Pitch deck has [X] placeholders throughout — TAM/SAM/SOM, traction, fund allocation %. Can't close a $1M pre-seed round with placeholder numbers.</div></div>
+        <div class="critical-severity sev-critical">Critical</div>
+      </div>
+      <div class="critical-row">
+        <div class="critical-num">05</div>
+        <div><strong>LinkedIn content = 0 posts published</strong><div class="item-sub">6 real posts are written and ready in the playbook. Founder-led content is the #1 enterprise discovery channel at this stage. Zero output = zero inbound.</div></div>
+        <div class="critical-severity sev-high">High</div>
+      </div>
+      <div class="critical-row">
+        <div class="critical-num">06</div>
+        <div><strong>No CTO / Head of AI hired</strong><div class="item-sub">Program agent infrastructure requires a technical co-builder. Investor strategy allocates $400K (40%) to this hire. Can't scale engagements solo.</div></div>
+        <div class="critical-severity sev-high">High</div>
+      </div>
+      <div class="critical-row">
+        <div class="critical-num">07</div>
+        <div><strong>eevolvv/talent — 0 consultants onboarded</strong><div class="item-sub">Rebrand done. Platform exists. No supply side. Target is 50 vetted consultants for beta. Talent marketplace needs humans to work.</div></div>
+        <div class="critical-severity sev-high">High</div>
+      </div>
+      <div class="critical-row">
+        <div class="critical-num">08</div>
+        <div><strong>No white-label / partner program</strong><div class="item-sub">Accountants, fCFOs, and consultants are the highest-leverage distribution channel. White-label diagnostic = their distribution, our pipeline. Medium build, outsized impact.</div></div>
+        <div class="critical-severity sev-high">High</div>
+      </div>
+      <div class="critical-row">
+        <div class="critical-num">09</div>
+        <div><strong>Evolution Certified Badge not built</strong><div class="item-sub">50 completed clients = 50 permanent backlinks + brand presence. Ambient virality that compounds. Loop 02 from the playbook — not built yet.</div></div>
+        <div class="critical-severity sev-medium">Medium</div>
+      </div>
+      <div class="critical-row">
+        <div class="critical-num">10</div>
+        <div><strong>Rate limiting is basic (3/hr per IP)</strong><div class="item-sub">Enterprise clients will hit this. Session-based auth or user accounts needed before scaling diagnostic traffic. Tech debt that blocks enterprise demos.</div></div>
+        <div class="critical-severity sev-medium">Medium</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PATH TO PROFITABILITY ── -->
+<div class="section-marker">§ 03 · PATH TO PROFITABILITY — THE MATH</div>
+<div class="revenue-path section-mb">
+  <div class="revenue-title">§ MRR MILESTONES · PROGRAM AGENT MODEL</div>
+  <div class="mrr-track">
+    <div class="mrr-step active">
+      <div class="mrr-step-label">TODAY</div>
+      <div class="mrr-value">$0</div>
+      <div class="mrr-note">Foundation complete<br>Revenue engine = 0</div>
+    </div>
+    <div class="mrr-step">
+      <div class="mrr-step-label">1 CLIENT</div>
+      <div class="mrr-value">$6K</div>
+      <div class="mrr-note">QA Program Agent<br>Proof of concept</div>
+    </div>
+    <div class="mrr-step">
+      <div class="mrr-step-label">3 CLIENTS</div>
+      <div class="mrr-value">$50K</div>
+      <div class="mrr-note">Default investor target<br>Ramen profitable</div>
+    </div>
+    <div class="mrr-step">
+      <div class="mrr-step-label">10 CLIENTS</div>
+      <div class="mrr-value">$150K</div>
+      <div class="mrr-note">Hire CTO + GTM<br>Seed round closes</div>
+    </div>
+  </div>
+  <div class="formula-line">
+    <div><span>PROGRAM AGENT PRICING →</span> $2K–$10K/mo per client</div>
+    <div><span>TO $50K MRR →</span> <span class="formula-highlight">3 clients @ avg $6K = done</span></div>
+    <div><span>TARGET BUYER →</span> CFO / QA Director at $5M–$50M co</div>
+    <div><span>SALES CYCLE →</span> 30–60 days (regulatory urgency)</div>
+  </div>
+  <div class="formula-line">
+    <div><span>SMB TIER →</span> $299/mo · Volume play · Runs parallel</div>
+    <div><span>TALENT TAKE RATE →</span> 15–25% of placed consultant fees</div>
+    <div><span>COMBINED TARGET →</span> <span class="formula-highlight">$100K MRR by Q1 2027</span></div>
+  </div>
+</div>
+
+<!-- ── WHAT TO BUILD ── -->
+<div class="section-marker">§ 04 · WHAT TO BUILD — PRIORITY ORDER</div>
+<div class="build-grid section-mb">
+
+  <div class="build-card p0">
+    <div class="build-priority">P0 — SHIP NOW</div>
+    <div class="build-name">Enterprise Outbound System</div>
+    <div class="build-desc">CFO & QA Director cold outreach. LinkedIn DM sequence + email. Scripts are written. Just need to execute daily. 10 outreach/day = 200/mo = first client.</div>
+    <div class="build-impact">→ Direct path to $6K MRR</div>
+  </div>
+
+  <div class="build-card p0">
+    <div class="build-priority">P0 — SHIP NOW</div>
+    <div class="build-name">Shareable Evolution Report Card</div>
+    <div class="build-desc">Auto-generate branded 1200×630px score card at diagnostic completion. Score, top 3 findings, "Get yours →" CTA. LinkedIn share button. This is the viral flywheel trigger.</div>
+    <div class="build-impact">→ K-factor: 0.05 → 0.4</div>
+  </div>
+
+  <div class="build-card p0">
+    <div class="build-priority">P0 — SHIP NOW</div>
+    <div class="build-name">LinkedIn Content Machine</div>
+    <div class="build-desc">6 posts are ready in the playbook. E publishes from personal profile. 1/day Mon–Fri. Ghost work stories every Mon/Wed/Fri. Industry intel Tue/Thu. No production cost.</div>
+    <div class="build-impact">→ Inbound in 30 days</div>
+  </div>
+
+  <div class="build-card p0">
+    <div class="build-priority">P0 — SHIP NOW</div>
+    <div class="build-name">Fix Pitch Deck Placeholders</div>
+    <div class="build-desc">Replace all [X] values in pitch.html with real numbers. TAM/SAM/SOM, traction (even leading indicators), fund allocation %, Calendly URL. Can't raise on placeholders.</div>
+    <div class="build-impact">→ Investor-ready in 1 day</div>
+  </div>
+
+  <div class="build-card p1">
+    <div class="build-priority">P1 — THIS MONTH</div>
+    <div class="build-name">Program Agent Proposal Template</div>
+    <div class="build-desc">Standardized proposal for QA, Finance Audit, and IT Compliance programs. Scope, deliverables, pricing tiers, ROI calculator vs. current consultant spend. Close faster.</div>
+    <div class="build-impact">→ Shortens sales cycle 50%</div>
+  </div>
+
+  <div class="build-card p1">
+    <div class="build-priority">P1 — THIS MONTH</div>
+    <div class="build-name">Enterprise Landing Page</div>
+    <div class="build-desc">Separate page targeting CFO / QA Director buyers. Regulatory urgency lead, consultant displacement ROI, case study slots, demo CTA. Different from SMB homepage.</div>
+    <div class="build-impact">→ Conversion surface for outbound</div>
+  </div>
+
+  <div class="build-card p1">
+    <div class="build-priority">P1 — THIS MONTH</div>
+    <div class="build-name">eevolvv/talent Consultant Onboarding</div>
+    <div class="build-desc">Onboard first 50 vetted consultants to talent platform. Application flow, skills tagging, availability calendar. Supply side must exist before demand side can convert.</div>
+    <div class="build-impact">→ Unlocks talent revenue stream</div>
+  </div>
+
+  <div class="build-card p2">
+    <div class="build-priority">P2 — NEXT 60 DAYS</div>
+    <div class="build-name">White-Label Partner Portal</div>
+    <div class="build-desc">Let accountants and fCFOs run the diagnostic under their brand. Rev share model. Their book of clients = our pipeline. Loop 05 from the virality playbook.</div>
+    <div class="build-impact">→ Distribution multiplier</div>
+  </div>
+
+  <div class="build-card p2">
+    <div class="build-priority">P2 — NEXT 60 DAYS</div>
+    <div class="build-name">Evolution Certified Badge</div>
+    <div class="build-desc">Badge + embed for clients who complete an engagement. LinkedIn milestone template, website widget that links back. 50 clients = 50 permanent backlinks, zero cost.</div>
+    <div class="build-impact">→ Ambient SEO + brand virality</div>
+  </div>
+
+  <div class="build-card p2">
+    <div class="build-priority">P2 — NEXT 60 DAYS</div>
+    <div class="build-name">Diagnostic Session Auth Upgrade</div>
+    <div class="build-desc">Replace IP-based rate limiting (3/hr) with session or user auth. Allows multi-session enterprise demos, proper conversion tracking, and client history persistence.</div>
+    <div class="build-impact">→ Unblocks enterprise demos</div>
+  </div>
+
+  <div class="build-card p2">
+    <div class="build-priority">P2 — Q3 2026</div>
+    <div class="build-name">CTO / Head of AI Hire</div>
+    <div class="build-desc">Build program agent infrastructure at scale. Requires investor capital ($400K allocated). Milestone: 3 paying clients closes the argument for the hire.</div>
+    <div class="build-impact">→ Unlocks enterprise scale</div>
+  </div>
+
+  <div class="build-card p2">
+    <div class="build-priority">P2 — Q3 2026</div>
+    <div class="build-name">Micro Tier (WhatsApp-First)</div>
+    <div class="build-desc">$29–49/mo for corner stores, kirana, sari-sari, bodegas. WhatsApp delivery. India/Philippines/LatAm entry. Long-term play. Don't touch until $50K MRR is locked.</div>
+    <div class="build-impact">→ 400M TAM · Long game</div>
+  </div>
+
+</div>
+
+<!-- ── TIMELINE ── -->
+<div class="section-marker">§ 05 · PLAN FORWARD — 18-MONTH ROADMAP</div>
+<div class="timeline section-mb">
+  <div class="timeline-track">
+    <div class="timeline-phase active">
+      <div class="phase-dot"></div>
+      <div class="phase-label">NOW → 30 DAYS</div>
+      <div class="phase-items">
+        <div class="phase-item"><div class="phase-item-dot"></div>Start LinkedIn content daily</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Fix pitch deck [X] placeholders</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Begin CFO/QA outbound (10/day)</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Ship shareable report card</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Build enterprise landing page</div>
+      </div>
+      <div class="phase-mrr">Target: First demo booked</div>
+    </div>
+    <div class="timeline-phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">30 → 90 DAYS</div>
+      <div class="phase-items">
+        <div class="phase-item"><div class="phase-item-dot"></div>Close first program agent client</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Onboard 50 talent consultants</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Build proposal template library</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>3+ investor meetings from deck</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>First case study with hard numbers</div>
+      </div>
+      <div class="phase-mrr">Target: $6K–$15K MRR</div>
+    </div>
+    <div class="timeline-phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Q3 2026</div>
+      <div class="phase-items">
+        <div class="phase-item"><div class="phase-item-dot"></div>3 program agent clients live</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>White-label partner program</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Evolution Certified badge</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Pre-seed round closes ($1M)</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>CTO / Head of AI hired</div>
+      </div>
+      <div class="phase-mrr">Target: $50K MRR</div>
+    </div>
+    <div class="timeline-phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Q4 2026 → Q1 2027</div>
+      <div class="phase-items">
+        <div class="phase-item"><div class="phase-item-dot"></div>10 program agent clients</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>SMB tier + talent generating revenue</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>K-factor approaching 0.4</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Seed round prep ($5M target)</div>
+        <div class="phase-item"><div class="phase-item-dot"></div>Micro tier scoping begins</div>
+      </div>
+      <div class="phase-mrr">Target: $100K–$150K MRR</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── BOTTOM LINE ── -->
+<div class="section-marker">§ 06 · THE HONEST BOTTOM LINE</div>
+<div class="three-col section-mb">
+  <div class="status-block amber">
+    <div class="status-block-header">
+      <div class="status-dot"></div>
+      <div class="status-block-label">The Real Risk</div>
+    </div>
+    <div class="status-block-body">
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Strategy ≠ sales. The plan is excellent. Nobody is executing it yet.</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Everything is documented. Nothing is in market. That's the gap.</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Runway is the clock. Pre-seed target is Q2 2026 — already May.</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">First client validates the entire thesis. That's the unlock.</div></div>
+    </div>
+  </div>
+  <div class="status-block green">
+    <div class="status-block-header">
+      <div class="status-dot"></div>
+      <div class="status-block-label">The Real Strengths</div>
+    </div>
+    <div class="status-block-body">
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">3 clients = $50K MRR. That math is simple and real.</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Brand is differentiated. Ghost Work is ownable. Voice is sharp.</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Product is live. Diagnostic works. Stack is production-grade.</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">Regulatory urgency = buyers motivated. Short sales cycle.</div></div>
+    </div>
+  </div>
+  <div class="status-block red">
+    <div class="status-block-header">
+      <div class="status-dot"></div>
+      <div class="status-block-label">The One Thing</div>
+    </div>
+    <div class="status-block-body">
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text"><strong>Stop building. Start selling.</strong></div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">10 CFO/QA outreach per day starting tomorrow.</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">1 LinkedIn post per day starting today. Posts are written.</div></div>
+      <div class="item-row"><div class="item-arrow">→</div><div class="item-text">The business needs a customer. Not another feature.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="doc-footer">
+  <div>eevolvv, Inc. · hello@eevolvv.com · eevolvv.com</div>
+  <div class="progress-bar">▓▓▓▓░░░░░░ 35% BUILT · 0% SOLD</div>
+  <div>gap-analysis · may 2026 · confidential</div>
+</div>
+
+</body>
+</html>

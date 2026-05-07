@@ -521,106 +521,8 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .agents-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* ── Talent + Long horizon: one ink band, shared scrolling geometric backdrop ── */
-.talent-horizon-band {
-  position: relative;
-  overflow: hidden;
-  background: var(--ink);
-}
-
-/* ── Talent section: scrolling geometric pattern + frosted text highlights only ── */
-.talent-section {
-  position: relative;
-  overflow: hidden;
-}
-
-.talent-wave-backdrop {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  color: color-mix(in oklch, var(--accent) 68%, var(--paper));
-}
-
-.talent-wave-backdrop::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    radial-gradient(
-      ellipse 78% 120% at 68% 42%,
-      color-mix(in oklch, var(--accent) 26%, transparent) 0%,
-      transparent 62%
-    ),
-    radial-gradient(
-      ellipse 52% 70% at 18% 58%,
-      color-mix(in oklch, var(--accent) 11%, transparent) 0%,
-      transparent 55%
-    );
-  opacity: 0.95;
-}
-
-.talent-wave-scroll {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.talent-wave-scroll--diag {
-  z-index: 2;
-  color: color-mix(in oklch, var(--accent) 52%, var(--paper));
-  opacity: 0.92;
-}
-
-.talent-wave-marquee {
-  display: flex;
-  width: 200%;
-  height: 100%;
-}
-
-.talent-wave-marquee--forward {
-  animation: talent-wave-marquee 38s linear infinite;
-}
-
-.talent-wave-marquee--reverse {
-  animation: talent-wave-marquee-rev 52s linear infinite;
-}
-
-@keyframes talent-wave-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes talent-wave-marquee-rev {
-  from {
-    transform: translateX(-50%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-.talent-geom-zig {
-  opacity: 0.58;
-}
-
-.talent-geom-grid-v,
-.talent-geom-grid-h {
-  opacity: 0.18;
-}
-
-.talent-geom-diag {
-  opacity: 0.26;
-}
-
-/* Frost follows glyphs / wrapped lines only — not the whole column */
-.talent-frost-inline {
+/* ── Horizon frost chips — used by GlobalHorizon ── */
+.horizon-frost-inline {
   display: inline;
   padding: 0.18em 0.4em;
   border-radius: 6px;
@@ -634,43 +536,17 @@ input:focus, textarea:focus, select:focus { outline: none; }
     0 4px 22px rgba(0, 0, 0, 0.28);
 }
 
-.talent-frost-inline--tight {
+.horizon-frost-inline--tight {
   padding: 0.12em 0.34em;
   border-radius: 4px;
 }
 
-.talent-frost-inline--body {
+.horizon-frost-inline--body {
   padding: 0.12em 0.34em;
 }
 
-.talent-frost-em {
-  font-style: italic;
-  color: var(--accent);
-}
-
-.talent-section-copy {
-  position: relative;
-  max-width: min(540px, 100%);
-}
-
-.talent-heading {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-}
-
-.talent-lede {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .talent-wave-marquee--forward,
-  .talent-wave-marquee--reverse {
-    animation: none !important;
-    transform: translateX(0);
-  }
-}
-
 @media (max-width: 760px) {
-  .talent-frost-inline {
+  .horizon-frost-inline {
     padding: 0.14em 0.32em;
   }
 }

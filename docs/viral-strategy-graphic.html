@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eevolvv × Volvv-e — Viral Video Strategy</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --paper: #faf7f0;
+    --ink: #141413;
+    --accent: #8C2B1A;
+    --accent-bright: #b03620;
+    --rule: rgba(250,247,240,0.10);
+    --rule-strong: rgba(250,247,240,0.18);
+    --muted: rgba(250,247,240,0.45);
+  }
+
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+  }
+
+  .card {
+    width: 1200px;
+    max-width: 100%;
+    background: var(--ink);
+    border: 1px solid var(--rule-strong);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Subtle grid background */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(250,247,240,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(250,247,240,0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-marker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+  }
+
+  .wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    color: var(--paper);
+  }
+
+  .wordmark span {
+    color: var(--accent-bright);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-left {
+    padding: 56px 48px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+  }
+
+  .hero-headline {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 520px;
+  }
+
+  .hero-headline em {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    color: var(--paper);
+    font-size: 16px;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    gap: 0;
+    align-items: flex-start;
+  }
+
+  .stat {
+    flex: 1;
+    padding-right: 32px;
+    border-right: 1px solid var(--rule);
+    margin-right: 32px;
+  }
+  .stat:last-child {
+    border-right: none;
+    margin-right: 0;
+    padding-right: 0;
+  }
+
+  .stat-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 32px;
+    color: var(--accent-bright);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .stat-sublabel {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    color: rgba(250,247,240,0.35);
+    margin-top: 4px;
+  }
+
+  /* Hero right — Volvv-e */
+  .hero-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    border-left: 1px solid var(--rule);
+    background: rgba(140,43,26,0.04);
+    position: relative;
+  }
+
+  .volvve-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .volvve-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--accent-bright);
+    letter-spacing: 0.1em;
+  }
+
+  #volvve-svg {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--rule);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── MID SECTION ── */
+  .mid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    position: relative;
+    z-index: 1;
+  }
+
+  .mid-col {
+    padding: 40px 40px;
+    border-right: 1px solid var(--rule);
+  }
+  .mid-col:last-child { border-right: none; }
+
+  .col-heading {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+    margin-bottom: 20px;
+  }
+
+  /* Platform list */
+  .platform-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .platform-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .platform-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-bright);
+    flex-shrink: 0;
+  }
+
+  .platform-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--paper);
+  }
+
+  .platform-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Format pills */
+  .format-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .format-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--rule-strong);
+    background: rgba(140,43,26,0.07);
+  }
+
+  .pill-arrow {
+    color: var(--accent-bright);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+
+  .pill-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--paper);
+  }
+
+  .pill-count {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent-bright);
+  }
+
+  /* Math column */
+  .math-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .math-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .math-row:last-child { border-bottom: none; }
+
+  .math-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent-bright);
+    width: 20px;
+    flex-shrink: 0;
+  }
+
+  .math-content {
+    flex: 1;
+  }
+
+  .math-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--paper);
+    line-height: 1.2;
+  }
+
+  .math-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--rule);
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+    background: rgba(140,43,26,0.06);
+  }
+
+  .footer-tagline {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: color-mix(in oklch, var(--accent-bright) 58%, var(--paper));
+  }
+
+  .footer-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .footer-url {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-bright);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-bright);
+    letter-spacing: 0.05em;
+    margin-top: 16px;
+  }
+
+  .progress-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ── TABLET (≤900px) ── */
+  @media (max-width: 900px) {
+    body { padding: 24px 16px; }
+
+    .hero { grid-template-columns: 1fr 240px; }
+
+    .hero-left { padding: 36px 28px 32px; gap: 24px; }
+
+    .hero-right { padding: 28px 20px; }
+
+    .stat-number { font-size: 22px; }
+
+    .mid { grid-template-columns: 1fr; }
+
+    .mid-col {
+      border-right: none;
+      border-bottom: 1px solid var(--rule);
+    }
+    .mid-col:last-child { border-bottom: none; }
+
+    .footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .footer-right { align-items: flex-start; }
+  }
+
+  /* ── MOBILE (≤640px) ── */
+  @media (max-width: 640px) {
+    body { padding: 0; align-items: flex-start; }
+
+    .card { border-left: none; border-right: none; border-radius: 0; }
+
+    /* Header */
+    .header { padding: 14px 20px; flex-wrap: wrap; gap: 6px; }
+    .section-marker { font-size: 9px; letter-spacing: 0.12em; }
+    .section-marker .hide-mobile { display: none; }
+
+    /* Hero — stack vertically, Volvv-e on top */
+    .hero { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+
+    .hero-right {
+      order: -1;
+      border-left: none;
+      border-bottom: 1px solid var(--rule);
+      padding: 32px 20px 28px;
+      background: rgba(140,43,26,0.06);
+    }
+
+    .volvve-container { flex-direction: row; gap: 20px; align-items: center; }
+
+    .volvve-label { font-size: 7px; }
+
+    .hero-left { padding: 28px 20px 24px; gap: 20px; }
+
+    .hero-eyebrow { font-size: 9px; letter-spacing: 0.15em; }
+
+    .stats-row { gap: 0; }
+
+    .stat { padding-right: 16px; margin-right: 16px; }
+
+    .stat-number { font-size: 18px; margin-bottom: 6px; }
+
+    .stat-label { font-size: 9px; }
+
+    .stat-sublabel { display: none; }
+
+    .hero-headline { font-size: 13px; max-width: 100%; }
+    .hero-headline em { font-size: 14px; }
+
+    .progress-bar { font-size: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+    /* Mid section */
+    .mid { grid-template-columns: 1fr; }
+
+    .mid-col { padding: 28px 20px; border-right: none; border-bottom: 1px solid var(--rule); }
+    .mid-col:last-child { border-bottom: none; }
+
+    .col-heading { font-size: 9px; }
+
+    .platform-name { font-size: 14px; }
+    .platform-sub { font-size: 9px; }
+
+    .pill-name { font-size: 9px; }
+
+    .math-value { font-size: 13px; }
+    .math-desc { font-size: 9px; }
+
+    /* Footer */
+    .footer { flex-direction: column; align-items: flex-start; gap: 10px; padding: 20px 20px; }
+    .footer-tagline { font-size: 14px; }
+    .footer-right { align-items: flex-start; }
+    .footer-sub { font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="section-marker">§ 01 · VIRAL MEDIA STRATEGY<span class="hide-mobile"> · MAY 2026</span></div>
+    <div class="wordmark">eevolvv<span>.com</span></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+
+      <div class="hero-eyebrow">→ Mass Short-Form Content Engine · TikTok · Instagram Reels · YouTube Shorts</div>
+
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-number">105</div>
+          <div class="stat-label">Scripts</div>
+          <div class="stat-sublabel">Word-for-word. Ready to film.</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">37</div>
+          <div class="stat-label">Formats</div>
+          <div class="stat-sublabel">7 shipping now. 30 in queue.</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">180+</div>
+          <div class="stat-label">Episodes</div>
+          <div class="stat-sublabel">All unified. All on-brand.</div>
+        </div>
+      </div>
+
+      <div class="hero-headline">
+        <em>Ghost Work is the villain. Volvv-e is the face. eevolvv is the evolution.</em>
+        <br><br>
+        Every video: 6–10 seconds of punchy parody → Volvv-e reacts → animated outro → eevolvv.com + episode slogan.
+        Some will hit. Some won't. Volume is the algorithm. Ship everything. Double down on what lands.
+      </div>
+
+      <div>
+        <div class="progress-bar">▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░</div>
+        <div class="progress-label">→ Tier 1 scripts complete · Tier 2–4 in queue</div>
+      </div>
+
+    </div>
+
+    <!-- VOLVV-E PIXEL ART -->
+    <div class="hero-right">
+      <div class="volvve-container">
+        <div class="volvve-label">VOLVV-E</div>
+        <div id="volvve-wrap" style="overflow:hidden;"><canvas id="volvve-canvas" width="260" height="340" style="image-rendering:pixelated;display:block;"></canvas></div>
+        <div class="volvve-label" style="font-size:7px;color:rgba(250,247,240,0.4);">GHOST WORK MADE VISIBLE</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MID SECTION -->
+  <div class="mid">
+
+    <!-- PLATFORMS -->
+    <div class="mid-col">
+      <div class="col-heading">→ Platforms</div>
+      <div class="platform-list">
+        <div class="platform-item">
+          <div class="platform-dot"></div>
+          <div>
+            <div class="platform-name">TikTok</div>
+            <div class="platform-sub">Primary · 9:16 · 1080×1920 · 60fps</div>
+          </div>
+        </div>
+        <div class="platform-item">
+          <div class="platform-dot"></div>
+          <div>
+            <div class="platform-name">Instagram Reels</div>
+            <div class="platform-sub">Primary · 9:16 · Same cut as TikTok</div>
+          </div>
+        </div>
+        <div class="platform-item">
+          <div class="platform-dot"></div>
+          <div>
+            <div class="platform-name">YouTube Shorts</div>
+            <div class="platform-sub">Distribution · Same cut · #Shorts tag</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px; padding-top:24px; border-top:1px solid var(--rule);">
+        <div class="col-heading" style="margin-bottom:14px;">→ The Math</div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.8; font-family:'JetBrains Mono',monospace; font-size:11px;">
+          1 WEEKEND FILMING<br>
+          <span style="color:var(--accent-bright);">→</span> 105 VIDEOS SHOT<br>
+          <span style="color:var(--accent-bright);">→</span> 3+ MONTHS DAILY CONTENT<br>
+          <span style="color:var(--accent-bright);">→</span> POST 1–2 / DAY<br>
+          <span style="color:var(--accent-bright);">→</span> DATA TELLS YOU WHAT HITS<br>
+          <span style="color:var(--accent-bright);">→</span> DOUBLE DOWN ON WINNER<br>
+          <span style="color:var(--accent-bright);">→</span> WRITE NEXT 15 FOR THAT FORMAT
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMATS -->
+    <div class="mid-col">
+      <div class="col-heading">→ Tier 1 Formats — Ship Now</div>
+      <div class="format-grid">
+        <div class="format-pill">
+          <span class="pill-arrow">→</span>
+          <span class="pill-name">Things Nobody Talks About</span>
+          <span class="pill-count">×15</span>
+        </div>
+        <div class="format-pill">
+          <span class="pill-arrow">→</span>
+          <span class="pill-name">POV: Series</span>
+          <span class="pill-count">×15</span>
+        </div>
+        <div class="format-pill">
+          <span class="pill-arrow">→</span>
+          <span class="pill-name">Breaking News</span>
+          <span class="pill-count">×15</span>
+        </div>
+        <div class="format-pill">
+          <span class="pill-arrow">→</span>
+          <span class="pill-name">Hot Takes</span>
+          <span class="pill-count">×15</span>
+        </div>
+        <div class="format-pill">
+          <span class="pill-arrow">→</span>
+          <span class="pill-name">Rate My Process</span>
+          <span class="pill-count">×15</span>
+        </div>
+        <div class="format-pill">
+          <span class="pill-arrow">→</span>
+          <span class="pill-name">Ghost Work Confessions</span>
+          <span class="pill-count">×15</span>
+        </div>
+        <div class="format-pill">
+          <span class="pill-arrow">→</span>
+          <span class="pill-name">Storytime</span>
+          <span class="pill-count">×15</span>
+        </div>
+      </div>
+      <div style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);">
+        ↳ + 30 more formats in Tier 2–4 queue
+      </div>
+    </div>
+
+    <!-- PRODUCTION OVERVIEW -->
+    <div class="mid-col">
+      <div class="col-heading">→ Production Stack</div>
+      <div class="math-stack">
+        <div class="math-row">
+          <div class="math-icon">◈</div>
+          <div class="math-content">
+            <div class="math-value">CapCut</div>
+            <div class="math-desc">Primary editing · Volvv-e sticker overlay · Text animations · Outro template</div>
+          </div>
+        </div>
+        <div class="math-row">
+          <div class="math-icon">◈</div>
+          <div class="math-content">
+            <div class="math-value">Volvv-e PNG → Animation</div>
+            <div class="math-desc">Commission 3-frame pixel sprite (Fiverr ~$50) · Idle / react / wave</div>
+          </div>
+        </div>
+        <div class="math-row">
+          <div class="math-icon">◈</div>
+          <div class="math-content">
+            <div class="math-value">Outro Card</div>
+            <div class="math-desc">Build once in CapCut · Logo + eevolvv.com + episode slogan · Drop on every clip</div>
+          </div>
+        </div>
+        <div class="math-row">
+          <div class="math-icon">◈</div>
+          <div class="math-content">
+            <div class="math-value">Batch Filming</div>
+            <div class="math-desc">Same setup · 15 different scripts · One session per format</div>
+          </div>
+        </div>
+        <div class="math-row">
+          <div class="math-icon">◈</div>
+          <div class="math-content">
+            <div class="math-value">Press Start 2P font</div>
+            <div class="math-desc">All Volvv-e dialogue bubbles · Scores · Pixel UI moments</div>
+          </div>
+        </div>
+        <div class="math-row">
+          <div class="math-icon">◈</div>
+          <div class="math-content">
+            <div class="math-value">Posting Cadence</div>
+            <div class="math-desc">1–2 / day across TikTok + Reels + Shorts · Track engagement by format</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-tagline">"eevolvving forward, together — one ghost at a time."</div>
+    <div class="footer-right">
+      <div class="footer-url">eevolvv.com</div>
+      <div class="footer-sub">Ghost Work is the villain · Volvv-e is the face · A service, not software.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── VOLVV-E PIXEL ART RENDERER ──
+const P = 20; // pixel size in canvas units
+const R = '#8C2B1A'; // brand accent red
+const D = '#6b1f10'; // darker red for depth/shadow pixels
+const W = '#faf7f0'; // paper white
+
+// Pixel grid: 13 cols × 17 rows
+// null = transparent
+const grid = [
+  [null,null,null,R,   R,   R,   R,   R,   R,   R,   null,null,null],
+  [null,null,R,   R,   R,   R,   R,   R,   R,   R,   R,   null,null],
+  [null,R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   null],
+  [R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R   ],
+  [R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R   ],
+  [R,   R,   W,   W,   R,   null,R,   null,R,   W,   W,   R,   R   ],
+  [R,   R,   W,   W,   R,   null,R,   null,R,   W,   W,   R,   R   ],
+  [R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R   ],
+  [R,   R,   R,   W,   W,   W,   W,   W,   W,   R,   R,   R,   R   ],
+  [R,   R,   R,   R,   W,   W,   W,   W,   R,   R,   R,   R,   R   ],
+  [R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R   ],
+  [R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R,   R   ],
+  // tentacles — alternating columns
+  [R,   null,R,   null,R,   null,R,   null,R,   null,R,   null,null],
+  [R,   null,R,   null,R,   null,R,   null,R,   null,R,   null,null],
+  [R,   null,R,   null,null,null,R,   null,R,   null,null,null,null],
+  [null,null,R,   null,null,null,R,   null,null,null,null,null,null],
+  [null,null,null,null,null,null,R,   null,null,null,null,null,null],
+];
+
+const canvas = document.getElementById('volvve-canvas');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('volvve-wrap');
+
+function drawVolvve(pixelSize) {
+  const cols = grid[0].length;
+  const rows = grid.length;
+  canvas.width = cols * pixelSize;
+  canvas.height = rows * pixelSize;
+  wrap.style.width = canvas.width + 'px';
+  wrap.style.height = canvas.height + 'px';
+
+  grid.forEach((row, rowIdx) => {
+    row.forEach((color, colIdx) => {
+      if (color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(colIdx * pixelSize, rowIdx * pixelSize, pixelSize, pixelSize);
+      }
+    });
+  });
+
+  // Subtle scanline effect
+  ctx.fillStyle = 'rgba(0,0,0,0.06)';
+  for (let y = 0; y < canvas.height; y += 2) {
+    ctx.fillRect(0, y, canvas.width, 1);
+  }
+}
+
+function getPixelSize() {
+  return window.innerWidth <= 640 ? 12 : window.innerWidth <= 900 ? 15 : 20;
+}
+
+drawVolvve(getPixelSize());
+
+window.addEventListener('resize', () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawVolvve(getPixelSize());
+});
+</script>
+</body>
+</html>

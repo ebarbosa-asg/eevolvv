@@ -269,7 +269,7 @@ function BrandLogoFigures({ size = 'md', header }: { size?: 'sm' | 'md'; header?
 // ─── Header ───────────────────────────────────────────────────────────────────
 //
 // AGENTS (#agents) = §06 deployable AI agent catalog on this page (main nav still links here).
-// TALENT = human network at `/talent` + in-page strip `#talent` (TalentNetworkBand). Header secondary CTA goes to `/talent`.
+
 
 function Header({ onCTA }: { onCTA: () => void }) {
   const nav: [string, string][] = [['how','PROCESS'],['who','INDUSTRIES'],['pricing','TIERS'],['agents','AGENTS'],['diagnostic','GET REPORT']]
@@ -324,23 +324,6 @@ function Header({ onCTA }: { onCTA: () => void }) {
             ))}
           </nav>
           <div className="site-header-actions flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:justify-self-end md:gap-3">
-            <a
-              href="/talent"
-              className="mono inline-flex md:hidden shrink-0 items-center gap-1"
-              style={{ fontSize: 10, letterSpacing: '0.14em', padding: '6px 10px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}
-            >
-              <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
-              TALENT
-            </a>
-            {/* Talent microsite — desktop pill keeps dot + label; mobile uses compact link above */}
-            <a
-              href="/talent"
-              className="mono header-cta-secondary hidden md:inline-flex items-center gap-1.5"
-              style={{ fontSize: 11, letterSpacing: '0.16em', padding: '6px 10px', border: '1px solid var(--rule)', color: 'var(--ink)', textDecoration: 'none' }}
-            >
-              <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
-              TALENT
-            </a>
             <a
               href="#how"
               className="mono header-cta-secondary inline-flex max-md:hidden"
@@ -422,19 +405,6 @@ function Header({ onCTA }: { onCTA: () => void }) {
                     {label}
                   </a>
                 ))}
-                <a
-                  href="/talent"
-                  className="block py-3.5"
-                  style={{
-                    color: 'var(--ink)',
-                    opacity: 0.85,
-                    textDecoration: 'none',
-                    borderBottom: '1px solid var(--rule)',
-                  }}
-                  onClick={closeMenu}
-                >
-                  TALENT
-                </a>
                 <a
                   href="#how"
                   className="block py-3.5"
@@ -1442,13 +1412,6 @@ function ChipButton({ label, onClick }: { label: string; onClick: () => void }) 
 }
 
 // ─── AgentsSection (§06) ───────────────────────────────────────────────────────
-//
-// This section *replaced* the old “EEVOLVV / TALENT / micro-contracting operators” block on the marketing page.
-// Naming & anchor: `id="agents"` only. Human talent promo lives in `TalentNetworkBand` (`id="talent"`) after Agents on the homepage.
-//
-// Talent split:
-//   • Here: AI agents we build & integrate for clients (`AGENT_CARDS`, eyebrow EEVOLVV / AGENTS).
-//   • Elsewhere: human talent network → `talent/` Next app + footer “Talent network” URL (new talent artwork belongs there).
 
 /** Mascot-aligned pixel palette: terracotta body + ink outline + red accent “eye” pixels. */
 const AGENT_PIXEL_PALETTE: Record<string, string> = {
@@ -1756,206 +1719,6 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
   )
 }
 
-// ─── TalentNetworkBand — replaces CTAClose ─────────────────────────────────────
-//
-// Lean strip for talent.eevolvv.com — scrolling geometric wave/grid backdrop; frosted highlight clips to text only.
-
-const TALENT_SITE_URL = process.env.NEXT_PUBLIC_TALENT_URL?.trim() || 'https://talent.eevolvv.com'
-
-const TALENT_TILE_W = 1200
-const TALENT_TILE_H = 300
-
-/** Zigzag polyline; extends past tile horizontally so the marquee never gaps. */
-function zigzagWavePath(y: number, halfPeriod: number, amp: number, x0: number, x1: number) {
-  let d = `M ${x0} ${y}`
-  let x = x0
-  let i = 0
-  while (x < x1 - 0.001) {
-    x += halfPeriod
-    const dy = i % 2 === 0 ? -amp : amp
-    d += ` L ${x} ${y + dy}`
-    i++
-  }
-  return d
-}
-
-function TalentGeomTile({ className }: { className?: string }) {
-  const waveRows = [
-    { y: 28, h: 44, amp: 12, phase: 0 },
-    { y: 58, h: 38, amp: 9, phase: -26 },
-    { y: 94, h: 50, amp: 13, phase: 18 },
-    { y: 134, h: 42, amp: 10, phase: -40 },
-    { y: 174, h: 46, amp: 11, phase: 30 },
-    { y: 216, h: 36, amp: 8, phase: -14 },
-    { y: 254, h: 54, amp: 14, phase: 44 },
-  ]
-
-  const vStep = 80
-  const hStep = 50
-
-  return (
-    <svg
-      className={className}
-      viewBox={`0 0 ${TALENT_TILE_W} ${TALENT_TILE_H}`}
-      width="50%"
-      height="100%"
-      preserveAspectRatio="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <g fill="none" stroke="currentColor" strokeWidth="1.45" strokeLinecap="square" strokeLinejoin="miter">
-        {waveRows.map((row, idx) => (
-          <path
-            key={`z-${idx}`}
-            className="talent-geom-zig"
-            transform={`translate(${row.phase} 0)`}
-            d={zigzagWavePath(row.y, row.h, row.amp, -120, TALENT_TILE_W + 120)}
-          />
-        ))}
-        {Array.from({ length: Math.floor(TALENT_TILE_W / vStep) + 4 }, (_, i) => (
-          <line
-            key={`gv-${i}`}
-            className="talent-geom-grid-v"
-            x1={i * vStep - 40}
-            y1={0}
-            x2={i * vStep - 40}
-            y2={TALENT_TILE_H}
-            strokeWidth="1"
-          />
-        ))}
-        {Array.from({ length: Math.floor(TALENT_TILE_H / hStep) + 3 }, (_, i) => (
-          <line key={`gh-${i}`} className="talent-geom-grid-h" x1={0} y1={i * hStep} x2={TALENT_TILE_W} y2={i * hStep} strokeWidth="1" />
-        ))}
-      </g>
-    </svg>
-  )
-}
-
-const TALENT_DIAG_W = 720
-
-function TalentDiagTile({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox={`0 0 ${TALENT_DIAG_W} ${TALENT_TILE_H}`}
-      width="50%"
-      height="100%"
-      preserveAspectRatio="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <g fill="none" stroke="currentColor" strokeWidth="1.05" strokeLinecap="square">
-        {Array.from({ length: 42 }, (_, i) => {
-          const x = i * 44 - 140
-          return (
-            <line key={`d-${i}`} className="talent-geom-diag" x1={x} y1={TALENT_TILE_H + 60} x2={x + 240} y2={-80} />
-          )
-        })}
-      </g>
-    </svg>
-  )
-}
-
-/** Seamless scrolling geometric waves + grid + counter-scrolling diagonals */
-function TalentWavePattern() {
-  return (
-    <div className="talent-wave-backdrop" aria-hidden>
-      <div className="talent-wave-scroll talent-wave-scroll--geom">
-        <div className="talent-wave-marquee talent-wave-marquee--forward">
-          <TalentGeomTile />
-          <TalentGeomTile />
-        </div>
-      </div>
-      <div className="talent-wave-scroll talent-wave-scroll--diag">
-        <div className="talent-wave-marquee talent-wave-marquee--reverse">
-          <TalentDiagTile />
-          <TalentDiagTile />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function TalentNetworkBand() {
-  return (
-    <section
-      id="talent"
-      className="talent-section relative z-[1] anchor-scroll"
-      style={{
-        padding: '72px 0',
-        background: 'transparent',
-        color: 'var(--paper)',
-      }}
-    >
-      <div className="mx-auto relative z-[1] site-rail">
-        <div className="talent-section-copy">
-          <div style={{ marginBottom: 14 }}>
-            <span
-              className="mono talent-frost-inline talent-frost-inline--tight"
-              style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.88 }}
-            >
-              EEVOLVV / TALENT
-            </span>
-          </div>
-          <h2
-            className="talent-heading"
-            style={{
-              fontFamily: 'Space Grotesk, sans-serif',
-              fontSize: 'clamp(28px, 3.8vw, 44px)',
-              fontWeight: 500,
-              letterSpacing: '-0.03em',
-              lineHeight: 1.15,
-              margin: 0,
-            }}
-          >
-            <span className="talent-frost-inline">
-              Operators who build it with you — <em className="serif talent-frost-em">on demand.</em>
-            </span>
-          </h2>
-          <p className="talent-lede" style={{ fontSize: 15, lineHeight: 1.65, opacity: 0.93, marginTop: 18, maxWidth: 520 }}>
-            <span className="talent-frost-inline talent-frost-inline--body">
-              Scoped specialists when you need hands on keyboard — not another hiring cycle. Paired with the AI agents above when
-              both matter.
-            </span>
-          </p>
-          <div style={{ display: 'flex', gap: 14, marginTop: 30, flexWrap: 'wrap', alignItems: 'center' }}>
-            <a
-              href={TALENT_SITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-gradient mono"
-              style={{
-                padding: '16px 26px',
-                fontSize: 11,
-                letterSpacing: '0.16em',
-                fontWeight: 600,
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-              }}
-            >
-              VISIT TALENT NETWORK →
-            </a>
-            <a
-              href="#agents"
-              style={{
-                color: 'var(--paper)',
-                padding: '14px 22px',
-                border: '1px solid rgba(255,255,255,0.42)',
-                fontSize: 14,
-                fontWeight: 600,
-                textDecoration: 'none',
-                background: 'rgba(20,20,19,0.25)',
-                backdropFilter: 'blur(6px)',
-              }}
-            >
-              Browse AI agents
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 // ─── GlobalHorizon ────────────────────────────────────────────────────────────
 
 const LAND: [number, number][] = [
@@ -2127,7 +1890,7 @@ function GlobalHorizon() {
       <div className="mx-auto site-rail">
         <div style={{ marginBottom: 48 }}>
           <span
-            className="mono talent-frost-inline talent-frost-inline--tight"
+            className="mono horizon-frost-inline horizon-frost-inline--tight"
             style={{ fontSize: 9, letterSpacing: '0.28em', color: 'var(--accent)' }}
           >
             LONG HORIZON · EEVOLVV GLOBAL · EST. 2026
@@ -2139,7 +1902,7 @@ function GlobalHorizon() {
           <div className="horizon-frost-panel horizon-frost-panel--graphic">
             <WorldDotMap />
             <div style={{ marginTop: 10, textAlign: 'center' }}>
-              <span className="mono talent-frost-inline talent-frost-inline--tight" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.72 }}>
+              <span className="mono horizon-frost-inline horizon-frost-inline--tight" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.72 }}>
                 SIGNAL STRENGTH: GROWING · MARKET: EARTH
               </span>
             </div>
@@ -2157,10 +1920,10 @@ function GlobalHorizon() {
                 textShadow: '0 1px 2px rgba(0, 0, 0, 0.35)',
               }}
             >
-              <span className="talent-frost-inline">Every business on earth deserves this.</span>
+              <span className="horizon-frost-inline">Every business on earth deserves this.</span>
             </h2>
             <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.72, margin: '0 0 40px', maxWidth: 400, textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)' }}>
-              <span className="talent-frost-inline talent-frost-inline--body">
+              <span className="horizon-frost-inline horizon-frost-inline--body">
                 We&apos;re starting in the US. The model works everywhere humans run businesses — which is everywhere. The horizon is global.
                 We&apos;re just warming up.
               </span>
@@ -2186,10 +1949,9 @@ function GlobalHorizon() {
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
 function Footer() {
-  // ENGAGE: “Talent” → `#talent` (TalentNetworkBand). External talent URL is the primary CTA on that strip.
   const cols: [string, [string, string][]][] = [
     ['NAVIGATE', [['Process','#how'],['Industries','#who'],['Pricing','#pricing']]],
-    ['ENGAGE',   [['Talent','#talent'],['AI agents','#agents'],['Free Audit','#diagnostic']]],
+    ['ENGAGE',   [['AI agents','#agents'],['Free Audit','#diagnostic']]],
     ['LEGAL',    [['Privacy','/privacy'],['Terms','/terms'],['Contact','mailto:hello@eevolvv.com']]],
   ]
   return (
@@ -2254,11 +2016,7 @@ export default function Home() {
       <WhoItsFor />
       <Pricing onCTA={tier => scrollToDiagnostic(tier)} />
       <AgentsSection />
-      <div className="talent-horizon-band">
-        <TalentWavePattern />
-        <TalentNetworkBand />
-        <GlobalHorizon />
-      </div>
+      <GlobalHorizon />
       <Footer />
     </main>
   )
