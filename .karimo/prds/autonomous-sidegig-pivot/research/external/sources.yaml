@@ -1,0 +1,156 @@
+sources:
+  - id: durable-pricing
+    url: https://durable.com/pricing
+    title: "Durable Pricing"
+    accessed: 2026-05-06
+    relevance: Competitive pricing reference
+
+  - id: durable-review-techradar
+    url: https://www.techradar.com/pro/software-services/durable
+    title: "Durable AI website builder review 2026 | TechRadar"
+    accessed: 2026-05-06
+    relevance: Competitive feature analysis
+
+  - id: 10web-pricing
+    url: https://10web.io/pricing-platform/
+    title: "10Web AI Builder Pricing"
+    accessed: 2026-05-06
+    relevance: Competitive pricing reference
+
+  - id: 10web-review
+    url: https://www.learningrevolution.net/10web-io-review/
+    title: "10Web.io Review (2026)"
+    accessed: 2026-05-06
+    relevance: Competitive feature analysis
+
+  - id: framer-pricing
+    url: https://www.framer.com/pricing
+    title: "Framer Pricing"
+    accessed: 2026-05-06
+    relevance: Competitive pricing reference
+
+  - id: mixo-pricing
+    url: https://www.mixo.io/
+    title: "Mixo.io"
+    accessed: 2026-05-06
+    relevance: Competitive pricing reference
+
+  - id: hocoos-shutdown
+    url: https://www.techradar.com/reviews/hocoos-website-builder
+    title: "Hocoos AI website builder review 2026 | TechRadar"
+    accessed: 2026-05-06
+    relevance: Competitive analysis - platform shutdown
+
+  - id: wegic-pricing
+    url: https://wegic.ai/pricing
+    title: "Wegic Pricing Information"
+    accessed: 2026-05-06
+    relevance: Competitive pricing reference
+
+  - id: ai-agency-business-model
+    url: https://www.articsledge.com/post/ai-agency-business-model
+    title: "AI Agency Business Model: How They Make Money"
+    accessed: 2026-05-06
+    relevance: Business model validation
+
+  - id: ai-automation-agency-pricing
+    url: https://zaytrics.com/ai-automation-agency-business-model-services-pricing-and-value-proposition/
+    title: "AI Automation Agency Business Model: Services, Pricing, and Value Proposition"
+    accessed: 2026-05-06
+    relevance: Pricing structure research
+
+  - id: bvp-ai-pricing-playbook
+    url: https://www.bvp.com/atlas/the-ai-pricing-and-monetization-playbook
+    title: "The AI pricing and monetization playbook - Bessemer Venture Partners"
+    accessed: 2026-05-06
+    relevance: Pricing strategy best practices
+
+  - id: smb-churn-benchmarks
+    url: https://www.wearefounders.uk/saas-churn-rates-and-customer-acquisition-costs-by-industry-2025-data/
+    title: "SaaS Churn Rates and Customer Acquisition Costs by Industry: 2026 Benchmarks"
+    accessed: 2026-05-06
+    relevance: LTV/CAC modeling
+
+  - id: ltv-cac-benchmarks
+    url: https://optif.ai/learn/questions/b2b-saas-ltv-benchmark/
+    title: "B2B SaaS LTV Benchmarks — Optifai"
+    accessed: 2026-05-06
+    relevance: LTV benchmarking
+
+  - id: saas-churn-vena
+    url: https://www.venasolutions.com/blog/saas-churn-rate
+    title: "2025 SaaS Churn Rate: Benchmarks, Formulas and Calculator"
+    accessed: 2026-05-06
+    relevance: Churn rate benchmarks for pricing model
+
+  - id: n8n-vs-make-vs-zapier
+    url: https://www.digidop.com/blog/n8n-vs-make-vs-zapier
+    title: "n8n vs Make vs Zapier [2026 Comparison]"
+    accessed: 2026-05-06
+    relevance: Automation orchestration tool selection
+
+  - id: programmatic-seo-tools
+    url: https://concurate.com/programmatic-seo-tools/
+    title: "Top 15 Programmatic SEO Tools for 2026"
+    accessed: 2026-05-06
+    relevance: SEO automation stack
+
+  - id: surfer-seo-pricing
+    url: https://surferseo.com/pricing/
+    title: "Surfer Pricing"
+    accessed: 2026-05-06
+    relevance: SEO tool cost
+
+  - id: claude-code-vs-cursor-2026
+    url: https://www.totalum.app/blog/cursor-vs-claude-code-2026
+    title: "Cursor vs Claude Code in 2026: The Honest Verdict"
+    accessed: 2026-05-06
+    relevance: AI coding tool autonomy levels
+
+  - id: claude-code-auto-mode
+    url: https://www.infoq.com/news/2026/05/anthropic-claude-code-auto-mode/
+    title: "Inside Claude Code Auto Mode: Anthropic's Autonomous Coding System"
+    accessed: 2026-05-06
+    relevance: Claude Code autonomy capabilities 2026
+
+  - id: devin-review-2026
+    url: https://www.idlen.io/blog/devin-ai-engineer-review-limits-2026/
+    title: "Devin, the AI Engineer: Review, Testing & Limitations in 2026"
+    accessed: 2026-05-06
+    relevance: Autonomous build agent capabilities
+
+  - id: vercel-pricing
+    url: https://vercel.com/pricing
+    title: "Vercel Pricing: Hobby, Pro, and Enterprise plans"
+    accessed: 2026-05-06
+    relevance: Multi-client deployment cost
+
+  - id: playwright-autonomous-qa
+    url: https://medium.com/@kapilkumar080/the-autonomous-qa-revolution-playwright-test-agents-explained-df49194f1603
+    title: "The Autonomous QA Revolution: Playwright Test Agents Explained"
+    accessed: 2026-05-06
+    relevance: QA automation approach
+
+  - id: checkly-playwright
+    url: https://www.checklyhq.com/docs/guides/playwright-testing-to-monitoring/
+    title: "Go From Playwright Testing to Playwright Monitoring with Checkly"
+    accessed: 2026-05-06
+    relevance: Post-deploy monitoring
+
+  - id: saas-conversion-benchmarks
+    url: https://www.madx.digital/learn/saas-conversion-rate
+    title: "SaaS Conversion Rate Guide & Benchmarks for 2025"
+    accessed: 2026-05-06
+    relevance: Free-to-paid funnel conversion rates
+
+  - id: productized-services-guide
+    url: https://assembly.com/blog/productized-services
+    title: "The complete guide to productized services (2025 edition)"
+    accessed: 2026-05-06
+    relevance: Productized service model best practices
+
+  - id: subscription-pricing-stripe
+    url: https://stripe.com/resources/more/subscription-pricing-models-a-guide-for-businesses
+    title: "Subscription Pricing: Which Model Is the Right One? | Stripe"
+    accessed: 2026-05-06
+    relevance: Subscription model design

@@ -1,0 +1,13 @@
+{
+  "slug": "autonomous-sidegig-pivot",
+  "feature": "eevolvv Side-Gig Pivot — Autonomous Full-Build Service",
+  "status": "research-complete",
+  "created": "2026-05-06",
+  "phase": "research",
+  "research": {
+    "internal": "complete",
+    "external": "complete",
+    "summary": "complete"
+  },
+  "next": "/karimo:plan --prd autonomous-sidegig-pivot"
+}
