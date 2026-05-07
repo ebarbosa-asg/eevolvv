@@ -1,0 +1,24 @@
+{
+  "slug": "autonomous-sidegig-pivot",
+  "feature": "eevolvv Side-Gig Pivot — Autonomous Full-Build Service",
+  "status": "prd-complete",
+  "created": "2026-05-06",
+  "prd_approved": "2026-05-06",
+  "phase": "ready-for-execution",
+  "research": {
+    "internal": "complete",
+    "external": "complete",
+    "summary": "complete"
+  },
+  "prd": {
+    "tasks": 24,
+    "waves": 5,
+    "total_complexity": 74,
+    "gates": 1,
+    "model_distribution": {
+      "sonnet": 23,
+      "opus": 1
+    }
+  },
+  "next": "/karimo:run --prd autonomous-sidegig-pivot"
+}

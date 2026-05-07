@@ -1,0 +1,176 @@
+prd: autonomous-sidegig-pivot
+version: "1.0"
+created: "2026-05-06"
+total_tasks: 24
+total_complexity: 74
+model_distribution:
+  sonnet: 23
+  opus: 1
+
+complexity_assessment:
+  total_points: 74
+  sonnet_tasks: 23
+  opus_tasks: 1
+  high_risk_tasks: 0
+  slicing_recommendation: "No slicing needed — 74 points is below the 100-point threshold"
+
+waves:
+  - wave: 1
+    label: "Foundation"
+    tasks:
+      - "T01"
+      - "T02"
+      - "T05"
+    task_count: 3
+    complexity_points: 8
+    rationale: "Zero dependencies. Stripe singleton (T01), Stripe product catalog (T02), and Supabase schema (T05) must exist before anything else can be built. All three can execute in parallel. These three tasks unlock all subsequent waves."
+    can_parallelize: true
+    estimated_effort: "low"
+
+  - wave: 2
+    label: "Revenue Layer"
+    tasks:
+      - "T03"
+      - "T04"
+      - "T07"
+      - "T08"
+      - "T10"
+    task_count: 5
+    complexity_points: 16
+    rationale: "With Stripe singleton and DB schema in place, build the revenue capture layer. Checkout API (T03), webhook handler (T04), payment wall in ChatEngine (T07), welcome/onboarding email templates (T08), and standalone pricing page (T10) all unblock the automation core in Wave 3. T08 builds the templates — they will not be triggered until T06 (Wave 3) calls them, but building them now avoids a Wave 3 blocker. T04 depends on T05 (Wave 1); T03 and T07 depend on T01 and T02 (Wave 1); T10 depends on T02. All five can build in parallel within Wave 2."
+    can_parallelize: true
+    estimated_effort: "medium"
+    notes:
+      - "T04 has hardcoded stub for createClientRecord() that will be implemented in T06 (Wave 3) — the handler must exist first so T06 can implement into it"
+      - "T08 template functions will exist but won't fire until T06 calls them"
+
+  - wave: 3
+    label: "Automation Core"
+    tasks:
+      - "T06"
+      - "T09"
+      - "T11"
+      - "T12"
+      - "T13"
+      - "T14"
+      - "T15"
+      - "T16"
+    task_count: 8
+    complexity_points: 27
+    rationale: "Client creation (T06) is the keystone automation task — it wires payment to onboarding and is the highest-complexity task in the PRD (opus). T06 unblocks T09 (onboarding page) and T15 (client portal). T16 (OS build queue) also depends on T06. T11 (homepage update), T12 (follow-up sequence), T13 (SOP), and T14 (rate limiter) are parallel work depending only on Wave 1/2 outputs. T06 should be prioritized first within this wave as it is the dependency for T09, T15, and T16."
+    can_parallelize: true
+    parallelization_notes: "Start T06 first (opus, highest complexity). T11, T12, T13, T14 can start immediately. T09, T15, T16 wait on T06 completion."
+    estimated_effort: "high"
+    gate:
+      type: "human_review"
+      trigger: "T06 completion"
+      reason: "T06 is the core automation bridge — payment to client record to onboarding trigger. E should verify the end-to-end flow (test payment → client created → emails sent → onboarding token valid) before Wave 4 builds on top of it."
+      label: "GATE-1: Core Automation Verification"
+
+  - wave: 4
+    label: "Lifecycle Automation"
+    tasks:
+      - "T17"
+      - "T18"
+      - "T19"
+      - "T20"
+      - "T21"
+      - "T22"
+    task_count: 6
+    complexity_points: 18
+    rationale: "With the core pipeline running and verified at GATE-1, add the full subscription lifecycle layer. Build notification emails (T17) depend on OS build queue (T16, Wave 3). Dunning and churn webhook handlers (T18) depend on T04/T05 (Waves 1-2). Upgrade (T19) and cancel (T20) flows depend on T04/T05/T15 (Waves 1-3). Monthly report cron (T21) depends on T05/T06/T08 (Waves 1-3). Churn detection cron (T22) depends on T05/T06/T09/T15 (Waves 1-3). All six can build in parallel within Wave 4."
+    can_parallelize: true
+    estimated_effort: "medium"
+
+  - wave: 5
+    label: "Intelligence Layer"
+    tasks:
+      - "T23"
+      - "T24"
+    task_count: 2
+    complexity_points: 4
+    rationale: "Quarterly re-calibration trigger (T23) and PostHog funnel tracking (T24) are the final intelligence layer. T23 depends on T06/T08. T24 instruments all components built in earlier waves — it requires those components to be stable before instrumentation is accurate. Both can execute in parallel. T24 touches the most files (6) but all changes are additive (posthog.capture() calls) with no risk of breaking existing functionality."
+    can_parallelize: true
+    estimated_effort: "low"
+
+orchestration:
+  integration_cadence: "wave"
+  review_cadence:
+    trigger: "per-gate"
+    scope: "wave-diff"
+    skip_if_diff_under: null
+    on_findings: "block"
+  gates:
+    model: "pause"
+    placements:
+      - after_wave: 3
+        label: "GATE-1: Core Automation Verification"
+        reason: "Verify payment-to-onboarding pipeline end-to-end before building lifecycle automation on top of it"
+        conditions:
+          - "Test Stripe checkout session creates client record"
+          - "Welcome and onboarding emails received within 2 minutes"
+          - "Onboarding token is valid and onboarding page loads"
+          - "Build record created with status queued on form submit"
+          - "Client portal accessible via token and shows correct state"
+
+dependency_matrix:
+  T01: []
+  T02: ["T01"]
+  T03: ["T01", "T02"]
+  T04: ["T01", "T05"]
+  T05: []
+  T06: ["T04", "T05"]
+  T07: ["T02", "T03"]
+  T08: ["T04", "T06"]
+  T09: ["T05", "T06"]
+  T10: ["T02"]
+  T11: ["T02", "T10"]
+  T12: ["T08"]
+  T13: ["T09"]
+  T14: ["T05"]
+  T15: ["T05", "T06", "T09"]
+  T16: ["T05", "T06"]
+  T17: ["T08", "T16"]
+  T18: ["T04", "T05"]
+  T19: ["T04", "T05", "T15"]
+  T20: ["T04", "T05", "T15"]
+  T21: ["T05", "T06", "T08"]
+  T22: ["T05", "T06", "T09", "T15"]
+  T23: ["T06", "T08"]
+  T24: ["T07", "T09", "T16"]
+
+priority_summary:
+  must:
+    tasks: ["T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08", "T09", "T10", "T15", "T16", "T17", "T18"]
+    count: 14
+  should:
+    tasks: ["T11", "T12", "T13", "T14", "T19", "T20", "T21", "T22", "T24"]
+    count: 9
+  could:
+    tasks: ["T23"]
+    count: 1
+
+model_assignments:
+  sonnet:
+    tasks: ["T01", "T02", "T03", "T04", "T05", "T07", "T08", "T09", "T10", "T11", "T12", "T13", "T14", "T15", "T16", "T17", "T18", "T19", "T20", "T21", "T22", "T23", "T24"]
+    count: 23
+  opus:
+    tasks: ["T06"]
+    count: 1
+
+pipeline_coverage:
+  payment: ["T01", "T02", "T03", "T07", "T10", "T11"]
+  client_record: ["T05", "T06"]
+  onboarding: ["T08", "T09"]
+  build_queue: ["T16"]
+  build_execution: ["T13"]
+  qa: []
+  deploy: []
+  client_notified: ["T17"]
+  subscription_maintained: ["T04", "T14"]
+  churn_detection: ["T22"]
+  monthly_report: ["T21"]
+  quarterly_recalibration: ["T23"]
+  failed_payment_recovery: ["T18"]
+  upgrade_downgrade_flows: ["T19", "T20"]
+  analytics: ["T24"]
