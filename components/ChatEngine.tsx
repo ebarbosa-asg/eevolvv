@@ -208,6 +208,9 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
     setUserMsgCount(c => c + 1)
 
     if (isFirstMessage) {
+      posthog.capture('diagnostic_started', {
+        source: typeof window !== 'undefined' && document.referrer?.includes('pricing') ? 'pricing' : 'homepage',
+      })
       posthog.capture('diagnostic_chat_started', { tier: defaultTier })
     }
     setInput('')

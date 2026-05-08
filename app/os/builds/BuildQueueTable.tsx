@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { BuildRow } from './page'
+import posthog from 'posthog-js'
 
 const STATUS_ORDER = ['queued', 'in_progress', 'qa', 'deploying', 'live', 'failed', 'paused']
 const STATUS_LABELS: Record<string, string> = {
@@ -41,6 +42,27 @@ export function BuildQueueTable({ builds }: { builds: BuildRow[] }) {
         setLocalBuilds(prev =>
           prev.map(b => (b.id === buildId ? { ...b, status, build_url: buildUrl ?? b.build_url } : b))
         )
+
+        // T24: PostHog funnel — build pipeline events (client_id = opaque UUID, no PII)
+        const build = localBuilds.find(b => b.id === buildId)
+        if (build) {
+          const clientId = build.clients?.id ?? ''
+          if (status === 'in_progress') {
+            posthog.capture('build_started', {
+              tier: build.tier,
+              client_id: clientId,
+            })
+          } else if (status === 'live') {
+            const createdAt = new Date(build.created_at).getTime()
+            const daysToDeliver = Math.round((Date.now() - createdAt) / (1000 * 60 * 60 * 24))
+            posthog.capture('build_live', {
+              tier: build.tier,
+              build_url: buildUrl ?? build.build_url ?? '',
+              days_to_deliver: daysToDeliver,
+              client_id: clientId,
+            })
+          }
+        }
       } else {
         const data = await res.json()
         alert(data.error ?? 'Update failed')

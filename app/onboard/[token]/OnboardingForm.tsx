@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import posthog from 'posthog-js'
 
 interface OnboardingFormProps {
   token: string
@@ -13,6 +14,7 @@ export function OnboardingForm({ token, tier, defaultName }: OnboardingFormProps
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const pageLoadMs = useRef<number>(Date.now())
 
   const [form, setForm] = useState({
     businessName: defaultName ?? '',
@@ -52,6 +54,12 @@ export function OnboardingForm({ token, tier, defaultName }: OnboardingFormProps
         setLoading(false)
         return
       }
+      // T24: onboarding_completed — time_to_complete_minutes measures form engagement
+      const timeToCompleteMinutes = Math.round((Date.now() - pageLoadMs.current) / 60000 * 10) / 10
+      posthog.capture('onboarding_completed', {
+        tier,
+        time_to_complete_minutes: timeToCompleteMinutes,
+      })
       setSubmitted(true)
     } catch {
       setError('Network error. Please check your connection and try again.')
