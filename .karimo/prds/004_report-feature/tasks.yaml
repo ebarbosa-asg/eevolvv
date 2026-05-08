@@ -1,0 +1,207 @@
+tasks:
+  # ─── Wave 1: Critical Fixes ───────────────────────────────────────────────
+
+  - id: T01
+    title: "Fix extractStats() — structured ### STATS block in prompt, server-side parse"
+    wave: 1
+    complexity: 4
+    files:
+      - lib/diagnosticPrompts.ts
+      - app/api/diagnostic/route.ts
+      - components/ChatEngine.tsx
+    depends_on: []
+    description: >
+      Add a `### STATS` block to the diagnostic system prompt instructing Claude
+      to output exactly three lines: HOURS_FREED, AUTOMATIONS, ANNUAL_SAVINGS.
+      Parse the block server-side in the diagnostic route, strip it from the
+      report text, and return a structured `stats` object in the API response.
+      Remove the fragile `extractStats()` regex function from ChatEngine and
+      consume `stats` directly from the API response.
+
+  - id: T02
+    title: "Email CTA — replace Calendly with Stripe payment link for recommended tier"
+    wave: 1
+    complexity: 4
+    files:
+      - emails/EvolutionReport.tsx
+      - app/api/diagnostic/route.ts
+    depends_on: []
+    description: >
+      Replace the primary CTA in EvolutionReport.tsx ("Book Your Strategy Call →"
+      → Calendly) with "Start Your Evolution →" linking to
+      `/api/stripe/checkout?tier={recommendedTier}&source=email`.
+      Pass `tier` and `submissionId` from the diagnostic route into the email
+      template props. Retain Calendly as a lower-emphasis secondary text link
+      ("Prefer to talk first? Book a call →").
+
+  # ─── Wave 2: Experience Polish ────────────────────────────────────────────
+
+  - id: T03
+    title: "TierCards — dynamic recommended tier highlight + placeholder social proof"
+    wave: 2
+    complexity: 4
+    files:
+      - components/TierCards.tsx
+      - components/ChatEngine.tsx
+    depends_on:
+      - T01
+    description: >
+      Pass the `tier` field from the diagnostic API response to TierCards as
+      `recommendedTier`. In TierCards, highlight the matching tier card with an
+      accent border and "RECOMMENDED FOR YOU" badge (replacing the hardcoded
+      "MOST POPULAR" on core). Add three placeholder testimonial rows below the
+      tier grid with name, business type, and one-line result quote.
+      Mark with a // TODO: replace with real testimonials comment.
+
+  - id: T04
+    title: "Progress ring smooth 92→99→100% — eliminate freeze-jump"
+    wave: 2
+    complexity: 3
+    files:
+      - components/ChatEngine.tsx
+    depends_on: []
+    description: >
+      Replace the hard 92% cap on extractPct with a smooth interpolation.
+      After the activity log completes, start a slow drift from 92→99% over
+      8 seconds via setInterval (visual only, no API dependency).
+      On API success, cancel the interval and animate to 100% with a 0.4s
+      CSS transition. This eliminates the freeze-jump regardless of API latency.
+
+  - id: T05
+    title: "Report sections stagger fade-in per <h3> section"
+    wave: 2
+    complexity: 4
+    files:
+      - components/ChatEngine.tsx
+      - app/globals.css
+    depends_on: []
+    description: >
+      After formatReport() generates the HTML, inject style="animation-delay: {n*120}ms"
+      on each <h3> and its following content group so report sections cascade in
+      sequentially. Add a .report-section-fade keyframe to globals.css
+      (opacity 0→1, translateY 8px→0, 0.5s ease). If T11 is complete, implement
+      in lib/format-report.ts; otherwise implement directly in ChatEngine.tsx
+      formatReport() and document the migration point for T11 to pick up.
+
+  - id: T06
+    title: "Fix VolvvEAvatar hardcoded state=idle → state={ghostState}"
+    wave: 2
+    complexity: 1
+    files:
+      - components/ChatEngine.tsx
+    depends_on: []
+    description: >
+      One-line fix. In ChatEngine.tsx, find the VolvvEAvatar render call with
+      state="idle" (line ~599) and change it to state={ghostState}. The
+      ghostState variable is already computed correctly via resolveGhostState()
+      but was never passed to the avatar, preventing thinking/done/error
+      animations from showing during the chat flow.
+
+  - id: T07
+    title: "Email confirmation line in UI after report generation"
+    wave: 2
+    complexity: 2
+    files:
+      - components/ChatEngine.tsx
+    depends_on: []
+    description: >
+      In the report phase header section, add a confirmation line below the
+      report metadata: "→ Report sent to {email}". Style as .mono 11px at
+      40% opacity, consistent with other metadata lines. The email field is
+      already available in ChatEngine state from the API response. No new state
+      required.
+
+  - id: T08
+    title: "Confetti + celebration burst on report complete"
+    wave: 2
+    complexity: 4
+    files:
+      - components/ChatEngine.tsx
+      - package.json
+    depends_on: []
+    description: >
+      Install react-confetti. Mount <Confetti> when revealStage >= 1 (document
+      header appears). Config: recycle={false}, numberOfPieces={180},
+      colors brand palette (['#8C2B1A', '#141413', '#faf7f0', '#d4a574']),
+      gravity={0.25}. Wrap mount in a prefers-reduced-motion check.
+      Remove the component from the DOM via onConfettiComplete callback.
+
+  # ─── Wave 3: Expansion ────────────────────────────────────────────────────
+
+  - id: T09
+    title: "/report/[submissionId] permalink page with signed token access"
+    wave: 3
+    complexity: 5
+    files:
+      - app/report/[id]/page.tsx
+      - app/api/diagnostic/route.ts
+      - components/ChatEngine.tsx
+    depends_on:
+      - T01
+    description: >
+      Create app/report/[id]/page.tsx — a server component that fetches a
+      submission from Supabase by ID after verifying a signed JWT in the ?token
+      query param (same pattern as /client/[token]). In the diagnostic route,
+      generate a 30-day JWT from submissionId + email at report creation time
+      and return reportUrl in the API response. The permalink page renders the
+      document header, stat callouts, formatted report content, and TierCards.
+      In ChatEngine, show a "Bookmark this report →" link in the report header
+      linking to reportUrl.
+
+  - id: T10
+    title: "Auto-trigger FollowUp1/2/3 emails after report generation"
+    wave: 3
+    complexity: 5
+    files:
+      - app/api/diagnostic/route.ts
+      - supabase/migrations/add_email_queue.sql
+      - supabase/functions/process-email-queue/index.ts
+      - lib/email-helpers.ts
+    depends_on:
+      - T01
+    description: >
+      Create a Supabase email_queue table (migration: submissionId, email,
+      template, send_after, status). In the diagnostic route, after saving the
+      submission, insert three rows for FollowUp1 (24h), FollowUp2 (48h),
+      FollowUp3 (72h). Create a Supabase Edge Function process-email-queue
+      that queries pending rows where send_after <= now() and sends via
+      lib/email-helpers.ts sendFollowUpEmail(). Schedule via pg_cron hourly.
+      Verify sendFollowUpEmail() accepts submissionId and email params.
+
+  - id: T11
+    title: "Delete DiagnosticForm dead code + extract formatReport() to lib/format-report.ts"
+    wave: 3
+    complexity: 2
+    files:
+      - app/page.tsx
+      - lib/format-report.ts
+      - components/ChatEngine.tsx
+    depends_on: []
+    description: >
+      1. Confirm DiagnosticForm is not rendered anywhere (grep for <DiagnosticForm).
+      2. Delete the DiagnosticForm component from app/page.tsx (~lines 1249–1380,
+         ~200 lines) including its local formatReport copy, LoadingNarrative,
+         and ChatMark helpers.
+      3. Extract formatReport() from ChatEngine.tsx to lib/format-report.ts as
+         a named export: export function formatReport(text: string): string.
+      4. Update ChatEngine.tsx to import formatReport from lib/format-report.ts.
+      5. Incorporate stagger delay injection from T05 into the extracted function
+         if T05 has already been applied to ChatEngine.tsx.
+
+  - id: T12
+    title: "PDF download button on report"
+    wave: 3
+    complexity: 4
+    files:
+      - components/ChatEngine.tsx
+      - package.json
+    depends_on:
+      - T09
+    description: >
+      Install react-to-pdf. Add a "Download PDF →" button in the report header
+      area alongside the Bookmark link from T09. Target the stat callouts +
+      .report-content div for export. Use the usePDF hook, triggered on button
+      click. File name: eevolvv-evolution-report-{businessName}-{date}.pdf.
+      Document as a known limitation that custom fonts (Space Grotesk,
+      JetBrains Mono) do not embed in html2canvas output — system fonts will
+      substitute. Upgrade path to @react-pdf/renderer is noted for a future PRD.
