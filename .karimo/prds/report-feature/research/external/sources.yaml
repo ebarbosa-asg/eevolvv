@@ -1,0 +1,120 @@
+sources:
+  - title: Smart Interface Design Patterns — Designing Better Loading and Progress UX
+    url: https://smart-interface-design-patterns.com/articles/designing-better-loading-progress-ux/
+    accessed: 2026-05-08
+    relevance: High
+    used_for: Loading state best practices for 10+ second waits, activity feed pattern
+
+  - title: Smashing Magazine — Best Practices For Animated Progress Indicators
+    url: https://www.smashingmagazine.com/2016/12/best-practices-for-animated-progress-indicators/
+    accessed: 2026-05-08
+    relevance: High
+    used_for: Progress indicator research foundation, determinate vs indeterminate
+
+  - title: RevenueCat — 5 Overlooked Paywall Improvements
+    url: https://www.revenuecat.com/blog/growth/paywall-conversion-boosters/
+    accessed: 2026-05-08
+    relevance: High
+    used_for: Post-report conversion tactics, social proof timing, urgency mechanisms
+
+  - title: RevenueCat — Four Paywall Redesign Case Studies
+    url: https://www.revenuecat.com/blog/growth/paywall-redesigns-case-studies/
+    accessed: 2026-05-08
+    relevance: High
+    used_for: Real conversion lift data from paywall redesigns (17% ARPU case)
+
+  - title: The Momentum — Optimize Paywall Conversion Rates with UX
+    url: https://www.themomentum.ai/blog/how-to-successfully-optimize-paywall-conversion-rates-with-ux
+    accessed: 2026-05-08
+    relevance: High
+    used_for: Paywall UX framework, timing after free deliverable, trial mechanics
+
+  - title: Userpilot — Free-to-Paid Conversion Strategy
+    url: https://userpilot.com/blog/free-to-paid-conversion-strategy/
+    accessed: 2026-05-08
+    relevance: High
+    used_for: Activation milestone trigger concept, conversion sequence strategy
+
+  - title: Crazy Egg — Free-to-Paid Conversion Rates Explained
+    url: https://www.crazyegg.com/blog/free-to-paid-conversion-rate/
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Benchmark data — opt-out (48.8%) vs opt-in (18.2%) trial conversion
+
+  - title: AI UX Design Guide — Progressive Disclosure in AI
+    url: https://www.aiuxdesign.guide/patterns/progressive-disclosure
+    accessed: 2026-05-08
+    relevance: High
+    used_for: Section-by-section reveal pattern, avoiding cognitive overload in AI output
+
+  - title: UXPin — What is Progressive Disclosure (2026)
+    url: https://www.uxpin.com/studio/blog/what-is-progressive-disclosure/
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Current definition and use cases
+
+  - title: Nielsen Norman Group — Progressive Disclosure
+    url: https://www.nngroup.com/articles/progressive-disclosure/
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Foundational research on cognitive load reduction via staged reveals
+
+  - title: FlowToken GitHub
+    url: https://github.com/Ephibbs/flowtoken
+    accessed: 2026-05-08
+    relevance: High
+    used_for: Library evaluation for animated LLM text — AnimatedMarkdown component
+
+  - title: FlowToken npm
+    url: https://www.npmjs.com/package/flowtoken
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Package version and maintenance status check
+
+  - title: Motion.dev — Typewriter Component
+    url: https://motion.dev/docs/react-typewriter
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Alternative typewriter animation for extracting screen
+
+  - title: react-confetti npm
+    url: https://www.npmjs.com/package/react-confetti
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Library evaluation for report complete celebration micro-animation
+
+  - title: react-to-pdf npm
+    url: https://www.npmjs.com/package/react-to-pdf
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Library evaluation for PDF export feature
+
+  - title: Semrush — My Reports documentation
+    url: https://www.semrush.com/kb/34-my-reports
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Reference for how a leading SaaS audit product structures its reports
+
+  - title: UXPin — Progress Tracker Design Best Practices 2026
+    url: https://www.uxpin.com/studio/blog/design-progress-trackers/
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Current multi-step progress pattern guidance
+
+  - title: Contextsdk — Optimizing Paywalls with Context
+    url: https://contextsdk.com/blogposts/optimizing-paywalls-best-practices-and-real-world-context-for-higher-conversions
+    accessed: 2026-05-08
+    relevance: Medium
+    used_for: Context-aware paywall timing, post-value-delivery moment
+
+  - title: LogRocket — 5 Ways to Implement Typing Animation in React
+    url: https://blog.logrocket.com/5-ways-implement-typing-animation-react/
+    accessed: 2026-05-08
+    relevance: Low
+    used_for: Overview of React typing animation approaches
+
+  - title: DEV Community — Micro-Interactions vs Animations for SaaS Conversions
+    url: https://dev.to/hashbyt/micro-interactions-vs-animations-which-converts-better-and-why-it-matters-in-saas-ux-5d1l
+    accessed: 2026-05-08
+    relevance: Low
+    used_for: Data on which micro-animations improve conversion in SaaS
