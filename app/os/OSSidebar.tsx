@@ -15,6 +15,7 @@ const SECTIONS = [
   { n: '06', label: 'INVESTORS', route: '/os/investors' },
   { n: '07', label: 'LINKS', route: '/os/links' },
   { n: '08', label: 'GHOST LOCKER', route: '/os/ghost-locker' },
+  { n: '09', label: 'BUILDS', route: '/os/builds' },
 ] as const
 
 const MONO = { fontFamily: 'JetBrains Mono, ui-monospace, monospace' } as const
