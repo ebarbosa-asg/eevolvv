@@ -212,6 +212,17 @@ Generate their eevolvv report now.`
       submission_id: submissionId,
     },
   })
+  // T24: report_generated event — distinctId is submissionId/ip, no PII
+  ph.capture({
+    distinctId: submissionId ?? ip,
+    event: 'report_generated',
+    properties: {
+      industry,
+      node_count: 12,
+      business_type: businessType,
+      duration_ms: durationMs,
+    },
+  })
   await ph.shutdown()
 
   return NextResponse.json(

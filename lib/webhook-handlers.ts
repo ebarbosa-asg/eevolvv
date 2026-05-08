@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { getTierFromPriceId, type Tier } from '@/lib/stripe-prices'
 import { sendWelcomeEmail, sendOnboardingEmail, sendPaymentFailed } from '@/lib/email-helpers'
 import { stripe } from '@/lib/stripe'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 /**
  * Create client record, subscription, onboarding token, and initial build entry
@@ -181,6 +182,21 @@ export async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
 ): Promise<void> {
   await createClientRecord(session)
+
+  // T24: checkout_completed — distinctId is Stripe customer ID (opaque, no PII)
+  const ph = getPostHogClient()
+  const distinctId =
+    (typeof session.customer === 'string' ? session.customer : null) ?? session.id
+  ph.capture({
+    distinctId,
+    event: 'checkout_completed',
+    properties: {
+      tier: session.metadata?.tier ?? '',
+      interval: session.metadata?.interval ?? '',
+      amount: session.amount_total != null ? session.amount_total / 100 : null,
+    },
+  })
+  await ph.shutdown()
 }
 
 /**

@@ -24,8 +24,9 @@ export function TierCards({ email, visible = true }: TierCardsProps) {
     setLoading(tier)
     setError(null)
 
-    // PostHog event — T24 will add more properties
-    posthog.capture('tier_selected', { tier, interval, price: priceId })
+    const tierConfig = TIER_CONFIGS.find(c => c.tier === tier)
+    const priceDisplay = tierConfig?.prices[interval]?.amountDisplay ?? priceId
+    posthog.capture('tier_selected', { tier, interval, price: priceDisplay })
 
     try {
       const res = await fetch('/api/stripe/checkout', {
