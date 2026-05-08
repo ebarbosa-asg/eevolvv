@@ -1000,55 +1000,161 @@ function WhoItsFor() {
 // ─── Pricing ──────────────────────────────────────────────────────────────────
 
 function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
+  const [showMonthly, setShowMonthly] = useState(false)
+
+  const tiers = [
+    {
+      id: 'seed',
+      code: 'T-01',
+      name: 'Seed',
+      label: 'Foundation',
+      who: 'Solopreneur or small local business',
+      price: showMonthly ? '$99' : '$950',
+      period: showMonthly ? '/month' : '/year',
+      saving: showMonthly ? null : 'Save $238 vs monthly',
+      highlight: false,
+      features: [
+        'Landing page + 1 automation workflow',
+        '72-hour build SLA',
+        'Hosting + uptime monitoring',
+        '1 content update / month',
+      ],
+    },
+    {
+      id: 'core',
+      code: 'T-02',
+      name: 'Core',
+      label: 'AI-Powered',
+      who: 'Growing business ready for automation',
+      price: showMonthly ? '$499' : '$4,790',
+      period: showMonthly ? '/month' : '/year',
+      saving: showMonthly ? null : 'Save $1,198 vs monthly',
+      highlight: true,
+      features: [
+        'Web app + 3–5 AI agents',
+        '7–10 day build SLA',
+        'CRM + integration connections',
+        '2 agent updates / month',
+        'Monthly performance report',
+      ],
+    },
+    {
+      id: 'evolve',
+      code: 'T-03',
+      name: 'Evolve',
+      label: 'Full-Stack',
+      who: 'Established business, complex operations',
+      price: showMonthly ? '$1,999' : '$19,190',
+      period: showMonthly ? '/month' : '/year',
+      saving: showMonthly ? null : 'Save $4,798 vs monthly',
+      highlight: false,
+      features: [
+        'Full-stack build + CRM/ERP',
+        '14–21 day build SLA',
+        'Custom dashboards + pipelines',
+        'Full managed service',
+        'Quarterly re-calibration',
+      ],
+    },
+  ]
+
   return (
     <section id="pricing" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="05" eyebrow="PRICING" title="Every business has a starting point." note="FIVE TIERS" />
-        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 620, marginTop: 24 }}>
-          All tiers include the eevolvv report. Outcomes reviewed at day 60 post-deployment.
+        <SectionHeader number="05" eyebrow="PRICING" title="A service, not software." note="THREE TIERS" />
+        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 580, marginTop: 24 }}>
+          We build it, host it, maintain it, and evolve it — every month. Choose your starting point.
         </p>
-        <div className="grid mt-12" style={{ gridTemplateColumns: 'repeat(5,1fr)', gap: 0, marginTop: 48, border: '1px solid var(--ink)' }}>
-          {TIERS.map((tier, i) => (
-            <div key={tier.id} className="status-cell" style={{ padding: 24, borderRight: i < TIERS.length - 1 ? '1px solid var(--ink)' : 'none', background: tier.highlight ? 'var(--ink)' : 'transparent', color: tier.highlight ? 'var(--paper)' : 'var(--ink)', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+
+        {/* Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 32, marginBottom: 40 }}>
+          <button
+            onClick={() => setShowMonthly(false)}
+            className="mono"
+            style={{
+              padding: '6px 14px', fontSize: 10, letterSpacing: '0.16em', fontWeight: 600,
+              background: !showMonthly ? 'var(--ink)' : 'transparent',
+              color: !showMonthly ? 'var(--paper)' : 'var(--ink)',
+              border: '1px solid var(--ink)', cursor: 'pointer',
+            }}
+          >
+            ANNUAL
+          </button>
+          <button
+            onClick={() => setShowMonthly(true)}
+            className="mono"
+            style={{
+              padding: '6px 14px', fontSize: 10, letterSpacing: '0.16em', fontWeight: 600,
+              background: showMonthly ? 'var(--ink)' : 'transparent',
+              color: showMonthly ? 'var(--paper)' : 'var(--ink)',
+              border: '1px solid var(--ink)', cursor: 'pointer',
+            }}
+          >
+            MONTHLY
+          </button>
+          {!showMonthly && (
+            <span className="mono" style={{ fontSize: 10, color: 'var(--accent)', letterSpacing: '0.1em' }}>2 MONTHS FREE</span>
+          )}
+        </div>
+
+        <div className="grid" style={{ gridTemplateColumns: 'repeat(3,1fr)', gap: 0, border: '1px solid var(--ink)' }}>
+          {tiers.map((tier, i) => (
+            <div key={tier.id} style={{
+              padding: 28, borderRight: i < tiers.length - 1 ? '1px solid var(--ink)' : 'none',
+              background: tier.highlight ? 'var(--ink)' : 'transparent',
+              color: tier.highlight ? 'var(--paper)' : 'var(--ink)',
+              position: 'relative', display: 'flex', flexDirection: 'column',
+            }}>
               {tier.highlight && (
-                <div className="mono" style={{ position: 'absolute', top: -12, left: 24, background: 'var(--accent)', color: 'var(--paper)', padding: '4px 10px', fontSize: 9, letterSpacing: '0.22em', fontWeight: 600 }}>HIGH IMPACT/COST</div>
+                <div className="mono" style={{ position: 'absolute', top: -12, left: 24, background: 'var(--accent)', color: 'var(--paper)', padding: '4px 10px', fontSize: 9, letterSpacing: '0.22em', fontWeight: 600 }}>MOST POPULAR</div>
               )}
               <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 12 }}>{tier.code}</div>
-              <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>{tier.name}</div>
-              <div className="serif" style={{ fontStyle: 'italic', fontSize: 16, color: 'var(--accent)', marginBottom: 8 }}>{tier.label}</div>
+              <div style={{ fontSize: 26, fontWeight: 600, letterSpacing: '-0.02em' }}>{tier.name}</div>
+              <div className="serif" style={{ fontStyle: 'italic', fontSize: 15, color: 'var(--accent)', marginBottom: 6 }}>{tier.label}</div>
               <div style={{ fontSize: 12, opacity: 0.6, marginBottom: 20 }}>{tier.who}</div>
               <div style={{ borderTop: '1px solid', borderColor: tier.highlight ? 'rgba(244,241,234,0.18)' : 'var(--rule)', paddingTop: 16, marginBottom: 16 }}>
-                <div style={{ fontSize: 24, fontWeight: 600, letterSpacing: '-0.015em' }}>{tier.price}</div>
-                <div style={{ fontSize: 12, opacity: 0.6, marginTop: 4 }}>{tier.tagline}</div>
+                <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.015em' }}>{tier.price}</div>
+                <div style={{ fontSize: 11, opacity: 0.55, marginTop: 4 }}>{tier.period}</div>
+                {tier.saving && (
+                  <div className="mono" style={{ fontSize: 9, color: 'var(--accent)', marginTop: 6, letterSpacing: '0.1em' }}>{tier.saving.toUpperCase()}</div>
+                )}
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, flex: 1, marginBottom: 20 }}>
                 {tier.features.map((f, j) => (
                   <li key={j} style={{ display: 'grid', gridTemplateColumns: '16px 1fr', gap: 8, padding: '6px 0', fontSize: 13, lineHeight: 1.5, opacity: 0.85 }}>
-                    <span style={{ color: 'var(--accent)' }}>✓</span>
+                    <span style={{ color: 'var(--accent)' }}>→</span>
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
-              <button onClick={() => onCTA(tier.id)} className="mono" style={{ width: '100%', padding: '14px 0', background: tier.highlight ? 'var(--accent)' : 'transparent', color: tier.highlight ? 'var(--paper)' : 'var(--ink)', border: tier.highlight ? '0' : '1px solid var(--ink)', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, cursor: 'pointer' }}>
+              <a
+                href="/pricing"
+                className="mono"
+                style={{
+                  display: 'block', textAlign: 'center', width: '100%', padding: '14px 0',
+                  background: tier.highlight ? 'var(--accent)' : 'transparent',
+                  color: tier.highlight ? 'var(--paper)' : 'var(--ink)',
+                  border: tier.highlight ? 'none' : '1px solid var(--ink)',
+                  fontSize: 11, letterSpacing: '0.18em', fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+              >
                 START WITH {tier.name.toUpperCase()} →
-              </button>
+              </a>
             </div>
           ))}
         </div>
-        {/* Retainer add-on */}
-        <div className="pricing-retainer-band" style={{ marginTop: 32, border: '1px solid var(--ink)', padding: 28, display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'center' }}>
-          <div>
-            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10, fontWeight: 600 }}>+ ADD-ON · EVOLVE RETAINER</div>
-            <div style={{ fontSize: 22, fontWeight: 500, letterSpacing: '-0.01em' }}>Keep evolving every month.</div>
-            <p style={{ fontSize: 14, lineHeight: 1.5, opacity: 0.7, margin: '6px 0 0', maxWidth: 520 }}>New automations built as your business grows. AI improves — so do you.</p>
+
+        <div style={{ marginTop: 24, border: '1px solid rgba(20,20,19,0.14)', padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
+          <div style={{ fontSize: 14, opacity: 0.6, lineHeight: 1.5 }}>
+            Not sure which tier fits?{' '}
+            <button onClick={() => onCTA('seed')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 14, textDecoration: 'underline', padding: 0 }}>
+              Run the free diagnostic first →
+            </button>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.01em' }}>$500–$25K</div>
-              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.55 }}>/ MONTH</div>
-            </div>
-            <button onClick={() => onCTA('retainer')} className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 22px', border: 0, cursor: 'pointer', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600 }}>ADD RETAINER →</button>
-          </div>
+          <a href="/pricing" className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--ink)', opacity: 0.55, textDecoration: 'underline', whiteSpace: 'nowrap' }}>
+            FULL PRICING DETAILS
+          </a>
         </div>
       </div>
     </section>
