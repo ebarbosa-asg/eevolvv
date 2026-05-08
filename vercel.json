@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/followup",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/churn-detection",
+      "schedule": "0 7 * * 1"
     }
   ]
 }
