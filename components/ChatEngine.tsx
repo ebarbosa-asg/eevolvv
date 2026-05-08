@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import posthog from 'posthog-js'
 import { VolvvE, VolvvEAvatar, type GhostState } from '@/components/VolvvE'
+import { TierCards } from '@/components/TierCards'
 
 type Phase = 'chatting' | 'extracting' | 'report' | 'error'
 type Msg = { role: 'user' | 'ai'; text: string; id: number }
@@ -102,7 +103,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
   const [streamText, setStreamText] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const [input, setInput] = useState('')
-  const [report, setReport] = useState<{ text: string; businessName?: string } | null>(null)
+  const [report, setReport] = useState<{ text: string; businessName?: string; email?: string } | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [userMsgCount, setUserMsgCount] = useState(0)
 
@@ -187,6 +188,13 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
     timings.forEach((ms, i) => setTimeout(() => setRevealStage(i + 1), ms))
   }, [phase, report])
 
+  // PostHog: fire payment_wall_viewed when payment wall becomes visible
+  useEffect(() => {
+    if (revealStage === 4) {
+      posthog.capture('payment_wall_viewed', { trigger: 'chat_end' })
+    }
+  }, [revealStage])
+
   const sendMessage = async (text: string) => {
     const trimmed = text.trim()
     if (!trimmed || isStreaming) return
@@ -200,6 +208,9 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
     setUserMsgCount(c => c + 1)
 
     if (isFirstMessage) {
+      posthog.capture('diagnostic_started', {
+        source: typeof window !== 'undefined' && document.referrer?.includes('pricing') ? 'pricing' : 'homepage',
+      })
       posthog.capture('diagnostic_chat_started', { tier: defaultTier })
     }
     setInput('')
@@ -285,7 +296,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
           tier: data.tier,
           submission_id: data.submissionId,
         })
-        setReport({ text: data.report, businessName: data.businessName })
+        setReport({ text: data.report, businessName: data.businessName, email: data.email })
         setExtractPct(100)
         setTimeout(() => setPhase('report'), 700)
       } else {
@@ -477,36 +488,11 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
           dangerouslySetInnerHTML={{ __html: formatReport(report.text) }}
         />
 
-        {/* CTA */}
-        <div
-          className="diagnostic-report-cta"
-          style={{
-            marginTop: 24, border: '1px solid var(--ink)',
-            padding: '28px 32px',
-            display: 'grid', gridTemplateColumns: '1fr auto',
-            gap: 24, alignItems: 'center',
-            opacity: revealStage >= 4 ? 1 : 0,
-            transform: revealStage >= 4 ? 'translateY(0)' : 'translateY(12px)',
-            transition: 'opacity 0.6s ease, transform 0.6s ease',
-          }}
-        >
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 500 }}>Ready to make this real?</div>
-            <p style={{ fontSize: 13, opacity: 0.65, marginTop: 4 }}>
-              Book your 30-min strategy call and let&apos;s build the roadmap together.
-            </p>
-          </div>
-          <a
-            href={calendlyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mono btn-gradient"
-            style={{ padding: '16px 28px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, whiteSpace: 'nowrap', display: 'inline-block' }}
-            onClick={() => posthog.capture('diagnostic_cta_clicked', { cta: 'book_strategy_call', business_name: report?.businessName })}
-          >
-            BOOK STRATEGY CALL →
-          </a>
-        </div>
+        {/* Payment wall — shown when report phase is complete */}
+        <TierCards
+          email={report?.email}
+          visible={revealStage >= 4}
+        />
       </div>
     )
   }

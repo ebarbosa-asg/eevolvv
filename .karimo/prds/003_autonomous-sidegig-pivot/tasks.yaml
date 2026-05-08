@@ -1,0 +1,541 @@
+prd: autonomous-sidegig-pivot
+version: "1.0"
+created: "2026-05-06"
+
+tasks:
+  - id: "T01"
+    title: "Stripe Foundation"
+    description: "Install stripe npm package, create lib/stripe.ts as a singleton Stripe client initialized with STRIPE_SECRET_KEY, and document all required environment variables in .env.example."
+    complexity: 2
+    priority: must
+    wave: 1
+    depends_on: []
+    acceptance_criteria:
+      - "stripe package installed and importable"
+      - "lib/stripe.ts exports an initialized Stripe client using STRIPE_SECRET_KEY"
+      - ".env.example updated with STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, and all 6 price ID vars"
+    files_affected:
+      - "lib/stripe.ts"
+      - "package.json"
+      - ".env.example"
+    model: sonnet
+
+  - id: "T02"
+    title: "Stripe Billing Setup"
+    description: "Create 6 Stripe Products and Prices: Seed Monthly ($99), Seed Annual ($950), Core Monthly ($499), Core Annual ($4,790), Evolve Monthly ($1,999), Evolve Annual ($19,190). Document all price IDs in lib/stripe-prices.ts as typed constants and in .env.example as env vars."
+    complexity: 2
+    priority: must
+    wave: 1
+    depends_on:
+      - "T01"
+    acceptance_criteria:
+      - "6 products exist in Stripe dashboard with correct names and prices"
+      - "lib/stripe-prices.ts exports typed constants mapping tier + interval to price ID"
+      - "All price IDs are env-var driven so staging and prod can differ"
+      - "Annual prices reflect 2 months free discount vs monthly rate"
+    files_affected:
+      - "lib/stripe-prices.ts"
+      - ".env.example"
+    model: sonnet
+
+  - id: "T03"
+    title: "Checkout API Route"
+    description: "Build app/api/stripe/checkout/route.ts — a POST endpoint accepting { priceId, email }, creating a Stripe Checkout Session with mode: 'subscription', and returning { url } for client-side redirect."
+    complexity: 3
+    priority: must
+    wave: 2
+    depends_on:
+      - "T01"
+      - "T02"
+    acceptance_criteria:
+      - "POST /api/stripe/checkout accepts { priceId, email } body"
+      - "Creates Stripe Checkout Session with correct success_url and cancel_url"
+      - "success_url includes {CHECKOUT_SESSION_ID} for post-payment verification"
+      - "Returns { url } for frontend redirect"
+      - "Handles Stripe errors with appropriate HTTP status codes"
+      - "customer_email pre-filled from request body"
+    files_affected:
+      - "app/api/stripe/checkout/route.ts"
+      - "app/onboard/success/page.tsx"
+    model: sonnet
+
+  - id: "T04"
+    title: "Webhook Handler"
+    description: "Build app/api/stripe/webhook/route.ts — verifies Stripe webhook signature using raw body, routes events to typed handler functions. Initial events: checkout.session.completed, invoice.payment_succeeded, invoice.payment_failed, customer.subscription.updated, customer.subscription.deleted."
+    complexity: 4
+    priority: must
+    wave: 2
+    depends_on:
+      - "T01"
+      - "T05"
+    acceptance_criteria:
+      - "Stripe webhook signature verification using STRIPE_WEBHOOK_SECRET"
+      - "Raw body parsing (not JSON — Stripe requires raw body for signature)"
+      - "Event router dispatches to typed handler functions"
+      - "checkout.session.completed handler calls createClientRecord() implemented in T06"
+      - "invoice.payment_succeeded handler updates subscriptions.status to active"
+      - "Unhandled events return 200 (Stripe requirement)"
+      - "Failed handler does NOT throw — logs error and returns 200"
+    files_affected:
+      - "app/api/stripe/webhook/route.ts"
+      - "lib/webhook-handlers.ts"
+    model: sonnet
+
+  - id: "T05"
+    title: "Supabase Migration 006"
+    description: "Create supabase/migrations/006_subscriptions_builds.sql defining 4 new tables: clients, subscriptions, builds, onboarding_tokens. Include RLS policies granting service role full access and no anon access."
+    complexity: 4
+    priority: must
+    wave: 1
+    depends_on: []
+    acceptance_criteria:
+      - "clients table: id, email, name, tier, stripe_customer_id, churn_risk (boolean), created_at"
+      - "subscriptions table: id, client_id (FK to clients), stripe_subscription_id, stripe_price_id, status, current_period_end, cancel_at_period_end, created_at"
+      - "builds table: id, client_id (FK to clients), tier, status (queued|in_progress|qa|deploying|live), assigned_to, build_url, notes, started_at, completed_at, created_at"
+      - "onboarding_tokens table: id, client_id (FK to clients), token (uuid), completed_at, expires_at, created_at"
+      - "RLS: service role full access, anon no access"
+      - "Migration runs without error on existing Supabase project"
+    files_affected:
+      - "supabase/migrations/006_subscriptions_builds.sql"
+    model: sonnet
+
+  - id: "T06"
+    title: "Webhook → Client Creation + Onboarding Trigger"
+    description: "Implement createClientRecord() in lib/webhook-handlers.ts. On checkout.session.completed: create client record in clients table, create subscriptions record, generate UUID onboarding token in onboarding_tokens (30-day expiry), and call sendWelcomeEmail() and sendOnboardingEmail(). Entire operation must be idempotent and wrapped in try/catch."
+    complexity: 5
+    priority: must
+    wave: 3
+    depends_on:
+      - "T04"
+      - "T05"
+      - "T08"
+    acceptance_criteria:
+      - "Idempotent — second call for same session ID is a no-op (check stripe_subscription_id uniqueness)"
+      - "Creates clients record with email, tier derived from price ID, Stripe customer ID"
+      - "Creates subscriptions record with correct status and billing interval"
+      - "Generates cryptographically random UUID token inserted into onboarding_tokens with 30-day expiry"
+      - "Calls sendWelcomeEmail() and sendOnboardingEmail() with token"
+      - "Entire operation wrapped in try/catch — failure logged, not thrown"
+    files_affected:
+      - "lib/webhook-handlers.ts"
+      - "lib/supabase.ts"
+    model: opus
+
+  - id: "T07"
+    title: "Payment Wall in ChatEngine.tsx"
+    description: "Replace the Calendly CTA at ~line 499 of components/ChatEngine.tsx with inline tier selection cards (Seed, Core, Evolve) that route to Stripe Checkout via /api/stripe/checkout. Monthly/Annual toggle with annual as default. Matches eevolvv design system."
+    complexity: 4
+    priority: must
+    wave: 2
+    depends_on:
+      - "T02"
+      - "T03"
+    acceptance_criteria:
+      - "Payment wall appears after report is delivered in the conversation"
+      - "Three tier cards: Seed ($99/mo or $950/yr), Core ($499/mo or $4,790/yr), Evolve ($1,999/mo or $19,190/yr)"
+      - "Monthly/Annual toggle present with annual as the default selected state"
+      - "Each card includes: tier name, price, 3-line feature summary, CTA button"
+      - "Clicking CTA calls POST /api/stripe/checkout with correct priceId and user email from chat"
+      - "On success, redirects to Stripe-hosted Checkout"
+      - "Loading state shown during API call"
+      - "Error state shown if API fails"
+      - "Uses components/ds/ — no raw Tailwind classes"
+    files_affected:
+      - "components/ChatEngine.tsx"
+      - "components/TierCards.tsx"
+    model: sonnet
+
+  - id: "T08"
+    title: "Welcome Email Template + Webhook Trigger"
+    description: "Create emails/WelcomeEmail.tsx and emails/OnboardingEmail.tsx react-email templates. Implement sendWelcomeEmail() and sendOnboardingEmail() helpers in lib/email-helpers.ts using Resend. Both functions return { success, error } and do not throw."
+    complexity: 3
+    priority: must
+    wave: 2
+    depends_on:
+      - "T04"
+    acceptance_criteria:
+      - "WelcomeEmail.tsx subject: 'Welcome to eevolvv — your [Tier] build is confirmed', includes tier, what happens next (3 steps), eevolvv branding"
+      - "OnboardingEmail.tsx subject: 'Complete your onboarding — [Tier] build starts when you do', includes onboarding link /onboard/[token], 5-minute time estimate"
+      - "Both templates use react-email components and match eevolvv color system"
+      - "lib/email-helpers.ts exports sendWelcomeEmail({ email, name, tier }) and sendOnboardingEmail({ email, name, tier, token })"
+      - "Resend from field uses hello@eevolvv.com"
+      - "Functions return { success: boolean, error?: string } — do not throw"
+    files_affected:
+      - "emails/WelcomeEmail.tsx"
+      - "emails/OnboardingEmail.tsx"
+      - "lib/email-helpers.ts"
+    model: sonnet
+
+  - id: "T09"
+    title: "Onboarding Page"
+    description: "Build app/onboard/[token]/page.tsx — a token-validated onboarding intake page. Validates token server-side, presents a tier-aware intake form, saves responses to clients table, marks token as completed, and creates a builds record with status: queued."
+    complexity: 4
+    priority: must
+    wave: 3
+    depends_on:
+      - "T05"
+      - "T06"
+    acceptance_criteria:
+      - "Token validated server-side on page load — invalid or expired tokens show error state"
+      - "Form fields: business name, contact name, website URL (optional), business description, primary goal, 3 biggest pain points, existing tools/integrations, preferred communication channel"
+      - "Evolve tier shows additional fields: org size, tech stack, key stakeholders"
+      - "On submit: updates clients record, marks onboarding_tokens.completed_at, creates builds record with status queued"
+      - "Success state shows SLA estimate based on tier"
+      - "Uses eevolvv design system"
+      - "Token expiry enforced (30 days from payment)"
+    files_affected:
+      - "app/onboard/[token]/page.tsx"
+      - "app/onboard/[token]/OnboardingForm.tsx"
+    model: sonnet
+
+  - id: "T10"
+    title: "Standalone /pricing Page"
+    description: "Build app/pricing/page.tsx — a standalone SEO-friendly pricing page showing Seed, Core, and Evolve tiers. Monthly/Annual toggle with annual as default. Each tier CTAs route to Stripe Checkout after inline email capture."
+    complexity: 2
+    priority: must
+    wave: 2
+    depends_on:
+      - "T02"
+    acceptance_criteria:
+      - "Route /pricing renders without authentication"
+      - "Three tier columns: Seed, Core, Evolve"
+      - "Monthly/Annual toggle — annual shown by default with 2 months free callout"
+      - "Each tier: name, price, feature list (5-8 items), CTA button"
+      - "CTA requires email input before redirecting (inline email capture or modal)"
+      - "Most popular badge on Core tier"
+      - "Matches eevolvv design system"
+      - "Page has SEO metadata: title, description"
+    files_affected:
+      - "app/pricing/page.tsx"
+      - "app/pricing/PricingTiers.tsx"
+    model: sonnet
+
+  - id: "T11"
+    title: "Homepage Pricing Section Update"
+    description: "Update the pricing section in app/page.tsx to reflect the subscription model. Replace existing pricing content with Seed/Core/Evolve tiers at annual pricing, with CTAs routing to /pricing page."
+    complexity: 2
+    priority: should
+    wave: 3
+    depends_on:
+      - "T02"
+      - "T10"
+    acceptance_criteria:
+      - "Existing pricing section updated with correct tier names and prices"
+      - "Annual pricing displayed by default"
+      - "CTA buttons route to /pricing page"
+      - "Section copy reflects managed service positioning"
+      - "Matches eevolvv design system"
+    files_affected:
+      - "app/page.tsx"
+    model: sonnet
+
+  - id: "T12"
+    title: "3-Email Follow-Up Sequence + Cron"
+    description: "Build a post-diagnostic follow-up sequence for unconverted leads. Vercel cron runs daily at 9am, checks for submissions without a matching clients record, and sends up to 3 follow-up emails at 24h, 72h, and 7-day intervals. Sequence stops on conversion."
+    complexity: 4
+    priority: should
+    wave: 3
+    depends_on:
+      - "T08"
+    acceptance_criteria:
+      - "FollowUp1.tsx (24h): highlights top 3 opportunities from report, links to pricing"
+      - "FollowUp2.tsx (72h): personalized based on diagnostic answers, softer CTA"
+      - "FollowUp3.tsx (7d): urgency framing, pricing link"
+      - "Vercel cron at 0 9 * * * queries submissions table for unconverted leads"
+      - "Follow-up state tracked in submissions table via followup_sent_at[] column"
+      - "Sequence stops if lead email found in clients table"
+      - "Unsubscribe link included in all emails"
+    files_affected:
+      - "emails/FollowUp1.tsx"
+      - "emails/FollowUp2.tsx"
+      - "emails/FollowUp3.tsx"
+      - "app/api/cron/followup/route.ts"
+      - "supabase/migrations/007_followup_tracking.sql"
+      - "vercel.json"
+    model: sonnet
+
+  - id: "T13"
+    title: "Seed Build SOP"
+    description: "Create docs/seed-build-sop.md documenting the semi-manual Seed build process. This is the technician's playbook covering intake review, template selection, Claude Code prompt construction, v0.dev component generation, QA, Vercel deploy, and client notification."
+    complexity: 2
+    priority: should
+    wave: 3
+    depends_on:
+      - "T09"
+    acceptance_criteria:
+      - "Document covers: intake form review, template selection (5 Seed templates), Claude Code prompt construction, v0.dev component generation, local review, Vercel deploy, client notification"
+      - "Includes 72-hour SLA from builds.status = in_progress"
+      - "Checklist format for technician to mark steps in OS build queue (T16)"
+      - "Documents triggers for build started and build live emails (T17)"
+      - "Covers escalation path for builds exceeding 72 hours"
+    files_affected:
+      - "docs/seed-build-sop.md"
+    model: sonnet
+
+  - id: "T14"
+    title: "Rate Limiter Upgrade (Subscription-Aware)"
+    description: "Upgrade lib/rateLimit.ts to be subscription-aware. Active subscribers get unlimited rate; free users keep existing 3/hr IP limit. checkRateLimit() accepts optional clientId, queries subscriptions table if provided."
+    complexity: 3
+    priority: should
+    wave: 3
+    depends_on:
+      - "T05"
+    acceptance_criteria:
+      - "checkRateLimit() accepts optional clientId parameter"
+      - "If clientId provided: queries subscriptions table; if status active returns { allowed: true, limit: null }"
+      - "If no clientId: existing IP-based 3/hr logic unchanged"
+      - "app/api/diagnostic/route.ts updated to pass client ID from session/cookie if present"
+      - "Graceful fallback: if Supabase query fails, falls back to IP-based limit"
+    files_affected:
+      - "lib/rateLimit.ts"
+      - "app/api/diagnostic/route.ts"
+    model: sonnet
+
+  - id: "T15"
+    title: "Client Portal"
+    description: "Build app/client/[token]/page.tsx — a token-validated dashboard where clients see build status, deliverables, upcoming milestones, next billing date, and subscription self-service options (change plan, cancel). Token IS the session — no separate auth required."
+    complexity: 4
+    priority: must
+    wave: 3
+    depends_on:
+      - "T05"
+      - "T06"
+      - "T09"
+    acceptance_criteria:
+      - "Token validated server-side against onboarding_tokens table"
+      - "Build Status section: current status badge, progress timeline, assigned technician initials"
+      - "Deliverables section: build URL when live, milestone artifact links"
+      - "Subscription section: tier name, billing interval, next billing date, status badge"
+      - "Actions: Change plan button (links to T19 flow), Cancel membership button (links to T20 flow)"
+      - "If builds.status = live: build URL shown prominently with Visit your site CTA"
+      - "Uses eevolvv design system"
+      - "Logs last_portal_visit_at on each page load (for T22 churn detection)"
+    files_affected:
+      - "app/client/[token]/page.tsx"
+      - "app/client/[token]/ClientDashboard.tsx"
+    model: sonnet
+
+  - id: "T16"
+    title: "Build Queue View in OS"
+    description: "Build app/os/builds/page.tsx — an internal technician view listing all builds by status. Claim button assigns a build. Status advancement buttons move builds through the pipeline from queued to live."
+    complexity: 3
+    priority: must
+    wave: 3
+    depends_on:
+      - "T05"
+      - "T06"
+    acceptance_criteria:
+      - "Route /os/builds accessible from OS sidebar"
+      - "List view columns: client email, tier, status, assigned_to, created_at, time_in_status"
+      - "Status filter tabs: All | Queued | In Progress | QA | Deploying | Live"
+      - "Claim button on unassigned builds — sets builds.assigned_to to current user"
+      - "Status advancement: Start Build (queued→in_progress), Submit for QA (in_progress→qa), Approve QA (qa→deploying), Mark Live (deploying→live)"
+      - "Mark Live requires build_url input before status advance"
+      - "Status changes trigger build notification emails via app/api/builds/update-status/route.ts"
+      - "Uses eevolvv design system (DS components)"
+    files_affected:
+      - "app/os/builds/page.tsx"
+      - "app/os/builds/BuildQueueTable.tsx"
+      - "app/api/builds/update-status/route.ts"
+    model: sonnet
+
+  - id: "T17"
+    title: "Build Status Notification Emails"
+    description: "Create BuildStarted.tsx, BuildReadyForReview.tsx, and BuildLive.tsx react-email templates. Wire them to OS build status transitions via app/api/builds/update-status/route.ts. Each email is triggered by a specific status change."
+    complexity: 3
+    priority: must
+    wave: 4
+    depends_on:
+      - "T08"
+      - "T16"
+    acceptance_criteria:
+      - "BuildStarted.tsx subject: 'We've started building your [tier] site', includes tier, SLA, client portal link"
+      - "BuildReadyForReview.tsx subject: 'Your build is ready — review it here', includes preview link if available, client portal link"
+      - "BuildLive.tsx subject: 'Your [tier] site is live', includes build URL prominently, Visit your site button, next steps"
+      - "lib/email-helpers.ts updated with sendBuildStarted(), sendBuildReadyForReview(), sendBuildLive()"
+      - "app/api/builds/update-status/route.ts calls appropriate email function on each status transition"
+      - "Emails use eevolvv branding and react-email components"
+    files_affected:
+      - "emails/BuildStarted.tsx"
+      - "emails/BuildReadyForReview.tsx"
+      - "emails/BuildLive.tsx"
+      - "lib/email-helpers.ts"
+    model: sonnet
+
+  - id: "T18"
+    title: "Failed Payment + Dunning Webhook Handlers"
+    description: "Implement invoice.payment_failed and customer.subscription.deleted webhook handlers in lib/webhook-handlers.ts. Failed payment: update DB status, send dunning email with Stripe billing portal link. Subscription deleted: mark client churned, freeze active builds."
+    complexity: 3
+    priority: must
+    wave: 4
+    depends_on:
+      - "T04"
+      - "T05"
+    acceptance_criteria:
+      - "invoice.payment_failed handler: updates subscriptions.status to past_due, sends PaymentFailed email, logs event"
+      - "customer.subscription.deleted handler: updates subscriptions.status to canceled, sets clients.churn_risk to true, sets builds.status to paused for all non-live builds"
+      - "PaymentFailed.tsx subject: 'Action required — payment failed for your eevolvv subscription', includes Stripe billing portal link, amount due, consequence of non-payment"
+      - "All handlers are idempotent"
+      - "Handlers registered in webhook event router"
+    files_affected:
+      - "lib/webhook-handlers.ts"
+      - "emails/PaymentFailed.tsx"
+      - "lib/email-helpers.ts"
+    model: sonnet
+
+  - id: "T19"
+    title: "Subscription Upgrade/Downgrade Flow"
+    description: "Build app/api/stripe/update-subscription/route.ts accepting { token, newPriceId }. Validates token, retrieves Stripe subscription ID, calls Stripe subscriptions.update() with proration. Wire to Change plan modal in client portal."
+    complexity: 3
+    priority: should
+    wave: 4
+    depends_on:
+      - "T04"
+      - "T05"
+      - "T15"
+    acceptance_criteria:
+      - "POST /api/stripe/update-subscription accepts { token, newPriceId }"
+      - "Token validated against onboarding_tokens to identify client"
+      - "Calls Stripe subscriptions.update() with proration_behavior: create_prorations and new price ID"
+      - "On success: updates subscriptions.stripe_price_id in DB"
+      - "Returns { success: true, newPlan: tierName }"
+      - "Client portal Change plan UI: modal with tier selector, current plan highlighted, price comparison, Confirm change button"
+      - "customer.subscription.updated webhook handler updates DB on Stripe confirmation"
+    files_affected:
+      - "app/api/stripe/update-subscription/route.ts"
+      - "app/client/[token]/ClientDashboard.tsx"
+    model: sonnet
+
+  - id: "T20"
+    title: "Subscription Cancellation Flow"
+    description: "Build app/api/stripe/cancel-subscription/route.ts that cancels at period end (not immediately). Sends WinBack email before executing. Wire to Cancel membership button in client portal. Two-step confirmation UI."
+    complexity: 2
+    priority: should
+    wave: 4
+    depends_on:
+      - "T04"
+      - "T05"
+      - "T15"
+    acceptance_criteria:
+      - "POST /api/stripe/cancel-subscription accepts { token }"
+      - "Token validated to identify client"
+      - "Step 1 (pre-cancel): sends WinBack email before executing cancellation"
+      - "Step 2 (confirmed): calls Stripe subscriptions.update({ cancel_at_period_end: true })"
+      - "Sets subscriptions.cancel_at_period_end to true in DB"
+      - "Service continues until period end — not immediate termination"
+      - "Client portal shows 'Cancellation scheduled — active until [date]' state"
+      - "WinBack.tsx subject: 'Before you go — a message from E', personal tone, includes what they lose, option to pause (manual), cancellation confirmation link"
+      - "Cancel is two-step confirmation in UI (not a single click)"
+    files_affected:
+      - "app/api/stripe/cancel-subscription/route.ts"
+      - "emails/WinBack.tsx"
+      - "lib/email-helpers.ts"
+      - "app/client/[token]/ClientDashboard.tsx"
+    model: sonnet
+
+  - id: "T21"
+    title: "Monthly Automated Client Report"
+    description: "Build a Vercel cron at 0 8 1 * * (8am on 1st of each month) that queries all active clients and sends a personalized monthly summary email. Sends sequentially with 100ms delay between emails. Failed sends logged but do not halt batch."
+    complexity: 4
+    priority: should
+    wave: 4
+    depends_on:
+      - "T05"
+      - "T06"
+      - "T08"
+    acceptance_criteria:
+      - "Vercel cron at 0 8 1 * * triggers app/api/cron/monthly-report/route.ts"
+      - "Queries all clients where subscriptions.status = active"
+      - "For each client: gathers builds count and status, subscription details (tier, next billing date), agent run count"
+      - "MonthlyReport.tsx subject: '[Month] Update — Your eevolvv [Tier] Summary', sections: Build Status, Subscription Details, Activity Summary, What's Coming Next, client portal CTA"
+      - "Emails sent sequentially with 100ms delay between sends"
+      - "Failed sends logged — batch continues on individual failure"
+      - "Cron route protected by CRON_SECRET header check"
+    files_affected:
+      - "app/api/cron/monthly-report/route.ts"
+      - "emails/MonthlyReport.tsx"
+      - "lib/email-helpers.ts"
+      - "vercel.json"
+    model: sonnet
+
+  - id: "T22"
+    title: "Churn Risk Detection Cron"
+    description: "Build a Vercel cron at 0 9 * * 1 (Monday 9am) that checks three churn signals: no onboarding >7 days, no portal visit >30 days, approaching renewal with low engagement. Flags at-risk clients in DB and sends internal OS alert to hello@eevolvv.com."
+    complexity: 3
+    priority: should
+    wave: 4
+    depends_on:
+      - "T05"
+      - "T06"
+      - "T09"
+      - "T15"
+      - "T21"
+    acceptance_criteria:
+      - "Vercel cron at 0 9 * * 1 triggers app/api/cron/churn-detection/route.ts"
+      - "Signal 1: onboarding not completed >7 days post-payment (onboarding_tokens.completed_at IS NULL AND clients.created_at < NOW() - INTERVAL '7 days')"
+      - "Signal 2: no client portal visit >30 days (clients.last_portal_visit_at is older than 30 days)"
+      - "Signal 3: subscription renewing within 7 days with last_portal_visit_at older than 14 days"
+      - "Matching clients: UPDATE clients SET churn_risk = true"
+      - "Sends internal alert email to hello@eevolvv.com listing at-risk clients with triggering signal"
+      - "Cron route protected by CRON_SECRET"
+      - "clients table has last_portal_visit_at column (via migration 008)"
+    files_affected:
+      - "app/api/cron/churn-detection/route.ts"
+      - "app/client/[token]/page.tsx"
+      - "supabase/migrations/008_churn_tracking.sql"
+      - "vercel.json"
+    model: sonnet
+
+  - id: "T23"
+    title: "Quarterly Re-Calibration Trigger"
+    description: "Build a Vercel cron at 0 10 * * * (daily 10am) checking for clients hitting 90 days from subscription creation. Evolve tier: sends email with Calendly link. Seed/Core: sends email with link to restart diagnostic with recalibration context."
+    complexity: 2
+    priority: could
+    wave: 5
+    depends_on:
+      - "T06"
+      - "T08"
+    acceptance_criteria:
+      - "Vercel cron at 0 10 * * * triggers app/api/cron/quarterly-recalibration/route.ts"
+      - "Queries clients where subscriptions.created_at is exactly 90 days ago (24h window)"
+      - "Evolve tier email: includes Calendly link https://calendly.com/hello-eevolvv for 2-hour session"
+      - "Seed/Core tier email: includes link to /diagnostic?recalibration=true&client_id=X"
+      - "QuarterlyRecalibration.tsx subject: 'Your quarterly re-calibration is due — [Tier]', framing around AI that learns your business getting sharper, value summary of past 90 days"
+      - "Cron route protected by CRON_SECRET"
+    files_affected:
+      - "app/api/cron/quarterly-recalibration/route.ts"
+      - "emails/QuarterlyRecalibration.tsx"
+      - "lib/email-helpers.ts"
+      - "vercel.json"
+    model: sonnet
+
+  - id: "T24"
+    title: "PostHog Funnel Tracking"
+    description: "Instrument the full conversion funnel with posthog.capture() calls at 8 key events: diagnostic_started, report_generated, payment_wall_viewed, tier_selected, checkout_completed, onboarding_completed, build_started, build_live. Server-side events use PostHog Node.js client. No PII in event properties."
+    complexity: 2
+    priority: should
+    wave: 5
+    depends_on:
+      - "T07"
+      - "T09"
+      - "T16"
+    acceptance_criteria:
+      - "diagnostic_started: { source: 'homepage'|'pricing'|'direct' } — ChatEngine.tsx on first message"
+      - "report_generated: { industry, node_count } — app/api/diagnostic/route.ts on successful report send"
+      - "payment_wall_viewed: { trigger: 'chat_end' } — ChatEngine.tsx when TierCards render"
+      - "tier_selected: { tier, interval: 'monthly'|'annual', price } — TierCards on CTA click"
+      - "checkout_completed: { tier, interval, amount } — webhook handler on checkout.session.completed"
+      - "onboarding_completed: { tier, time_to_complete_minutes } — OnboardingForm on submit"
+      - "build_started: { tier, client_id } — OS BuildQueueTable on status to in_progress"
+      - "build_live: { tier, build_url, days_to_deliver } — OS BuildQueueTable on status to live"
+      - "Server-side events use PostHog Node.js client"
+      - "Client-side events use PostHog React/Next.js client"
+      - "No PII in event properties (client_id not email)"
+    files_affected:
+      - "components/ChatEngine.tsx"
+      - "components/TierCards.tsx"
+      - "app/api/diagnostic/route.ts"
+      - "lib/webhook-handlers.ts"
+      - "app/onboard/[token]/OnboardingForm.tsx"
+      - "app/os/builds/BuildQueueTable.tsx"
+    model: sonnet

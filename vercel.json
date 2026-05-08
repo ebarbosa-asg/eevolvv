@@ -4,6 +4,22 @@
     {
       "path": "/api/cron/agents",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/followup",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/churn-detection",
+      "schedule": "0 7 * * 1"
+    },
+    {
+      "path": "/api/cron/monthly-report",
+      "schedule": "0 8 1 * *"
+    },
+    {
+      "path": "/api/cron/recalibration",
+      "schedule": "0 6 * * 3"
     }
   ]
 }

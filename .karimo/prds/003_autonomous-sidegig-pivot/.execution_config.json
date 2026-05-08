@@ -1,0 +1,46 @@
+{
+  "configured_at": "2026-05-07T00:00:00Z",
+  "orchestration_version": 2,
+  "orchestration": {
+    "integration": {
+      "cadence": "worktree",
+      "auto_merge_on_green": true
+    },
+    "review": {
+      "trigger": "per-task",
+      "scope": "pr-diff",
+      "skip_if_diff_under": 0,
+      "on_findings": "halt",
+      "providers": {
+        "greptile": { "fire_at": [], "on_findings": "halt" },
+        "code-review": { "fire_at": [], "on_findings": "halt" }
+      }
+    },
+    "gates": {
+      "model": "conditional",
+      "conditions": {
+        "require_tests_pass": false,
+        "require_build_pass": true,
+        "max_critical_findings": 0
+      },
+      "placements": [
+        { "after_wave": 3, "label": "Core automation verified end-to-end" }
+      ]
+    }
+  },
+  "models": {
+    "default": "sonnet",
+    "complexity_threshold": 5,
+    "force_opus_tasks": ["T06"],
+    "force_sonnet_tasks": [],
+    "escalation": {
+      "after_failures": 1,
+      "triggers": ["architectural_issues", "type_system_issues"]
+    }
+  },
+  "max_revision_loops": 3,
+  "allow_bypass": {
+    "future_work_overlap": true,
+    "false_positive_factual": true
+  }
+}
