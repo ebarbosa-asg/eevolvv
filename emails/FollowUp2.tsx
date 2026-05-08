@@ -1,0 +1,133 @@
+import * as React from 'react'
+import {
+  Html, Head, Body, Container, Section, Text, Heading, Button, Hr, Preview, Font,
+} from '@react-email/components'
+
+interface FollowUp2Props {
+  name?: string
+  businessName?: string
+}
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
+
+export function FollowUp2Email({ name, businessName }: FollowUp2Props) {
+  const greeting = name ? `Hi ${name.split(' ')[0]},` : 'Hi,'
+  const biz = businessName || 'your business'
+
+  return (
+    <Html lang="en" dir="ltr">
+      <Head>
+        <Font
+          fontFamily="Helvetica Neue"
+          fallbackFontFamily="Helvetica"
+          webFont={undefined}
+          fontWeight={400}
+          fontStyle="normal"
+        />
+      </Head>
+      <Preview>Still thinking it over? Here&apos;s what other businesses found with eevolvv</Preview>
+      <Body
+        style={{
+          background: '#faf7f0',
+          margin: 0,
+          padding: 0,
+          fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+        }}
+      >
+        <Container style={{ maxWidth: 600, margin: '0 auto', padding: '40px 24px' }}>
+          <Section style={{ marginBottom: 24 }}>
+            <Text
+              style={{
+                fontSize: 11,
+                letterSpacing: '0.22em',
+                color: '#8C2B1A',
+                fontWeight: 700,
+                margin: 0,
+                textTransform: 'uppercase' as const,
+              }}
+            >
+              EEVOLVV
+            </Text>
+          </Section>
+          <Hr style={{ borderColor: 'rgba(20,20,19,0.14)', marginBottom: 32 }} />
+          <Section style={{ marginBottom: 32 }}>
+            <Heading
+              as="h1"
+              style={{
+                fontSize: 26,
+                fontWeight: 600,
+                color: '#141413',
+                margin: '0 0 12px',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.2,
+              }}
+            >
+              Still thinking it over?
+            </Heading>
+            <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6, margin: 0 }}>
+              {greeting}
+            </Text>
+            <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+              We sent your eevolvv report for {biz} a few days ago. No pressure — but here&apos;s
+              what other businesses found when they started with Seed:
+            </Text>
+            {/* Social proof bullets */}
+            <Section
+              style={{
+                background: 'rgba(20,20,19,0.04)',
+                borderLeft: '3px solid #8C2B1A',
+                padding: '16px 20px',
+                margin: '16px 0',
+              }}
+            >
+              <Text
+                style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: '0 0 8px' }}
+              >
+                → A local service business automated their client intake form in 72 hours.
+                8 hours/week freed — they used that time to take on 3 more clients.
+              </Text>
+              <Text
+                style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: 0 }}
+              >
+                → A solopreneur launched their first professional landing page in 72 hours.
+                First inbound lead came in within 48 hours of going live.
+              </Text>
+            </Section>
+            <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+              The Seed tier ($950/yr) is our lowest-risk starting point. Built in 72 hours,
+              hosted and maintained. If you&apos;re not satisfied in the first 30 days,
+              we&apos;ll make it right.
+            </Text>
+          </Section>
+          <Section style={{ marginBottom: 32, textAlign: 'center' as const }}>
+            <Button
+              href={`${BASE_URL}/pricing`}
+              style={{
+                background: '#141413',
+                color: '#faf7f0',
+                padding: '16px 32px',
+                fontSize: 11,
+                letterSpacing: '0.18em',
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'inline-block',
+                fontFamily: 'Courier New, monospace',
+              }}
+            >
+              EXPLORE SEED →
+            </Button>
+          </Section>
+          <Hr style={{ borderColor: 'rgba(20,20,19,0.14)', marginBottom: 16 }} />
+          <Section>
+            <Text style={{ fontSize: 11, color: '#141413', opacity: 0.4, margin: 0 }}>
+              EEVOLVV · hello@eevolvv.com ·{' '}
+              <a href={`${BASE_URL}/unsubscribe?email=`} style={{ color: '#141413' }}>
+                Unsubscribe
+              </a>
+            </Text>
+          </Section>
+        </Container>
+      </Body>
+    </Html>
+  )
+}
