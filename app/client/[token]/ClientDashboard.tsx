@@ -1,5 +1,8 @@
 'use client'
 
+import { useState } from 'react'
+import { TIER_CONFIGS } from '@/lib/stripe-prices'
+
 interface Build {
   id: string
   tier: string
@@ -48,7 +51,18 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 export function ClientDashboard({ token, client, subscription, latestBuild, builds }: Props) {
-  void token // kept in scope for T19/T20 to use when adding upgrade/cancel flows
+  // Change plan state
+  const [showChangePlan, setShowChangePlan] = useState(false)
+  const [changePlanLoading, setChangePlanLoading] = useState<string | null>(null)
+  const [changePlanError, setChangePlanError] = useState<string | null>(null)
+  const [changePlanSuccess, setChangePlanSuccess] = useState<string | null>(null)
+
+  // Cancel state: 0 = hidden, 1 = initial confirm, 2 = post-winback final confirm
+  const [cancelStep, setCancelStep] = useState<0 | 1 | 2>(0)
+  const [cancelLoading, setCancelLoading] = useState(false)
+  const [cancelError, setCancelError] = useState<string | null>(null)
+  const [cancelPeriodEnd, setCancelPeriodEnd] = useState<string | null>(null)
+  const [cancelSuccess, setCancelSuccess] = useState(false)
 
   const buildStatusIndex = latestBuild ? STATUS_ORDER.indexOf(latestBuild.status) : -1
   const totalSteps = STATUS_ORDER.length
@@ -62,6 +76,55 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
         year: 'numeric',
       })
     : 'Not available'
+
+  async function handleCancelStep1() {
+    setCancelLoading(true)
+    setCancelError(null)
+    try {
+      const res = await fetch('/api/stripe/cancel-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, confirmed: false }),
+      })
+      const data = await res.json()
+      if (res.ok && data.winBackSent) {
+        setCancelPeriodEnd(data.periodEnd ?? null)
+        setCancelStep(2)
+      } else {
+        setCancelError(data.error ?? 'Something went wrong')
+      }
+    } catch {
+      setCancelError('Network error')
+    } finally {
+      setCancelLoading(false)
+    }
+  }
+
+  async function handleCancelConfirm() {
+    setCancelLoading(true)
+    setCancelError(null)
+    try {
+      const res = await fetch('/api/stripe/cancel-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, confirmed: true }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setCancelSuccess(true)
+        setTimeout(() => {
+          setCancelStep(0)
+          setCancelSuccess(false)
+        }, 3000)
+      } else {
+        setCancelError(data.error ?? 'Cancellation failed')
+      }
+    } catch {
+      setCancelError('Network error')
+    } finally {
+      setCancelLoading(false)
+    }
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -192,38 +255,40 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
           </div>
         )}
 
-        {/* Plan management — T19 and T20 will wire these */}
+        {/* Plan management */}
         <div style={{ display: 'flex', gap: 12 }}>
-          <a
-            href="/pricing"
+          <button
+            onClick={() => { setShowChangePlan(true); setChangePlanError(null); setChangePlanSuccess(null) }}
             className="mono"
             style={{
               padding: '10px 20px',
               border: '1px solid var(--ink)',
               fontSize: 10,
               letterSpacing: '0.14em',
-              textDecoration: 'none',
               color: 'var(--ink)',
+              background: 'transparent',
+              cursor: 'pointer',
             }}
           >
             CHANGE PLAN
-          </a>
+          </button>
           {!subscription?.cancel_at_period_end && (
-            <a
-              href="/pricing"
+            <button
+              onClick={() => { setCancelStep(1); setCancelError(null) }}
               className="mono"
               style={{
                 padding: '10px 20px',
                 border: '1px solid rgba(20,20,19,0.3)',
                 fontSize: 10,
                 letterSpacing: '0.14em',
-                textDecoration: 'none',
                 color: 'var(--ink)',
+                background: 'transparent',
                 opacity: 0.55,
+                cursor: 'pointer',
               }}
             >
               CANCEL MEMBERSHIP
-            </a>
+            </button>
           )}
         </div>
       </section>
@@ -283,6 +348,262 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
           hello@eevolvv.com
         </a>
       </div>
+
+      {/* Change Plan Modal */}
+      {showChangePlan && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(20,20,19,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+          }}
+        >
+          <div
+            style={{
+              background: 'var(--paper)',
+              maxWidth: 560,
+              width: '100%',
+              margin: 24,
+              padding: 32,
+              border: '1px solid var(--ink)',
+            }}
+          >
+            <div
+              className="mono"
+              style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}
+            >
+              CHANGE PLAN
+            </div>
+            <h2 style={{ fontSize: 20, fontWeight: 600, margin: '0 0 20px' }}>Select your new plan</h2>
+            {TIER_CONFIGS.map(config => {
+              const price = config.prices.annual
+              const isCurrent = client?.tier === config.tier
+              return (
+                <div
+                  key={config.tier}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '12px 16px',
+                    border: '1px solid var(--rule)',
+                    marginBottom: 8,
+                    opacity: isCurrent ? 0.5 : 1,
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 600 }}>{config.name}</div>
+                    <div style={{ fontSize: 12, opacity: 0.6 }}>
+                      {price.amountDisplay}/yr · {config.buildSla}
+                    </div>
+                  </div>
+                  {isCurrent ? (
+                    <span className="mono" style={{ fontSize: 9, letterSpacing: '0.14em', opacity: 0.5 }}>
+                      CURRENT PLAN
+                    </span>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        setChangePlanLoading(config.tier)
+                        setChangePlanError(null)
+                        try {
+                          const res = await fetch('/api/stripe/update-subscription', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token, newPriceId: price.priceId }),
+                          })
+                          const data = await res.json()
+                          if (res.ok) {
+                            setChangePlanSuccess(`Plan updated to ${data.newPlan}`)
+                            setTimeout(() => setShowChangePlan(false), 2000)
+                          } else {
+                            setChangePlanError(data.error ?? 'Update failed')
+                          }
+                        } catch {
+                          setChangePlanError('Network error')
+                        } finally {
+                          setChangePlanLoading(null)
+                        }
+                      }}
+                      disabled={changePlanLoading !== null}
+                      className="mono"
+                      style={{
+                        padding: '8px 16px',
+                        background: 'var(--ink)',
+                        color: 'var(--paper)',
+                        border: 'none',
+                        fontSize: 10,
+                        letterSpacing: '0.14em',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {changePlanLoading === config.tier ? '...' : 'SELECT →'}
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+            {changePlanError && (
+              <div style={{ color: 'var(--accent)', fontSize: 13, marginTop: 12 }}>{changePlanError}</div>
+            )}
+            {changePlanSuccess && (
+              <div style={{ color: '#4ade80', fontSize: 13, marginTop: 12 }}>{changePlanSuccess}</div>
+            )}
+            <button
+              onClick={() => setShowChangePlan(false)}
+              style={{ marginTop: 16, background: 'none', border: 'none', fontSize: 12, opacity: 0.5, cursor: 'pointer' }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Membership Modal — Step 1: Initial */}
+      {cancelStep === 1 && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(20,20,19,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+          }}
+        >
+          <div
+            style={{
+              background: 'var(--paper)',
+              maxWidth: 480,
+              width: '100%',
+              margin: 24,
+              padding: 32,
+              border: '1px solid var(--ink)',
+            }}
+          >
+            <div
+              className="mono"
+              style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}
+            >
+              CANCEL MEMBERSHIP
+            </div>
+            <h2 style={{ fontSize: 20, fontWeight: 600, margin: '0 0 12px' }}>
+              Are you sure you want to cancel?
+            </h2>
+            <p style={{ fontSize: 14, opacity: 0.7, margin: '0 0 24px', lineHeight: 1.6 }}>
+              Before we process your cancellation, we&apos;ll send you a note from E with what you&apos;d be walking away from. You can still change your mind after.
+            </p>
+            {cancelError && (
+              <div style={{ color: 'var(--accent)', fontSize: 13, marginBottom: 16 }}>{cancelError}</div>
+            )}
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button
+                onClick={handleCancelStep1}
+                disabled={cancelLoading}
+                className="mono"
+                style={{
+                  padding: '10px 20px',
+                  background: 'var(--ink)',
+                  color: 'var(--paper)',
+                  border: 'none',
+                  fontSize: 10,
+                  letterSpacing: '0.14em',
+                  cursor: 'pointer',
+                }}
+              >
+                {cancelLoading ? '...' : 'SEND ME THE INFO →'}
+              </button>
+              <button
+                onClick={() => setCancelStep(0)}
+                style={{ background: 'none', border: 'none', fontSize: 12, opacity: 0.5, cursor: 'pointer' }}
+              >
+                Keep my membership
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Membership Modal — Step 2: Final confirm after win-back */}
+      {cancelStep === 2 && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(20,20,19,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+          }}
+        >
+          <div
+            style={{
+              background: 'var(--paper)',
+              maxWidth: 480,
+              width: '100%',
+              margin: 24,
+              padding: 32,
+              border: '1px solid var(--ink)',
+            }}
+          >
+            <div
+              className="mono"
+              style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}
+            >
+              CONFIRM CANCELLATION
+            </div>
+            {cancelSuccess ? (
+              <div style={{ color: '#4ade80', fontSize: 14 }}>
+                Cancellation scheduled. Your service continues until {cancelPeriodEnd ?? nextBillingDate}.
+              </div>
+            ) : (
+              <>
+                <p style={{ fontSize: 14, opacity: 0.7, margin: '0 0 8px', lineHeight: 1.6 }}>
+                  We&apos;ve sent you an email from E. Check your inbox.
+                </p>
+                <p style={{ fontSize: 14, margin: '0 0 24px', lineHeight: 1.6 }}>
+                  {cancelPeriodEnd
+                    ? `If you still want to cancel, your service will remain active until ${cancelPeriodEnd}.`
+                    : 'If you still want to cancel, your service will remain active until your current billing period ends.'}
+                </p>
+                {cancelError && (
+                  <div style={{ color: 'var(--accent)', fontSize: 13, marginBottom: 16 }}>{cancelError}</div>
+                )}
+                <div style={{ display: 'flex', gap: 12 }}>
+                  <button
+                    onClick={handleCancelConfirm}
+                    disabled={cancelLoading}
+                    className="mono"
+                    style={{
+                      padding: '10px 20px',
+                      background: 'var(--accent)',
+                      color: '#faf7f0',
+                      border: 'none',
+                      fontSize: 10,
+                      letterSpacing: '0.14em',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {cancelLoading ? '...' : 'CONFIRM CANCELLATION'}
+                  </button>
+                  <button
+                    onClick={() => setCancelStep(0)}
+                    style={{ background: 'none', border: 'none', fontSize: 12, opacity: 0.5, cursor: 'pointer' }}
+                  >
+                    Keep my membership
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

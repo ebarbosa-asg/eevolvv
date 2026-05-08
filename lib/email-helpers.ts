@@ -6,6 +6,7 @@ import { OnboardingEmail } from '@/emails/OnboardingEmail'
 import { FollowUp1Email } from '@/emails/FollowUp1'
 import { FollowUp2Email } from '@/emails/FollowUp2'
 import { FollowUp3Email } from '@/emails/FollowUp3'
+import { WinBackEmail } from '@/emails/WinBack'
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -123,6 +124,40 @@ export async function sendFollowUpEmail({
     return { success: true }
   } catch (err) {
     console.error(`[email-helpers] sendFollowUpEmail (seq ${sequence}) unexpected:`, err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendWinBack({
+  email,
+  name,
+  tier,
+  periodEnd,
+}: {
+  email: string
+  name?: string
+  tier?: string
+  periodEnd?: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+
+  const tierLabel = tier ? ` ${tier.charAt(0).toUpperCase() + tier.slice(1)}` : ''
+
+  try {
+    const html = await render(WinBackEmail({ name, tier, periodEnd }))
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: `Before you go — a message from E about your eevolvv${tierLabel} membership`,
+      html,
+    })
+    if (error) {
+      console.error('[email-helpers] sendWinBack error:', error)
+      return { success: false, error: String(error) }
+    }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendWinBack unexpected error:', err)
     return { success: false, error: String(err) }
   }
 }
