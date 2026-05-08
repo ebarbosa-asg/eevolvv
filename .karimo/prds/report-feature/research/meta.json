@@ -1,0 +1,15 @@
+{
+  "slug": "report-feature",
+  "mode": "feature-init",
+  "started_at": "2026-05-08",
+  "phases": ["internal", "external", "summary"],
+  "focus_areas": [
+    "report CTA buttons across the site",
+    "ChatEngine report phase UI",
+    "diagnostic flow from CTA to report delivery",
+    "report content rendering and styling",
+    "post-report payment wall conversion",
+    "mobile responsiveness of report flow",
+    "email delivery of report"
+  ]
+}
