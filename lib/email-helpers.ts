@@ -6,6 +6,9 @@ import { OnboardingEmail } from '@/emails/OnboardingEmail'
 import { FollowUp1Email } from '@/emails/FollowUp1'
 import { FollowUp2Email } from '@/emails/FollowUp2'
 import { FollowUp3Email } from '@/emails/FollowUp3'
+import { BuildStartedEmail } from '@/emails/BuildStarted'
+import { BuildReadyForReviewEmail } from '@/emails/BuildReadyForReview'
+import { BuildLiveEmail } from '@/emails/BuildLive'
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -123,6 +126,112 @@ export async function sendFollowUpEmail({
     return { success: true }
   } catch (err) {
     console.error(`[email-helpers] sendFollowUpEmail (seq ${sequence}) unexpected:`, err)
+    return { success: false, error: String(err) }
+  }
+}
+
+const TIER_SLAS: Record<string, string> = {
+  seed: '72 hours',
+  core: '7–10 days',
+  evolve: '14–21 days',
+}
+
+export async function sendBuildStarted({
+  email,
+  name,
+  tier,
+  portalUrl,
+}: {
+  email: string
+  name?: string
+  tier: string
+  portalUrl: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+  const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1)
+  try {
+    const html = await render(BuildStartedEmail({ name, tier, sla: TIER_SLAS[tier] ?? '7–10 days', portalUrl }))
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: `We've started building your ${tierLabel} — build clock is running`,
+      html,
+    })
+    if (error) {
+      console.error('[email-helpers] sendBuildStarted:', error)
+      return { success: false, error: String(error) }
+    }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendBuildStarted unexpected:', err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendBuildReadyForReview({
+  email,
+  name,
+  tier,
+  portalUrl,
+  previewUrl,
+}: {
+  email: string
+  name?: string
+  tier: string
+  portalUrl: string
+  previewUrl?: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+  const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1)
+  try {
+    const html = await render(BuildReadyForReviewEmail({ name, tier, portalUrl, previewUrl }))
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: `Your ${tierLabel} build is ready for review`,
+      html,
+    })
+    if (error) {
+      console.error('[email-helpers] sendBuildReadyForReview:', error)
+      return { success: false, error: String(error) }
+    }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendBuildReadyForReview unexpected:', err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendBuildLive({
+  email,
+  name,
+  tier,
+  buildUrl,
+  portalUrl,
+}: {
+  email: string
+  name?: string
+  tier: string
+  buildUrl: string
+  portalUrl: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+  const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1)
+  try {
+    const html = await render(BuildLiveEmail({ name, tier, buildUrl, portalUrl }))
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: `Your ${tierLabel} site is live →`,
+      html,
+    })
+    if (error) {
+      console.error('[email-helpers] sendBuildLive:', error)
+      return { success: false, error: String(error) }
+    }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendBuildLive unexpected:', err)
     return { success: false, error: String(err) }
   }
 }

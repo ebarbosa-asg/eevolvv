@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { sendBuildStarted, sendBuildReadyForReview, sendBuildLive } from '@/lib/email-helpers'
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
   queued: ['in_progress'],
@@ -76,8 +77,54 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to update build status' }, { status: 500 })
   }
 
-  // T17 will add email triggers here based on status transition
   console.log(`[builds/update-status] ${build.status} → ${status} for build ${buildId}`)
+
+  // Fire-and-forget email notifications on relevant transitions (T17)
+  if (status === 'in_progress' || status === 'deploying' || status === 'live') {
+    ;(async () => {
+      try {
+        if (!supabase) return
+
+        // Fetch client email + name
+        const { data: client } = await supabase
+          .from('clients')
+          .select('email, name, tier')
+          .eq('id', build.client_id)
+          .single()
+
+        if (!client?.email) return
+
+        // Fetch portal token for URL construction
+        const { data: tokenRow } = await supabase
+          .from('onboarding_tokens')
+          .select('token')
+          .eq('client_id', build.client_id)
+          .maybeSingle()
+
+        const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
+        const portalUrl = tokenRow?.token
+          ? `${BASE_URL}/client/${tokenRow.token}`
+          : `${BASE_URL}/pricing`
+
+        const emailArgs = {
+          email: client.email,
+          name: client.name ?? undefined,
+          tier: client.tier ?? build.tier ?? 'seed',
+          portalUrl,
+        }
+
+        if (status === 'in_progress') {
+          await sendBuildStarted(emailArgs)
+        } else if (status === 'deploying') {
+          await sendBuildReadyForReview(emailArgs)
+        } else if (status === 'live') {
+          await sendBuildLive({ ...emailArgs, buildUrl: buildUrl ?? '' })
+        }
+      } catch (err) {
+        console.error('[builds/update-status] email send failed:', err)
+      }
+    })()
+  }
 
   return NextResponse.json({
     success: true,
