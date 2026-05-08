@@ -6,6 +6,7 @@ import { OnboardingEmail } from '@/emails/OnboardingEmail'
 import { FollowUp1Email } from '@/emails/FollowUp1'
 import { FollowUp2Email } from '@/emails/FollowUp2'
 import { FollowUp3Email } from '@/emails/FollowUp3'
+import { PaymentFailedEmail } from '@/emails/PaymentFailed'
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -123,6 +124,39 @@ export async function sendFollowUpEmail({
     return { success: true }
   } catch (err) {
     console.error(`[email-helpers] sendFollowUpEmail (seq ${sequence}) unexpected:`, err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendPaymentFailed({
+  email,
+  name,
+  amountDue,
+  tier,
+  billingPortalUrl,
+}: {
+  email: string
+  name?: string
+  amountDue?: string
+  tier?: string
+  billingPortalUrl: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+  try {
+    const html = await render(PaymentFailedEmail({ name, amountDue, tier, billingPortalUrl }))
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: 'Action required — payment failed for your eevolvv subscription',
+      html,
+    })
+    if (error) {
+      console.error('[email-helpers] sendPaymentFailed:', error)
+      return { success: false, error: String(error) }
+    }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendPaymentFailed unexpected:', err)
     return { success: false, error: String(err) }
   }
 }

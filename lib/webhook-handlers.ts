@@ -1,7 +1,8 @@
 import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'
 import { getTierFromPriceId, type Tier } from '@/lib/stripe-prices'
-import { sendWelcomeEmail, sendOnboardingEmail } from '@/lib/email-helpers'
+import { sendWelcomeEmail, sendOnboardingEmail, sendPaymentFailed } from '@/lib/email-helpers'
+import { stripe } from '@/lib/stripe'
 
 /**
  * Create client record, subscription, onboarding token, and initial build entry
@@ -206,12 +207,91 @@ export async function handleInvoicePaymentSucceeded(
 
 /**
  * Handle invoice.payment_failed
- * Full dunning implementation added by T18.
+ * Updates subscription to past_due and sends dunning email with Stripe billing portal link.
  */
 export async function handleInvoicePaymentFailed(
   invoice: Stripe.Invoice
 ): Promise<void> {
-  console.log('[webhook-handlers] handleInvoicePaymentFailed stub — implement in T18', invoice.id)
+  if (!supabase) { console.error('[webhook-handlers] Supabase not configured'); return }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rawInvoice = invoice as Record<string, any>
+  const subscriptionId: string =
+    rawInvoice.subscription_id ??
+    (typeof rawInvoice.subscription === 'string' ? rawInvoice.subscription : rawInvoice.subscription?.id) ??
+    ''
+
+  if (!subscriptionId) {
+    console.warn('[webhook-handlers] payment_failed: no subscription ID on invoice', invoice.id)
+    return
+  }
+
+  // Update subscription status to past_due
+  const { data: sub, error: subErr } = await supabase
+    .from('subscriptions')
+    .update({ status: 'past_due', updated_at: new Date().toISOString() })
+    .eq('stripe_subscription_id', subscriptionId)
+    .select('client_id')
+    .single()
+
+  if (subErr || !sub) {
+    console.error('[webhook-handlers] payment_failed: subscription update error:', subErr?.message)
+    return
+  }
+
+  // Fetch client for email
+  const { data: client } = await supabase
+    .from('clients')
+    .select('email, name, tier, stripe_customer_id')
+    .eq('id', sub.client_id)
+    .single()
+
+  if (!client?.email) {
+    console.warn('[webhook-handlers] payment_failed: no client email for client_id', sub.client_id)
+    return
+  }
+
+  // Build billing portal URL — try Stripe portal first, fall back to /pricing
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
+  let billingPortalUrl = `${BASE_URL}/pricing`
+
+  if (stripe && client.stripe_customer_id) {
+    try {
+      const { data: tokenRow } = await supabase
+        .from('onboarding_tokens')
+        .select('token')
+        .eq('client_id', sub.client_id)
+        .maybeSingle()
+
+      const returnUrl = tokenRow?.token
+        ? `${BASE_URL}/client/${tokenRow.token}`
+        : `${BASE_URL}/pricing`
+
+      const session = await stripe.billingPortal.sessions.create({
+        customer: client.stripe_customer_id,
+        return_url: returnUrl,
+      })
+      billingPortalUrl = session.url
+    } catch (err) {
+      console.error('[webhook-handlers] billing portal creation failed:', err)
+    }
+  }
+
+  const amountDue = rawInvoice.amount_due
+    ? `$${(rawInvoice.amount_due / 100).toFixed(2)}`
+    : undefined
+
+  ;(async () => {
+    await sendPaymentFailed({
+      email: client.email!,
+      name: client.name ?? undefined,
+      amountDue,
+      tier: client.tier ?? undefined,
+      billingPortalUrl,
+    })
+  })()
+
+  console.log('[webhook-handlers] payment_failed handled for subscription:', subscriptionId)
 }
 
 /**
@@ -244,10 +324,42 @@ export async function handleSubscriptionUpdated(
 
 /**
  * Handle customer.subscription.deleted
- * Full implementation added by T18.
+ * Marks subscription canceled, flags client as churn risk, pauses non-live builds.
  */
 export async function handleSubscriptionDeleted(
   subscription: Stripe.Subscription
 ): Promise<void> {
-  console.log('[webhook-handlers] handleSubscriptionDeleted stub — implement in T18', subscription.id)
+  if (!supabase) { console.error('[webhook-handlers] Supabase not configured'); return }
+
+  // Update subscription status to canceled
+  const { data: sub } = await supabase
+    .from('subscriptions')
+    .update({ status: 'canceled', updated_at: new Date().toISOString() })
+    .eq('stripe_subscription_id', subscription.id)
+    .select('client_id')
+    .maybeSingle()
+
+  if (!sub?.client_id) {
+    console.warn('[webhook-handlers] subscription_deleted: no matching record for', subscription.id)
+    return
+  }
+
+  // Flag client as churn risk
+  await supabase
+    .from('clients')
+    .update({ churn_risk: true })
+    .eq('id', sub.client_id)
+
+  // Pause all non-live, non-failed builds for this client
+  const { error: buildErr } = await supabase
+    .from('builds')
+    .update({ status: 'paused', updated_at: new Date().toISOString() })
+    .eq('client_id', sub.client_id)
+    .not('status', 'in', '(live,failed)')
+
+  if (buildErr) {
+    console.error('[webhook-handlers] subscription_deleted: build pause error:', buildErr.message)
+  }
+
+  console.log('[webhook-handlers] subscription_deleted handled:', subscription.id, 'client:', sub.client_id)
 }
