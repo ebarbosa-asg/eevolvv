@@ -443,19 +443,83 @@ input:focus, textarea:focus, select:focus { outline: none; }
   opacity: 0.82;
 }
 
-/* ── Report content ── */
-.report-content h3 {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 600;
-  color: var(--accent);
-  text-transform: uppercase; letter-spacing: 0.18em;
-  margin-top: 24px; margin-bottom: 8px;
+/* ── Report document styles ── */
+.report-content {
+  font-size: 15px;
+  line-height: 1.75;
+  color: rgba(20,20,19,0.85);
 }
-.report-content p    { font-size: 14px; line-height: 1.65; opacity: 0.85; margin-bottom: 12px; }
-.report-content ul   { list-style: none; padding: 0; margin-bottom: 12px; }
-.report-content ul li { font-size: 14px; line-height: 1.55; opacity: 0.85; padding: 4px 0 4px 20px; position: relative; }
-.report-content ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
-.report-content strong { font-weight: 600; opacity: 1; }
+.report-content h3 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-left: 3px solid var(--accent);
+  padding-left: 12px;
+  margin: 36px 0 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.report-content h3:first-child {
+  margin-top: 0;
+}
+.report-content p {
+  font-size: 15px;
+  line-height: 1.72;
+  color: rgba(20,20,19,0.80);
+  margin: 0 0 14px;
+}
+.report-content strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.report-content ul {
+  padding: 0;
+  list-style: none;
+  margin: 0 0 18px;
+}
+.report-content ul li {
+  position: relative;
+  padding: 6px 0 6px 22px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(20,20,19,0.78);
+  border-bottom: 1px solid var(--rule);
+}
+.report-content ul li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.report-content ul li:last-child {
+  border-bottom: none;
+}
+
+/* ── Report stat callouts (3-col → 1-col on mobile) ── */
+.report-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--ink);
+}
+@media (max-width: 600px) {
+  .report-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes reportSectionFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.report-section-fade {
+  opacity: 0;
+  animation: reportSectionFadeIn 0.5s ease forwards;
+}
 
 /* ── §03 Who we evolve — compact industry/program tiles ─────────────────────── */
 .who-evolve-card {
@@ -826,6 +890,71 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .diagnostic-status-dot--thinking,
   .diagnostic-value-badge { animation: none !important; }
   .diagnostic-msg-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
+
+/* ── Pricing tier grid ── */
+.pricing-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--ink);
+}
+.pricing-faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+.pricing-qa-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+}
+.pricing-bottom-cta {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+  border: 1px solid var(--ink);
+  padding: 40px;
+}
+.pricing-page-main {
+  min-height: 100vh;
+  background: var(--paper);
+  padding: 80px 32px;
+}
+@media (max-width: 760px) {
+  .pricing-tier-grid {
+    grid-template-columns: 1fr;
+  }
+  .pricing-tier-grid > * {
+    border-right: none !important;
+    border-bottom: 1px solid var(--ink);
+  }
+  .pricing-tier-grid > *:last-child {
+    border-bottom: none;
+  }
+  .pricing-faq-grid {
+    grid-template-columns: 1fr;
+  }
+  .pricing-bottom-cta {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 28px 20px;
+  }
+  .pricing-bottom-cta a,
+  .pricing-bottom-cta button {
+    text-align: center;
+    width: 100%;
+    display: block;
+  }
+  .pricing-page-main {
+    padding: 64px 20px;
+  }
+  .pricing-qa-row {
+    grid-template-columns: 1fr !important;
+    gap: 4px !important;
+  }
+  .report-content { padding: 0 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -182,62 +182,6 @@ const PAIN_POINTS = [
   'Work that exists because it always has — never because it should.',
 ]
 
-const LOADING_NARRATIVE = [
-  { label: 'SCANNING',  message: 'Scanning for ghost work…',               detail: 'Reading every workflow you described.' },
-  { label: 'MAPPING',   message: 'Mapping where the hours disappear…',     detail: 'Identifying tasks that shouldn\'t be human jobs.' },
-  { label: 'ANALYZING', message: 'Calculating the cost of your ghosts…',   detail: 'Running ROI models against your revenue and team size.' },
-  { label: 'BUILDING',  message: 'Building your exorcism roadmap…',        detail: 'Sequencing eliminations by impact-to-effort ratio.' },
-  { label: 'WRITING',   message: 'Writing your Ghost Work Audit…',         detail: 'Formatting every finding for your team.' },
-]
-
-// ─── Chat questions ───────────────────────────────────────────────────────────
-
-type QType = 'text' | 'email' | 'textarea' | 'chips'
-interface ChatQ {
-  key: string
-  ask: string | ((f: Record<string, string>) => string)
-  type: QType
-  options?: string[]
-  placeholder?: string
-  validate?: (v: string) => boolean
-}
-
-const CHAT_QUESTIONS: ChatQ[] = [
-  { key: 'name',            type: 'text',     placeholder: 'Your name',          validate: v => v.trim().length > 0,
-    ask: "Hi — I'm the eevolvv AI. I'm going to map your operation and find every ghost work drain hiding in it.\n\nEvery business has them. Most owners have no idea how much they cost.\n\nLet's start: what's your name?" },
-  { key: 'email',           type: 'email',    placeholder: 'you@business.com',   validate: v => /\S+@\S+\.\S+/.test(v),
-    ask: f => `Nice to meet you, ${f.name.split(' ')[0]}. What email should I send your report to?` },
-  { key: 'businessName',    type: 'text',     placeholder: 'Business name',      validate: v => v.trim().length > 0,
-    ask: "What's the name of your business?" },
-  { key: 'businessType',    type: 'text',     placeholder: 'e.g. CrossFit gym, e-commerce brand, law firm…', validate: v => v.trim().length > 0,
-    ask: 'How would you describe what your business does in one sentence?' },
-  { key: 'industry',        type: 'chips',    options: INDUSTRIES_LIST,
-    ask: 'Which industry are you in?' },
-  { key: 'revenue',         type: 'chips',    options: ['Under $100K','$100K–$500K','$500K–$1M','$1M–$5M','$5M–$20M','$20M–$100M','$100M+'],
-    ask: "What's your approximate annual revenue?" },
-  { key: 'teamSize',        type: 'chips',    options: ['Solo (just me)','2–5','6–15','16–50','51–200','200+'],
-    ask: 'How many people are on your team?' },
-  { key: 'topPains',        type: 'textarea', placeholder: 'e.g. Manually entering customer data (3hrs), chasing unpaid invoices (2hrs)…', validate: v => v.trim().length > 5,
-    ask: 'What are your top 3 most time-consuming manual tasks every week? Be specific — the more detail, the better your report.' },
-  { key: 'tools',           type: 'text',     placeholder: 'e.g. QuickBooks, Google Sheets, Slack, Salesforce…', validate: v => v.trim().length > 0,
-    ask: 'What tools and software does your business currently use?' },
-  { key: 'errorPoints',     type: 'textarea', placeholder: 'e.g. Handoffs between sales and fulfillment cause double-bookings…', validate: v => v.trim().length > 5,
-    ask: 'Where do errors or delays most often happen? What slows you down or breaks?' },
-  { key: 'customerJourney', type: 'textarea', placeholder: 'e.g. Customer finds us on Instagram → messages us → we manually check availability…', validate: v => v.trim().length > 5,
-    ask: 'Walk me through your customer journey — from first contact to completed sale.' },
-  { key: 'hoursFreed',      type: 'textarea', placeholder: 'e.g. Land 3 more enterprise clients, actually take weekends off…', validate: v => v.trim().length > 5,
-    ask: f => `Last one. When we eliminate the ghost work at ${f.businessName || 'your business'} — and we will — what do you do with those 20+ hours a week?` },
-]
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface FormFields {
-  name: string; email: string; businessName: string; businessType: string
-  industry: string; revenue: string; teamSize: string; topPains: string
-  tools: string; customerJourney: string; errorPoints: string; hoursFreed: string
-  tier: string
-}
-
 // ─── Brand mark (pixel mascot — same asset site-wide as `/mascot.png`) ───────────
 
 const MASCOT_PX = { w: 338, h: 338 } as const
@@ -688,13 +632,19 @@ function Hero({ onCTA }: { onCTA: () => void }) {
         </h1>
 
         <div className="grid mt-10 anim-fade-up hero-body-grid" style={{ gridTemplateColumns: '1.1fr 0.9fr', gap: 56, animationDelay: '0.4s', marginTop: 56, alignItems: 'end' }}>
-          <p style={{ fontSize: 18, lineHeight: 1.55, maxWidth: 560, color: 'color-mix(in oklab, var(--ink) 78%, transparent)', margin: 0 }}>
-            Every business has ghost work — the invisible, habitual tasks nobody questions. It&apos;s costing you 23 hours a week. We find it, eliminate it, and build AI that runs it instead.
-            <span style={{ display: 'block', marginTop: 16, opacity: 0.6 }}>Permanently. We don&apos;t sell software — we become your AI operations team.</span>
-          </p>
+          <div>
+            <p style={{ fontSize: 18, lineHeight: 1.6, maxWidth: 520, color: 'color-mix(in oklab, var(--ink) 78%, transparent)', margin: '0 0 24px' }}>
+              We map your ghost work, project your ROI, and hand you a custom automation roadmap — free, in under 10 minutes.
+            </p>
+            <div className="mono" style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 11, opacity: 0.55, letterSpacing: '0.12em' }}>
+              <div>→ AI WORKFLOW MAP</div>
+              <div>→ ROI PROJECTION</div>
+              <div>→ 90-DAY BUILD ROADMAP</div>
+            </div>
+          </div>
           <div className="flex items-end gap-3 hero-cta-row" style={{ alignSelf: 'end', justifySelf: 'end', flexWrap: 'wrap' }}>
-            <button onClick={onCTA} className="btn-gradient" style={{ padding: '18px 30px', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>FIND MY GHOST WORK →</button>
-            <a href="#how" style={{ background: 'transparent', color: 'var(--ink)', padding: '18px 30px', border: '1px solid var(--ink)', cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em', textDecoration: 'none' }}>SEE HOW IT WORKS</a>
+            <button onClick={onCTA} className="btn-gradient" style={{ padding: '18px 32px', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>GET FREE REPORT →</button>
+            <a href="/pricing" style={{ background: 'transparent', color: 'var(--ink)', padding: '18px 28px', border: '1px solid var(--ink)', cursor: 'pointer', fontSize: 13, fontWeight: 600, letterSpacing: '0.04em', textDecoration: 'none', opacity: 0.7 }}>VIEW PRICING</a>
           </div>
         </div>
 
@@ -784,11 +734,11 @@ function Problem() {
   return (
     <section style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="01" eyebrow="THE GHOST WORK AUDIT" title="Your business is haunted. We find the ghosts." note="DIAGNOSIS" />
-        <div className="grid problem-grid" style={{ gridTemplateColumns: 'minmax(0, 1fr) minmax(340px, 1.22fr)', gap: 72, marginTop: 56, alignItems: 'stretch' }}>
+        <SectionHeader number="02" eyebrow="THE GHOST WORK AUDIT" title="23 hours a week. Gone." note="DIAGNOSIS" />
+        <div className="grid problem-grid" style={{ gridTemplateColumns: 'minmax(0, 1fr) minmax(340px, 1.22fr)', gap: 72, marginTop: 48, alignItems: 'stretch' }}>
           <div>
-            <p style={{ fontSize: 18, lineHeight: 1.55, color: 'rgba(20,20,19,0.78)', marginBottom: 32 }}>
-              Ghost work is the invisible, habitual labor haunting every business. Tasks everyone does because nobody ever stopped to ask if they should. It&apos;s costing you <strong>23 hours a week</strong>. We find it. We name it. Then we eliminate it.
+            <p style={{ fontSize: 16, lineHeight: 1.55, color: 'rgba(20,20,19,0.65)', marginBottom: 24 }}>
+              Ghost work is invisible, habitual labor nobody questions. We find it, name it, and eliminate it.
             </p>
             <div style={{ borderTop: '1px solid var(--ink)' }}>
               {PAIN_POINTS.map((p, i) => (
@@ -947,7 +897,7 @@ function WhoItsFor() {
   return (
     <section id="who" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="04" eyebrow="WHO WE EVOLVE" title="Ghost work haunts every industry. We exorcise all of it." note={`N=${EXAMPLES.length}`} />
+        <SectionHeader number="03" eyebrow="WHO WE EVOLVE" title="Every industry has ghost work." note={`N=${EXAMPLES.length}`} />
         <div
           className="who-we-evolve-grid grid mt-12"
           style={{
@@ -1015,7 +965,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
       highlight: false,
       features: [
         'Landing page + 1 automation workflow',
-        '72-hour build SLA',
+        '24-hour build SLA',
         'Hosting + uptime monitoring',
         '1 content update / month',
       ],
@@ -1032,7 +982,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
       highlight: true,
       features: [
         'Web app + 3–5 AI agents',
-        '7–10 day build SLA',
+        '3–5 day build SLA',
         'CRM + integration connections',
         '2 agent updates / month',
         'Monthly performance report',
@@ -1050,7 +1000,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
       highlight: false,
       features: [
         'Full-stack build + CRM/ERP',
-        '14–21 day build SLA',
+        '7–10 day build SLA',
         'Custom dashboards + pipelines',
         'Full managed service',
         'Quarterly re-calibration',
@@ -1061,7 +1011,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
   return (
     <section id="pricing" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="05" eyebrow="PRICING" title="A service, not software." note="THREE TIERS" />
+        <SectionHeader number="04" eyebrow="PRICING" title="A service, not software." note="THREE TIERS" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 580, marginTop: 24 }}>
           We build it, host it, maintain it, and evolve it — every month. Choose your starting point.
         </p>
@@ -1097,7 +1047,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
           )}
         </div>
 
-        <div className="grid" style={{ gridTemplateColumns: 'repeat(3,1fr)', gap: 0, border: '1px solid var(--ink)' }}>
+        <div className="pricing-tier-grid">
           {tiers.map((tier, i) => (
             <div key={tier.id} style={{
               padding: 28, borderRight: i < tiers.length - 1 ? '1px solid var(--ink)' : 'none',
@@ -1145,7 +1095,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
           ))}
         </div>
 
-        <div style={{ marginTop: 24, border: '1px solid rgba(20,20,19,0.14)', padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
+        <div style={{ marginTop: 24, border: '1px solid rgba(20,20,19,0.14)', padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
           <div style={{ fontSize: 14, opacity: 0.6, lineHeight: 1.5 }}>
             Not sure which tier fits?{' '}
             <button onClick={() => onCTA('seed')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 14, textDecoration: 'underline', padding: 0 }}>
@@ -1161,361 +1111,6 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
   )
 }
 
-// ─── LoadingNarrative ─────────────────────────────────────────────────────────
-
-function LoadingNarrative({ step, elapsed }: { step: number; elapsed: number }) {
-  const progress = Math.min((step + 1) / LOADING_NARRATIVE.length * 100, 100)
-  const filled = Math.round(progress / 5)
-  return (
-    <div style={{ maxWidth: 640, margin: '0 auto' }}>
-      <div style={{ border: '1px solid var(--ink)', background: 'var(--ink)', color: 'var(--paper)', padding: 32, fontFamily: 'JetBrains Mono, monospace' }}>
-        <div className="flex items-center justify-between" style={{ paddingBottom: 16, marginBottom: 24, borderBottom: '1px solid rgba(244,241,234,0.18)' }}>
-          <div className="flex items-center gap-2">
-            <div style={{ width: 8, height: 8, borderRadius: 999, background: 'var(--accent)' }} className="anim-blink" />
-            <span style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.6 }}>diagnostic_engine.run</span>
-          </div>
-          <span style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)' }}>{elapsed}s</span>
-        </div>
-        <div style={{ marginBottom: 24 }}>
-          <div className="flex items-center gap-3" style={{ marginBottom: 8 }}>
-            <span style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 600 }}>[{LOADING_NARRATIVE[step].label}]</span>
-          </div>
-          <div style={{ fontSize: 15, marginBottom: 4 }}>{LOADING_NARRATIVE[step].message}</div>
-          <div style={{ fontSize: 12, opacity: 0.6 }}>{LOADING_NARRATIVE[step].detail}</div>
-        </div>
-        <div style={{ marginBottom: 24 }}>
-          <div className="flex items-center justify-between" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.55, marginBottom: 6 }}>
-            <span>PROGRESS</span><span>{Math.round(progress)}%</span>
-          </div>
-          <div style={{ height: 4, background: 'rgba(244,241,234,0.12)', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${progress}%`, background: 'var(--accent)', transition: 'width 1s ease-out' }} />
-          </div>
-          <div style={{ marginTop: 8, fontSize: 10, color: 'rgba(244,241,234,0.4)', letterSpacing: '0.05em' }}>
-            {'▓'.repeat(filled)}{'░'.repeat(20 - filled)}
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {LOADING_NARRATIVE.map((s, i) => {
-            const done = i < step, active = i === step
-            return (
-              <div key={i} style={{ fontSize: 11, opacity: done ? 0.7 : active ? 1 : 0.3, color: done ? 'var(--accent)' : 'inherit', display: 'flex', gap: 8 }}>
-                <span>{done ? '✓' : active ? '▶' : '○'}</span>
-                <span>{s.label.toLowerCase()} {done ? 'complete' : active ? 'in progress…' : 'queued'}</span>
-              </div>
-            )
-          })}
-        </div>
-        <p style={{ marginTop: 28, textAlign: 'center', fontSize: 10, letterSpacing: '0.22em', opacity: 0.4 }}>
-          AI IS GENERATING YOUR REPORT · TYPICALLY 20–35 SECONDS
-        </p>
-      </div>
-    </div>
-  )
-}
-
-// ─── ChatMark ─────────────────────────────────────────────────────────────────
-
-function ChatMark() {
-  return (
-    <div
-      className="relative shrink-0 overflow-hidden"
-      style={{
-        width: 28,
-        height: 28,
-        border: '1px solid var(--ink)',
-        marginTop: 2,
-        background: 'var(--paper)',
-      }}
-      aria-hidden
-    >
-      <Image
-        src="/mascot.png"
-        alt=""
-        fill
-        sizes="28px"
-        className="object-contain"
-        style={{ imageRendering: 'pixelated', objectPosition: 'center' }}
-      />
-    </div>
-  )
-}
-
-// ─── DiagnosticForm ───────────────────────────────────────────────────────────
-
-function DiagnosticForm({ defaultTier }: { defaultTier: string }) {
-  const [form, setForm] = useState<FormFields>({
-    name: '', email: '', businessName: '', businessType: '',
-    industry: '', revenue: '', teamSize: '', topPains: '',
-    tools: '', customerJourney: '', errorPoints: '', hoursFreed: '',
-    tier: defaultTier || 'grow',
-  })
-  const [history, setHistory] = useState<{ role: 'ai' | 'user'; text: string }[]>([])
-  const [currentQ, setCurrentQ] = useState(0)
-  const [input, setInput] = useState('')
-  const [animKey, setAnimKey] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [loadingStep, setLoadingStep] = useState(0)
-  const [elapsed, setElapsed] = useState(0)
-  const [report, setReport] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [done, setDone] = useState(false)
-  const inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null)
-
-  useEffect(() => {
-    if (!loading) { setLoadingStep(0); setElapsed(0); return }
-    const a = setInterval(() => setLoadingStep(p => Math.min(p + 1, LOADING_NARRATIVE.length - 1)), 5500)
-    const b = setInterval(() => setElapsed(p => p + 1), 1000)
-    return () => { clearInterval(a); clearInterval(b) }
-  }, [loading])
-
-  useEffect(() => { setForm(f => ({ ...f, tier: defaultTier || f.tier })) }, [defaultTier])
-
-  const messagesRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const el = messagesRef.current
-    if (el) el.scrollTop = el.scrollHeight
-  }, [history, currentQ])
-
-  useEffect(() => {
-    if (!done) inputRef.current?.focus()
-  }, [currentQ, done])
-
-  const q = CHAT_QUESTIONS[currentQ]
-  const aiText = typeof q.ask === 'function' ? q.ask(form as unknown as Record<string, string>) : q.ask
-  const isValid = q.validate ? q.validate(input) : input.trim().length > 0
-
-  const runSubmit = async (finalForm: FormFields) => {
-    setLoading(true); setError(null)
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 55_000)
-    try {
-      const res = await fetch('/api/diagnostic', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(finalForm),
-        signal: controller.signal,
-      })
-      clearTimeout(timeout)
-      let data: Record<string, unknown> = {}
-      try { data = await res.json() } catch { throw new Error('The server returned an unexpected response. Please try again.') }
-      if (res.status === 429) throw new Error("You've generated 3 reports this hour — your limit resets in 60 minutes.")
-      if (res.status === 400) throw new Error((data.error as string) || 'Please check your inputs and try again.')
-      if (res.status === 502) throw new Error('The AI engine timed out. Please try again in 30 seconds.')
-      if (!res.ok) throw new Error((data.error as string) || `Unexpected error (${res.status}).`)
-      if (!data.success) throw new Error((data.error as string) || 'Something went wrong. Please try again.')
-      setReport(data.report as string)
-    } catch (err: unknown) {
-      clearTimeout(timeout)
-      if (err instanceof Error && err.name === 'AbortError') {
-        setError('The request timed out — the AI is taking longer than expected. Please try again.')
-      } else {
-        setError(err instanceof Error ? err.message : 'Connection failed. Check your internet and try again.')
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const advance = (value: string) => {
-    if (!value.trim()) return
-    const updatedForm = { ...form, [q.key]: value } as FormFields
-    setForm(updatedForm)
-    setHistory(h => [...h, { role: 'ai', text: aiText }, { role: 'user', text: value }])
-    setInput('')
-    setAnimKey(k => k + 1)
-    if (currentQ < CHAT_QUESTIONS.length - 1) {
-      setCurrentQ(c => c + 1)
-    } else {
-      setDone(true)
-      runSubmit(updatedForm)
-    }
-  }
-
-  const formatReport = (text: string) => {
-    const sections = text.split(/(?=###\s)/).map(chunk => {
-      const headingMatch = chunk.match(/^###\s+(.+?)\n([\s\S]*)$/)
-      if (!headingMatch) return `<p>${chunk.trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br />')}</p>`
-      const [, heading, body] = headingMatch
-      const formattedBody = body.trim()
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .split('\n\n')
-        .map(para => {
-          const lines = para.trim().split('\n')
-          if (lines.every(l => l.trim().startsWith('- '))) {
-            return `<ul>${lines.map(l => `<li>${l.replace(/^- /, '')}</li>`).join('')}</ul>`
-          }
-          return `<p>${lines.join('<br />')}</p>`
-        })
-        .join('')
-      return `<h3>${heading}</h3>${formattedBody}`
-    })
-    return sections.join('')
-  }
-
-  if (report) {
-    return (
-      <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ width: 56, height: 56, border: '2px solid var(--ink)', background: 'var(--accent)', color: 'var(--paper)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 20 }}>✓</div>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>SHEET R-01 · EEVOLVV REPORT</div>
-          <div style={{ fontSize: 32, fontWeight: 500, letterSpacing: '-0.02em' }}>Your eevolvv report</div>
-          <p style={{ fontSize: 14, opacity: 0.65, marginTop: 8 }}>AI-generated diagnostic for {form.businessName || form.businessType}</p>
-        </div>
-        <div className="report-content" style={{ border: '1px solid var(--ink)', background: 'rgba(255,255,255,0.5)', padding: 32 }} dangerouslySetInnerHTML={{ __html: formatReport(report) }} />
-        <div className="diagnostic-report-cta" style={{ marginTop: 24, border: '1px solid var(--ink)', padding: 24, display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 500 }}>Ready to make this real?</div>
-            <p style={{ fontSize: 13, opacity: 0.7, marginTop: 4 }}>Book your 30-min strategy call and let&apos;s build the roadmap together.</p>
-          </div>
-          <a href={process.env.NEXT_PUBLIC_CALENDLY_URL || 'mailto:hello@eevolvv.com?subject=eevolvv%20Strategy%20Call%20Request'} target="_blank" rel="noopener noreferrer" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 22px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600 }}>BOOK STRATEGY CALL →</a>
-        </div>
-      </div>
-    )
-  }
-
-  if (loading) return <LoadingNarrative step={loadingStep} elapsed={elapsed} />
-
-  const progress = ((currentQ + 1) / CHAT_QUESTIONS.length) * 100
-
-  return (
-    <div style={{ maxWidth: 680, margin: '0 auto' }}>
-      {/* Progress bar */}
-      <div style={{ height: 2, background: 'rgba(20,20,19,0.1)', marginBottom: 0, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${progress}%`, background: 'var(--accent)', transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)' }} />
-      </div>
-
-      {/* Chat window */}
-      <div style={{ border: '1px solid var(--ink)', borderTop: 'none', background: 'rgba(255,255,255,0.45)', overflow: 'hidden' }}>
-
-        {/* Messages */}
-        <div ref={messagesRef} className="chat-messages-panel" style={{ maxHeight: 420, overflowY: 'auto', padding: '32px 32px 8px' }}>
-          {history.map((msg, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 20 }}>
-              {msg.role === 'ai' && (
-                <div style={{ display: 'flex', gap: 14, maxWidth: '82%' }}>
-                  <ChatMark />
-                  <div style={{ fontSize: 15, lineHeight: 1.65, color: 'var(--ink)', opacity: 0.6, whiteSpace: 'pre-line', paddingTop: 4 }}>{msg.text}</div>
-                </div>
-              )}
-              {msg.role === 'user' && (
-                <div style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '10px 18px', fontSize: 15, lineHeight: 1.5, maxWidth: '72%' }}>
-                  {msg.text}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* Current AI question */}
-          {!done && (
-            <div key={animKey} className="anim-fade-up" style={{ display: 'flex', gap: 14, maxWidth: '82%', marginBottom: 28 }}>
-              <ChatMark />
-              <div style={{ fontSize: 15, lineHeight: 1.65, color: 'var(--ink)', whiteSpace: 'pre-line', fontWeight: 500, paddingTop: 4 }}>{aiText}</div>
-            </div>
-          )}
-
-        </div>
-
-        {/* Chips */}
-        {!done && q.type === 'chips' && (
-          <div style={{ padding: '4px 32px 24px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {q.options!.map(opt => (
-              <ChipButton key={opt} label={opt} onClick={() => advance(opt)} />
-            ))}
-          </div>
-        )}
-
-        {/* Text / textarea input */}
-        {!done && q.type !== 'chips' && (
-          <div style={{ borderTop: '1px solid rgba(20,20,19,0.12)', display: 'flex', alignItems: q.type === 'textarea' ? 'flex-end' : 'center' }}>
-            {q.type === 'textarea' ? (
-              <textarea
-                ref={inputRef}
-                rows={3}
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                placeholder={q.placeholder}
-                style={{ flex: 1, padding: '18px 20px', border: 'none', background: 'transparent', fontSize: 15, resize: 'none', fontFamily: 'Space Grotesk, sans-serif', color: 'var(--ink)', lineHeight: 1.55 }}
-              />
-            ) : (
-              <input
-                ref={inputRef}
-                type={q.type}
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); if (isValid) advance(input) } }}
-                placeholder={q.placeholder}
-                style={{ flex: 1, padding: '18px 20px', border: 'none', background: 'transparent', fontSize: 15, fontFamily: 'Space Grotesk, sans-serif', color: 'var(--ink)' }}
-              />
-            )}
-            <button
-              onClick={() => advance(input)}
-              disabled={!isValid}
-              style={{
-                padding: '0 22px',
-                alignSelf: 'stretch',
-                background: isValid ? 'var(--ink)' : 'transparent',
-                color: isValid ? 'var(--paper)' : 'var(--ink)',
-                border: 'none',
-                borderLeft: '1px solid rgba(20,20,19,0.12)',
-                cursor: isValid ? 'pointer' : 'default',
-                fontSize: 20,
-                opacity: isValid ? 1 : 0.25,
-                transition: 'background 0.2s, opacity 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >→</button>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <div style={{ borderTop: '1px solid var(--accent)', padding: '14px 32px', background: 'rgba(255,255,255,0.4)', display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: 4 }}>※ ERROR</div>
-              <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0 }}>{error}</p>
-            </div>
-            <button onClick={() => { setError(null); setDone(false); runSubmit(form) }} className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '10px 16px', border: 0, cursor: 'pointer', fontSize: 10, letterSpacing: '0.18em', flexShrink: 0 }}>RETRY →</button>
-          </div>
-        )}
-      </div>
-
-      {/* Step counter */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
-        <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.4 }}>
-          {q.type === 'text' || q.type === 'email' ? 'ENTER TO SEND' : ''}
-        </span>
-        <span className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.4 }}>
-          {currentQ + 1} / {CHAT_QUESTIONS.length}
-        </span>
-      </div>
-    </div>
-  )
-}
-
-function ChipButton({ label, onClick }: { label: string; onClick: () => void }) {
-  const [hovered, setHovered] = useState(false)
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        padding: '7px 14px',
-        border: '1px solid var(--ink)',
-        background: hovered ? 'var(--ink)' : 'transparent',
-        color: hovered ? 'var(--paper)' : 'var(--ink)',
-        cursor: 'pointer',
-        fontSize: 13,
-        fontFamily: 'Space Grotesk, sans-serif',
-        transition: 'background 0.15s, color 0.15s',
-        lineHeight: 1.4,
-      }}
-    >
-      {label}
-    </button>
-  )
-}
 
 // ─── AgentsSection (§06) ───────────────────────────────────────────────────────
 
@@ -1774,46 +1369,46 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
       }}>03</div>
 
       <div className="mx-auto site-rail" style={{ position: 'relative', zIndex: 1 }}>
-        <SectionHeader number="03" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. right now. Free." note="" />
+        <SectionHeader number="01" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. Free." note="" />
 
-        {/* Animated value badge */}
-        <div style={{ marginTop: 16, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ marginTop: 12, marginBottom: 32, display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
           <div className="diagnostic-value-badge mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 700 }}>
-            ★&nbsp;&nbsp;VALUED ~$3K
+            ★&nbsp;&nbsp;VALUED ~$3K — YOURS FREE
           </div>
-          <span className="mono" style={{ fontSize: 9, letterSpacing: '0.14em', opacity: 0.38 }}>— YOURS FREE</span>
+          <span style={{ fontSize: 15, opacity: 0.65 }}>10 minutes. No signup required.</span>
         </div>
 
-        <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 580, marginTop: 16, marginBottom: 40 }}>
-          Just talk to us. Our AI asks the right questions, maps your workflows, and delivers a custom automation roadmap — free.
-        </p>
-
-        {/* Value prop cards */}
-        <div className="diagnostic-value-cards">
-          {([
-            { icon: '◈', label: 'AI WORKFLOW MAP', desc: 'Every bottleneck, mapped' },
-            { icon: '◎', label: 'ROI PROJECTION', desc: 'Exact dollar impact identified' },
-            { icon: '▷', label: '90-DAY ROADMAP', desc: 'Your first 3 automations, ready to build' },
-          ] as const).map((card, i) => (
-            <div
-              key={i}
-              className="anim-fade-up"
-              style={{
-                border: '1px solid var(--rule)',
-                padding: '18px 22px',
-                background: 'rgba(255,255,255,0.55)',
-                display: 'flex', gap: 14, alignItems: 'flex-start',
-                animationDelay: `${i * 0.1}s`,
-                opacity: 0,
-              }}
-            >
-              <div className="mono" style={{ fontSize: 18, color: 'var(--accent)', lineHeight: 1, paddingTop: 2, flexShrink: 0 }}>{card.icon}</div>
-              <div>
-                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: 0.5, marginBottom: 5 }}>{card.label}</div>
-                <div style={{ fontSize: 13, opacity: 0.7, lineHeight: 1.4 }}>{card.desc}</div>
+        {/* What's in your report */}
+        <div style={{ border: '1px solid var(--ink)', marginBottom: 32 }}>
+          <div className="mono" style={{ padding: '14px 24px', borderBottom: '1px solid var(--ink)', fontSize: 9, letterSpacing: '0.28em', fontWeight: 700, background: 'var(--ink)', color: 'var(--paper)' }}>
+            WHAT&apos;S IN YOUR REPORT
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0 }}>
+            {([
+              { num: '01', icon: '◈', label: 'GHOST WORK AUDIT', desc: 'Every bottleneck mapped. Hours wasted per week calculated.' },
+              { num: '02', icon: '◎', label: 'ROI PROJECTION', desc: 'Exact annual savings for your specific operation.' },
+              { num: '03', icon: '▷', label: '90-DAY ROADMAP', desc: 'First 3 automations ranked by impact. Ready to build.' },
+            ] as const).map((card, i) => (
+              <div
+                key={i}
+                className="anim-fade-up"
+                style={{
+                  padding: '24px 20px',
+                  borderRight: i < 2 ? '1px solid var(--ink)' : 'none',
+                  background: i === 1 ? 'rgba(20,20,19,0.03)' : 'var(--paper)',
+                  animationDelay: `${i * 0.1}s`,
+                  opacity: 0,
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+                  <span className="mono" style={{ fontSize: 20, color: 'var(--accent)', lineHeight: 1 }}>{card.icon}</span>
+                  <span className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: 0.35 }}>{card.num}</span>
+                </div>
+                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: 0.55, marginBottom: 8 }}>{card.label}</div>
+                <div style={{ fontSize: 13, opacity: 0.65, lineHeight: 1.55 }}>{card.desc}</div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Chat container */}
@@ -2116,13 +1711,10 @@ export default function Home() {
       <Header onCTA={() => scrollToDiagnostic()} />
       <Hero onCTA={() => scrollToDiagnostic()} />
       <Stats />
-      <Problem />
-      <Process />
       <DiagnosticSection targetTier={targetTier} />
+      <Problem />
       <WhoItsFor />
       <Pricing onCTA={tier => scrollToDiagnostic(tier)} />
-      <AgentsSection />
-      <GlobalHorizon />
       <Footer />
     </main>
   )

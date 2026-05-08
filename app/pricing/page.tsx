@@ -13,36 +13,35 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <main style={{ minHeight: '100vh', background: 'var(--paper)', padding: '80px 32px' }}>
+    <main className="pricing-page-main">
       <div className="site-rail mx-auto">
         {/* Header */}
-        <div style={{ marginBottom: 60 }}>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}>
+        <div style={{ marginBottom: 48 }}>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 14, fontWeight: 600 }}>
             § 01 · PRICING
           </div>
-          <h1 style={{ fontSize: 48, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 16px', color: 'var(--ink)', lineHeight: 1.1 }}>
-            Every business has a<br />starting point.
+          <h1 style={{ fontSize: 'clamp(28px, 5vw, 44px)', fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 12px', color: 'var(--ink)', lineHeight: 1.1 }}>
+            Pick your starting point.
           </h1>
-          <p style={{ fontSize: 17, opacity: 0.65, maxWidth: 540, margin: 0, lineHeight: 1.6 }}>
-            A service, not software. We build, host, monitor, and maintain your AI-powered system — so you can focus on your business.
+          <p style={{ fontSize: 16, opacity: 0.6, maxWidth: 480, margin: 0, lineHeight: 1.55 }}>
+            We build it, host it, and maintain it every month. Not software — a service.
           </p>
         </div>
 
         <PricingTiers />
 
         {/* Bottom CTA */}
-        <div style={{ marginTop: 80, padding: '40px', border: '1px solid var(--ink)', display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'center' }}>
+        <div className="pricing-bottom-cta" style={{ marginTop: 60 }}>
           <div>
-            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 8, fontWeight: 600 }}>NOT SURE WHERE TO START?</div>
-            <div style={{ fontSize: 20, fontWeight: 500 }}>Get your free AI diagnostic first.</div>
-            <p style={{ fontSize: 14, opacity: 0.65, margin: '6px 0 0', lineHeight: 1.5 }}>The diagnostic tells you exactly which tier fits your business and why.</p>
+            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 6 }}>Not sure which tier?</div>
+            <p style={{ fontSize: 14, opacity: 0.6, margin: 0, lineHeight: 1.5 }}>Run the free AI diagnostic — it maps your business and tells you exactly where to start.</p>
           </div>
           <a
             href="/#diagnostic"
             className="mono"
             style={{ padding: '16px 28px', background: 'var(--ink)', color: 'var(--paper)', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 700, whiteSpace: 'nowrap' }}
           >
-            GET FREE REPORT →
+            FREE DIAGNOSTIC →
           </a>
         </div>
       </div>

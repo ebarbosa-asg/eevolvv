@@ -36,7 +36,14 @@ OUTPUT STRUCTURE (use these exact headers):
 [1-2 sentences that crystallize the opportunity cost of staying manual — make it real]
 
 ### TALENT MATCH (OPTIONAL)
-[If this business could benefit from a fractional operator, specialist, or micro-consultant to implement these automations, briefly note that eevolvv/talent connects businesses with vetted specialists who can execute the roadmap — 1-2 sentences max, only if genuinely relevant]`
+[If this business could benefit from a fractional operator, specialist, or micro-consultant to implement these automations, briefly note that eevolvv/talent connects businesses with vetted specialists who can execute the roadmap — 1-2 sentences max, only if genuinely relevant]
+
+### STATS
+HOURS_FREED: {integer — total weekly hours freed across all automations combined}
+AUTOMATIONS: {integer — exact count of automations listed in TOP AUTOMATION OPPORTUNITIES}
+ANNUAL_SAVINGS: {integer — 12-month savings figure from ESTIMATED ROI PROJECTION, number only, no $ sign, no K suffix, no commas}
+
+Output STATS as the absolute final section of every report. Use plain integers only (e.g. 14, 5, 67000). No ranges, no approximations, no formatting.`
 
 const INDUSTRY_CONTEXT: Record<string, string> = {
   'Restaurant / Food & Beverage': `

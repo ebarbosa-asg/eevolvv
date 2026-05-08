@@ -2,8 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import posthog from 'posthog-js'
+import Confetti from 'react-confetti'
+import { usePDF } from 'react-to-pdf'
 import { VolvvE, VolvvEAvatar, type GhostState } from '@/components/VolvvE'
 import { TierCards } from '@/components/TierCards'
+import { formatReport } from '@/lib/format-report'
 
 type Phase = 'chatting' | 'extracting' | 'report' | 'error'
 type Msg = { role: 'user' | 'ai'; text: string; id: number }
@@ -33,50 +36,6 @@ function resolveGhostState(phase: Phase, isStreaming: boolean): GhostState {
   return 'idle'
 }
 
-function formatReport(text: string): string {
-  const sections = text.split(/(?=###\s)/).map(chunk => {
-    const m = chunk.match(/^###\s+(.+?)\n([\s\S]*)$/)
-    if (!m) {
-      return `<p>${chunk.trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br />')}</p>`
-    }
-    const [, heading, body] = m
-    const formatted = body.trim()
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .split('\n\n')
-      .map(para => {
-        const lines = para.trim().split('\n')
-        if (lines.length > 1 && lines.every(l => l.trim().startsWith('- '))) {
-          return `<ul>${lines.map(l => `<li>${l.replace(/^- /, '')}</li>`).join('')}</ul>`
-        }
-        return `<p>${lines.join('<br />')}</p>`
-      })
-      .join('')
-    return `<h3>${heading}</h3>${formatted}`
-  })
-  return sections.join('')
-}
-
-function extractStats(text: string): { label: string; value: string }[] {
-  const stats: { label: string; value: string }[] = []
-
-  const hoursMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:hours?|hrs?)\s*(?:per\s*week|\/\s*week|weekly|a\s*week|saved|freed)/i)
-  if (hoursMatch) stats.push({ label: 'HRS / WEEK FREED', value: hoursMatch[1] })
-
-  const autoMatch = text.match(/(\d+)\s+(?:key\s+)?(?:automations?|workflows?|processes?|opportunities)\s*(?:identified|found|recommended|to\s*automate)?/i)
-  if (autoMatch) stats.push({ label: 'AUTOMATIONS FOUND', value: autoMatch[1] })
-
-  const savingsMatch = text.match(/\$\s*(\d[\d,]*(?:K|k|M|m)?)\s*(?:per\s*year|annually|\/\s*year|in\s*(?:annual\s*)?savings?)?/i)
-  if (savingsMatch) stats.push({ label: 'EST. ANNUAL SAVINGS', value: '$' + savingsMatch[1] })
-
-  const defaults = [
-    { label: 'WORKFLOWS MAPPED', value: '3+' },
-    { label: 'AUTOMATIONS FOUND', value: '5+' },
-    { label: 'ROI SECTIONS', value: '6' },
-  ]
-  while (stats.length < 3) stats.push(defaults[stats.length])
-  return stats.slice(0, 3)
-}
-
 function ProgressRing({ pct }: { pct: number }) {
   const r = 38
   const circ = 2 * Math.PI * r
@@ -103,7 +62,15 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
   const [streamText, setStreamText] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const [input, setInput] = useState('')
-  const [report, setReport] = useState<{ text: string; businessName?: string; email?: string } | null>(null)
+  const [report, setReport] = useState<{
+    text: string
+    businessName?: string
+    email?: string
+    stats?: { hoursFreed: number; automations: number; annualSavings: number } | null
+    tier?: string
+    submissionId?: string
+  } | null>(null)
+  const [showConfetti, setShowConfetti] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [userMsgCount, setUserMsgCount] = useState(0)
 
@@ -125,6 +92,8 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
   const hasInteracted = useRef(false)
   const msgIdRef = useRef(1)
   const extractionStarted = useRef(false)
+  const driftIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { toPDF, targetRef: pdfTargetRef } = usePDF({ filename: 'eevolvv-evolution-report.pdf' })
 
   useEffect(() => {
     const el = messagesRef.current
@@ -169,6 +138,16 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
           setTimeout(tick, 340)
         } else {
           setAllLinesComplete(true)
+          // Drift 92→99 over 8 seconds while waiting for API
+          let driftPct = 92
+          driftIntervalRef.current = setInterval(() => {
+            driftPct = Math.min(99, driftPct + 7 / (8000 / 200))
+            setExtractPct(Math.round(driftPct))
+            if (driftPct >= 99) {
+              clearInterval(driftIntervalRef.current!)
+              driftIntervalRef.current = null
+            }
+          }, 200)
         }
       }
     }
@@ -177,14 +156,31 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
     return () => {
       cancelled = true
       extractionStarted.current = false
+      if (driftIntervalRef.current) {
+        clearInterval(driftIntervalRef.current)
+        driftIntervalRef.current = null
+      }
     }
   }, [phase])
 
   // Report stagger reveal
   useEffect(() => {
     if (phase !== 'report' || !report) return
-    setReportStats(extractStats(report.text))
-    const timings = [120, 380, 680, 1060]
+    if (report.stats && (report.stats.hoursFreed > 0 || report.stats.automations > 0 || report.stats.annualSavings > 0)) {
+      setReportStats([
+        { label: 'HRS / WEEK FREED', value: String(report.stats.hoursFreed) },
+        { label: 'AUTOMATIONS FOUND', value: String(report.stats.automations) },
+        { label: 'EST. ANNUAL SAVINGS', value: `$${report.stats.annualSavings.toLocaleString()}` },
+      ])
+    } else {
+      setReportStats([
+        { label: 'WORKFLOWS MAPPED', value: '3+' },
+        { label: 'AUTOMATIONS FOUND', value: '5+' },
+        { label: 'ROI POTENTIAL', value: 'HIGH' },
+      ])
+    }
+    setShowConfetti(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    const timings = [100, 500, 1000, 1600]
     timings.forEach((ms, i) => setTimeout(() => setRevealStage(i + 1), ms))
   }, [phase, report])
 
@@ -296,7 +292,11 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
           tier: data.tier,
           submission_id: data.submissionId,
         })
-        setReport({ text: data.report, businessName: data.businessName, email: data.email })
+        setReport({ text: data.report, businessName: data.businessName, email: data.email, stats: data.stats, tier: data.tier, submissionId: data.submissionId })
+        if (driftIntervalRef.current) {
+          clearInterval(driftIntervalRef.current)
+          driftIntervalRef.current = null
+        }
         setExtractPct(100)
         setTimeout(() => setPhase('report'), 700)
       } else {
@@ -325,8 +325,13 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
     setExtractPct(0)
     setRevealStage(0)
     setReportStats([])
+    setShowConfetti(false)
     msgIdRef.current = 1
     extractionStarted.current = false
+    if (driftIntervalRef.current) {
+      clearInterval(driftIntervalRef.current)
+      driftIntervalRef.current = null
+    }
   }
 
   const progressPct = Math.min(100, Math.round((userMsgCount / APPROX_QUESTIONS) * 100))
@@ -422,77 +427,164 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
 
   // ── Report ─────────────────────────────────────────────────────────────────
   if (phase === 'report' && report) {
-    const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || 'mailto:hello@eevolvv.com?subject=eevolvv%20Strategy%20Call%20Request'
+    const reportDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    const reportId = `R-${String(Date.now()).slice(-5)}`
+    const pdfFilename = `eevolvv-evolution-report-${(report.businessName || 'business').toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().slice(0, 10)}.pdf`
 
     return (
-      <div style={{ padding: '40px 32px', background: 'var(--paper)' }}>
-        {/* Stat callouts */}
+      <div style={{ background: 'var(--paper)' }}>
+
+        {/* T08 — Confetti burst */}
+        {showConfetti && revealStage >= 1 && (
+          <Confetti
+            recycle={false}
+            numberOfPieces={180}
+            colors={['#8C2B1A', '#141413', '#faf7f0', '#d4a574']}
+            gravity={0.25}
+            onConfettiComplete={() => setShowConfetti(false)}
+            style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999, pointerEvents: 'none' }}
+          />
+        )}
+
+        {/* ── Document header ── */}
         <div
-          className="diagnostic-stat-callouts"
+          ref={pdfTargetRef}
           style={{
             opacity: revealStage >= 1 ? 1 : 0,
-            transform: revealStage >= 1 ? 'translateY(0)' : 'translateY(16px)',
+            transform: revealStage >= 1 ? 'none' : 'translateY(-8px)',
             transition: 'opacity 0.5s ease, transform 0.5s ease',
           }}
         >
-          {reportStats.map((s, i) => (
-            <div key={i} style={{
-              border: '1px solid var(--ink)',
-              padding: '20px 24px', textAlign: 'center',
-              background: i === 0 ? 'var(--ink)' : 'var(--paper)',
-              color: i === 0 ? 'var(--paper)' : 'var(--ink)',
-            }}>
-              <div style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 8 }}>
-                {s.value}
+          <div style={{
+            background: 'var(--ink)', color: 'var(--paper)',
+            padding: '28px 32px',
+            borderBottom: '3px solid var(--accent)',
+            position: 'relative', overflow: 'hidden',
+          }}>
+            <div style={{
+              position: 'absolute', inset: 0,
+              backgroundImage: 'linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)',
+              backgroundSize: '24px 24px', pointerEvents: 'none',
+            }} />
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.32em', color: 'var(--accent)', fontWeight: 700 }}>
+                  EEVOLVV DIAGNOSTIC REPORT
+                </div>
+                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.35 }}>
+                  {reportId} · {reportDate}
+                </div>
               </div>
-              <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: i === 0 ? 0.6 : 0.45 }}>
-                {s.label}
+              <div style={{ fontSize: 'clamp(26px, 5vw, 42px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: 12 }}>
+                {report.businessName || 'Your Business'}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 10 }}>
+                <span style={{ fontSize: 13, opacity: 0.45, letterSpacing: '0.04em' }}>
+                  AI-generated automation roadmap
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80', flexShrink: 0 }} />
+                  <span className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', color: '#4ade80' }}>COMPLETE</span>
+                </span>
+              </div>
+              {/* T07 — Email confirmation */}
+              {report.email && (
+                <div className="mono" style={{ fontSize: 11, opacity: 0.4, marginBottom: 10 }}>
+                  → Report sent to {report.email}
+                </div>
+              )}
+              {/* T09 + T12 — Bookmark + PDF links */}
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 4 }}>
+                {report.submissionId && (
+                  <a
+                    href={`/report/${report.submissionId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mono"
+                    style={{ fontSize: 10, letterSpacing: '0.14em', color: 'rgba(250,247,240,0.55)', textDecoration: 'none', borderBottom: '1px solid rgba(250,247,240,0.25)' }}
+                  >
+                    Bookmark this report →
+                  </a>
+                )}
+                <button
+                  onClick={() => { (toPDF as (opts?: { filename?: string }) => void)({ filename: pdfFilename }) }}
+                  className="mono"
+                  style={{ fontSize: 10, letterSpacing: '0.14em', color: 'rgba(250,247,240,0.55)', background: 'none', border: 'none', borderBottom: '1px solid rgba(250,247,240,0.25)', cursor: 'pointer', padding: 0 }}
+                >
+                  Download PDF →
+                </button>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Report header */}
-        <div style={{
-          textAlign: 'center', marginBottom: 28,
-          opacity: revealStage >= 2 ? 1 : 0,
-          transform: revealStage >= 2 ? 'translateY(0)' : 'translateY(12px)',
-          transition: 'opacity 0.5s ease, transform 0.5s ease',
-        }}>
-          <div style={{
-            width: 44, height: 44, border: '2px solid var(--ink)',
-            background: 'var(--accent)', color: 'var(--paper)',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 18, marginBottom: 14,
-          }}>✓</div>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 8 }}>
-            SHEET R-01 · EEVOLVV REPORT
           </div>
-          <div style={{ fontSize: 28, fontWeight: 500, letterSpacing: '-0.02em' }}>Your eevolvv report</div>
-          <p style={{ fontSize: 13, opacity: 0.6, marginTop: 6 }}>
-            AI-generated diagnostic for {report.businessName || 'your business'}
-          </p>
+
+          {/* ── Stat callouts ── */}
+          <div className="report-stat-grid">
+            {reportStats.map((s, i) => (
+              <div key={i} style={{
+                background: i === 0 ? 'var(--accent)' : 'var(--paper)',
+                color: i === 0 ? 'var(--paper)' : 'var(--ink)',
+                padding: '24px 20px',
+                textAlign: 'center',
+              }}>
+                <div style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 8 }}>
+                  {s.value}
+                </div>
+                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: i === 0 ? 0.72 : 0.45, lineHeight: 1.5 }}>
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Report content */}
+        {/* ── Report content ── */}
         <div
           className="report-content"
           style={{
-            border: '1px solid var(--ink)',
-            background: 'rgba(255,255,255,0.5)',
-            padding: 32,
-            opacity: revealStage >= 3 ? 1 : 0,
-            transform: revealStage >= 3 ? 'translateY(0)' : 'translateY(12px)',
-            transition: 'opacity 0.6s ease, transform 0.6s ease',
+            padding: '40px 32px',
+            opacity: revealStage >= 2 ? 1 : 0,
+            transform: revealStage >= 2 ? 'none' : 'translateY(16px)',
+            transition: 'opacity 0.7s ease, transform 0.7s ease',
           }}
           dangerouslySetInnerHTML={{ __html: formatReport(report.text) }}
         />
 
-        {/* Payment wall — shown when report phase is complete */}
-        <TierCards
-          email={report?.email}
-          visible={revealStage >= 4}
-        />
+        {/* ── Next-step banner ── */}
+        <div
+          style={{
+            padding: '32px',
+            borderTop: '3px solid var(--accent)',
+            background: 'var(--ink)',
+            color: 'var(--paper)',
+            opacity: revealStage >= 3 ? 1 : 0,
+            transform: revealStage >= 3 ? 'none' : 'translateY(12px)',
+            transition: 'opacity 0.5s ease, transform 0.5s ease',
+          }}
+        >
+          <div className="mono" style={{ fontSize: 9, letterSpacing: '0.28em', color: 'var(--accent)', marginBottom: 10, fontWeight: 700 }}>
+            → NEXT STEP
+          </div>
+          <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 8, lineHeight: 1.2 }}>
+            Your roadmap is ready. Time to build it.
+          </div>
+          <p style={{ fontSize: 14, opacity: 0.55, margin: 0, lineHeight: 1.6 }}>
+            Every automation above can be live within days. Choose your tier and we start immediately.
+          </p>
+        </div>
+
+        {/* ── Payment wall ── */}
+        <div
+          style={{
+            padding: '32px',
+            background: 'var(--paper)',
+            opacity: revealStage >= 4 ? 1 : 0,
+            transform: revealStage >= 4 ? 'none' : 'translateY(12px)',
+            transition: 'opacity 0.5s ease, transform 0.5s ease',
+          }}
+        >
+          <TierCards email={report?.email} visible={revealStage >= 4} recommendedTier={report?.tier} />
+        </div>
+
       </div>
     )
   }
@@ -550,7 +642,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
           >
             {msg.role === 'ai' && (
               <div style={{ display: 'flex', gap: 14, maxWidth: '82%', alignItems: 'flex-start' }}>
-                <VolvvEAvatar state="idle" scale={4} />
+                <VolvvEAvatar state={ghostState} scale={4} />
                 <div style={{ fontSize: 15, lineHeight: 1.65, color: 'var(--ink)', whiteSpace: 'pre-line', paddingTop: 4 }}>
                   {msg.text}
                 </div>

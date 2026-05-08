@@ -20,6 +20,7 @@ interface Props {
   industry?: string
   tier?: string
   report: string
+  submissionId?: string
 }
 
 const TIER_LABELS: Record<string, string> = {
@@ -52,6 +53,7 @@ export function EvolutionReportEmail({
   industry,
   tier,
   report,
+  submissionId,
 }: Props) {
   const displayName = businessName || businessType || 'your business'
   const greeting = name ? `Hi ${name.split(' ')[0]},` : 'Hi,'
@@ -133,14 +135,18 @@ export function EvolutionReportEmail({
           <Section style={ctaSection}>
             <Heading as="h3" style={ctaHeading}>Ready to make this real?</Heading>
             <Text style={ctaText}>
-              Book your free 30-minute strategy call. We&apos;ll walk through your roadmap together and confirm the right starting point for your business.
+              Your roadmap is ready. Start your build now — we begin the moment checkout is complete.
             </Text>
             <Button
-              href="https://calendly.com/hello-eevolvv"
+              href={`https://eevolvv.com/api/stripe/checkout?tier=${tier ?? 'core'}&source=email${submissionId ? `&sid=${submissionId}` : ''}`}
               style={ctaButton}
             >
-              Book Your Strategy Call →
+              Start Your Evolution →
             </Button>
+            <Text style={secondaryCtaText}>
+              Prefer to talk first?{' '}
+              <a href="https://calendly.com/hello-eevolvv" style={secondaryCtaLink}>Book a call →</a>
+            </Text>
           </Section>
 
           <Hr style={divider} />
@@ -312,6 +318,18 @@ const ctaButton: React.CSSProperties = {
   padding: '14px 28px',
   textDecoration: 'none',
   display: 'inline-block',
+}
+
+const secondaryCtaText: React.CSSProperties = {
+  color: 'rgba(20,20,19,0.5)',
+  fontSize: '13px',
+  marginTop: '16px',
+  margin: '16px 0 0',
+}
+
+const secondaryCtaLink: React.CSSProperties = {
+  color: ACCENT,
+  textDecoration: 'underline',
 }
 
 const footerSection: React.CSSProperties = {

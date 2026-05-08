@@ -141,7 +141,7 @@ Contact: ${name || 'Not provided'} — ${email}
 
 Generate their eevolvv report now.`
 
-  let report: string
+  let rawReport: string
   try {
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
@@ -149,7 +149,7 @@ Generate their eevolvv report now.`
       system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: userMessage }],
     })
-    report = message.content[0].type === 'text'
+    rawReport = message.content[0].type === 'text'
       ? message.content[0].text
       : 'Report generation failed. Please try again.'
   } catch (err) {
@@ -165,6 +165,16 @@ Generate their eevolvv report now.`
     )
   }
 
+  // ── Parse structured STATS block ─────────────────────────────────────────
+  const statsMatch = rawReport.match(/###\s*STATS\s*\n([\s\S]*?)$/i)
+  const statsBlock = statsMatch?.[1] ?? ''
+  const stats = statsMatch ? {
+    hoursFreed: parseInt(statsBlock.match(/HOURS_FREED:\s*(\d+)/i)?.[1] ?? '0', 10),
+    automations: parseInt(statsBlock.match(/AUTOMATIONS:\s*(\d+)/i)?.[1] ?? '0', 10),
+    annualSavings: parseInt(statsBlock.match(/ANNUAL_SAVINGS:\s*\$?(\d+)/i)?.[1] ?? '0', 10),
+  } : null
+  const report = rawReport.replace(/###\s*STATS[\s\S]*$/i, '').trim()
+
   const durationMs = Date.now() - startMs
 
   // ── Update Supabase with report ───────────────────────────────────────────
@@ -179,7 +189,7 @@ Generate their eevolvv report now.`
     ;(async () => {
       try {
         const html = await render(
-          EvolutionReportEmail({ name, businessName, businessType, industry, tier, report })
+          EvolutionReportEmail({ name, businessName, businessType, industry, tier, report, submissionId: submissionId ?? undefined })
         )
         const { error: emailError } = await resend.emails.send({
           from: process.env.FROM_EMAIL ?? 'hello@eevolvv.com',
@@ -195,6 +205,20 @@ Generate their eevolvv report now.`
       } catch (err) {
         console.error('[resend] unexpected error:', err)
       }
+    })()
+  }
+
+  // ── Schedule follow-up email queue (T10) ─────────────────────────────────
+  if (submissionId && supabase && email) {
+    ;(async () => {
+      const now = new Date()
+      const rows = [
+        { submission_id: submissionId, email, template: 'followup1', name: name ?? null, business_name: businessName ?? null, send_after: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), status: 'pending' },
+        { submission_id: submissionId, email, template: 'followup2', name: name ?? null, business_name: businessName ?? null, send_after: new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString(), status: 'pending' },
+        { submission_id: submissionId, email, template: 'followup3', name: name ?? null, business_name: businessName ?? null, send_after: new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString(), status: 'pending' },
+      ]
+      const { error: queueError } = await supabase.from('email_queue').insert(rows)
+      if (queueError) console.error('[email_queue] insert error:', queueError.message)
     })()
   }
 
@@ -229,6 +253,7 @@ Generate their eevolvv report now.`
     {
       success: true,
       report,
+      stats,
       businessName: businessName || businessType,
       email, name, tier,
       submissionId,

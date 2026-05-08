@@ -1,29 +1,40 @@
 'use client'
 
 import { useState } from 'react'
-import { TIER_CONFIGS, getPriceId, type Tier } from '@/lib/stripe-prices'
+import { TIER_CONFIGS, type Tier } from '@/lib/stripe-prices'
+
+const DISPLAY_FEATURES: Record<Tier, string[]> = {
+  seed: [
+    'Landing page + 1 automation workflow',
+    '24-hour build delivery',
+    'Hosting, monitoring + 1 update/mo',
+  ],
+  core: [
+    'Web app + 3–5 AI agents built for you',
+    '3–5 day build delivery',
+    'CRM integrations + monthly report',
+  ],
+  evolve: [
+    'Full-stack build + CRM/ERP integrations',
+    '7–10 day build delivery',
+    'Full managed service + quarterly sessions',
+  ],
+}
 
 export function PricingTiers() {
   const [interval, setInterval] = useState<'annual' | 'monthly'>('annual')
-  const [emailInputs, setEmailInputs] = useState<Record<Tier, string>>({ seed: '', core: '', evolve: '' })
   const [loading, setLoading] = useState<Tier | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   async function handleStart(tier: Tier) {
-    const email = emailInputs[tier].trim()
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setErrors(e => ({ ...e, [tier]: 'Enter a valid email to continue.' }))
-      return
-    }
     setErrors(e => ({ ...e, [tier]: '' }))
     setLoading(tier)
 
-    const priceId = getPriceId(tier, interval)
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId, email }),
+        body: JSON.stringify({ tier, interval }),
       })
       const data = await res.json()
       if (data.url) {
@@ -41,7 +52,7 @@ export function PricingTiers() {
   return (
     <>
       {/* Toggle */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 40 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
         {(['annual', 'monthly'] as const).map(opt => (
           <button
             key={opt}
@@ -59,17 +70,18 @@ export function PricingTiers() {
         ))}
         {interval === 'annual' && (
           <span className="mono" style={{ fontSize: 10, color: 'var(--accent)', letterSpacing: '0.1em' }}>
-            2 MONTHS FREE ON ANNUAL
+            2 MONTHS FREE
           </span>
         )}
       </div>
 
       {/* Tier grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0, border: '1px solid var(--ink)' }}>
+      <div className="pricing-tier-grid">
         {TIER_CONFIGS.map((config, i) => {
           const price = config.prices[interval]
           const isCore = config.tier === 'core'
           const isLoading = loading === config.tier
+          const features = DISPLAY_FEATURES[config.tier]
           return (
             <div
               key={config.tier}
@@ -90,77 +102,57 @@ export function PricingTiers() {
                   MOST POPULAR
                 </div>
               )}
-              <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.5, marginBottom: 10 }}>
-                {config.tier.toUpperCase()}
-              </div>
-              <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
+
+              <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
                 {config.name}
               </div>
-              <div style={{ fontSize: 13, opacity: 0.6, marginBottom: 24, lineHeight: 1.5 }}>
+              <div style={{ fontSize: 13, opacity: 0.55, marginBottom: 20, lineHeight: 1.4 }}>
                 {config.tagline}
               </div>
 
               <div style={{
                 borderTop: `1px solid ${isCore ? 'rgba(244,241,234,0.18)' : 'var(--rule)'}`,
-                paddingTop: 20, marginBottom: 20,
+                paddingTop: 18, marginBottom: 24,
               }}>
-                <div style={{ fontSize: 36, fontWeight: 700, letterSpacing: '-0.025em' }}>
+                <div style={{ fontSize: 38, fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1 }}>
                   {price.amountDisplay}
                 </div>
-                <div className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', opacity: 0.5, marginTop: 4 }}>
+                <div className="mono" style={{ fontSize: 10, letterSpacing: '0.14em', opacity: 0.5, marginTop: 6 }}>
                   {interval === 'annual' ? '/ YEAR · BILLED ONCE' : '/ MONTH · CANCEL ANYTIME'}
                 </div>
                 {price.annualSavingsDisplay && interval === 'annual' && (
-                  <div className="mono" style={{ fontSize: 9, color: 'var(--accent)', marginTop: 8, letterSpacing: '0.1em' }}>
+                  <div className="mono" style={{ fontSize: 9, color: 'var(--accent)', marginTop: 6, letterSpacing: '0.1em' }}>
                     {price.annualSavingsDisplay.toUpperCase()}
                   </div>
                 )}
               </div>
 
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px', flex: 1 }}>
-                {config.features.map((f, j) => (
-                  <li key={j} style={{ display: 'grid', gridTemplateColumns: '14px 1fr', gap: 10, padding: '7px 0', fontSize: 13, lineHeight: 1.5 }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 auto', flex: 1 }}>
+                {features.map((f, j) => (
+                  <li key={j} style={{ display: 'grid', gridTemplateColumns: '14px 1fr', gap: 10, padding: '8px 0', fontSize: 13, lineHeight: 1.5, borderBottom: `1px solid ${isCore ? 'rgba(244,241,234,0.1)' : 'var(--rule)'}` }}>
                     <span style={{ color: 'var(--accent)' }}>→</span>
-                    <span style={{ opacity: 0.85 }}>{f}</span>
+                    <span style={{ opacity: 0.88 }}>{f}</span>
                   </li>
                 ))}
               </ul>
 
-              <div className="mono" style={{ fontSize: 10, opacity: 0.45, marginBottom: 16, letterSpacing: '0.1em' }}>
-                {config.buildSla.toUpperCase()}
-              </div>
-
-              {/* Email capture + CTA */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <input
-                  type="email"
-                  placeholder="your@email.com"
-                  value={emailInputs[config.tier]}
-                  onChange={e => setEmailInputs(prev => ({ ...prev, [config.tier]: e.target.value }))}
-                  style={{
-                    padding: '11px 14px',
-                    border: `1px solid ${isCore ? 'rgba(244,241,234,0.3)' : 'var(--rule)'}`,
-                    background: 'transparent',
-                    color: isCore ? 'var(--paper)' : 'var(--ink)',
-                    fontSize: 13, outline: 'none', fontFamily: 'inherit',
-                  }}
-                />
+              <div style={{ marginTop: 28 }}>
                 {errors[config.tier] && (
-                  <div style={{ fontSize: 11, color: 'var(--accent)' }}>{errors[config.tier]}</div>
+                  <div style={{ fontSize: 11, color: 'var(--accent)', marginBottom: 8 }}>{errors[config.tier]}</div>
                 )}
                 <button
                   onClick={() => handleStart(config.tier)}
                   disabled={loading !== null}
                   className="mono"
                   style={{
-                    padding: '14px 0', fontSize: 11, letterSpacing: '0.18em', fontWeight: 700,
+                    width: '100%', padding: '16px 0', fontSize: 11, letterSpacing: '0.18em', fontWeight: 700,
                     background: isCore ? 'var(--accent)' : 'var(--ink)',
                     color: 'var(--paper)',
                     border: 'none', cursor: loading !== null ? 'not-allowed' : 'pointer',
                     opacity: loading !== null && !isLoading ? 0.5 : 1,
                   }}
                 >
-                  {isLoading ? 'LOADING...' : `START ${config.name.toUpperCase()} →`}
+                  {isLoading ? 'REDIRECTING...' : `START ${config.name.toUpperCase()} →`}
                 </button>
               </div>
             </div>
@@ -168,24 +160,24 @@ export function PricingTiers() {
         })}
       </div>
 
-      {/* FAQ */}
-      <div style={{ marginTop: 80 }}>
-        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 24, fontWeight: 600 }}>
-          § 02 · COMMON QUESTIONS
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
-          {[
-            { q: 'Can I cancel anytime?', a: 'Yes. Monthly plans cancel at end of billing period. Annual plans are non-refundable after the build starts.' },
-            { q: 'What if my build takes longer than the SLA?', a: 'We extend your subscription by the delay — free of charge. SLA guarantees apply from when your technician claims your build.' },
-            { q: 'Can I upgrade from Seed to Core?', a: 'Yes. Upgrade at any time from your client portal. Stripe prorates the difference automatically.' },
-            { q: 'What does "managed service" mean?', a: 'We host, monitor, update, and maintain your build. You get a monthly report and one content/agent update per month included.' },
-          ].map(({ q, a }) => (
-            <div key={q}>
-              <div style={{ fontWeight: 600, marginBottom: 8, fontSize: 15 }}>{q}</div>
-              <div style={{ fontSize: 14, opacity: 0.65, lineHeight: 1.6 }}>{a}</div>
-            </div>
-          ))}
-        </div>
+      {/* Post-purchase note */}
+      <div className="mono" style={{ marginTop: 14, padding: '12px 18px', background: 'rgba(20,20,19,0.04)', borderLeft: '3px solid var(--accent)', fontSize: 11, letterSpacing: '0.06em', lineHeight: 1.7 }}>
+        → Checkout takes 2 minutes. Build queues immediately. Onboarding doc + client portal link sent to your inbox automatically.
+      </div>
+
+      {/* Compact FAQ */}
+      <div style={{ marginTop: 56, display: 'grid', gap: 20 }}>
+        {[
+          { q: 'Can I cancel?', a: 'Monthly: cancel anytime, ends at period close. Annual: non-refundable once build starts.' },
+          { q: 'What if the build runs late?', a: 'We extend your subscription by the delay — no charge.' },
+          { q: 'Can I upgrade?', a: 'Yes, from your client portal. Stripe prorates automatically.' },
+          { q: 'What\'s included in "managed"?', a: 'Hosting, monitoring, updates, and a monthly performance report.' },
+        ].map(({ q, a }) => (
+          <div key={q} className="pricing-qa-row" style={{ paddingBottom: 20, borderBottom: '1px solid var(--rule)' }}>
+            <div style={{ fontWeight: 600, fontSize: 14 }}>{q}</div>
+            <div style={{ fontSize: 14, opacity: 0.65, lineHeight: 1.6 }}>{a}</div>
+          </div>
+        ))}
       </div>
     </>
   )
