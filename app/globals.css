@@ -964,3 +964,86 @@ input:focus, textarea:focus, select:focus { outline: none; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── /fitness vertical landing page ──────────────────────────────────────── */
+.fitness-stats-bar {
+  grid-template-columns: repeat(4, 1fr);
+}
+.fitness-ghost-row {
+  grid-template-columns: 80px 1fr 1fr auto;
+}
+.fitness-studio-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+.fitness-how-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+.fitness-testimonial-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 900px) {
+  .fitness-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .fitness-stats-bar > *:nth-child(2) {
+    border-right: none !important;
+  }
+  .fitness-stats-bar > *:nth-child(1),
+  .fitness-stats-bar > *:nth-child(2) {
+    border-bottom: 1px solid rgba(244,241,234,0.1);
+  }
+  .fitness-ghost-row {
+    grid-template-columns: 1fr;
+  }
+  .fitness-ghost-row > * {
+    border-right: none !important;
+    border-bottom: 1px solid var(--rule);
+  }
+  .fitness-ghost-row > *:last-child {
+    border-bottom: none;
+  }
+  .fitness-studio-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .fitness-studio-grid > *:nth-child(2n) {
+    border-right: none !important;
+  }
+  .fitness-how-grid {
+    grid-template-columns: 1fr;
+  }
+  .fitness-how-grid > * {
+    border-right: none !important;
+    border-bottom: 1px solid var(--ink);
+  }
+  .fitness-how-grid > *:last-child {
+    border-bottom: none;
+  }
+  .fitness-testimonial-grid {
+    grid-template-columns: 1fr;
+  }
+  .fitness-testimonial-grid > * {
+    border-right: none !important;
+    border-bottom: 1px solid var(--ink);
+  }
+  .fitness-testimonial-grid > *:last-child {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .fitness-stats-bar {
+    grid-template-columns: 1fr;
+  }
+  .fitness-stats-bar > * {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(244,241,234,0.1);
+  }
+  .fitness-studio-grid {
+    grid-template-columns: 1fr;
+  }
+  .fitness-studio-grid > * {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(244,241,234,0.1);
+  }
+}
