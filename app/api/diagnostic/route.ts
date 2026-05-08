@@ -3,7 +3,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { Resend } from 'resend'
 import { buildSystemPrompt } from '@/lib/diagnosticPrompts'
 import { supabase, saveSubmission, markEmailSent } from '@/lib/supabase'
-import { checkRateLimit } from '@/lib/rateLimit'
+import { checkRateLimit, checkRateLimitWithSubscription } from '@/lib/rateLimit'
 import { render } from '@react-email/render'
 import { EvolutionReportEmail } from '@/emails/EvolutionReport'
 import { getPostHogClient } from '@/lib/posthog-server'
@@ -42,15 +42,35 @@ export async function POST(req: NextRequest) {
 
   // ── Rate limiting ─────────────────────────────────────────────────────────
   const ip = getClientIp(req)
-  const { allowed, remaining } = await checkRateLimitDb(ip)
+  const clientId = req.headers.get('x-client-id') ?? null
+
+  // Use subscription-aware rate limiter — active subscribers bypass IP limit
+  const { allowed, remaining, isSubscribed } = await checkRateLimitWithSubscription(ip, clientId)
+
   if (!allowed) {
-    const phRateLimit = getPostHogClient()
-    phRateLimit.capture({ distinctId: ip, event: 'diagnostic_rate_limited', properties: { ip } })
-    await phRateLimit.shutdown()
-    return NextResponse.json(
-      { error: 'Too many requests. You can generate up to 3 reports per hour. Please try again later.' },
-      { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
-    )
+    // Fallback: also check Supabase-based rate limit for non-subscribers
+    const dbCheck = await checkRateLimitDb(ip)
+    if (!dbCheck.allowed) {
+      const phRateLimit = getPostHogClient()
+      phRateLimit.capture({ distinctId: ip, event: 'diagnostic_rate_limited', properties: { ip, is_subscribed: isSubscribed } })
+      await phRateLimit.shutdown()
+      return NextResponse.json(
+        { error: 'Too many requests. You can generate up to 3 reports per hour. Please try again later.' },
+        { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
+      )
+    }
+  } else if (!isSubscribed) {
+    // Non-subscriber passed in-memory check — also verify against Supabase
+    const dbCheck = await checkRateLimitDb(ip)
+    if (!dbCheck.allowed) {
+      const phRateLimit = getPostHogClient()
+      phRateLimit.capture({ distinctId: ip, event: 'diagnostic_rate_limited', properties: { ip, is_subscribed: false } })
+      await phRateLimit.shutdown()
+      return NextResponse.json(
+        { error: 'Too many requests. You can generate up to 3 reports per hour. Please try again later.' },
+        { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
+      )
+    }
   }
 
   // ── Parse + validate ──────────────────────────────────────────────────────
