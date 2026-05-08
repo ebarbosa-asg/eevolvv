@@ -1,7 +1,7 @@
 {
   "slug": "autonomous-sidegig-pivot",
   "feature": "eevolvv Side-Gig Pivot — Autonomous Full-Build Service",
-  "status": "all-tasks-complete",
+  "status": "complete",
   "created": "2026-05-06",
   "prd_approved": "2026-05-06",
   "phase": "finalization",
@@ -76,6 +76,9 @@
     "gates_human_paused": 0,
     "pr_count": 35,
     "escalations": 0,
-    "wave_4_consolidation_note": "T18, T20, T21, T23 consolidated onto feature branch due to email-helpers.ts + vercel.json merge conflicts across tasks in same wave"
-  }
+    "wave_4_consolidation_note": "T18, T20, T21, T23 consolidated onto feature branch due to email-helpers.ts + vercel.json merge conflicts across tasks in same wave",
+    "umbrella_pr": 36,
+    "umbrella_pr_url": "https://github.com/ebarbosa-asg/eevolvv/pull/36"
+  },
+  "next": "Merge PR #36 (feature/autonomous-sidegig-pivot → main) to ship to production"
 }
