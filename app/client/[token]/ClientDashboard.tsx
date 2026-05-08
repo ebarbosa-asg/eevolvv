@@ -1,5 +1,8 @@
 'use client'
 
+import { useState } from 'react'
+import { TIER_CONFIGS } from '@/lib/stripe-prices'
+
 interface Build {
   id: string
   tier: string
@@ -48,7 +51,10 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 export function ClientDashboard({ token, client, subscription, latestBuild, builds }: Props) {
-  void token // kept in scope for T19/T20 to use when adding upgrade/cancel flows
+  const [showChangePlan, setShowChangePlan] = useState(false)
+  const [changePlanLoading, setChangePlanLoading] = useState<string | null>(null)
+  const [changePlanError, setChangePlanError] = useState<string | null>(null)
+  const [changePlanSuccess, setChangePlanSuccess] = useState<string | null>(null)
 
   const buildStatusIndex = latestBuild ? STATUS_ORDER.indexOf(latestBuild.status) : -1
   const totalSteps = STATUS_ORDER.length
@@ -192,22 +198,23 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
           </div>
         )}
 
-        {/* Plan management — T19 and T20 will wire these */}
+        {/* Plan management */}
         <div style={{ display: 'flex', gap: 12 }}>
-          <a
-            href="/pricing"
+          <button
+            onClick={() => { setShowChangePlan(true); setChangePlanError(null); setChangePlanSuccess(null) }}
             className="mono"
             style={{
               padding: '10px 20px',
               border: '1px solid var(--ink)',
               fontSize: 10,
               letterSpacing: '0.14em',
-              textDecoration: 'none',
               color: 'var(--ink)',
+              background: 'transparent',
+              cursor: 'pointer',
             }}
           >
             CHANGE PLAN
-          </a>
+          </button>
           {!subscription?.cancel_at_period_end && (
             <a
               href="/pricing"
@@ -283,6 +290,120 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
           hello@eevolvv.com
         </a>
       </div>
+
+      {/* Change Plan Modal */}
+      {showChangePlan && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(20,20,19,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+          }}
+        >
+          <div
+            style={{
+              background: 'var(--paper)',
+              maxWidth: 560,
+              width: '100%',
+              margin: 24,
+              padding: 32,
+              border: '1px solid var(--ink)',
+            }}
+          >
+            <div
+              className="mono"
+              style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}
+            >
+              CHANGE PLAN
+            </div>
+            <h2 style={{ fontSize: 20, fontWeight: 600, margin: '0 0 20px' }}>Select your new plan</h2>
+            {TIER_CONFIGS.map(config => {
+              const price = config.prices.annual
+              const isCurrent = client?.tier === config.tier
+              return (
+                <div
+                  key={config.tier}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '12px 16px',
+                    border: '1px solid var(--rule)',
+                    marginBottom: 8,
+                    opacity: isCurrent ? 0.5 : 1,
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 600 }}>{config.name}</div>
+                    <div style={{ fontSize: 12, opacity: 0.6 }}>
+                      {price.amountDisplay}/yr · {config.buildSla}
+                    </div>
+                  </div>
+                  {isCurrent ? (
+                    <span className="mono" style={{ fontSize: 9, letterSpacing: '0.14em', opacity: 0.5 }}>
+                      CURRENT PLAN
+                    </span>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        setChangePlanLoading(config.tier)
+                        setChangePlanError(null)
+                        try {
+                          const res = await fetch('/api/stripe/update-subscription', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token, newPriceId: price.priceId }),
+                          })
+                          const data = await res.json()
+                          if (res.ok) {
+                            setChangePlanSuccess(`Plan updated to ${data.newPlan}`)
+                            setTimeout(() => setShowChangePlan(false), 2000)
+                          } else {
+                            setChangePlanError(data.error ?? 'Update failed')
+                          }
+                        } catch {
+                          setChangePlanError('Network error')
+                        } finally {
+                          setChangePlanLoading(null)
+                        }
+                      }}
+                      disabled={changePlanLoading !== null}
+                      className="mono"
+                      style={{
+                        padding: '8px 16px',
+                        background: 'var(--ink)',
+                        color: 'var(--paper)',
+                        border: 'none',
+                        fontSize: 10,
+                        letterSpacing: '0.14em',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {changePlanLoading === config.tier ? '...' : 'SELECT →'}
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+            {changePlanError && (
+              <div style={{ color: 'var(--accent)', fontSize: 13, marginTop: 12 }}>{changePlanError}</div>
+            )}
+            {changePlanSuccess && (
+              <div style={{ color: '#4ade80', fontSize: 13, marginTop: 12 }}>{changePlanSuccess}</div>
+            )}
+            <button
+              onClick={() => setShowChangePlan(false)}
+              style={{ marginTop: 16, background: 'none', border: 'none', fontSize: 12, opacity: 0.5, cursor: 'pointer' }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
