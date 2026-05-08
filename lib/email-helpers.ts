@@ -6,6 +6,7 @@ import { OnboardingEmail } from '@/emails/OnboardingEmail'
 import { FollowUp1Email } from '@/emails/FollowUp1'
 import { FollowUp2Email } from '@/emails/FollowUp2'
 import { FollowUp3Email } from '@/emails/FollowUp3'
+import { QuarterlyRecalibrationEmail } from '@/emails/QuarterlyRecalibration'
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -123,6 +124,48 @@ export async function sendFollowUpEmail({
     return { success: true }
   } catch (err) {
     console.error(`[email-helpers] sendFollowUpEmail (seq ${sequence}) unexpected:`, err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendQuarterlyRecalibration({
+  email,
+  name,
+  tier,
+  clientId,
+}: {
+  email: string
+  name?: string
+  tier: string
+  clientId?: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+
+  const isEvolve = tier === 'evolve'
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
+  const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL ?? 'https://calendly.com/hello-eevolvv'
+  const recalibrationUrl = clientId
+    ? `${BASE_URL}/diagnostic?recalibration=true&client_id=${clientId}`
+    : `${BASE_URL}/diagnostic`
+  const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1)
+
+  try {
+    const html = await render(
+      QuarterlyRecalibrationEmail({ name, tier, isEvolve, calendlyUrl, recalibrationUrl, clientId }),
+    )
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: `Your quarterly re-calibration is due — ${tierLabel}`,
+      html,
+    })
+    if (error) {
+      console.error('[email-helpers] sendQuarterlyRecalibration error:', error)
+      return { success: false, error: String(error) }
+    }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendQuarterlyRecalibration unexpected error:', err)
     return { success: false, error: String(err) }
   }
 }
