@@ -255,7 +255,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
                 className="header-brand-sub mono hidden md:inline"
                 style={{ fontSize: 10, letterSpacing: '0.12em', fontWeight: 600, color: 'var(--accent)', whiteSpace: 'nowrap' }}
               >
-                Ghost Work Exorcists
+                AI eevolvvtion is here...
               </span>
             </div>
           </a>
@@ -841,7 +841,7 @@ function Process() {
   return (
     <section id="how" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="02" eyebrow="THE EXORCISM PROCESS" title="Day 1 we diagnose. Day 60 you look nothing like you did." note="N=5 STEPS" />
+        <SectionHeader number="03" eyebrow="THE EXORCISM PROCESS" title="Day 1 we diagnose. Day 60 you look nothing like you did." note="N=5 STEPS" />
         <div className="grid mt-14" style={{ gridTemplateColumns: 'repeat(5,1fr)', gap: 0, marginTop: 64, border: '1px solid var(--ink)' }}>
           {PROCESS_STEPS.map((step, i) => (
             <div key={i} className="status-cell" style={{ padding: 28, borderRight: i < PROCESS_STEPS.length - 1 ? '1px solid var(--ink)' : 'none' }}>
@@ -893,21 +893,32 @@ function whoEvolveCellBorders(index: number, total: number, cols: number) {
 
 function WhoItsFor() {
   const cols = useWhoEvolveCols()
-  const n = EXAMPLES.length
+  const featuredExamples = EXAMPLES.slice(0, 6)
+  const n = featuredExamples.length
   return (
-    <section id="who" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
+    <section id="who" className="anchor-scroll" style={{ padding: '80px 0', borderBottom: '1px solid var(--rule)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="03" eyebrow="WHO WE EVOLVE" title="Every industry has ghost work." note={`N=${EXAMPLES.length}`} />
+        <div className="who-evolve-compact-head">
+          <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 600 }}>§ 04</div>
+          <div>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 10 }}>WHO WE EVOLVE</div>
+            <div className="who-evolve-compact-title">Start where the ghost work is loudest.</div>
+          </div>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, alignSelf: 'start' }}>SAMPLE SET</div>
+        </div>
+        <p className="who-evolve-compact-note">
+          The diagnostic adapts to the business. These are just the common starting points.
+        </p>
         <div
           className="who-we-evolve-grid grid mt-12"
           style={{
             gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
             gap: 0,
-            marginTop: 56,
+            marginTop: 34,
             border: '1px solid var(--ink)',
           }}
         >
-          {EXAMPLES.map((ex, i) => {
+          {featuredExamples.map((ex, i) => {
             const compact = cols >= 4
             const pad = compact ? '9px 10px' : cols === 2 ? '12px 14px' : '16px 18px'
             return (
@@ -1011,7 +1022,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
   return (
     <section id="pricing" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="04" eyebrow="PRICING" title="A service, not software." note="THREE TIERS" />
+        <SectionHeader number="05" eyebrow="PRICING" title="A service, not software." note="THREE TIERS" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 580, marginTop: 24 }}>
           We build it, host it, maintain it, and evolve it — every month. Choose your starting point.
         </p>
@@ -1311,7 +1322,7 @@ function AgentsSection() {
       <div className="mx-auto site-rail">
         <SectionHeader number="06" eyebrow="EEVOLVV / AGENTS" title="Agents we build to optimize how you operate." note="12 DEPLOYABLE" />
         {/* volvv-e hero intro */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 48, marginTop: 56, marginBottom: 0, padding: '40px 48px', background: 'var(--ink)', color: 'var(--paper)', borderLeft: '4px solid var(--accent)' }}>
+        <div className="agents-volvve-intro" style={{ display: 'flex', alignItems: 'center', gap: 48, marginTop: 56, marginBottom: 0, padding: '40px 48px', background: 'var(--ink)', color: 'var(--paper)', borderLeft: '4px solid var(--accent)' }}>
           <VolvvE state="idle" scale={7} style={{ flexShrink: 0 }} />
           <div>
             <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10 }}>MEET VOLVV-E</div>
@@ -1366,7 +1377,7 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
         fontSize: 'clamp(180px, 26vw, 360px)', fontWeight: 700,
         color: 'var(--ink)', opacity: 0.022, lineHeight: 1,
         pointerEvents: 'none', userSelect: 'none', zIndex: 0,
-      }}>03</div>
+      }}>01</div>
 
       <div className="mx-auto site-rail" style={{ position: 'relative', zIndex: 1 }}>
         <SectionHeader number="01" eyebrow="FREE AI AUDIT" title="Get your eevolvv report. Free." note="" />
@@ -1383,7 +1394,7 @@ function DiagnosticSection({ targetTier }: { targetTier: string }) {
           <div className="mono" style={{ padding: '14px 24px', borderBottom: '1px solid var(--ink)', fontSize: 9, letterSpacing: '0.28em', fontWeight: 700, background: 'var(--ink)', color: 'var(--paper)' }}>
             WHAT&apos;S IN YOUR REPORT
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0 }}>
+          <div className="what-in-report-grid">
             {([
               { num: '01', icon: '◈', label: 'GHOST WORK AUDIT', desc: 'Every bottleneck mapped. Hours wasted per week calculated.' },
               { num: '02', icon: '◎', label: 'ROI PROJECTION', desc: 'Exact annual savings for your specific operation.' },
@@ -1713,8 +1724,10 @@ export default function Home() {
       <Stats />
       <DiagnosticSection targetTier={targetTier} />
       <Problem />
+      <Process />
       <WhoItsFor />
       <Pricing onCTA={tier => scrollToDiagnostic(tier)} />
+      <AgentsSection />
       <Footer />
     </main>
   )
