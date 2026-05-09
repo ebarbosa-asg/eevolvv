@@ -521,6 +521,33 @@ input:focus, textarea:focus, select:focus { outline: none; }
   animation: reportSectionFadeIn 0.5s ease forwards;
 }
 
+/* ── Volvv-E report signature ── */
+.report-volvve-sig {
+  margin-top: 40px;
+  padding-top: 24px;
+  text-align: center;
+}
+.report-volvve-sig__line {
+  width: 40px;
+  height: 2px;
+  background: var(--accent);
+  margin: 0 auto 16px;
+}
+.report-volvve-sig__text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.report-volvve-sig__sub {
+  font-size: 12px;
+  opacity: 0.45;
+  line-height: 1.6;
+}
+
 /* ── §03 Who we evolve — compact industry/program tiles ─────────────────────── */
 .who-evolve-card {
   min-width: 0;

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import ChatEngine from '@/components/ChatEngine'
+import { VolvvECard } from '@/components/VolvvE'
 
 export const metadata: Metadata = {
   title: 'AI Automation for Gyms & Fitness Studios — eevolvv',
@@ -371,9 +372,13 @@ export default function FitnessPage() {
             </p>
           </div>
 
+          {/* Volvv-E intro */}
+          <VolvvECard dark />
+
           {/* Diagnostic embed */}
           <div style={{
             border: '1px solid rgba(244,241,234,0.15)',
+            borderTop: 'none',
             overflow: 'hidden',
           }}>
             <ChatEngine defaultTier="core" defaultIndustry="Gym / Fitness / Wellness" />

@@ -472,20 +472,28 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
               backgroundSize: '24px 24px', pointerEvents: 'none',
             }} />
             <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
-                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.32em', color: 'var(--accent)', fontWeight: 700 }}>
-                  EEVOLVV DIAGNOSTIC REPORT
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
+                <div>
+                  <div className="mono" style={{ fontSize: 9, letterSpacing: '0.32em', color: 'var(--accent)', fontWeight: 700, marginBottom: 4 }}>
+                    EEVOLVV DIAGNOSTIC REPORT
+                  </div>
+                  <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.35 }}>
+                    {reportId} · {reportDate}
+                  </div>
                 </div>
-                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.35 }}>
-                  {reportId} · {reportDate}
+                {/* Volvv-E signature badge */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                  <VolvvE state="done" scale={6} />
+                  <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', color: 'var(--accent)', fontWeight: 700 }}>VOLVV-E</div>
+                  <div className="mono" style={{ fontSize: 7, letterSpacing: '0.14em', opacity: 0.4 }}>AI AGENT</div>
                 </div>
               </div>
-              <div style={{ fontSize: 'clamp(26px, 5vw, 42px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: 12 }}>
+              <div style={{ fontSize: 'clamp(26px, 5vw, 44px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.0, marginBottom: 10 }}>
                 {report.businessName || 'Your Business'}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 10 }}>
                 <span style={{ fontSize: 13, opacity: 0.45, letterSpacing: '0.04em' }}>
-                  AI-generated automation roadmap
+                  Diagnostic prepared by Volvv-E
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80', flexShrink: 0 }} />
@@ -528,13 +536,19 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
               <div key={i} style={{
                 background: i === 0 ? 'var(--accent)' : 'var(--paper)',
                 color: i === 0 ? 'var(--paper)' : 'var(--ink)',
-                padding: '24px 20px',
+                padding: '36px 28px',
                 textAlign: 'center',
+                position: 'relative',
               }}>
-                <div style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 8 }}>
+                {i === 0 && (
+                  <div className="mono" style={{ fontSize: 8, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 10 }}>
+                    HOURS FREED / WEEK
+                  </div>
+                )}
+                <div style={{ fontSize: 'clamp(40px, 6vw, 56px)', fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1, marginBottom: 10 }}>
                   {s.value}
                 </div>
-                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.2em', opacity: i === 0 ? 0.72 : 0.45, lineHeight: 1.5 }}>
+                <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: i === 0 ? 0.75 : 0.45, lineHeight: 1.6, maxWidth: 140, margin: '0 auto' }}>
                   {s.label}
                 </div>
               </div>
@@ -554,7 +568,7 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
           dangerouslySetInnerHTML={{ __html: formatReport(report.text) }}
         />
 
-        {/* ── Next-step banner ── */}
+        {/* ── Next-step banner — Volvv-E ── */}
         <div
           style={{
             padding: '32px',
@@ -566,15 +580,20 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
             transition: 'opacity 0.5s ease, transform 0.5s ease',
           }}
         >
-          <div className="mono" style={{ fontSize: 9, letterSpacing: '0.28em', color: 'var(--accent)', marginBottom: 10, fontWeight: 700 }}>
-            → NEXT STEP
+          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+            <VolvvE state="done" scale={5} style={{ flexShrink: 0, marginTop: 4 }} />
+            <div>
+              <div className="mono" style={{ fontSize: 9, letterSpacing: '0.28em', color: 'var(--accent)', marginBottom: 10, fontWeight: 700 }}>
+                → VOLVV-E SAYS
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 8, lineHeight: 1.2 }}>
+                Your roadmap is ready. Time to build it.
+              </div>
+              <p style={{ fontSize: 14, opacity: 0.55, margin: 0, lineHeight: 1.6 }}>
+                I&apos;ve mapped every automation opportunity in your operation above. Choose your tier and I start building immediately — delivery within days.
+              </p>
+            </div>
           </div>
-          <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 8, lineHeight: 1.2 }}>
-            Your roadmap is ready. Time to build it.
-          </div>
-          <p style={{ fontSize: 14, opacity: 0.55, margin: 0, lineHeight: 1.6 }}>
-            Every automation above can be live within days. Choose your tier and we start immediately.
-          </p>
         </div>
 
         {/* ── Payment wall ── */}
@@ -597,25 +616,31 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
   // ── Chatting ───────────────────────────────────────────────────────────────
   return (
     <div>
-      {/* Chrome bar */}
+      {/* Chrome bar — Volvv-E identity header */}
       <div style={{
         background: 'var(--ink)', color: 'var(--paper)',
-        padding: '10px 20px',
-        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '12px 20px',
+        display: 'flex', alignItems: 'center', gap: 14,
+        borderBottom: '1px solid rgba(244,241,234,0.08)',
       }}>
-        <div className={`diagnostic-status-dot${isStreaming ? ' diagnostic-status-dot--thinking' : ''}`} />
-        <span className="mono" style={{ fontSize: 9, letterSpacing: '0.22em', opacity: 0.6 }}>
-          {isStreaming ? 'AI THINKING...' : 'AI READY'}
-        </span>
+        <VolvvE state={ghostState} scale={3} />
+        <div>
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 700, lineHeight: 1.1 }}>
+            VOLVV-E
+          </div>
+          <div className="mono" style={{ fontSize: 8, letterSpacing: '0.16em', opacity: 0.4, marginTop: 3 }}>
+            {isStreaming ? '▷ WORKING...' : '◈ AI BUSINESS AGENT'}
+          </div>
+        </div>
         <div style={{ flex: 1 }} />
-        <span className="mono" style={{ fontSize: 9, letterSpacing: '0.16em', opacity: 0.3 }}>
-          SHEET D-01 · EEVOLVV DIAGNOSTIC
-        </span>
-        {userMsgCount > 0 && (
-          <span className="mono" style={{ fontSize: 9, letterSpacing: '0.14em', color: 'var(--accent)', marginLeft: 10 }}>
-            Q {userMsgCount} / ~{APPROX_QUESTIONS}
-          </span>
-        )}
+        <div style={{ textAlign: 'right' }}>
+          <div className="mono" style={{ fontSize: 8, letterSpacing: '0.16em', opacity: 0.28 }}>EEVOLVV DIAGNOSTIC</div>
+          {userMsgCount > 0 && (
+            <div className="mono" style={{ fontSize: 9, letterSpacing: '0.14em', color: 'var(--accent)', marginTop: 2 }}>
+              Q {userMsgCount} / ~{APPROX_QUESTIONS}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Progress bar */}
@@ -639,6 +664,29 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
           background: 'rgba(255,255,255,0.45)',
         }}
       >
+        {/* Volvv-E intro — shown before first user message */}
+        {userMsgCount === 0 && (
+          <div style={{
+            display: 'flex', gap: 18, alignItems: 'center',
+            padding: '4px 0 20px',
+            borderBottom: '1px solid var(--rule)',
+            marginBottom: 20,
+          }}>
+            <VolvvE state="idle" scale={5} style={{ flexShrink: 0 }} />
+            <div>
+              <div className="mono" style={{ fontSize: 9, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 5, fontWeight: 600 }}>
+                YOUR AI BUSINESS AGENT
+              </div>
+              <div style={{ fontWeight: 700, fontSize: 16, letterSpacing: '-0.01em', marginBottom: 4, color: 'var(--ink)' }}>
+                Volvv-E
+              </div>
+              <div style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.65, color: 'var(--ink)', maxWidth: 380 }}>
+                Part analyst, part strategist — think of me as your always-on AI staff member. I'll map your operation, find every hour you&apos;re losing, and deliver a custom automation roadmap. No forms. Just a conversation.
+              </div>
+            </div>
+          </div>
+        )}
+
         {messages.map(msg => (
           <div
             key={msg.id}

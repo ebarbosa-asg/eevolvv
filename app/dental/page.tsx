@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import ChatEngine from '@/components/ChatEngine'
+import { VolvvECard } from '@/components/VolvvE'
 
 export const metadata: Metadata = {
   title: 'AI Automation for Dental Practices — eevolvv',

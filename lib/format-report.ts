@@ -21,5 +21,10 @@ export function formatReport(text: string): string {
       .join('')
     return `<h3 class="report-section-fade" style="animation-delay:${delay}ms">${heading}</h3>${formatted}`
   })
-  return sections.join('')
+  const sig = `<div class="report-volvve-sig">
+    <div class="report-volvve-sig__line"></div>
+    <div class="report-volvve-sig__text">Diagnostic prepared exclusively by Volvv-E · eevolvv AI Engine</div>
+    <div class="report-volvve-sig__sub">Every opportunity above is specific to your operation, tools, and revenue range.</div>
+  </div>`
+  return sections.join('') + sig
 }

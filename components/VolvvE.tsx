@@ -101,6 +101,53 @@ export function VolvvEAvatar({ state, scale = 4 }: { state?: GhostState; scale?:
   )
 }
 
+/**
+ * Feature introduction card — drop anywhere to introduce Volvv-E.
+ * Dark or light variant.
+ */
+export function VolvvECard({ dark = false }: { dark?: boolean }) {
+  const bg = dark ? 'var(--ink)' : 'rgba(20,20,19,0.04)'
+  const fg = dark ? 'var(--paper)' : 'var(--ink)'
+  const border = dark ? '1px solid rgba(244,241,234,0.1)' : '1px solid var(--rule)'
+  return (
+    <div style={{
+      display: 'flex', gap: 24, alignItems: 'center',
+      padding: '28px 32px',
+      background: bg, border, color: fg,
+      flexWrap: 'wrap',
+    }}>
+      <VolvvE state="idle" scale={6} style={{ flexShrink: 0 }} />
+      <div style={{ flex: 1, minWidth: 200 }}>
+        <div style={{
+          fontFamily: 'JetBrains Mono, monospace',
+          fontSize: 9, letterSpacing: '0.22em',
+          color: ACCENT, fontWeight: 600, marginBottom: 6,
+          textTransform: 'uppercase',
+        }}>
+          Meet your AI agent
+        </div>
+        <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 6 }}>
+          Volvv-E
+        </div>
+        <div style={{ fontSize: 13, opacity: dark ? 0.5 : 0.55, lineHeight: 1.65, maxWidth: 440 }}>
+          Part analyst, part strategist — your always-on AI staff member. I map operations, identify ghost work, and build your automation roadmap. Think of me as the intern who never sleeps, the front desk that never misses a lead, and the analyst who reads every line of your business.
+        </div>
+        <div style={{ display: 'flex', gap: 24, marginTop: 14, flexWrap: 'wrap' }}>
+          {['Available 24/7', '1,200+ automation patterns', 'Report in 10 minutes'].map(f => (
+            <span key={f} style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 9, letterSpacing: '0.14em',
+              color: ACCENT, fontWeight: 600,
+            }}>
+              → {f}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /** Corner presence: floating volvv-e in a fixed corner of the screen */
 export function VolvvECorner({ state = 'idle', side = 'right' }: { state?: GhostState; side?: 'left' | 'right' }) {
   return (
