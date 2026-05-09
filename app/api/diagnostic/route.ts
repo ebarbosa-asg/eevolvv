@@ -265,9 +265,9 @@ Generate their eevolvv report now.`
     ;(async () => {
       const now = new Date()
       const rows = [
-        { submission_id: submissionId, email, template: 'followup1', name: name ?? null, business_name: businessName ?? null, send_after: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), status: 'pending' },
-        { submission_id: submissionId, email, template: 'followup2', name: name ?? null, business_name: businessName ?? null, send_after: new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString(), status: 'pending' },
-        { submission_id: submissionId, email, template: 'followup3', name: name ?? null, business_name: businessName ?? null, send_after: new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString(), status: 'pending' },
+        { submission_id: submissionId, email, template: 'followup1', name: name ?? null, business_name: businessName ?? null, industry: industry ?? null, send_after: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), status: 'pending' },
+        { submission_id: submissionId, email, template: 'followup2', name: name ?? null, business_name: businessName ?? null, industry: industry ?? null, send_after: new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString(), status: 'pending' },
+        { submission_id: submissionId, email, template: 'followup3', name: name ?? null, business_name: businessName ?? null, industry: industry ?? null, send_after: new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString(), status: 'pending' },
       ]
       const { error: queueError } = await supabase.from('email_queue').insert(rows)
       if (queueError) console.error('[email_queue] insert error:', queueError.message)

@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   // Fetch all submissions where the diagnostic email was sent
   const { data: submissions, error: subError } = await supabase
     .from('submissions')
-    .select('id, email, name, business_name, created_at, followup_sent_at')
+    .select('id, email, name, business_name, created_at, followup_sent_at, industry')
     .eq('email_sent', true)
     .not('email', 'is', null)
 
@@ -63,6 +63,7 @@ export async function GET(req: NextRequest) {
       email: sub.email,
       name: sub.name ?? undefined,
       businessName: sub.business_name ?? undefined,
+      industry: sub.industry ?? undefined,
       sequence,
     })
 
