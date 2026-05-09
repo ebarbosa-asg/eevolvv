@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  const { conversation, tier } = body
+  const { conversation, tier, defaultIndustry } = body as typeof body & { defaultIndustry?: string }
   if (!conversation?.length) {
     return NextResponse.json({ error: 'conversation required' }, { status: 400 })
   }
@@ -61,6 +61,9 @@ export async function POST(req: NextRequest) {
     console.error('[extract-intake] extraction error:', err)
     return NextResponse.json({ error: 'Failed to extract intake data from conversation.' }, { status: 502 })
   }
+
+  // If we know the industry from the landing page, always use that — don't trust the extraction
+  if (defaultIndustry) extracted.industry = defaultIndustry
 
   if (!extracted.email?.trim() || !extracted.businessType?.trim()) {
     return NextResponse.json(

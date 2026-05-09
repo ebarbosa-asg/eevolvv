@@ -2,84 +2,84 @@ import type { Metadata } from 'next'
 import ChatEngine from '@/components/ChatEngine'
 
 export const metadata: Metadata = {
-  title: 'AI Automation for Gyms & Fitness Studios — eevolvv',
-  description: 'CrossFit boxes, BJJ academies, and fitness studios recover 15–25 hrs/week and cut member churn 25–35% with eevolvv AI automation. Free audit in 10 minutes.',
-  keywords: 'gym automation, fitness studio AI, crossfit automation, BJJ gym software, member retention automation, gym management AI, fitness business automation',
+  title: 'AI Automation for Law Firms — eevolvv',
+  description: 'Law firms recover 15–20 hrs/week of non-billable time by automating intake, billing, and document workflows. Free AI audit in 10 minutes.',
+  keywords: 'law firm automation, legal practice management AI, client intake automation, legal billing automation, law firm management software, legal document automation',
   openGraph: {
-    title: 'Stop Running Your Gym on Ghost Work — eevolvv',
-    description: 'Free AI diagnostic reveals exactly where your fitness studio is losing hours and members. CrossFit, BJJ, MMA, yoga — built for all of them.',
-    url: 'https://eevolvv.com/fitness',
+    title: 'Stop Running Your Law Firm on Ghost Work — eevolvv',
+    description: 'Law firms recover 15–20 hrs/week of non-billable time by automating intake, billing, and document workflows. Free AI audit in 10 minutes.',
+    url: 'https://eevolvv.com/legal',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://eevolvv.com/fitness',
+    canonical: 'https://eevolvv.com/legal',
   },
 }
 
 const GHOST_WORK_ITEMS = [
   {
     code: 'G-01',
-    label: 'Member Churn',
-    pain: 'Manually tracking who stopped showing up — usually too late to save them',
-    win: 'Automated early-warning system flags at-risk members at the first missed class',
+    label: 'Client Intake',
+    pain: 'Screening inquiries manually, scheduling consultations one by one, missing leads after hours',
+    win: 'Automated intake form + conflict check + consultation scheduling — qualified leads book directly',
     hrs: '4–6 hrs/wk',
   },
   {
     code: 'G-02',
-    label: 'Failed Payments',
-    pain: 'Chasing EFT failures one by one via phone or email',
-    win: 'Automated dunning sequence recovers payments before memberships lapse',
-    hrs: '2–3 hrs/wk',
+    label: 'Document Assembly',
+    pain: 'Drafting the same agreements, letters, and motions from scratch every time',
+    win: 'Template-driven document automation cuts drafting time by 60–80% on standard matter types',
+    hrs: '4–8 hrs/wk',
   },
   {
     code: 'G-03',
-    label: 'Lead Follow-Up',
-    pain: 'New inquiry comes in — you respond 4 hours later, they\'ve already joined someone else',
-    win: 'Instant lead response + 14-day nurture sequence converts trials to members',
-    hrs: '3–4 hrs/wk',
-  },
-  {
-    code: 'G-04',
-    label: 'Class Utilization',
-    pain: 'Manually pulling attendance data to figure out which classes to cut or add',
-    win: 'Automated weekly report: utilization by class, coach, and time slot',
-    hrs: '2–3 hrs/wk',
-  },
-  {
-    code: 'G-05',
-    label: 'Onboarding',
-    pain: 'Walking every new member through the same 45-minute orientation manually',
-    win: 'Automated 7-day welcome sequence handles intro, waivers, goals, and first milestones',
+    label: 'Billing & Time Capture',
+    pain: 'Reconstructing time entries at the end of the week from memory — losing 1–2 hours of billable time daily',
+    win: 'Automated time-capture prompts + billing run automation with AR follow-up sequences',
     hrs: '3–5 hrs/wk',
   },
   {
-    code: 'G-06',
-    label: 'Reviews & Referrals',
-    pain: 'Great results but no system to turn them into Google reviews or referrals',
-    win: 'Automated review ask at peak satisfaction moments + referral reward sequences',
+    code: 'G-04',
+    label: 'Collections Follow-Up',
+    pain: 'Sending billing reminders manually and tracking who owes what across matters',
+    win: 'Automated 7/21/45-day collections sequences with escalation triggers — collections improve 20–35%',
+    hrs: '2–4 hrs/wk',
+  },
+  {
+    code: 'G-05',
+    label: 'Court Date Reminders',
+    pain: 'Manually calling clients to remind them of hearings, deadlines, and appointments',
+    win: 'Automated deadline and court date reminders via text and email — no-shows drop significantly',
     hrs: '1–2 hrs/wk',
+  },
+  {
+    code: 'G-06',
+    label: 'Matter Status Updates',
+    pain: 'Clients calling for updates because no proactive communication went out',
+    win: 'Automated milestone notifications at every stage of the matter lifecycle',
+    hrs: '2–3 hrs/wk',
   },
 ]
 
 const STUDIO_TYPES = [
-  { id: 'F-01', name: 'CrossFit Boxes', note: 'Open gym, class management, coach scheduling' },
-  { id: 'F-02', name: 'BJJ Academies', note: 'Belt progression, trial conversion, comp prep' },
-  { id: 'F-03', name: 'MMA Gyms', note: 'Multi-discipline, retail, event promotion' },
-  { id: 'F-04', name: 'Yoga Studios', note: 'Class packs, workshop funnels, teacher scheduling' },
-  { id: 'F-05', name: 'Pilates Studios', note: 'Private session waitlists, package renewals' },
-  { id: 'F-06', name: 'Kickboxing / Muay Thai', note: 'Free trial flows, gear upsell, event camps' },
-  { id: 'F-07', name: 'Personal Training', note: 'Session reminders, rebooking, progress reports' },
-  { id: 'F-08', name: 'Bootcamp / HIIT', note: 'Challenge launches, retention, referral loops' },
+  { id: 'L-01', name: 'Personal Injury', note: 'Lead intake funnels, medical record tracking, settlement sequences' },
+  { id: 'L-02', name: 'Family Law', note: 'Sensitive intake flows, document collection, calendar coordination' },
+  { id: 'L-03', name: 'Estate Planning', note: 'Consultation booking, document delivery, annual review campaigns' },
+  { id: 'L-04', name: 'Business Law', note: 'Contract automation, entity management, retainer renewals' },
+  { id: 'L-05', name: 'Criminal Defense', note: 'After-hours intake, court date tracking, client communication' },
+  { id: 'L-06', name: 'Real Estate Law', note: 'Transaction coordination, title document workflows, closing sequences' },
+  { id: 'L-07', name: 'Employment Law', note: 'Intake screening, statute deadline tracking, settlement workflows' },
+  { id: 'L-08', name: 'Immigration', note: 'Application status updates, deadline reminders, document checklists' },
 ]
 
 const STATS = [
-  { value: '25–35%', label: 'member churn reduction with automated engagement' },
-  { value: '6–10 hrs', label: 'saved per week on front-desk admin alone' },
-  { value: '40–60%', label: 'faster lead-to-member conversion' },
-  { value: '15–25%', label: 'increase in PT bookings via automated upsell' },
+  { value: '40–60%', label: 'reduction in intake admin with automated screening workflows' },
+  { value: '60–80%', label: 'faster document drafting on standard templates' },
+  { value: '20–35%', label: 'improvement in collections with automated billing reminders' },
+  { value: '30–50%', label: 'fewer inbound status calls with automated matter updates' },
 ]
 
-export default function FitnessPage() {
+export default function LegalPage() {
   return (
     <main style={{ background: 'var(--paper)' }}>
 
@@ -87,7 +87,7 @@ export default function FitnessPage() {
       <section style={{ borderBottom: '1px solid var(--ink)', padding: '80px 32px 72px' }}>
         <div className="site-rail mx-auto">
           <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 20, fontWeight: 600 }}>
-            § 01 · FITNESS &amp; MARTIAL ARTS
+            § 01 · LEGAL &amp; LAW FIRMS
           </div>
           <h1 style={{
             fontSize: 'clamp(34px, 6vw, 64px)',
@@ -98,12 +98,11 @@ export default function FitnessPage() {
             marginBottom: 24,
             maxWidth: 820,
           }}>
-            Your gym is running on<br />
+            Your law firm is running on<br />
             <span style={{ color: 'var(--accent)' }}>ghost work.</span>
           </h1>
           <p style={{ fontSize: 18, lineHeight: 1.6, opacity: 0.65, maxWidth: 560, marginBottom: 36 }}>
-            Member churn, failed payments, lead drop-off, manual scheduling — fitness studios lose
-            15–25 hours every week to tasks that should be automated. We find them, name them, and build the fix.
+            Client intake bottlenecks, unbilled time, slow collections, manual document assembly — law firms lose 15–20 hours every week to non-billable work that should be automated. We find it, name it, and build the fix.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
             <a
@@ -119,7 +118,7 @@ export default function FitnessPage() {
                 display: 'inline-block',
               }}
             >
-              GET FREE GYM AUDIT →
+              GET FREE FIRM AUDIT →
             </a>
             <span className="mono" style={{ fontSize: 11, opacity: 0.45, letterSpacing: '0.1em' }}>
               10 minutes · no signup · instant report
@@ -165,14 +164,14 @@ export default function FitnessPage() {
                 § 02 · WHERE THE HOURS GO
               </div>
               <h2 style={{ fontSize: 'clamp(26px, 4vw, 42px)', fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.1, margin: 0 }}>
-                Ghost work hiding in every fitness business.
+                Ghost work hiding in every law firm.
               </h2>
             </div>
             <div style={{ paddingBottom: 4 }}>
               <p style={{ fontSize: 15, lineHeight: 1.65, opacity: 0.6, margin: 0 }}>
                 These aren&apos;t inefficiencies you can hustle through.
-                They&apos;re structural drains that compound every month — losing you members,
-                revenue, and the hours you should be spending on your community.
+                They&apos;re structural drains that compound every month — losing you billable hours,
+                revenue, and the focus you should have for your clients.
               </p>
             </div>
           </div>
@@ -215,19 +214,19 @@ export default function FitnessPage() {
           </div>
 
           <div className="mono" style={{ marginTop: 16, fontSize: 11, opacity: 0.4, letterSpacing: '0.08em' }}>
-            Total: 15–23 hours per week recovered across a typical fitness studio.
+            Total: 16–28 hours per week recovered across a typical law firm.
           </div>
         </div>
       </section>
 
-      {/* ── Studio types ──────────────────────────────────────────────────────── */}
+      {/* ── Practice areas ────────────────────────────────────────────────────── */}
       <section style={{ padding: '72px 32px', background: 'var(--ink)', color: 'var(--paper)', borderBottom: '1px solid rgba(244,241,234,0.1)' }}>
         <div className="site-rail mx-auto">
           <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}>
             § 03 · WHO WE BUILD FOR
           </div>
           <h2 style={{ fontSize: 'clamp(22px, 3.5vw, 36px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 40, maxWidth: 600 }}>
-            Every fitness format. One AI engine.
+            Every practice area. One AI engine.
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, border: '1px solid rgba(244,241,234,0.1)' }} className="fitness-studio-grid">
             {STUDIO_TYPES.map((s, i) => (
@@ -298,39 +297,39 @@ export default function FitnessPage() {
             INTEGRATES WITH
           </div>
           <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
-            {['Mindbody', 'Glofox', 'Pike13', 'ABC Fitness', 'Zen Planner', 'HubSpot', 'MailChimp', 'Stripe', 'Google Reviews'].map(tool => (
+            {['Clio', 'MyCase', 'PracticePanther', 'LawPay', 'DocuSign', 'Calendly', 'NetDocuments', 'QuickBooks'].map(tool => (
               <span key={tool} className="mono" style={{ fontSize: 11, letterSpacing: '0.1em', opacity: 0.45 }}>{tool}</span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Testimonial placeholder ───────────────────────────────────────────── */}
+      {/* ── Testimonials ──────────────────────────────────────────────────────── */}
       <section style={{ padding: '80px 32px', borderBottom: '1px solid var(--ink)' }}>
         <div className="site-rail mx-auto">
           <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 40, fontWeight: 600 }}>
             § 05 · RESULTS
           </div>
-          {/* TODO: replace with real fitness client testimonials */}
+          {/* TODO: replace with real law firm client testimonials */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0, border: '1px solid var(--ink)' }} className="fitness-testimonial-grid">
             {[
               {
-                quote: 'We recovered 18 hours a week in month one. The churn system alone paid for the whole year.',
+                stat: '16 hrs/wk recovered',
+                quote: 'We were losing billable time reconstructing entries every Friday. The capture automation alone recovered $8K/month in time we were giving away for free.',
                 name: 'Marcus T.',
-                biz: 'CrossFit Box — Austin, TX',
-                stat: '18 hrs/wk recovered',
+                biz: 'Personal Injury Firm — Austin, TX',
               },
               {
-                quote: 'Our lead-to-trial conversion went from 22% to 41% after the automated follow-up sequence launched.',
+                stat: '+28% collections',
+                quote: 'Document assembly for standard wills used to take 3 hours. Now it takes 20 minutes. We doubled our estate planning volume without adding a single staff member.',
                 name: 'Priya S.',
-                biz: 'Yoga Studio — Chicago, IL',
-                stat: '+87% trial conversion',
+                biz: 'Estate Planning Attorney — Chicago, IL',
               },
               {
-                quote: 'Failed payment recovery used to take me a full day every month. Now it runs itself.',
-                name: 'Jordan R.',
-                biz: 'BJJ Academy — Miami, FL',
                 stat: '1 day/mo → zero',
+                quote: 'Client status calls used to eat my mornings. The milestone automation cut inbound calls by 60% in the first month. My clients feel more informed and I have my mornings back.',
+                name: 'Jordan R.',
+                biz: 'Family Law Practice — Miami, FL',
               },
             ].map(({ quote, name, biz, stat }, i) => (
               <div key={i} style={{
@@ -365,18 +364,17 @@ export default function FitnessPage() {
               Find your ghost work. Free, in 10 minutes.
             </h2>
             <p style={{ fontSize: 16, opacity: 0.55, lineHeight: 1.6, margin: 0 }}>
-              Our AI maps your gym&apos;s operation, identifies every automation opportunity, and
+              Our AI maps your firm&apos;s operation, identifies every automation opportunity, and
               delivers a custom Evolution Report with a 90-day build roadmap — specific to your
-              business type, tools, and revenue range.
+              practice area, tools, and billing model.
             </p>
           </div>
 
-          {/* Diagnostic embed */}
           <div style={{
             border: '1px solid rgba(244,241,234,0.15)',
             overflow: 'hidden',
           }}>
-            <ChatEngine defaultTier="core" defaultIndustry="Gym / Fitness / Wellness" />
+            <ChatEngine defaultTier="core" defaultIndustry="Legal / Law Firm" />
           </div>
 
           <div className="mono" style={{ marginTop: 16, fontSize: 10, opacity: 0.3, letterSpacing: '0.1em' }}>

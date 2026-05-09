@@ -19,14 +19,17 @@ RULES:
 - Do not explain that you are collecting data or mention the report structure`
 
 export async function POST(req: NextRequest) {
-  let body: { messages: { role: 'user' | 'assistant'; content: string }[] }
+  let body: { messages: { role: 'user' | 'assistant'; content: string }[]; defaultIndustry?: string }
   try {
     body = await req.json()
   } catch {
     return new Response('Invalid request body', { status: 400 })
   }
 
-  const { messages } = body
+  const { messages, defaultIndustry } = body
+  const systemPrompt = defaultIndustry
+    ? `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the ${defaultIndustry} landing page. Their industry is already confirmed: "${defaultIndustry}". Do NOT ask what kind of business they run — skip that question entirely. Ask their name and business name first, then go straight into their specific pain points, team size, revenue range, current tools, and email.`
+    : CHAT_SYSTEM_PROMPT
   if (!messages?.length) {
     return new Response('messages required', { status: 400 })
   }
@@ -38,7 +41,7 @@ export async function POST(req: NextRequest) {
         const claudeStream = anthropic.messages.stream({
           model: 'claude-sonnet-4-6',
           max_tokens: 400,
-          system: [{ type: 'text', text: CHAT_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
+          system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages,
         })
 

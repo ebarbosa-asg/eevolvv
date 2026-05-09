@@ -182,6 +182,46 @@ Common stack: WhatsApp Business, Vyapar, OkCredit, Khatabook, or manual ledgers 
 Highest-ROI automations: credit customer payment reminders (WhatsApp), inventory reorder alerts, daily sales + profit summary, supplier order automation via WhatsApp, fast-moving vs. slow-moving SKU tracking.
 Language: reference Indian retail context — use terms like "khata," "credit customers," "margin," "fast-moving goods," "FMCG," "distributor," "cash flow"; emphasize WhatsApp-first, mobile-native, Hindi/English bilingual where appropriate.`,
 
+  'Cleaning / Home Services': `
+INDUSTRY CONTEXT — CLEANING / HOME SERVICES:
+Key automation targets: booking and scheduling, recurring appointment reminders, invoice generation and follow-up, lead response, team dispatch and routing, review solicitation, client onboarding, service upsell sequences.
+Industry benchmarks: automated booking and reminders reduce no-shows by 35–50%; invoice automation improves collections by 25–35%; instant lead response (under 5 min) increases conversion by 3–5x; review automation generates 3–5x more Google reviews; team dispatch automation cuts scheduling conflicts by 40%.
+Common stack: Jobber, Housecall Pro, ZenMaid, ServiceM8, Square, Stripe, Google Calendar, Yelp, Google Business Profile.
+Highest-ROI automations: instant lead response + booking funnel, recurring service reminder sequences, automated invoice + payment follow-up, review solicitation after each job, team scheduling and dispatch optimization.
+Language: use terms like "recurring revenue," "client LTV," "cancellation rate," "route density," "job cost," "service frequency," "upsell visit."`,
+
+  'Salon / Beauty': `
+INDUSTRY CONTEXT — SALON / BEAUTY:
+Key automation targets: appointment booking and reminders, no-show and cancellation recovery, rebooking automation, product retail upsell, client anniversary and birthday sequences, stylist scheduling, review collection, referral programs.
+Industry benchmarks: automated reminders reduce no-shows by 35–50% (avg no-show costs $50–$150/slot); rebooking automation increases client return rate by 20–30%; retail product upsell sequences increase average ticket by 15–25%; review automation generates 3–4x more Google reviews; birthday/anniversary sequences drive 10–15% of rebookings.
+Common stack: Vagaro, Square Appointments, Booksy, Fresha, Boulevard, GlossGenius, Stripe, Google Reviews, Instagram.
+Highest-ROI automations: appointment reminder + confirmation sequence, lapsed client win-back, post-visit rebooking nudge, retail upsell email sequence, birthday reward campaign, review solicitation.
+Language: use terms like "average ticket," "client retention," "chair utilization," "no-show rate," "retail attachment," "rebooking rate," "booth rent."`,
+
+  'Childcare / Daycare': `
+INDUSTRY CONTEXT — CHILDCARE / DAYCARE:
+Key automation targets: enrollment inquiry response, waitlist management, tuition billing and late payment follow-up, parent communication and updates, attendance tracking, re-enrollment campaigns, staff scheduling, subsidy/voucher tracking.
+Industry benchmarks: automated inquiry response within 5 minutes increases enrollment by 20–30%; billing automation reduces late payments by 30–40%; re-enrollment campaigns retain 15–25% more families; parent communication automation reduces inbound call volume by 40–50%; waitlist automation converts 25–35% of waitlisted families.
+Common stack: Brightwheel, Procare, HiMama, Kangarootime, Stripe, Google Calendar, MailChimp, DocuSign, Remind.
+Highest-ROI automations: inquiry-to-tour nurture sequence, automated tuition billing + late fee reminders, re-enrollment campaign, daily parent update digest, waitlist activation sequence.
+Language: use terms like "enrollment capacity," "subsidy," "re-enrollment rate," "drop-in rate," "family LTV," "occupancy rate," "compliance," "ratio."`,
+
+  'Automotive / Auto Repair': `
+INDUSTRY CONTEXT — AUTOMOTIVE / AUTO REPAIR:
+Key automation targets: appointment scheduling and reminders, estimate follow-up, service completion and pickup notifications, declined service win-back campaigns, review solicitation, seasonal maintenance campaigns, parts ordering alerts, customer recall campaigns.
+Industry benchmarks: automated appointment reminders reduce no-shows by 40–60%; estimate follow-up automation closes 25–40% more declined jobs; review automation generates 3–5x more Google reviews; seasonal campaign sequences (oil change, tire rotation) increase repeat visits by 15–25%; declined service win-back recovers 10–20% of jobs.
+Common stack: Mitchell1, NAPA TRACS, Tekmetric, Shop-Ware, Autoflow, QuickBooks, Stripe, Google Reviews, Yelp.
+Highest-ROI automations: appointment reminder + confirmation flow, declined service 30-day follow-up, post-service review solicitation, seasonal maintenance campaign, parts reorder threshold alerts, customer vehicle recall notification.
+Language: use terms like "RO count," "ARO (average repair order)," "declined services," "effective labor rate," "customer pay vs. warranty," "DVI (digital vehicle inspection)," "comeback rate."`,
+
+  'Insurance Agency': `
+INDUSTRY CONTEXT — INSURANCE AGENCY:
+Key automation targets: lead intake and routing, policy renewal reminders and cross-sell sequences, claims status updates, annual review scheduling, lapsed policy win-back, referral request automation, document collection, compliance tracking.
+Industry benchmarks: automated renewal reminders improve retention by 30–50% (avg policy retention without automation is 65–75%); cross-sell automation increases policies-per-household by 20–30%; lead response within 5 minutes increases conversion 9x; claims status automation reduces inbound calls by 40–60%; referral automation generates 15–25% of new business.
+Common stack: Applied Epic, AgencyZoom, HawkSoft, EZLynx, AMS360, Salesforce, MailChimp, Calendly, DocuSign.
+Highest-ROI automations: instant lead response + nurture sequence, renewal reminder campaign (90/60/30 days out), cross-sell trigger automation, annual review scheduling sequence, referral request post-renewal, lapsed policy win-back.
+Language: use terms like "retention rate," "policies in force," "policies per household," "X-Date," "round out," "monoline," "premium volume," "loss ratio," "contingency."`,
+
   'Sari-Sari Store': `
 INDUSTRY CONTEXT — SARI-SARI STORE:
 Key automation targets: daily sales tracking, inventory replenishment alerts, credit/utang tracking and reminders, supplier payment scheduling, cash flow visibility, top-selling item identification, suki (loyal customer) tracking.
@@ -222,6 +262,11 @@ export function getIndustryShortName(industry: string): string {
     'Corner Store / Bodega': 'Corner Store',
     'Kirana Store': 'Kirana',
     'Sari-Sari Store': 'Sari-Sari',
+    'Cleaning / Home Services': 'Cleaning',
+    'Salon / Beauty': 'Salon',
+    'Childcare / Daycare': 'Childcare',
+    'Automotive / Auto Repair': 'Auto Shop',
+    'Insurance Agency': 'Insurance',
   }
   return map[industry] ?? 'Business'
 }

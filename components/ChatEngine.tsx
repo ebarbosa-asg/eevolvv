@@ -12,7 +12,12 @@ type Phase = 'chatting' | 'extracting' | 'report' | 'error'
 type Msg = { role: 'user' | 'ai'; text: string; id: number }
 type ApiMsg = { role: 'user' | 'assistant'; content: string }
 
-const OPENING = "Hi! I'm eevolvv's AI diagnostic assistant.\n\nWhat kind of business do you run — and what's your name?"
+const OPENING_DEFAULT = "Hi! I'm eevolvv's AI diagnostic assistant.\n\nWhat kind of business do you run — and what's your name?"
+const OPENING_SEEDED = "Hi! I'm eevolvv's AI diagnostic assistant.\n\nI'll map your business and find every automation opportunity hiding in your workflow. What's your name, and what's your business called?"
+
+function getOpening(industry?: string) {
+  return industry ? OPENING_SEEDED : OPENING_DEFAULT
+}
 
 const ACTIVITY_LINES = [
   '> Parsing business profile',
@@ -55,9 +60,9 @@ function ProgressRing({ pct }: { pct: number }) {
   )
 }
 
-export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
+export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTier: string; defaultIndustry?: string }) {
   const [phase, setPhase] = useState<Phase>('chatting')
-  const [messages, setMessages] = useState<Msg[]>([{ role: 'ai', text: OPENING, id: 0 }])
+  const [messages, setMessages] = useState<Msg[]>([{ role: 'ai', text: getOpening(defaultIndustry), id: 0 }])
   const [apiMsgs, setApiMsgs] = useState<ApiMsg[]>([])
   const [streamText, setStreamText] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
@@ -217,7 +222,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: nextApiMsgs }),
+        body: JSON.stringify({ messages: nextApiMsgs, defaultIndustry }),
       })
       if (!res.ok || !res.body) throw new Error(`Chat error ${res.status}`)
 
@@ -273,7 +278,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
       const res = await fetch('/api/extract-intake', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversation, tier: defaultTier }),
+        body: JSON.stringify({ conversation, tier: defaultTier, defaultIndustry }),
       })
       const data = await res.json()
       if (res.status === 429) throw new Error("You've generated 3 reports this hour — your limit resets in 60 minutes.")
@@ -312,7 +317,7 @@ export default function ChatEngine({ defaultTier }: { defaultTier: string }) {
 
   const reset = () => {
     setPhase('chatting')
-    setMessages([{ role: 'ai', text: OPENING, id: 0 }])
+    setMessages([{ role: 'ai', text: getOpening(defaultIndustry), id: 0 }])
     setApiMsgs([])
     setStreamText('')
     setInput('')

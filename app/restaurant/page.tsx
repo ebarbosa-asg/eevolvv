@@ -2,84 +2,84 @@ import type { Metadata } from 'next'
 import ChatEngine from '@/components/ChatEngine'
 
 export const metadata: Metadata = {
-  title: 'AI Automation for Gyms & Fitness Studios — eevolvv',
-  description: 'CrossFit boxes, BJJ academies, and fitness studios recover 15–25 hrs/week and cut member churn 25–35% with eevolvv AI automation. Free audit in 10 minutes.',
-  keywords: 'gym automation, fitness studio AI, crossfit automation, BJJ gym software, member retention automation, gym management AI, fitness business automation',
+  title: 'AI Automation for Restaurants — eevolvv',
+  description: 'Restaurants recover 15–25 hrs/week by automating no-shows, scheduling, and inventory. Free AI audit in 10 minutes. No signup.',
+  keywords: 'restaurant automation, restaurant AI software, restaurant no-show prevention, staff scheduling automation, restaurant management software, food service automation',
   openGraph: {
-    title: 'Stop Running Your Gym on Ghost Work — eevolvv',
-    description: 'Free AI diagnostic reveals exactly where your fitness studio is losing hours and members. CrossFit, BJJ, MMA, yoga — built for all of them.',
-    url: 'https://eevolvv.com/fitness',
+    title: 'Stop Running Your Restaurant on Ghost Work — eevolvv',
+    description: 'Restaurants recover 15–25 hrs/week by automating no-shows, scheduling, and inventory. Free AI audit in 10 minutes. No signup.',
+    url: 'https://eevolvv.com/restaurant',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://eevolvv.com/fitness',
+    canonical: 'https://eevolvv.com/restaurant',
   },
 }
 
 const GHOST_WORK_ITEMS = [
   {
     code: 'G-01',
-    label: 'Member Churn',
-    pain: 'Manually tracking who stopped showing up — usually too late to save them',
-    win: 'Automated early-warning system flags at-risk members at the first missed class',
-    hrs: '4–6 hrs/wk',
+    label: 'No-Shows',
+    pain: 'Tables sitting empty because a guest forgot their reservation — no automatic reminder went out',
+    win: 'Automated 24-hr and 2-hr confirmation sequence cuts no-shows by 30–40%',
+    hrs: '2–4 hrs/wk',
   },
   {
     code: 'G-02',
-    label: 'Failed Payments',
-    pain: 'Chasing EFT failures one by one via phone or email',
-    win: 'Automated dunning sequence recovers payments before memberships lapse',
-    hrs: '2–3 hrs/wk',
+    label: 'Staff Scheduling',
+    pain: 'Building the schedule every week: availability, requests, labor cost targets — all manual',
+    win: 'Automated schedule generation with constraint-aware optimization and instant staff notification',
+    hrs: '4–6 hrs/wk',
   },
   {
     code: 'G-03',
-    label: 'Lead Follow-Up',
-    pain: 'New inquiry comes in — you respond 4 hours later, they\'ve already joined someone else',
-    win: 'Instant lead response + 14-day nurture sequence converts trials to members',
-    hrs: '3–4 hrs/wk',
+    label: 'Inventory & Reordering',
+    pain: 'Manually counting stock, building order sheets, emailing suppliers — hours lost every week',
+    win: 'Threshold-based reorder triggers automatically generate purchase orders when stock dips',
+    hrs: '3–5 hrs/wk',
   },
   {
     code: 'G-04',
-    label: 'Class Utilization',
-    pain: 'Manually pulling attendance data to figure out which classes to cut or add',
-    win: 'Automated weekly report: utilization by class, coach, and time slot',
+    label: 'Review Response',
+    pain: 'Positive reviews going unacknowledged; negative reviews taking days to get a response',
+    win: 'Automated review monitoring + templated response workflows keep your rating climbing',
     hrs: '2–3 hrs/wk',
   },
   {
     code: 'G-05',
-    label: 'Onboarding',
-    pain: 'Walking every new member through the same 45-minute orientation manually',
-    win: 'Automated 7-day welcome sequence handles intro, waivers, goals, and first milestones',
-    hrs: '3–5 hrs/wk',
+    label: 'Waitlist & Reservations',
+    pain: 'Manually managing the waitlist — guests calling to check their spot, tables going empty',
+    win: 'Automated waitlist management with real-time table availability texting',
+    hrs: '2–3 hrs/wk',
   },
   {
     code: 'G-06',
-    label: 'Reviews & Referrals',
-    pain: 'Great results but no system to turn them into Google reviews or referrals',
-    win: 'Automated review ask at peak satisfaction moments + referral reward sequences',
-    hrs: '1–2 hrs/wk',
+    label: 'Supplier Invoices',
+    pain: 'Matching invoices to deliveries, reconciling pricing discrepancies, entering data manually',
+    win: 'Automated invoice reconciliation with exception flagging and QuickBooks sync',
+    hrs: '2–4 hrs/wk',
   },
 ]
 
 const STUDIO_TYPES = [
-  { id: 'F-01', name: 'CrossFit Boxes', note: 'Open gym, class management, coach scheduling' },
-  { id: 'F-02', name: 'BJJ Academies', note: 'Belt progression, trial conversion, comp prep' },
-  { id: 'F-03', name: 'MMA Gyms', note: 'Multi-discipline, retail, event promotion' },
-  { id: 'F-04', name: 'Yoga Studios', note: 'Class packs, workshop funnels, teacher scheduling' },
-  { id: 'F-05', name: 'Pilates Studios', note: 'Private session waitlists, package renewals' },
-  { id: 'F-06', name: 'Kickboxing / Muay Thai', note: 'Free trial flows, gear upsell, event camps' },
-  { id: 'F-07', name: 'Personal Training', note: 'Session reminders, rebooking, progress reports' },
-  { id: 'F-08', name: 'Bootcamp / HIIT', note: 'Challenge launches, retention, referral loops' },
+  { id: 'R-01', name: 'Full Service Restaurants', note: 'Reservation management, server scheduling, review response' },
+  { id: 'R-02', name: 'Fast Casual', note: 'Order routing, inventory triggers, staff scheduling' },
+  { id: 'R-03', name: 'QSR', note: 'Franchise reporting, labor cost tracking, supplier management' },
+  { id: 'R-04', name: 'Bars & Nightlife', note: 'Event promotion, VIP lists, liquor inventory' },
+  { id: 'R-05', name: 'Catering & Events', note: 'Event inquiry funnels, quote automation, deposit collection' },
+  { id: 'R-06', name: 'Food Trucks', note: 'Route planning, pre-order systems, social scheduling' },
+  { id: 'R-07', name: 'Ghost Kitchens', note: 'Multi-channel order sync, delivery platform management' },
+  { id: 'R-08', name: 'Bakeries & Cafes', note: 'Pre-order automation, subscription management, loyalty' },
 ]
 
 const STATS = [
-  { value: '25–35%', label: 'member churn reduction with automated engagement' },
-  { value: '6–10 hrs', label: 'saved per week on front-desk admin alone' },
-  { value: '40–60%', label: 'faster lead-to-member conversion' },
-  { value: '15–25%', label: 'increase in PT bookings via automated upsell' },
+  { value: '30–40%', label: 'reduction in no-shows with automated reservation reminders' },
+  { value: '4–8 hrs', label: 'saved per week on manual staff scheduling' },
+  { value: '12–18%', label: 'food cost reduction via smart inventory automation' },
+  { value: '60–80%', label: 'faster supplier invoice reconciliation' },
 ]
 
-export default function FitnessPage() {
+export default function RestaurantPage() {
   return (
     <main style={{ background: 'var(--paper)' }}>
 
@@ -87,7 +87,7 @@ export default function FitnessPage() {
       <section style={{ borderBottom: '1px solid var(--ink)', padding: '80px 32px 72px' }}>
         <div className="site-rail mx-auto">
           <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 20, fontWeight: 600 }}>
-            § 01 · FITNESS &amp; MARTIAL ARTS
+            § 01 · RESTAURANT &amp; FOOD SERVICE
           </div>
           <h1 style={{
             fontSize: 'clamp(34px, 6vw, 64px)',
@@ -98,12 +98,11 @@ export default function FitnessPage() {
             marginBottom: 24,
             maxWidth: 820,
           }}>
-            Your gym is running on<br />
+            Your restaurant is running on<br />
             <span style={{ color: 'var(--accent)' }}>ghost work.</span>
           </h1>
           <p style={{ fontSize: 18, lineHeight: 1.6, opacity: 0.65, maxWidth: 560, marginBottom: 36 }}>
-            Member churn, failed payments, lead drop-off, manual scheduling — fitness studios lose
-            15–25 hours every week to tasks that should be automated. We find them, name them, and build the fix.
+            No-shows, staff scheduling, inventory reorder, review response — restaurants lose 15–25 hours every week to work that should be automated. We find it, name it, and build the fix.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
             <a
@@ -119,7 +118,7 @@ export default function FitnessPage() {
                 display: 'inline-block',
               }}
             >
-              GET FREE GYM AUDIT →
+              GET FREE RESTAURANT AUDIT →
             </a>
             <span className="mono" style={{ fontSize: 11, opacity: 0.45, letterSpacing: '0.1em' }}>
               10 minutes · no signup · instant report
@@ -165,14 +164,14 @@ export default function FitnessPage() {
                 § 02 · WHERE THE HOURS GO
               </div>
               <h2 style={{ fontSize: 'clamp(26px, 4vw, 42px)', fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.1, margin: 0 }}>
-                Ghost work hiding in every fitness business.
+                Ghost work hiding in every restaurant.
               </h2>
             </div>
             <div style={{ paddingBottom: 4 }}>
               <p style={{ fontSize: 15, lineHeight: 1.65, opacity: 0.6, margin: 0 }}>
                 These aren&apos;t inefficiencies you can hustle through.
-                They&apos;re structural drains that compound every month — losing you members,
-                revenue, and the hours you should be spending on your community.
+                They&apos;re structural drains that compound every month — losing you covers,
+                revenue, and the hours you should be spending on your craft.
               </p>
             </div>
           </div>
@@ -215,19 +214,19 @@ export default function FitnessPage() {
           </div>
 
           <div className="mono" style={{ marginTop: 16, fontSize: 11, opacity: 0.4, letterSpacing: '0.08em' }}>
-            Total: 15–23 hours per week recovered across a typical fitness studio.
+            Total: 15–25 hours per week recovered across a typical restaurant.
           </div>
         </div>
       </section>
 
-      {/* ── Studio types ──────────────────────────────────────────────────────── */}
+      {/* ── Format types ──────────────────────────────────────────────────────── */}
       <section style={{ padding: '72px 32px', background: 'var(--ink)', color: 'var(--paper)', borderBottom: '1px solid rgba(244,241,234,0.1)' }}>
         <div className="site-rail mx-auto">
           <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}>
             § 03 · WHO WE BUILD FOR
           </div>
           <h2 style={{ fontSize: 'clamp(22px, 3.5vw, 36px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 40, maxWidth: 600 }}>
-            Every fitness format. One AI engine.
+            Every format. One AI engine.
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, border: '1px solid rgba(244,241,234,0.1)' }} className="fitness-studio-grid">
             {STUDIO_TYPES.map((s, i) => (
@@ -298,39 +297,39 @@ export default function FitnessPage() {
             INTEGRATES WITH
           </div>
           <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
-            {['Mindbody', 'Glofox', 'Pike13', 'ABC Fitness', 'Zen Planner', 'HubSpot', 'MailChimp', 'Stripe', 'Google Reviews'].map(tool => (
+            {['Toast', 'Square', 'Clover', 'OpenTable', 'Resy', '7shifts', 'QuickBooks', 'Google Reviews', 'Yelp'].map(tool => (
               <span key={tool} className="mono" style={{ fontSize: 11, letterSpacing: '0.1em', opacity: 0.45 }}>{tool}</span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Testimonial placeholder ───────────────────────────────────────────── */}
+      {/* ── Testimonials ──────────────────────────────────────────────────────── */}
       <section style={{ padding: '80px 32px', borderBottom: '1px solid var(--ink)' }}>
         <div className="site-rail mx-auto">
           <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 40, fontWeight: 600 }}>
             § 05 · RESULTS
           </div>
-          {/* TODO: replace with real fitness client testimonials */}
+          {/* TODO: replace with real restaurant client testimonials */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0, border: '1px solid var(--ink)' }} className="fitness-testimonial-grid">
             {[
               {
-                quote: 'We recovered 18 hours a week in month one. The churn system alone paid for the whole year.',
+                stat: '22 hrs/wk recovered',
+                quote: 'The scheduling automation alone gave us back a full day every week. And the no-show rate dropped from 23% to 9% in the first month.',
                 name: 'Marcus T.',
-                biz: 'CrossFit Box — Austin, TX',
-                stat: '18 hrs/wk recovered',
+                biz: 'Full Service Restaurant — Austin, TX',
               },
               {
-                quote: 'Our lead-to-trial conversion went from 22% to 41% after the automated follow-up sequence launched.',
-                name: 'Priya S.',
-                biz: 'Yoga Studio — Chicago, IL',
-                stat: '+87% trial conversion',
+                stat: '+31% table revenue',
+                quote: 'We had no idea how much we were losing to manual inventory until eevolvv showed us. The reorder automation paid for itself in the first quarter.',
+                name: 'Priya R.',
+                biz: 'Fast Casual Group — Chicago, IL',
               },
               {
-                quote: 'Failed payment recovery used to take me a full day every month. Now it runs itself.',
-                name: 'Jordan R.',
-                biz: 'BJJ Academy — Miami, FL',
                 stat: '1 day/mo → zero',
+                quote: 'Supplier invoice reconciliation was a nightmare. Now it\'s completely hands-off and our food cost dropped 14% in 60 days.',
+                name: 'Jordan C.',
+                biz: 'Catering Company — Miami, FL',
               },
             ].map(({ quote, name, biz, stat }, i) => (
               <div key={i} style={{
@@ -365,18 +364,17 @@ export default function FitnessPage() {
               Find your ghost work. Free, in 10 minutes.
             </h2>
             <p style={{ fontSize: 16, opacity: 0.55, lineHeight: 1.6, margin: 0 }}>
-              Our AI maps your gym&apos;s operation, identifies every automation opportunity, and
+              Our AI maps your restaurant&apos;s operation, identifies every automation opportunity, and
               delivers a custom Evolution Report with a 90-day build roadmap — specific to your
-              business type, tools, and revenue range.
+              format, tools, and revenue range.
             </p>
           </div>
 
-          {/* Diagnostic embed */}
           <div style={{
             border: '1px solid rgba(244,241,234,0.15)',
             overflow: 'hidden',
           }}>
-            <ChatEngine defaultTier="core" defaultIndustry="Gym / Fitness / Wellness" />
+            <ChatEngine defaultTier="core" defaultIndustry="Restaurant / Food & Beverage" />
           </div>
 
           <div className="mono" style={{ marginTop: 16, fontSize: 10, opacity: 0.3, letterSpacing: '0.1em' }}>
