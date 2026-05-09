@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
+import { fitnessConfig } from '@/lib/industries'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -18,6 +19,20 @@ RULES:
 - The tone is knowledgeable but human — like a sharp consultant, not a bot
 - Do not explain that you are collecting data or mention the report structure`
 
+function buildSystemPrompt(defaultIndustry?: string): string {
+  if (!defaultIndustry) return CHAT_SYSTEM_PROMPT
+
+  if (defaultIndustry === fitnessConfig.key) {
+    const questionList = fitnessConfig.intakeQuestions
+      .map((q, i) => `${i + 1}. ${q}`)
+      .join('\n')
+    return `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the Fitness / Gym / Studio landing page. Their industry is already confirmed: "${fitnessConfig.key}". Do NOT ask what kind of business they run — skip that question entirely.\n\nAsk their name and business name first, then work through these fitness-specific questions (one or two at a time, in a natural conversational order):\n\n${questionList}\n\nOnce you have their name, business name, answers to at least 4 of these questions, and their email address, end your message with exactly: [READY] on its own line.`
+  }
+
+  // Generic industry override (non-fitness)
+  return `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the ${defaultIndustry} landing page. Their industry is already confirmed: "${defaultIndustry}". Do NOT ask what kind of business they run — skip that question entirely. Ask their name and business name first, then go straight into their specific pain points, team size, revenue range, current tools, and email.`
+}
+
 export async function POST(req: NextRequest) {
   let body: { messages: { role: 'user' | 'assistant'; content: string }[]; defaultIndustry?: string }
   try {
@@ -27,9 +42,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { messages, defaultIndustry } = body
-  const systemPrompt = defaultIndustry
-    ? `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the ${defaultIndustry} landing page. Their industry is already confirmed: "${defaultIndustry}". Do NOT ask what kind of business they run — skip that question entirely. Ask their name and business name first, then go straight into their specific pain points, team size, revenue range, current tools, and email.`
-    : CHAT_SYSTEM_PROMPT
+  const systemPrompt = buildSystemPrompt(defaultIndustry)
   if (!messages?.length) {
     return new Response('messages required', { status: 400 })
   }
