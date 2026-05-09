@@ -86,6 +86,14 @@ Common stack: Athenahealth, Kareo, drchrono, SimplePractice, Healow, Zocdoc, Ava
 Highest-ROI automations: appointment reminder sequences, digital patient intake, insurance auth tracking, lapsed patient recall, billing error auto-detection.
 Language: use terms like "patient panel," "no-show rate," "RVU," "collections rate," "days in AR," "CPT codes," "prior auth."`,
 
+  'Dental / Oral Health': `
+INDUSTRY CONTEXT — DENTAL / ORAL HEALTH:
+Key automation targets: recall campaign outreach, no-show confirmation + rescheduling, insurance pre-authorization follow-up, new patient intake forms, treatment plan follow-up, AR aging follow-up, patient reactivation (lapsed 12+ months), hygiene appointment reminders.
+Industry benchmarks: recall rate — industry avg 55–65%, top practices 85–90%; every 10% gain in recall rate = ~$50K–$100K/yr per provider. No-show rate — avg 4–7%, top practices <1%; each missed slot = $200–$300 in lost production. Treatment acceptance — avg 55–65%, top practices 70–80%. Collection rate — target 98%+. Days in AR — target <30 days.
+Common stack: Dentrix, Eaglesoft, Open Dental, Curve Dental, Carestream, Weave, NexHealth, Lighthouse 360, RevenueWell.
+Highest-ROI automations: recall outreach sequence (re-engages lapsed patients due for hygiene), no-show confirmation + rebook workflow, insurance pre-authorization tracking, new patient nurture sequence, AR follow-up automation for aging balances.
+Language: use dental terms: "recall rate," "hygiene appointment," "treatment acceptance," "days in AR," "production," "collection rate," "perio," "new patient," "recare," "unscheduled treatment," "insurance aging," "pre-auth."`,
+
   'Real Estate': `
 INDUSTRY CONTEXT — REAL ESTATE:
 Key automation targets: lead capture + routing, listing nurture sequences, showing scheduling, offer document generation, transaction coordination, post-close follow-up, referral request automation, market report distribution, CRM hygiene.
@@ -249,6 +257,7 @@ export function getIndustryShortName(industry: string): string {
     'Retail / E-commerce': 'Retail',
     'Legal / Law Firm': 'Legal',
     'Medical / Healthcare': 'Healthcare',
+    'Dental / Oral Health': 'Dental',
     'Real Estate': 'Real Estate',
     'Construction / Trades': 'Construction',
     'Accounting / Finance': 'Accounting',
