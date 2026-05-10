@@ -1,6 +1,8 @@
 import { supabase } from '@/lib/supabase'
 import { formatReport } from '@/lib/format-report'
 import { TierCards } from '@/components/TierCards'
+import { FitnessKPIPanels } from '@/components/report/FitnessKPIPanels'
+import { fitnessConfig } from '@/lib/industries'
 import type { Metadata } from 'next'
 
 interface PageProps {
@@ -24,7 +26,7 @@ export default async function ReportPermalinkPage({ params }: PageProps) {
 
   const { data: submission, error } = await supabase
     .from('submissions')
-    .select('id, business_name, report, tier, email, created_at')
+    .select('id, business_name, report, tier, email, created_at, industry')
     .eq('id', id)
     .eq('status', 'completed')
     .maybeSingle()
@@ -79,6 +81,9 @@ export default async function ReportPermalinkPage({ params }: PageProps) {
 
       {/* Report body */}
       <div className="site-rail mx-auto">
+        {submission.industry === fitnessConfig.key && (
+          <FitnessKPIPanels submission={submission} />
+        )}
         <div
           className="report-content"
           style={{ padding: '40px 32px' }}
