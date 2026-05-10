@@ -94,11 +94,13 @@ export async function sendFollowUpEmail({
   email,
   name,
   businessName,
+  industry,
   sequence,
 }: {
   email: string
   name?: string
   businessName?: string
+  industry?: string
   sequence: FollowUpSequence
 }): Promise<EmailResult> {
   if (!resend) return { success: false, error: 'Email service not configured' }
@@ -110,9 +112,9 @@ export async function sendFollowUpEmail({
   }
 
   const templates: Record<FollowUpSequence, React.ReactElement> = {
-    1: React.createElement(FollowUp1Email, { name, businessName }),
-    2: React.createElement(FollowUp2Email, { name, businessName }),
-    3: React.createElement(FollowUp3Email, { name, businessName }),
+    1: React.createElement(FollowUp1Email, { name, businessName, industry }),
+    2: React.createElement(FollowUp2Email, { name, businessName, industry }),
+    3: React.createElement(FollowUp3Email, { name, businessName, industry }),
   }
 
   try {
