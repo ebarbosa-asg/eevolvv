@@ -34,7 +34,7 @@ export default async function OnboardingPage({ params }: PageProps) {
   // Fetch client info for tier-aware form
   const { data: client } = await supabase
     .from('clients')
-    .select('name, email, tier')
+    .select('name, email, tier, industry')
     .eq('id', tokenRow.client_id)
     .single()
 
@@ -60,6 +60,7 @@ export default async function OnboardingPage({ params }: PageProps) {
           clientId={tokenRow.client_id}
           tier={tier}
           defaultName={client?.name ?? ''}
+          industry={client?.industry ?? undefined}
         />
       </div>
     </main>

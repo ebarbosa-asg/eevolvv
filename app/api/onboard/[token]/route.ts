@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { Resend } from 'resend'
+import { render } from '@react-email/render'
+import { AdminOnboardingAlert } from '@/emails/AdminOnboardingAlert'
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
+const FROM_EMAIL = process.env.FROM_EMAIL ?? 'hello@eevolvv.com'
 
 export async function PATCH(
   req: NextRequest,
@@ -80,6 +86,51 @@ export async function PATCH(
       status: 'queued',
     })
   }
+
+  // Send admin notification for fitness onboarding
+  ;(async () => {
+    try {
+      // Fetch client info for notification
+      const { data: clientData } = await supabase!
+        .from('clients')
+        .select('name, tier, industry')
+        .eq('id', clientId)
+        .single()
+
+      if (clientData?.industry === 'Fitness / Gym / Studio' && resend) {
+        const formBody = body as Record<string, string>
+        const gymSoftware = formBody.gymSoftware || '—'
+        const credentialsPresent = !!(formBody.softwareUsername && formBody.softwarePassword)
+        const memberCount = formBody.memberCount || ''
+        const monthlyChurnRate = formBody.monthlyChurnRate || ''
+        const clientName = clientData.name || (formBody.businessName as string) || 'Unknown'
+        const businessName = (formBody.businessName as string) || '—'
+        const tier = clientData.tier || 'seed'
+
+        const html = await render(AdminOnboardingAlert({
+          clientName,
+          businessName,
+          vertical: 'Fitness / Gym / Studio',
+          gymSoftware,
+          credentialsPresent,
+          memberCount,
+          monthlyChurnRate,
+          tier,
+        }))
+
+        const { error: adminErr } = await resend.emails.send({
+          from: FROM_EMAIL,
+          to: 'hello@eevolvv.com',
+          subject: `[Onboarding] ${clientName} — Fitness — ${gymSoftware}`,
+          html,
+        })
+
+        if (adminErr) console.error('[onboard] admin notification error:', adminErr)
+      }
+    } catch (err) {
+      console.error('[onboard] admin notification unexpected error:', err)
+    }
+  })()
 
   return NextResponse.json({ success: true })
 }
