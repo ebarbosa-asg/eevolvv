@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { fitnessConfig } from '@/lib/industries'
+import { fitnessConfig, dentalConfig } from '@/lib/industries'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -29,7 +29,14 @@ function buildSystemPrompt(defaultIndustry?: string): string {
     return `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the Fitness / Gym / Studio landing page. Their industry is already confirmed: "${fitnessConfig.key}". Do NOT ask what kind of business they run — skip that question entirely.\n\nAsk their name and business name first, then work through these fitness-specific questions (one or two at a time, in a natural conversational order):\n\n${questionList}\n\nOnce you have their name, business name, answers to at least 4 of these questions, and their email address, end your message with exactly: [READY] on its own line.`
   }
 
-  // Generic industry override (non-fitness)
+  if (defaultIndustry === dentalConfig.key) {
+    const questionList = dentalConfig.intakeQuestions
+      .map((q, i) => `${i + 1}. ${q}`)
+      .join('\n')
+    return `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the Dental / Oral Health landing page. Their industry is already confirmed: "${dentalConfig.key}". Do NOT ask what kind of business they run — skip that question entirely.\n\nAsk their name and practice name first, then work through these dental-specific questions (one or two at a time, in a natural conversational order):\n\n${questionList}\n\nOnce you have their name, practice name, answers to at least 4 of these questions, and their email address, end your message with exactly: [READY] on its own line.`
+  }
+
+  // Generic industry override (non-fitness, non-dental)
   return `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the ${defaultIndustry} landing page. Their industry is already confirmed: "${defaultIndustry}". Do NOT ask what kind of business they run — skip that question entirely. Ask their name and business name first, then go straight into their specific pain points, team size, revenue range, current tools, and email.`
 }
 
