@@ -97,11 +97,30 @@ Language: use terms like "patient panel," "no-show rate," "RVU," "collections ra
 
   'Dental / Oral Health': `
 INDUSTRY CONTEXT — DENTAL / ORAL HEALTH:
-Key automation targets: recall campaign outreach, no-show confirmation + rescheduling, insurance pre-authorization follow-up, new patient intake forms, treatment plan follow-up, AR aging follow-up, patient reactivation (lapsed 12+ months), hygiene appointment reminders.
-Industry benchmarks: recall rate — industry avg 55–65%, top practices 85–90%; every 10% gain in recall rate = ~$50K–$100K/yr per provider. No-show rate — avg 4–7%, top practices <1%; each missed slot = $200–$300 in lost production. Treatment acceptance — avg 55–65%, top practices 70–80%. Collection rate — target 98%+. Days in AR — target <30 days.
-Common stack: Dentrix, Eaglesoft, Open Dental, Curve Dental, Carestream, Weave, NexHealth, Lighthouse 360, RevenueWell.
-Highest-ROI automations: recall outreach sequence (re-engages lapsed patients due for hygiene), no-show confirmation + rebook workflow, insurance pre-authorization tracking, new patient nurture sequence, AR follow-up automation for aging balances.
-Language: use dental terms: "recall rate," "hygiene appointment," "treatment acceptance," "days in AR," "production," "collection rate," "perio," "new patient," "recare," "unscheduled treatment," "insurance aging," "pre-auth."`,
+
+Key automation targets: recall campaign outreach (text + email multi-touch), no-show confirmation and same-day rescheduling, insurance pre-authorization tracking and escalation, new patient intake and nurture sequence, treatment plan follow-up and acceptance nudge, AR aging follow-up and payment plan offers, lapsed patient reactivation (12+ months inactive).
+
+Industry benchmarks (with exact numbers):
+- Recall rate: avg 55–65%, top practices 85–90%. Every 10% gain in recall rate = $50K–$100K/yr per provider in recovered production. Dollar formula: providers × (target_recall_rate - current_recall_rate) / 10 × $75,000 = annual production opportunity.
+- No-show rate: avg 4–7%, top practices <1%. Each missed slot = $200–$300 in lost production (chair time + overhead). Dollar formula: monthly_appointments × no_show_rate × $250_avg_slot = monthly_lost_production.
+- Treatment acceptance: avg 55–65%, top practices 70–80%. The gap = scheduled treatment left on the table.
+- Collection rate: target 98%+. Every 1% below 98% = $10K–$50K/yr depending on practice size.
+- Days in AR: target <30 days. Every 30-day band above that costs cash flow and write-off risk.
+
+Common stack: Dentrix, Eaglesoft, Open Dental, Curve Dental, Carestream Dental, Weave (communication), NexHealth (online booking + recalls), Lighthouse 360 (recall + reminders), RevenueWell (marketing automation), Availity (insurance eligibility), Change Healthcare.
+
+Competitive context: Weave and NexHealth are communication and booking platforms — they handle reminders and online scheduling. eevolvv builds automation ON TOP of these: recall campaign intelligence that goes beyond basic reminders, insurance pre-auth tracking when Availity lags, AR follow-up sequences that NexHealth doesn't touch. These tools handle scheduling; eevolvv handles the business outcomes those tools leave on the table.
+
+Highest-ROI automations:
+1. Recall Outreach Sequence (Month 1) — multi-touch recall campaign for patients overdue for hygiene; 3-month advance + 1-month + 2-week sequence; industry recall rate lift of 20–30 percentage points is typical.
+2. No-Show Confirmation & Rescheduling (Month 1) — day-before confirmation with one-tap confirm/cancel; auto-reschedule offer on no-show; recovers 40–60% of would-be no-shows.
+3. Insurance Pre-Authorization Tracking (Month 2) — tracks pending pre-auth, alerts at 5-business-day threshold, auto-escalates; eliminates treatment delays and billing surprises.
+4. New Patient Nurture Sequence (Month 2) — 30-day automated welcome: intake form → pre-appointment prep → post-visit check-in → 6-month recall scheduling.
+5. AR Follow-Up Automation (Month 3) — automated aging AR: 30-day statement, 60-day reminder, 90-day final with payment plan offer; drives Days in AR below 30.
+
+HIPAA note: DIAGNOSTIC ONLY: This diagnostic analyzes operational metrics — production, recall rate, AR — not patient records or clinical data. Patient-facing automations that involve PHI (names, DOB, treatment) require a BAA (Business Associate Agreement) before eevolvv accesses production data. Mention this when recommending patient communication automations.
+
+Language — enforce dental vocabulary: Use "patient" (never "customer"), "hygiene appointment" (never just "appointment" — specify type), "recall rate," "unscheduled treatment," "treatment acceptance," "production" (not "revenue" — dental uses production as the primary metric), "collection rate," "days in AR," "pre-auth," "insurance aging," "recare," "active patient," "new patient goal," "chair time." Do NOT use "client" or "customer."`,
 
   'Real Estate': `
 INDUSTRY CONTEXT — REAL ESTATE:
