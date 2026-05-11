@@ -15,6 +15,7 @@ export function FollowUp3Email({ name, businessName, industry }: FollowUp3Props)
   const greeting = name ? `Hi ${name.split(' ')[0]},` : 'Hi,'
   const biz = businessName || 'your business'
   const isFitness = industry === 'Fitness / Gym / Studio'
+  const isDental = industry === 'Dental / Oral Health'
 
   return (
     <Html lang="en" dir="ltr">
@@ -90,6 +91,55 @@ export function FollowUp3Email({ name, businessName, industry }: FollowUp3Props)
                 </Text>
                 <Text style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: 0 }}>
                   → Referral Campaign — automated referral ask to your most loyal members; referrals convert at 3–5x higher rate than cold leads.
+                </Text>
+              </Section>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                Your diagnostic report stays on file. We pick up exactly where the analysis left off.
+              </Text>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                Build queue opens every Monday. Spots fill fast.
+              </Text>
+            </Section>
+          ) : isDental ? (
+            <Section style={{ marginBottom: 32 }}>
+              <Heading
+                as="h1"
+                style={{
+                  fontSize: 26,
+                  fontWeight: 600,
+                  color: '#141413',
+                  margin: '0 0 12px',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.2,
+                }}
+              >
+                Your A/R follow-up system and new patient nurture are ready to build.
+              </Heading>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6, margin: 0 }}>
+                {greeting}
+              </Text>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                This is our last follow-up for {biz}&apos;s automation roadmap.
+              </Text>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                Month 3 in your dental roadmap includes:
+              </Text>
+              <Section
+                style={{
+                  background: 'rgba(20,20,19,0.04)',
+                  borderLeft: '3px solid #8C2B1A',
+                  padding: '16px 20px',
+                  margin: '16px 0',
+                }}
+              >
+                <Text style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: '0 0 8px' }}>
+                  → AR Follow-Up — automated copay and balance reminders cut days-in-AR by 30–40% in 90 days.
+                </Text>
+                <Text style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: '0 0 12px', opacity: 0.65 }}>
+                  ↳ Industry benchmark: 30–45 days. Top practices: under 25 days.
+                </Text>
+                <Text style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: 0 }}>
+                  → New Patient Nurture — post-consult sequences that move treatment-planned patients to scheduled; lifts acceptance 15–25%.
                 </Text>
               </Section>
               <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
