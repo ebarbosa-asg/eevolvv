@@ -15,6 +15,7 @@ export function FollowUp1Email({ name, businessName, industry }: FollowUp1Props)
   const greeting = name ? `Hi ${name.split(' ')[0]},` : 'Hi,'
   const biz = businessName || 'your business'
   const isFitness = industry === 'Fitness / Gym / Studio'
+  const isDental = industry === 'Dental / Oral Health'
 
   return (
     <Html lang="en" dir="ltr">
@@ -89,6 +90,41 @@ export function FollowUp1Email({ name, businessName, industry }: FollowUp1Props)
                 7–10 days.
               </Text>
             </Section>
+          ) : isDental ? (
+            <Section style={{ marginBottom: 32 }}>
+              <Heading
+                as="h1"
+                style={{
+                  fontSize: 26,
+                  fontWeight: 600,
+                  color: '#141413',
+                  margin: '0 0 12px',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.2,
+                }}
+              >
+                Your recall gap is costing $50K–$100K a year per provider.
+              </Heading>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6, margin: 0 }}>
+                {greeting}
+              </Text>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                Your eevolvv diagnostic for {biz} identified your biggest recovery opportunity:
+                patients who are overdue for hygiene but never rescheduled.
+              </Text>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                Industry recall rates average 40–50%. Top practices hit 85%+. Every 1% gap on
+                a 1,500-patient panel equals ~$75,000/yr in missed production.
+              </Text>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                The first automation we build: your Recall Outreach system — automated sequences
+                that contact overdue patients via text and email, fill your hygiene chair, and
+                report fill rates weekly.
+              </Text>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                Ready to start? The Core tier gets your recall system live within 7–10 days.
+              </Text>
+            </Section>
           ) : (
             <Section style={{ marginBottom: 32 }}>
               <Heading
@@ -133,7 +169,7 @@ export function FollowUp1Email({ name, businessName, industry }: FollowUp1Props)
                 fontFamily: 'Courier New, monospace',
               }}
             >
-              {isFitness ? 'STOP THE CHURN →' : 'SEE PRICING →'}
+              {isFitness ? 'STOP THE CHURN →' : isDental ? 'RECOVER YOUR RECALL →' : 'SEE PRICING →'}
             </Button>
           </Section>
           <Hr style={{ borderColor: 'rgba(20,20,19,0.14)', marginBottom: 16 }} />

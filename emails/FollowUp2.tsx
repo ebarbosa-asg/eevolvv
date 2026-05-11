@@ -15,6 +15,7 @@ export function FollowUp2Email({ name, businessName, industry }: FollowUp2Props)
   const greeting = name ? `Hi ${name.split(' ')[0]},` : 'Hi,'
   const biz = businessName || 'your business'
   const isFitness = industry === 'Fitness / Gym / Studio'
+  const isDental = industry === 'Dental / Oral Health'
 
   return (
     <Html lang="en" dir="ltr">
@@ -103,6 +104,55 @@ export function FollowUp2Email({ name, businessName, industry }: FollowUp2Props)
                 automations over 3 months.
               </Text>
             </Section>
+          ) : isDental ? (
+            <Section style={{ marginBottom: 32 }}>
+              <Heading
+                as="h1"
+                style={{
+                  fontSize: 26,
+                  fontWeight: 600,
+                  color: '#141413',
+                  margin: '0 0 12px',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.2,
+                }}
+              >
+                No-shows and insurance delays — both solvable this month.
+              </Heading>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6, margin: 0 }}>
+                {greeting}
+              </Text>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                A few days ago we sent your practice&apos;s automation roadmap. Two of your highest-ROI Month 2 builds:
+              </Text>
+              <Section
+                style={{
+                  background: 'rgba(20,20,19,0.04)',
+                  borderLeft: '3px solid #8C2B1A',
+                  padding: '16px 20px',
+                  margin: '16px 0',
+                }}
+              >
+                <Text style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: '0 0 8px' }}>
+                  → No-Show Confirmation — automated text + email sequences cut no-shows 40–60%. At $200/slot that&apos;s real production recovered weekly.
+                </Text>
+                <Text style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: '0 0 12px', opacity: 0.65 }}>
+                  ↳ Industry no-show rate: 10–15%. Top practices: under 5%.
+                </Text>
+                <Text style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: '0 0 8px' }}>
+                  → Insurance Pre-Auth — automated pre-authorization reduces same-day claim denials and front-desk bottlenecks.
+                </Text>
+                <Text style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: 0, opacity: 0.65 }}>
+                  ↳ Faster auth = faster treatment acceptance = faster production.
+                </Text>
+              </Section>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                Month 1 starts with your Recall Outreach system. These follow in Month 2.
+              </Text>
+              <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
+                Core tier ($2,400/yr) covers all five dental automations over 3 months.
+              </Text>
+            </Section>
           ) : (
             <Section style={{ marginBottom: 32 }}>
               <Heading
@@ -170,7 +220,7 @@ export function FollowUp2Email({ name, businessName, industry }: FollowUp2Props)
                 fontFamily: 'Courier New, monospace',
               }}
             >
-              {isFitness ? 'EXPLORE CORE →' : 'EXPLORE SEED →'}
+              {isFitness ? 'EXPLORE CORE →' : isDental ? 'EXPLORE CORE →' : 'EXPLORE SEED →'}
             </Button>
           </Section>
           <Hr style={{ borderColor: 'rgba(20,20,19,0.14)', marginBottom: 16 }} />

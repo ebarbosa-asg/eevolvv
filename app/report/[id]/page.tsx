@@ -2,7 +2,8 @@ import { supabase } from '@/lib/supabase'
 import { formatReport } from '@/lib/format-report'
 import { TierCards } from '@/components/TierCards'
 import { FitnessKPIPanels } from '@/components/report/FitnessKPIPanels'
-import { fitnessConfig } from '@/lib/industries'
+import { DentalKPIPanels } from '@/components/report/DentalKPIPanels'
+import { fitnessConfig, dentalConfig } from '@/lib/industries'
 import type { Metadata } from 'next'
 
 interface PageProps {
@@ -83,6 +84,9 @@ export default async function ReportPermalinkPage({ params }: PageProps) {
       <div className="site-rail mx-auto">
         {submission.industry === fitnessConfig.key && (
           <FitnessKPIPanels submission={submission} />
+        )}
+        {submission.industry === dentalConfig.key && (
+          <DentalKPIPanels submission={submission} />
         )}
         <div
           className="report-content"

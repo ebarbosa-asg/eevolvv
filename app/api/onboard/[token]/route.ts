@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { render } from '@react-email/render'
 import { AdminOnboardingAlert } from '@/emails/AdminOnboardingAlert'
+import { AdminDentalOnboardingAlert } from '@/emails/AdminDentalOnboardingAlert'
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 const FROM_EMAIL = process.env.FROM_EMAIL ?? 'hello@eevolvv.com'
@@ -126,6 +127,36 @@ export async function PATCH(
         })
 
         if (adminErr) console.error('[onboard] admin notification error:', adminErr)
+      } else if (clientData?.industry === 'Dental / Oral Health' && resend) {
+        const formBody = body as Record<string, string>
+        const practiceManagementSoftware = formBody.practiceManagementSoftware || '—'
+        const credentialsPresent = !!(formBody.softwareUsername && formBody.softwarePassword)
+        const recallRate = formBody.recallRate || ''
+        const noShowRate = formBody.noShowRate || ''
+        const frontDeskCount = formBody.frontDeskCount || ''
+        const clientName = clientData.name || (formBody.businessName as string) || 'Unknown'
+        const businessName = (formBody.businessName as string) || '—'
+        const tier = clientData.tier || 'seed'
+
+        const html = await render(AdminDentalOnboardingAlert({
+          clientName,
+          businessName,
+          practiceManagementSoftware,
+          credentialsPresent,
+          recallRate,
+          noShowRate,
+          frontDeskCount,
+          tier,
+        }))
+
+        const { error: adminErr } = await resend.emails.send({
+          from: FROM_EMAIL,
+          to: 'hello@eevolvv.com',
+          subject: `[Onboarding] ${clientName} — Dental — ${practiceManagementSoftware}`,
+          html,
+        })
+
+        if (adminErr) console.error('[onboard] dental admin notification error:', adminErr)
       }
     } catch (err) {
       console.error('[onboard] admin notification unexpected error:', err)
