@@ -8,13 +8,17 @@ interface OnboardingFormProps {
   clientId: string
   tier: 'seed' | 'core' | 'evolve'
   defaultName?: string
+  industry?: string
 }
 
-export function OnboardingForm({ token, tier, defaultName }: OnboardingFormProps) {
+export function OnboardingForm({ token, tier, defaultName, industry }: OnboardingFormProps) {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const pageLoadMs = useRef<number>(Date.now())
+
+  const isFitness = industry === 'Fitness / Gym / Studio'
+  const isDental = industry === 'Dental / Oral Health'
 
   const [form, setForm] = useState({
     businessName: defaultName ?? '',
@@ -31,6 +35,19 @@ export function OnboardingForm({ token, tier, defaultName }: OnboardingFormProps
     orgSize: '',
     techStack: '',
     keyStakeholders: '',
+    // Fitness fields
+    gymSoftware: '',
+    softwareUsername: '',
+    softwarePassword: '',
+    apiKey: '',
+    memberCount: '',
+    monthlyChurnRate: '',
+    // Dental fields
+    practiceManagementSoftware: '',
+    recallRate: '',
+    noShowRate: '',
+    frontDeskCount: '',
+    hipaaAcknowledgment: '',
   })
 
   function set(field: keyof typeof form, value: string) {
@@ -76,6 +93,60 @@ export function OnboardingForm({ token, tier, defaultName }: OnboardingFormProps
         <p style={{ fontSize: 14, opacity: 0.65, lineHeight: 1.6, margin: 0 }}>
           Build SLA: <strong>{slaMap[tier] ?? '72 hours'}</strong> from when your technician claims your build. You&apos;ll receive an email the moment work begins.
         </p>
+
+        {isFitness && (
+          <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid var(--rule)' }}>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 8 }}>→ NEXT STEP</div>
+            <p style={{ fontSize: 14, opacity: 0.65, lineHeight: 1.6, margin: '0 0 16px' }}>
+              Book a 15-minute kickoff call so we can confirm your software access and start building.
+            </p>
+            <a
+              href={process.env.NEXT_PUBLIC_CALENDLY_URL ?? 'https://calendly.com/hello-eevolvv'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mono"
+              style={{
+                display: 'inline-block',
+                padding: '14px 24px',
+                background: 'var(--ink)',
+                color: 'var(--paper)',
+                textDecoration: 'none',
+                fontSize: 11,
+                letterSpacing: '0.18em',
+                fontWeight: 700,
+              }}
+            >
+              BOOK KICKOFF CALL →
+            </a>
+          </div>
+        )}
+
+        {isDental && (
+          <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid var(--rule)' }}>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 8 }}>→ NEXT STEP</div>
+            <p style={{ fontSize: 14, opacity: 0.65, lineHeight: 1.6, margin: '0 0 16px' }}>
+              Book a 15-minute kickoff call so we can confirm your practice software access and begin your recall outreach build.
+            </p>
+            <a
+              href={process.env.NEXT_PUBLIC_CALENDLY_URL ?? 'https://calendly.com/hello-eevolvv'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mono"
+              style={{
+                display: 'inline-block',
+                padding: '14px 24px',
+                background: 'var(--ink)',
+                color: 'var(--paper)',
+                textDecoration: 'none',
+                fontSize: 11,
+                letterSpacing: '0.18em',
+                fontWeight: 700,
+              }}
+            >
+              BOOK KICKOFF CALL →
+            </a>
+          </div>
+        )}
       </div>
     )
   }
@@ -122,6 +193,152 @@ export function OnboardingForm({ token, tier, defaultName }: OnboardingFormProps
           <option value="slack">Slack</option>
         </select>
       </div>
+
+      {/* Fitness fields */}
+      {isFitness && (
+        <>
+          <hr style={{ borderColor: 'var(--rule)', margin: '8px 0' }} />
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: -8 }}>
+            § · FITNESS SETUP
+          </div>
+
+          <div>
+            <label style={labelStyle}>GYM MANAGEMENT SOFTWARE *</label>
+            <select required style={inputStyle} value={form.gymSoftware} onChange={e => set('gymSoftware', e.target.value)}>
+              <option value="">Select your software</option>
+              <option value="Mindbody">Mindbody</option>
+              <option value="Glofox">Glofox</option>
+              <option value="Zen Planner">Zen Planner</option>
+              <option value="Pike13">Pike13</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', opacity: 0.55, padding: '8px 0' }}>
+            ↳ Your credentials are transmitted over HTTPS and stored encrypted. We use them only to connect your software and build your automations.
+          </div>
+
+          <div>
+            <label style={labelStyle}>SOFTWARE LOGIN (USERNAME / EMAIL) *</label>
+            <input required type="text" style={inputStyle} value={form.softwareUsername} onChange={e => set('softwareUsername', e.target.value)} placeholder="login@example.com" />
+          </div>
+          <div>
+            <label style={labelStyle}>SOFTWARE PASSWORD *</label>
+            <input required type="password" style={inputStyle} value={form.softwarePassword} onChange={e => set('softwarePassword', e.target.value)} placeholder="••••••••" />
+          </div>
+
+          <div>
+            <label style={labelStyle}>API KEY (OPTIONAL)</label>
+            <input type="text" style={inputStyle} value={form.apiKey} onChange={e => set('apiKey', e.target.value)} placeholder="Found in your software's developer / integrations settings" />
+          </div>
+
+          <div>
+            <label style={labelStyle}>CURRENT ACTIVE MEMBER COUNT *</label>
+            <input required type="number" min="1" style={inputStyle} value={form.memberCount} onChange={e => set('memberCount', e.target.value)} placeholder="e.g. 250" />
+          </div>
+
+          <div>
+            <label style={labelStyle}>MONTHLY CHURN RATE (%) *</label>
+            <input required type="number" min="0" max="100" step="0.1" style={inputStyle} value={form.monthlyChurnRate} onChange={e => set('monthlyChurnRate', e.target.value)} placeholder="e.g. 5.5" />
+          </div>
+
+          <div style={{
+            background: 'rgba(20,20,19,0.04)',
+            borderLeft: '3px solid var(--accent)',
+            padding: '16px 20px',
+          }}>
+            <div className="mono" style={{ fontSize: 9, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10, fontWeight: 700 }}>
+              → MONTH 1 BUILD
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, color: 'var(--ink)' }}>
+              Churn Early-Warning System
+            </div>
+            <div style={{ fontSize: 13, opacity: 0.7, lineHeight: 1.6, margin: 0 }}>
+              We will build your churn early-warning system. This flags at-risk members 30 days before they cancel — based on declining check-in frequency, skipped classes, and failed EFT payments — and triggers a re-engagement sequence automatically.
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Dental fields */}
+      {isDental && (
+        <>
+          <hr style={{ borderColor: 'var(--rule)', margin: '8px 0' }} />
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: -8 }}>
+            § · DENTAL PRACTICE SETUP
+          </div>
+
+          <div>
+            <label style={labelStyle}>PRACTICE MANAGEMENT SOFTWARE *</label>
+            <select required style={inputStyle} value={form.practiceManagementSoftware} onChange={e => set('practiceManagementSoftware', e.target.value)}>
+              <option value="">Select your software</option>
+              <option value="Dentrix">Dentrix</option>
+              <option value="Eaglesoft">Eaglesoft</option>
+              <option value="Open Dental">Open Dental</option>
+              <option value="Curve Dental">Curve Dental</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', opacity: 0.55, padding: '8px 0' }}>
+            ↳ Your credentials are transmitted over HTTPS and stored encrypted. We use them only to connect your practice software and build your recall automations.
+          </div>
+
+          <div>
+            <label style={labelStyle}>SOFTWARE LOGIN (USERNAME / EMAIL) *</label>
+            <input required type="text" style={inputStyle} value={form.softwareUsername} onChange={e => set('softwareUsername', e.target.value)} placeholder="login@example.com" />
+          </div>
+          <div>
+            <label style={labelStyle}>SOFTWARE PASSWORD *</label>
+            <input required type="password" style={inputStyle} value={form.softwarePassword} onChange={e => set('softwarePassword', e.target.value)} placeholder="••••••••" />
+          </div>
+
+          <div>
+            <label style={labelStyle}>CURRENT RECALL RATE (%) *</label>
+            <input required type="number" min="0" max="100" step="1" style={inputStyle} value={form.recallRate} onChange={e => set('recallRate', e.target.value)} placeholder="e.g. 45" />
+          </div>
+
+          <div>
+            <label style={labelStyle}>CURRENT NO-SHOW / CANCELLATION RATE (%) *</label>
+            <input required type="number" min="0" max="100" step="1" style={inputStyle} value={form.noShowRate} onChange={e => set('noShowRate', e.target.value)} placeholder="e.g. 12" />
+          </div>
+
+          <div>
+            <label style={labelStyle}>FRONT DESK HEADCOUNT *</label>
+            <input required type="number" min="1" style={inputStyle} value={form.frontDeskCount} onChange={e => set('frontDeskCount', e.target.value)} placeholder="e.g. 2" />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <input
+              required
+              type="checkbox"
+              id="hipaaAck"
+              checked={form.hipaaAcknowledgment === 'true'}
+              onChange={e => set('hipaaAcknowledgment', e.target.checked ? 'true' : '')}
+              style={{ marginTop: 2, flexShrink: 0 }}
+            />
+            <label htmlFor="hipaaAck" style={{ ...labelStyle, opacity: 0.7, cursor: 'pointer', marginBottom: 0 }}>
+              I understand that eevolvv will access practice data for operational analysis only. We will not store or transmit individually identifiable patient health information (PHI) and will sign a BAA prior to any PHI access if required.
+            </label>
+          </div>
+
+          <div style={{
+            background: 'rgba(20,20,19,0.04)',
+            borderLeft: '3px solid var(--accent)',
+            padding: '16px 20px',
+          }}>
+            <div className="mono" style={{ fontSize: 9, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 10, fontWeight: 700 }}>
+              → MONTH 1 BUILD
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, color: 'var(--ink)' }}>
+              Recall Outreach System
+            </div>
+            <div style={{ fontSize: 13, opacity: 0.7, lineHeight: 1.6, margin: 0 }}>
+              We will build your automated patient recall outreach system — text and email sequences that contact overdue patients, fill your hygiene chair, and report fill rates weekly. Industry average recall rate is 40–50%. Top practices hit 85%+.
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Core + Evolve */}
       {(tier === 'core' || tier === 'evolve') && (

@@ -1,0 +1,505 @@
+prd: industry-vertical-workflows
+version: "1.0"
+created_at: "2026-05-09"
+owner: Eduardo Barbosa
+
+waves:
+  - wave: 1
+    name: "Foundation & Hotfixes"
+    description: "Critical bug fix, shared DB migration, and the lib/industries/ config pattern that all waves depend on."
+    tasks:
+      - id: IVW-001
+        title: "Fix dental defaultIndustry key"
+        description: |
+          app/dental/page.tsx line 378 passes defaultIndustry="Medical / Healthcare" — a key that
+          matches the medical/healthcare INDUSTRY_CONTEXT block, not any dental-specific block.
+          Every dental visitor receives a report written for a doctor using Athenahealth/Kareo.
+
+          Fix requires two files:
+          1. Update the key string in dental/page.tsx to "Dental / Oral Health"
+          2. Add a proper INDUSTRY_CONTEXT entry for "Dental / Oral Health" in diagnosticPrompts.ts
+             with Dentrix/Eaglesoft/Open Dental terminology, recall rate benchmarks, and dental vocabulary.
+
+          This is a hotfix — ship independently, no dependency on other tasks.
+        files_to_change:
+          - path: "app/dental/page.tsx"
+            change: "Line 378: change defaultIndustry=\"Medical / Healthcare\" to defaultIndustry=\"Dental / Oral Health\""
+          - path: "lib/diagnosticPrompts.ts"
+            change: |
+              Add INDUSTRY_CONTEXT entry for "Dental / Oral Health":
+              - Software: Dentrix, Eaglesoft, Open Dental, Carestream
+              - KPIs: recall rate (avg 55-65%, target 85-90%), no-show rate (avg 4-7%, target 1%),
+                treatment acceptance (avg 55-65%, target 70-80%), collection rate (98% target)
+              - Vocabulary: patients (not customers), hygiene appointments, recall, pre-auth, AR days
+              - Top automations: recall outreach, no-show confirmation sequence, pre-auth automation
+        acceptance_criteria:
+          - Dental landing page passes defaultIndustry="Dental / Oral Health" to ChatEngine
+          - INDUSTRY_CONTEXT["Dental / Oral Health"] exists in diagnosticPrompts.ts with dental-specific content
+          - buildSystemPrompt("Dental / Oral Health") returns dental benchmarks, not medical ones
+          - No other industry context blocks are modified
+        complexity: 1
+        model: sonnet
+        dependencies: []
+
+      - id: IVW-002
+        title: "Create lib/industries/ config module — fitness.ts"
+        description: |
+          Create lib/industries/fitness.ts as the canonical vertical config pattern.
+          This file is the single source of truth for all fitness-specific content:
+          intake questions, benchmarks, software options, automation catalog, email vocabulary,
+          KPI panel definitions, and onboarding fields.
+
+          This module is imported by api/chat/route.ts, diagnosticPrompts.ts, report page,
+          email templates, and onboarding form. Build it first; all other waves import it.
+
+          Export shape:
+            VERTICAL_CONFIG = {
+              key: "Fitness / Gym / Studio",
+              displayName: "Fitness & Gym",
+              intakeQuestions: string[],       // 7 questions from external research
+              benchmarks: Record<string, BenchmarkEntry>,
+              softwareOptions: string[],       // Mindbody, Glofox, Zen Planner, Pike13, other
+              automationCatalog: Automation[],
+              emailVocabulary: { customer, payment, appointment },
+              kpiPanels: KPIPanel[],
+              onboardingFields: OnboardingField[],
+            }
+
+          Intake questions (7):
+            1. What gym management software do you use? (Mindbody, Glofox, Zen Planner, Pike13, other)
+            2. How many active members, and what is your current monthly churn rate?
+            3. How do you currently follow up with new leads after a trial visit?
+            4. What happens when an EFT or membership payment fails?
+            5. What is your current lead-to-trial conversion rate?
+            6. How do you identify members who might cancel before they do?
+            7. Do you have a personal training program? What percentage of members participate?
+        files_to_change:
+          - path: "lib/industries/fitness.ts"
+            change: "CREATE — new file implementing full VERTICAL_CONFIG export"
+          - path: "lib/industries/index.ts"
+            change: "CREATE — barrel export: export { VERTICAL_CONFIG as fitnessConfig } from './fitness'"
+        acceptance_criteria:
+          - lib/industries/fitness.ts exists and exports VERTICAL_CONFIG
+          - All 7 intake questions are present and match external research spec
+          - benchmarks object includes churn rate, lead conversion, ARPM, annual retention, class utilization
+          - automationCatalog contains all 5 named automations with month, description, and delivery model
+          - emailVocabulary maps customer→"member", payment→"EFT", appointment→"class"
+          - TypeScript compiles without errors (tsc --noEmit)
+          - lib/industries/index.ts exports fitnessConfig
+        complexity: 2
+        model: sonnet
+        dependencies: []
+
+      - id: IVW-003
+        title: "Supabase migration: add industry column to clients table"
+        description: |
+          The submissions table already has an industry TEXT column (migration 001, line 15).
+          The clients table does not. The OS dashboard cannot filter by vertical without this column.
+
+          Add a single migration that:
+          1. Adds industry TEXT column to clients table
+          2. Backfills from submissions where clients.submission_id = submissions.id (if join exists)
+          3. Adds index on clients.industry for filtering performance
+
+          Migration file: supabase/migrations/010_clients_industry_column.sql
+          (Migrations 001–009 already exist. 010 is the next available number.)
+        files_to_change:
+          - path: "supabase/migrations/010_clients_industry_column.sql"
+            change: |
+              CREATE new migration:
+              ALTER TABLE clients ADD COLUMN IF NOT EXISTS industry TEXT;
+              CREATE INDEX IF NOT EXISTS idx_clients_industry ON clients(industry);
+              -- backfill if submission_id join available
+        acceptance_criteria:
+          - Migration file exists and runs cleanly via supabase db push
+          - clients table has industry TEXT column
+          - Index idx_clients_industry exists
+          - Existing client rows are not broken (NULL industry is acceptable)
+          - No other tables are modified
+        complexity: 1
+        model: sonnet
+        dependencies: []
+
+  - wave: 2
+    name: "Fitness Chat Intake + System Prompt"
+    description: "Wire the fitness config into the AI pipeline: intake questions injected into chat, INDUSTRY_CONTEXT block updated with fitness-specific content."
+    tasks:
+      - id: IVW-004
+        title: "Inject fitness-specific intake questions into api/chat/route.ts"
+        description: |
+          Currently, api/chat/route.ts uses a single CHAT_SYSTEM_PROMPT (line 6) with 7 generic
+          intake questions for all industries. When defaultIndustry === fitness key, the AI
+          should ask the 7 fitness-specific questions from lib/industries/fitness.ts instead.
+
+          Implementation:
+          1. Import fitnessConfig from lib/industries/index.ts
+          2. Before building the system prompt, check if defaultIndustry matches fitnessConfig.key
+          3. If match: append fitnessConfig.intakeQuestions to the prompt as the intake question set,
+             replacing the generic questions
+          4. If no match: preserve current generic question behavior (no regression)
+
+          The INDUSTRY OVERRIDE comment at line 31 already skips "what kind of business" question —
+          the fitness injection slots into the same conditional block.
+        files_to_change:
+          - path: "app/api/chat/route.ts"
+            change: |
+              Import fitnessConfig.
+              In the system prompt construction block, add conditional:
+              if (defaultIndustry === fitnessConfig.key) {
+                use fitnessConfig.intakeQuestions as the intake question list
+              } else {
+                use existing generic questions
+              }
+        acceptance_criteria:
+          - When ChatEngine is initialized with defaultIndustry="Fitness / Gym / Studio", the AI asks gym-specific questions (churn rate, gym software, EFT handling)
+          - Generic questions are NOT asked when fitness industry is detected
+          - When defaultIndustry is not set or is a different vertical, existing generic behavior is unchanged
+          - No TypeScript errors
+        complexity: 2
+        model: sonnet
+        dependencies:
+          - IVW-002
+
+      - id: IVW-005
+        title: "Fitness INDUSTRY_CONTEXT entry in diagnosticPrompts.ts"
+        description: |
+          The existing INDUSTRY_CONTEXT entry for fitness (if one exists) is generic.
+          Replace or add a fully-specified fitness entry using real benchmarks from external research.
+
+          The entry must include:
+          - Software: Mindbody, Glofox, Zen Planner, Pike13, ABC Fitness
+          - KPIs with benchmarks: monthly churn (4-6% avg, <4% target), ARPM ($50-150 standard,
+            $250+ boutique), lead-to-trial conversion (15-25% avg, 40-60% with automation),
+            annual retention (66.4% industry median, 2025 HFA Benchmarking Report),
+            class utilization (target 70%+)
+          - Dollar-value formula: members × ARPM × (current churn % - target %) = annual retention opportunity
+          - Vocabulary: members (not customers), EFT (not payment), class (not appointment),
+            front desk, personal training, boutique studio
+          - Top automations named: churn early-warning, EFT dunning, 14-day lead nurture,
+            class utilization report, referral campaign
+          - Competitive context: Mindbody, Glofox, ABC Fitness are software tools — eevolvv builds
+            on top of them, not against them
+
+          Key must exactly match fitnessConfig.key from IVW-002.
+        files_to_change:
+          - path: "lib/diagnosticPrompts.ts"
+            change: |
+              Add or replace INDUSTRY_CONTEXT entry for fitnessConfig.key.
+              Full entry with benchmarks, vocabulary, software list, and automation targets.
+        acceptance_criteria:
+          - INDUSTRY_CONTEXT entry exists with key matching fitnessConfig.key exactly
+          - buildSystemPrompt(fitnessConfig.key) returns content containing Mindbody/Glofox, churn benchmarks, EFT terminology
+          - Dollar-value formula is present in the context block
+          - No existing INDUSTRY_CONTEXT entries are modified
+          - Key string in diagnosticPrompts.ts exactly matches fitnessConfig.key (no typo drift)
+        complexity: 2
+        model: sonnet
+        dependencies:
+          - IVW-002
+
+  - wave: 3
+    name: "Fitness Report + Follow-up Emails"
+    description: "Make the report and email nurture sequence fitness-aware. Report fetches industry and renders KPI panels; emails use fitness vocabulary."
+    tasks:
+      - id: IVW-006
+        title: "Industry-aware report page — fitness KPI panels"
+        description: |
+          app/report/[id]/page.tsx currently fetches: id, business_name, report, tier, email, created_at.
+          It does NOT fetch industry. Report is rendered as generic markdown-to-HTML.
+
+          Changes required:
+          1. Add industry to the Supabase SELECT query
+          2. If industry matches fitnessConfig.key, render fitness KPI callout panels above the
+             generic report content
+          3. KPI panels pull from fitnessConfig.kpiPanels:
+             - Churn rate vs. 4-6% benchmark (with user's submitted churn rate if captured)
+             - Lead-to-trial conversion vs. 15-25% benchmark
+             - ARPM vs. $50-150 standard / $250+ boutique
+             - Annual retention opportunity (dollar-value formula if member count + ARPM captured)
+             - Class utilization target vs. 70%+
+          4. Each panel shows: metric name, user's value (or "not captured"), benchmark, gap, dollar opportunity
+          5. If industry is null or not fitness, render existing generic report (no regression)
+
+          Use components/ds/ design system components (KPIStat, DataRow, Card) — no raw Tailwind.
+        files_to_change:
+          - path: "app/report/[id]/page.tsx"
+            change: |
+              Add industry to SELECT.
+              Import fitnessConfig.
+              After data fetch, conditionally render <FitnessKPIPanels /> block above report content
+              when industry === fitnessConfig.key.
+          - path: "components/report/FitnessKPIPanels.tsx"
+            change: |
+              CREATE — new component rendering fitness KPI callout panels using ds/ components.
+              Props: { submissionData: SubmissionRow }
+              Renders: churn panel, lead conversion panel, ARPM panel, retention opportunity panel,
+              class utilization panel.
+        acceptance_criteria:
+          - Report page fetches industry from Supabase without breaking existing data fetch
+          - When industry === fitnessConfig.key, fitness KPI panels render above the markdown report
+          - Panels display benchmark comparisons (user value vs. industry avg)
+          - Dollar-value retention opportunity formula renders if member count and ARPM are available
+          - When industry is null or non-fitness, report renders exactly as before (no regression)
+          - Uses ds/ components only — no raw Tailwind class blocks
+          - TypeScript types for SubmissionRow are updated to include industry
+        complexity: 3
+        model: sonnet
+        dependencies:
+          - IVW-002
+          - IVW-003
+
+      - id: IVW-007
+        title: "Industry-aware follow-up emails — fitness vocabulary"
+        description: |
+          emails/FollowUp1.tsx, FollowUp2.tsx, FollowUp3.tsx have no industry prop.
+          All leads get identical nurture copy regardless of vertical.
+
+          Changes required for all three email components:
+          1. Add optional industry prop: industry?: string
+          2. Import fitnessConfig and define fitness vocabulary substitutions
+          3. In email copy, replace generic terms with vertical-specific terms when industry matches:
+             - "customers" → fitnessConfig.emailVocabulary.customer ("members")
+             - "payments" / "billing" → fitnessConfig.emailVocabulary.payment ("EFT")
+             - "appointments" → fitnessConfig.emailVocabulary.appointment ("classes")
+          4. FollowUp1 (day 3): add fitness-specific CTA — churn early-warning system preview
+          5. FollowUp2 (day 7): add EFT dunning and lead nurture mention
+          6. FollowUp3 (day 14): add class utilization report and referral campaign mention
+          7. When industry is null or non-fitness, render existing generic copy (no regression)
+
+          The email send call (in api/diagnostic/route.ts or wherever emails are triggered) must
+          also be updated to pass the industry value through to the email component.
+        files_to_change:
+          - path: "emails/FollowUp1.tsx"
+            change: "Add industry prop, conditional fitness vocabulary, fitness-specific CTA for churn system"
+          - path: "emails/FollowUp2.tsx"
+            change: "Add industry prop, conditional fitness vocabulary, EFT + lead nurture mention"
+          - path: "emails/FollowUp3.tsx"
+            change: "Add industry prop, conditional fitness vocabulary, utilization report + referral mention"
+          - path: "app/api/diagnostic/route.ts"
+            change: "Pass industry from submission data to FollowUp email send calls"
+        acceptance_criteria:
+          - All three email files accept optional industry prop
+          - When industry === fitnessConfig.key, email copy uses "members," "EFT," "classes"
+          - Fitness-specific automation CTAs appear in appropriate follow-up emails (churn in F1, EFT+leads in F2, utilization+referral in F3)
+          - Generic emails render unchanged when industry is null or non-fitness
+          - Emails compile and render in react-email preview without errors
+          - api/diagnostic/route.ts passes industry to email send calls
+        complexity: 2
+        model: sonnet
+        dependencies:
+          - IVW-002
+
+  - wave: 4
+    name: "Fitness Onboarding"
+    description: "Make the onboarding form fitness-aware: ask for gym software credentials, name the first automation, send admin notification to Eduardo."
+    tasks:
+      - id: IVW-008
+        title: "Industry-aware onboarding form — fitness branch"
+        description: |
+          app/onboard/[token]/OnboardingForm.tsx is currently generic. It does not ask for
+          software credentials or name the automation being built.
+
+          Changes required:
+          1. Fetch industry from the onboarding token record in Supabase
+          2. When industry === fitnessConfig.key, render fitness-specific field branch:
+             a. Gym software dropdown (Mindbody, Glofox, Zen Planner, Pike13, other)
+             b. Login credentials field (username + password, clearly labeled as secure)
+             c. API key field (optional — "if your software provides one")
+             d. Current member count (number input)
+             e. Current monthly churn rate (% input)
+             f. Automation preview block: "Month 1: We will build your churn early-warning system.
+                This flags at-risk members 30 days before they cancel."
+          3. On submission completion, trigger admin notification to Eduardo:
+             - To: hello@eevolvv.com
+             - Subject: "New fitness client onboarded: [business_name]"
+             - Body: client name, gym software, member count, churn rate, API key availability
+          4. After form submission, show Calendly booking CTA (NEXT_PUBLIC_CALENDLY_URL from env)
+             with message: "Book your kickoff call — we'll walk through the build plan together."
+          5. When industry is null or non-fitness, render existing generic form (no regression)
+        files_to_change:
+          - path: "app/onboard/[token]/OnboardingForm.tsx"
+            change: |
+              Fetch industry from token record.
+              Import fitnessConfig.
+              Add fitness branch: gym software dropdown, credentials, API key, member count,
+              churn rate, automation preview block.
+              On submit: trigger admin notification + show Calendly CTA.
+          - path: "app/api/onboard/submit/route.ts"
+            change: |
+              (or wherever onboarding submission is handled)
+              On fitness industry submission: send admin notification email via Resend
+              to hello@eevolvv.com with client data.
+          - path: "emails/AdminOnboardingAlert.tsx"
+            change: "CREATE — admin notification email template with client name, vertical, gym software, credentials present flag, member count, churn rate"
+        acceptance_criteria:
+          - Fitness onboarding form renders gym software dropdown with correct options
+          - Credentials fields are present and clearly labeled
+          - API key field is present but optional
+          - Member count and churn rate fields are present
+          - Automation preview block names "churn early-warning system" as Month 1 build
+          - On form submission, admin notification email is sent to hello@eevolvv.com
+          - Admin notification includes: client name, gym software selected, member count, churn rate, API key availability
+          - Calendly booking CTA appears after form submission using NEXT_PUBLIC_CALENDLY_URL
+          - Generic onboarding form renders unchanged for non-fitness clients
+          - TypeScript compiles without errors
+        complexity: 2
+        model: sonnet
+        dependencies:
+          - IVW-002
+          - IVW-003
+
+  - wave: 5
+    name: "Dental Vertical (template reuse)"
+    description: "Apply the fitness template to dental. Diagnostic-only scope — no patient-facing automations. Uses lib/industries/dental.ts following the same pattern as fitness.ts."
+    tasks:
+      - id: IVW-009
+        title: "Create lib/industries/dental.ts config"
+        description: |
+          Create lib/industries/dental.ts following the exact same VERTICAL_CONFIG export shape
+          established in fitness.ts (IVW-002). No new patterns — pure content substitution.
+
+          Dental config content:
+          - key: "Dental / Oral Health" (must match IVW-001 fix)
+          - Software: Dentrix, Eaglesoft, Open Dental, Carestream, other
+          - Intake questions (7):
+            1. What practice management software do you use?
+            2. What is your current recall rate? (% of patients returning within 18 months)
+            3. What is your current no-show rate?
+            4. How many new patients per month?
+            5. What is your insurance mix? (% PPO vs. fee-for-service)
+            6. How do you handle recall outreach? (calls, postcards, automated texts)
+            7. How many front-desk staff do you have?
+          - Benchmarks: recall rate (55-65% avg, 85-90% target, $50K-$100K/yr per 10% gain),
+            no-show rate (4-7% avg, <1% target, $200-300/missed slot),
+            treatment acceptance (55-65% avg, 70-80% target),
+            collection rate (98% target), days in AR (target <30)
+          - emailVocabulary: customer→"patient", payment→"copay", appointment→"hygiene appointment"
+          - HIPAA note in config: automations touching patient records require BAA — diagnostic scope only
+          - automationCatalog (diagnostic-scope): recall outreach sequence, no-show confirmation,
+            pre-auth automation, new patient nurture, AR follow-up sequence
+
+          Add dental to lib/industries/index.ts barrel export.
+        files_to_change:
+          - path: "lib/industries/dental.ts"
+            change: "CREATE — dental VERTICAL_CONFIG export following fitness.ts pattern"
+          - path: "lib/industries/index.ts"
+            change: "Add: export { VERTICAL_CONFIG as dentalConfig } from './dental'"
+        acceptance_criteria:
+          - lib/industries/dental.ts exists and exports VERTICAL_CONFIG
+          - dental config key exactly matches the key set in IVW-001 ("Dental / Oral Health")
+          - All 7 intake questions are present and match research spec
+          - benchmarks object includes recall rate, no-show rate, treatment acceptance, collection rate, days in AR
+          - emailVocabulary maps correctly (patient, copay, hygiene appointment)
+          - HIPAA note is present in automationCatalog or config metadata
+          - TypeScript compiles without errors
+          - lib/industries/index.ts exports dentalConfig
+        complexity: 2
+        model: sonnet
+        dependencies:
+          - IVW-001
+          - IVW-002
+
+      - id: IVW-010
+        title: "Dental chat intake + INDUSTRY_CONTEXT entry"
+        description: |
+          Wire dental config into the AI pipeline using the same pattern established for fitness.
+
+          Two changes:
+          1. api/chat/route.ts — add dental conditional alongside fitness conditional:
+             if (defaultIndustry === dentalConfig.key) { use dentalConfig.intakeQuestions }
+          2. lib/diagnosticPrompts.ts — the IVW-001 hotfix added a basic dental INDUSTRY_CONTEXT entry.
+             Expand it to match the depth of the fitness entry: full benchmark data, dollar-value
+             formulas (recall rate × $200 slot value × missed slots), dental vocabulary enforcement,
+             competitive context (Weave/NexHealth are communication tools, not diagnostic + build).
+        files_to_change:
+          - path: "app/api/chat/route.ts"
+            change: |
+              Import dentalConfig from lib/industries/index.ts.
+              Add dental conditional alongside fitness:
+              if (defaultIndustry === dentalConfig.key) { use dentalConfig.intakeQuestions }
+          - path: "lib/diagnosticPrompts.ts"
+            change: |
+              Expand the "Dental / Oral Health" INDUSTRY_CONTEXT entry added in IVW-001:
+              - Add full benchmark data with dollar-value formulas
+              - Add competitive context (Weave, NexHealth, Arini AI are point tools)
+              - Add dental vocabulary enforcement (patients, recall, hygiene, pre-auth, AR)
+              - Add HIPAA note: diagnostic is safe; patient-facing automations need BAA
+        acceptance_criteria:
+          - When ChatEngine is initialized with defaultIndustry="Dental / Oral Health", AI asks dental-specific intake questions
+          - Dental intake questions ask about recall rate, no-show rate, practice management software
+          - buildSystemPrompt("Dental / Oral Health") returns content with Dentrix/Eaglesoft benchmarks and dollar-value formulas
+          - Fitness intake path is unchanged (no regression)
+          - Generic path is unchanged (no regression)
+          - TypeScript compiles without errors
+        complexity: 2
+        model: sonnet
+        dependencies:
+          - IVW-001
+          - IVW-004
+          - IVW-005
+          - IVW-009
+
+      - id: IVW-011
+        title: "Dental report panels + onboarding branch"
+        description: |
+          Apply the fitness report and onboarding patterns to dental.
+
+          Report changes (app/report/[id]/page.tsx):
+          1. Add dental branch alongside fitness branch
+          2. Render dental KPI panels when industry === dentalConfig.key:
+             - Recall rate vs. 55-65% benchmark (with dollar-value: 10% gain = $50K-$100K)
+             - No-show rate vs. 4-7% benchmark (each missed slot = $200-300)
+             - Treatment acceptance vs. 55-65% benchmark
+             - Collection rate vs. 98% target
+             - Days in AR vs. <30 target
+          3. Create components/report/DentalKPIPanels.tsx following FitnessKPIPanels.tsx pattern
+
+          Onboarding changes (app/onboard/[token]/OnboardingForm.tsx):
+          1. Add dental branch alongside fitness branch:
+             a. Practice management software dropdown (Dentrix, Eaglesoft, Open Dental, Carestream, other)
+             b. Login credentials (username + password)
+             c. Current recall rate (% input)
+             d. Current no-show rate (% input)
+             e. Number of front-desk staff
+             f. Automation preview: "Month 1: We will build your recall outreach sequence.
+                This re-engages patients due for recall before they drift to another practice."
+             g. HIPAA acknowledgment checkbox: "I understand the diagnostic is for business metrics
+                only and does not involve patient health records."
+          2. Admin notification email includes dental-specific fields (recall rate, no-show rate, staff count)
+
+          Follow-up emails:
+          - Apply dentalConfig.emailVocabulary to FollowUp1-3.tsx (same pattern as IVW-007)
+          - Dental CTAs: recall campaign in FollowUp1, no-show reduction in FollowUp2, AR follow-up in FollowUp3
+        files_to_change:
+          - path: "app/report/[id]/page.tsx"
+            change: "Add dental branch: render DentalKPIPanels when industry === dentalConfig.key"
+          - path: "components/report/DentalKPIPanels.tsx"
+            change: "CREATE — dental KPI panels following FitnessKPIPanels.tsx pattern"
+          - path: "app/onboard/[token]/OnboardingForm.tsx"
+            change: "Add dental branch: practice management software, credentials, recall/no-show rates, HIPAA checkbox, automation preview"
+          - path: "emails/FollowUp1.tsx"
+            change: "Add dental vocabulary branch and recall campaign CTA"
+          - path: "emails/FollowUp2.tsx"
+            change: "Add dental vocabulary branch and no-show reduction mention"
+          - path: "emails/FollowUp3.tsx"
+            change: "Add dental vocabulary branch and AR follow-up mention"
+        acceptance_criteria:
+          - Dental report panels render when industry === dentalConfig.key
+          - Dental KPI panels show recall rate, no-show rate, treatment acceptance, collection rate, AR days with benchmarks
+          - Dollar-value formulas appear in dental panels (recall gain, missed slot cost)
+          - Dental onboarding form renders practice management software dropdown and recall/no-show fields
+          - HIPAA acknowledgment checkbox is present and required before form submission
+          - Admin notification email includes dental-specific fields
+          - Dental vocabulary appears in FollowUp emails (patients, recall, hygiene appointment)
+          - Fitness paths unchanged (no regression)
+          - Generic paths unchanged (no regression)
+          - TypeScript compiles without errors
+          - Uses ds/ components only in report panels
+        complexity: 2
+        model: sonnet
+        dependencies:
+          - IVW-006
+          - IVW-007
+          - IVW-008
+          - IVW-009
+          - IVW-010

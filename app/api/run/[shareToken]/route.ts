@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { anthropic, MODEL } from '@/lib/llm'
 import { supabase } from '@/lib/supabase'
 import { sendRunEmail } from '@/lib/email'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { traceLLMCall } from '@/lib/langfuse'
 
 export async function POST(
   _req: NextRequest,
@@ -68,13 +67,27 @@ export async function POST(
 
     const startMs = Date.now()
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: MODEL.standard,
       max_tokens: 4000,
       system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: lines }],
     })
     const latencyMs = Date.now() - startMs
     const output = message.content[0]?.type === 'text' ? message.content[0].text : ''
+
+    traceLLMCall({
+      traceId: run.id,
+      name: 'agent-run-shared',
+      model: MODEL.standard,
+      systemPrompt,
+      userMessage: lines,
+      output,
+      inputTokens: message.usage.input_tokens,
+      outputTokens: message.usage.output_tokens,
+      latencyMs,
+      userId: agent.client_id,
+      metadata: { agentId: agent.id, shareToken: params.shareToken },
+    }).catch(() => {})
 
     await supabase.from('agent_runs').update({
       status: 'success',

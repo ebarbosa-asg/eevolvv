@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import posthog from 'posthog-js'
 import Confetti from 'react-confetti'
 import { usePDF } from 'react-to-pdf'
-import { VolvvE, VolvvEAvatar, type GhostState } from '@/components/VolvvE'
+import { VolvvE, VolvvECard, type GhostState } from '@/components/VolvvE'
 import { TierCards } from '@/components/TierCards'
 import { formatReport } from '@/lib/format-report'
 
@@ -12,8 +12,8 @@ type Phase = 'chatting' | 'extracting' | 'report' | 'error'
 type Msg = { role: 'user' | 'ai'; text: string; id: number }
 type ApiMsg = { role: 'user' | 'assistant'; content: string }
 
-const OPENING_DEFAULT = "Hi! I'm eevolvv's AI diagnostic assistant.\n\nWhat kind of business do you run — and what's your name?"
-const OPENING_SEEDED = "Hi! I'm eevolvv's AI diagnostic assistant.\n\nI'll map your business and find every automation opportunity hiding in your workflow. What's your name, and what's your business called?"
+const OPENING_DEFAULT = "What kind of business do you run — and what's your name?"
+const OPENING_SEEDED = "What's your name, and what's your business called?"
 
 function getOpening(industry?: string) {
   return industry ? OPENING_SEEDED : OPENING_DEFAULT
@@ -78,6 +78,7 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
   const [showConfetti, setShowConfetti] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [userMsgCount, setUserMsgCount] = useState(0)
+  const [copied, setCopied] = useState(false)
 
   // Ghost state (derived — no extra useState needed)
   const ghostState: GhostState = resolveGhostState(phase, isStreaming)
@@ -339,6 +340,15 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
     }
   }
 
+  const copyReportLink = () => {
+    if (!report?.submissionId) return
+    const url = `${window.location.origin}/report/${report.submissionId}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }).catch(() => {})
+  }
+
   const progressPct = Math.min(100, Math.round((userMsgCount / APPROX_QUESTIONS) * 100))
 
   // ── Error ──────────────────────────────────────────────────────────────────
@@ -370,7 +380,7 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
           backgroundSize: '32px 32px', pointerEvents: 'none',
         }} />
 
-        <div style={{ position: 'relative', zIndex: 1, padding: '40px 32px' }}>
+        <div className="chat-extracting-body" style={{ position: 'relative', zIndex: 1, padding: '40px 32px' }}>
           {/* Header row */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, marginBottom: 36 }}>
             <div>
@@ -460,7 +470,7 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
             transition: 'opacity 0.5s ease, transform 0.5s ease',
           }}
         >
-          <div style={{
+          <div className="chat-report-header" style={{
             background: 'var(--ink)', color: 'var(--paper)',
             padding: '28px 32px',
             borderBottom: '3px solid var(--accent)',
@@ -526,6 +536,15 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
                 >
                   Download PDF →
                 </button>
+                {report.submissionId && (
+                  <button
+                    onClick={copyReportLink}
+                    className="mono"
+                    style={{ fontSize: 10, letterSpacing: '0.14em', color: copied ? '#4ade80' : 'rgba(250,247,240,0.55)', background: 'none', border: 'none', borderBottom: `1px solid ${copied ? '#4ade80' : 'rgba(250,247,240,0.25)'}`, cursor: 'pointer', padding: 0, transition: 'color 0.2s, border-color 0.2s' }}
+                  >
+                    {copied ? 'Link copied ✓' : 'Share report →'}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -615,28 +634,27 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
 
   // ── Chatting ───────────────────────────────────────────────────────────────
   return (
-    <div>
-      {/* Chrome bar — Volvv-E identity header */}
-      <div style={{
-        background: 'var(--ink)', color: 'var(--paper)',
-        padding: '12px 20px',
-        display: 'flex', alignItems: 'center', gap: 14,
-        borderBottom: '1px solid rgba(244,241,234,0.08)',
-      }}>
-        <VolvvE state={ghostState} scale={3} />
-        <div>
-          <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 700, lineHeight: 1.1 }}>
-            VOLVV-E
-          </div>
-          <div className="mono" style={{ fontSize: 8, letterSpacing: '0.16em', opacity: 0.4, marginTop: 3 }}>
-            {isStreaming ? '▷ WORKING...' : '◈ AI BUSINESS AGENT'}
+    <div className="diagnostic-console-shell">
+      {/* Chrome bar — diagnostic identity header */}
+      <div className="diagnostic-console-topbar">
+        <div className="diagnostic-console-agent">
+          <div>
+            <div className="mono diagnostic-console-kicker">
+              LIVE AI DIAGNOSTIC
+            </div>
+            <div className="diagnostic-console-title">
+              Business evolution scan
+            </div>
           </div>
         </div>
-        <div style={{ flex: 1 }} />
-        <div style={{ textAlign: 'right' }}>
-          <div className="mono" style={{ fontSize: 8, letterSpacing: '0.16em', opacity: 0.28 }}>EEVOLVV DIAGNOSTIC</div>
+        <div className="diagnostic-console-status">
+          <span className="diagnostic-status-dot" />
+          <span className="mono">{isStreaming ? 'WORKING' : 'READY'}</span>
+        </div>
+        <div className="diagnostic-console-meta">
+          <div className="mono">EEVOLVV DIAGNOSTIC</div>
           {userMsgCount > 0 && (
-            <div className="mono" style={{ fontSize: 9, letterSpacing: '0.14em', color: 'var(--accent)', marginTop: 2 }}>
+            <div className="mono diagnostic-console-progress-label">
               Q {userMsgCount} / ~{APPROX_QUESTIONS}
             </div>
           )}
@@ -659,31 +677,13 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
         ref={messagesRef}
         className="chat-messages-panel"
         style={{
-          maxHeight: 440, overflowY: 'auto',
-          padding: '28px 28px 16px',
-          background: 'rgba(255,255,255,0.45)',
+          padding: '30px 28px 18px',
         }}
       >
         {/* Volvv-E intro — shown before first user message */}
         {userMsgCount === 0 && (
-          <div style={{
-            display: 'flex', gap: 18, alignItems: 'center',
-            padding: '4px 0 20px',
-            borderBottom: '1px solid var(--rule)',
-            marginBottom: 20,
-          }}>
-            <VolvvE state="idle" scale={5} style={{ flexShrink: 0 }} />
-            <div>
-              <div className="mono" style={{ fontSize: 9, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 5, fontWeight: 600 }}>
-                YOUR AI BUSINESS AGENT
-              </div>
-              <div style={{ fontWeight: 700, fontSize: 16, letterSpacing: '-0.01em', marginBottom: 4, color: 'var(--ink)' }}>
-                Volvv-E
-              </div>
-              <div style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.65, color: 'var(--ink)', maxWidth: 380 }}>
-                Part analyst, part strategist — think of me as your always-on AI staff member. I'll map your operation, find every hour you&apos;re losing, and deliver a custom automation roadmap. No forms. Just a conversation.
-              </div>
-            </div>
+          <div className="diagnostic-intro-card-wrap">
+            <VolvvECard />
           </div>
         )}
 
@@ -694,15 +694,14 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
             style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 20 }}
           >
             {msg.role === 'ai' && (
-              <div style={{ display: 'flex', gap: 14, maxWidth: '82%', alignItems: 'flex-start' }}>
-                <VolvvEAvatar state={ghostState} scale={4} />
-                <div style={{ fontSize: 15, lineHeight: 1.65, color: 'var(--ink)', whiteSpace: 'pre-line', paddingTop: 4 }}>
+              <div className="diagnostic-ai-message">
+                <div className="diagnostic-ai-bubble">
                   {msg.text}
                 </div>
               </div>
             )}
             {msg.role === 'user' && (
-              <div style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '10px 18px', fontSize: 15, lineHeight: 1.5, maxWidth: '72%' }}>
+              <div className="diagnostic-user-bubble">
                 {msg.text}
               </div>
             )}
@@ -710,12 +709,11 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
         ))}
 
         {isStreaming && (
-          <div className="diagnostic-msg-in" style={{ display: 'flex', gap: 14, maxWidth: '82%', marginBottom: 20, alignItems: 'flex-start' }}>
-            <VolvvEAvatar state="thinking" scale={4} />
+          <div className="diagnostic-msg-in diagnostic-ai-message" style={{ marginBottom: 20 }}>
             {streamText ? (
-              <div style={{ fontSize: 15, lineHeight: 1.65, color: 'var(--ink)', whiteSpace: 'pre-line', paddingTop: 4 }}>{streamText}</div>
+              <div className="diagnostic-ai-bubble">{streamText}</div>
             ) : (
-              <div style={{ display: 'flex', gap: 5, alignItems: 'center', paddingTop: 14 }}>
+              <div className="diagnostic-thinking-dots">
                 {[0, 1, 2].map(i => (
                   <div key={i} style={{ width: 6, height: 6, background: 'var(--ink)', borderRadius: '50%', animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }} />
                 ))}
@@ -726,7 +724,7 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
       </div>
 
       {/* Input bar */}
-      <div style={{ display: 'flex', borderTop: '1px solid var(--ink)', background: 'var(--paper)' }}>
+      <div className="diagnostic-input-dock">
         <input
           ref={inputRef}
           type="text"
@@ -735,25 +733,12 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input) } }}
           disabled={isStreaming}
           placeholder={isStreaming ? '' : 'Type your answer...'}
-          style={{
-            flex: 1, border: 'none', padding: '16px 20px', fontSize: 15,
-            background: 'transparent', outline: 'none', color: 'var(--ink)',
-            fontFamily: 'Space Grotesk, sans-serif',
-          }}
+          className="diagnostic-input"
         />
         <button
           onClick={() => sendMessage(input)}
           disabled={!input.trim() || isStreaming}
-          className="mono"
-          style={{
-            background: input.trim() && !isStreaming ? 'var(--ink)' : 'transparent',
-            color: input.trim() && !isStreaming ? 'var(--paper)' : 'var(--ink)',
-            border: 'none', borderLeft: '1px solid var(--ink)',
-            padding: '0 24px', fontSize: 11, letterSpacing: '0.18em',
-            fontWeight: 600, cursor: input.trim() && !isStreaming ? 'pointer' : 'default',
-            opacity: input.trim() && !isStreaming ? 1 : 0.4,
-            transition: 'all 0.15s',
-          }}
+          className="mono diagnostic-send-button"
         >
           SEND →
         </button>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { randomUUID } from 'crypto'
+import { anthropic, MODEL } from '@/lib/llm'
+import { traceLLMCall } from '@/lib/langfuse'
 
 const EXTRACT_PROMPT = `You are a data extraction assistant. Given a conversation between an AI assistant and a business owner, extract structured intake data as a JSON object.
 
@@ -43,20 +43,31 @@ export async function POST(req: NextRequest) {
     .join('\n\n')
 
   let extracted: Record<string, string>
+  const traceId = randomUUID()
+  const startMs = Date.now()
+  const userMessage = `${EXTRACT_PROMPT}\n\nCONVERSATION:\n${transcript}${tier ? `\n\nPreferred tier hint: ${tier}` : ''}`
   try {
     const msg = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: MODEL.fast,
       max_tokens: 600,
-      messages: [
-        {
-          role: 'user',
-          content: `${EXTRACT_PROMPT}\n\nCONVERSATION:\n${transcript}${tier ? `\n\nPreferred tier hint: ${tier}` : ''}`,
-        },
-      ],
+      messages: [{ role: 'user', content: userMessage }],
     })
+    const latencyMs = Date.now() - startMs
     const raw = msg.content[0].type === 'text' ? msg.content[0].text : '{}'
     const match = raw.match(/\{[\s\S]*\}/)
     extracted = match ? JSON.parse(match[0]) : {}
+
+    traceLLMCall({
+      traceId,
+      name: 'extract-intake',
+      model: MODEL.fast,
+      userMessage,
+      output: raw,
+      inputTokens: msg.usage.input_tokens,
+      outputTokens: msg.usage.output_tokens,
+      latencyMs,
+      metadata: { tier, hasTranscript: !!transcript },
+    }).catch(() => {})
   } catch (err) {
     console.error('[extract-intake] extraction error:', err)
     return NextResponse.json({ error: 'Failed to extract intake data from conversation.' }, { status: 502 })

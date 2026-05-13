@@ -1,6 +1,9 @@
 import { supabase } from '@/lib/supabase'
 import { formatReport } from '@/lib/format-report'
 import { TierCards } from '@/components/TierCards'
+import { FitnessKPIPanels } from '@/components/report/FitnessKPIPanels'
+import { DentalKPIPanels } from '@/components/report/DentalKPIPanels'
+import { fitnessConfig, dentalConfig } from '@/lib/industries'
 import type { Metadata } from 'next'
 
 interface PageProps {
@@ -8,10 +11,37 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = params
+
+  let businessName = 'Your Business'
+  if (supabase) {
+    const { data: submission } = await supabase
+      .from('submissions')
+      .select('business_name')
+      .eq('id', id)
+      .eq('status', 'completed')
+      .maybeSingle()
+    if (submission?.business_name) businessName = submission.business_name
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
+
   return {
-    title: 'Evolution Report — eevolvv',
-    description: 'Your AI-generated business automation roadmap from eevolvv.',
+    title: `${businessName} — Evolution Report | eevolvv`,
+    description: `AI-generated business automation roadmap for ${businessName}. See the full diagnostic results and ranked automation opportunities.`,
     robots: 'noindex',
+    openGraph: {
+      title: `${businessName} — Evolution Report`,
+      description: 'AI-generated business automation roadmap from eevolvv. Free AI Business Diagnostic.',
+      url: `${baseUrl}/report/${id}`,
+      siteName: 'eevolvv',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${businessName} — Evolution Report`,
+      description: 'AI-generated business automation roadmap from eevolvv.',
+    },
   }
 }
 
@@ -24,7 +54,7 @@ export default async function ReportPermalinkPage({ params }: PageProps) {
 
   const { data: submission, error } = await supabase
     .from('submissions')
-    .select('id, business_name, report, tier, email, created_at')
+    .select('id, business_name, report, tier, email, created_at, industry')
     .eq('id', id)
     .eq('status', 'completed')
     .maybeSingle()
@@ -79,6 +109,12 @@ export default async function ReportPermalinkPage({ params }: PageProps) {
 
       {/* Report body */}
       <div className="site-rail mx-auto">
+        {submission.industry === fitnessConfig.key && (
+          <FitnessKPIPanels submission={submission} />
+        )}
+        {submission.industry === dentalConfig.key && (
+          <DentalKPIPanels submission={submission} />
+        )}
         <div
           className="report-content"
           style={{ padding: '40px 32px' }}

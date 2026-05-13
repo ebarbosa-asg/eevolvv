@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { randomUUID } from 'crypto'
+import { fitnessConfig, dentalConfig } from '@/lib/industries'
+import { anthropic, MODEL } from '@/lib/llm'
+import { traceLLMCall } from '@/lib/langfuse'
 
 const CHAT_SYSTEM_PROMPT = `You are eevolvv's AI business diagnostic assistant. You are having a brief, warm conversation to understand a business before generating their free eevolvv report.
 
@@ -18,6 +19,27 @@ RULES:
 - The tone is knowledgeable but human — like a sharp consultant, not a bot
 - Do not explain that you are collecting data or mention the report structure`
 
+function buildSystemPrompt(defaultIndustry?: string): string {
+  if (!defaultIndustry) return CHAT_SYSTEM_PROMPT
+
+  if (defaultIndustry === fitnessConfig.key) {
+    const questionList = fitnessConfig.intakeQuestions
+      .map((q, i) => `${i + 1}. ${q}`)
+      .join('\n')
+    return `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the Fitness / Gym / Studio landing page. Their industry is already confirmed: "${fitnessConfig.key}". Do NOT ask what kind of business they run — skip that question entirely.\n\nAsk their name and business name first, then work through these fitness-specific questions (one or two at a time, in a natural conversational order):\n\n${questionList}\n\nOnce you have their name, business name, answers to at least 4 of these questions, and their email address, end your message with exactly: [READY] on its own line.`
+  }
+
+  if (defaultIndustry === dentalConfig.key) {
+    const questionList = dentalConfig.intakeQuestions
+      .map((q, i) => `${i + 1}. ${q}`)
+      .join('\n')
+    return `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the Dental / Oral Health landing page. Their industry is already confirmed: "${dentalConfig.key}". Do NOT ask what kind of business they run — skip that question entirely.\n\nAsk their name and practice name first, then work through these dental-specific questions (one or two at a time, in a natural conversational order):\n\n${questionList}\n\nOnce you have their name, practice name, answers to at least 4 of these questions, and their email address, end your message with exactly: [READY] on its own line.`
+  }
+
+  // Generic industry override (non-fitness, non-dental)
+  return `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the ${defaultIndustry} landing page. Their industry is already confirmed: "${defaultIndustry}". Do NOT ask what kind of business they run — skip that question entirely. Ask their name and business name first, then go straight into their specific pain points, team size, revenue range, current tools, and email.`
+}
+
 export async function POST(req: NextRequest) {
   let body: { messages: { role: 'user' | 'assistant'; content: string }[]; defaultIndustry?: string }
   try {
@@ -27,30 +49,47 @@ export async function POST(req: NextRequest) {
   }
 
   const { messages, defaultIndustry } = body
-  const systemPrompt = defaultIndustry
-    ? `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the ${defaultIndustry} landing page. Their industry is already confirmed: "${defaultIndustry}". Do NOT ask what kind of business they run — skip that question entirely. Ask their name and business name first, then go straight into their specific pain points, team size, revenue range, current tools, and email.`
-    : CHAT_SYSTEM_PROMPT
+  const systemPrompt = buildSystemPrompt(defaultIndustry)
   if (!messages?.length) {
     return new Response('messages required', { status: 400 })
   }
 
+  const traceId = randomUUID()
+  const startMs = Date.now()
   const encoder = new TextEncoder()
   const stream = new ReadableStream({
     async start(controller) {
       try {
         const claudeStream = anthropic.messages.stream({
-          model: 'claude-sonnet-4-6',
+          model: MODEL.fast,
           max_tokens: 400,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages,
         })
 
+        let fullOutput = ''
         for await (const chunk of claudeStream) {
           if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+            fullOutput += chunk.delta.text
             const data = JSON.stringify({ type: 'delta', text: chunk.delta.text })
             controller.enqueue(encoder.encode(`data: ${data}\n\n`))
           }
         }
+
+        const finalMsg = await claudeStream.finalMessage()
+        const latencyMs = Date.now() - startMs
+        traceLLMCall({
+          traceId,
+          name: 'chat',
+          model: MODEL.fast,
+          systemPrompt,
+          userMessage: messages[messages.length - 1]?.content ?? '',
+          output: fullOutput,
+          inputTokens: finalMsg.usage.input_tokens,
+          outputTokens: finalMsg.usage.output_tokens,
+          latencyMs,
+          metadata: { messageCount: messages.length, defaultIndustry },
+        }).catch(() => {})
 
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`))
       } catch (err) {

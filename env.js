@@ -1,0 +1,58 @@
+const { createEnv } = require('@t3-oss/env-nextjs')
+const { z } = require('zod')
+
+const env = createEnv({
+  server: {
+    ANTHROPIC_API_KEY: z.string().min(1),
+    SUPABASE_URL: z.string().url(),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+    RESEND_API_KEY: z.string().min(1),
+    NEXTAUTH_SECRET: z.string().min(1),
+    STRIPE_SECRET_KEY: z.string().min(1),
+    STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    CRON_SECRET: z.string().min(1),
+    LANGFUSE_SECRET_KEY: z.string().optional(),
+    LANGFUSE_PUBLIC_KEY: z.string().optional(),
+    LANGFUSE_BASE_URL: z.string().url().optional(),
+    SENTRY_DSN: z.string().optional(),
+    RATE_LIMIT_MAX: z.string().optional(),
+    FROM_EMAIL: z.string().email().optional(),
+    POSTHOG_PERSONAL_API_KEY: z.string().optional(),
+    GITHUB_TOKEN: z.string().optional(),
+  },
+  client: {
+    NEXT_PUBLIC_BASE_URL: z.string().url().default('https://eevolvv.com'),
+    NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: z.string().optional(),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string().optional(),
+    NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
+    NEXT_PUBLIC_CALENDLY_URL: z.string().url().optional(),
+    NEXT_PUBLIC_DEV_BYPASS: z.string().optional(),
+  },
+  runtimeEnv: {
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    CRON_SECRET: process.env.CRON_SECRET,
+    LANGFUSE_SECRET_KEY: process.env.LANGFUSE_SECRET_KEY,
+    LANGFUSE_PUBLIC_KEY: process.env.LANGFUSE_PUBLIC_KEY,
+    LANGFUSE_BASE_URL: process.env.LANGFUSE_BASE_URL,
+    SENTRY_DSN: process.env.SENTRY_DSN,
+    RATE_LIMIT_MAX: process.env.RATE_LIMIT_MAX,
+    FROM_EMAIL: process.env.FROM_EMAIL,
+    POSTHOG_PERSONAL_API_KEY: process.env.POSTHOG_PERSONAL_API_KEY,
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+    NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    NEXT_PUBLIC_CALENDLY_URL: process.env.NEXT_PUBLIC_CALENDLY_URL,
+    NEXT_PUBLIC_DEV_BYPASS: process.env.NEXT_PUBLIC_DEV_BYPASS,
+  },
+  skipValidation: process.env.SKIP_ENV_VALIDATION === 'true',
+})
+
+module.exports = { env }

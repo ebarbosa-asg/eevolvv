@@ -375,7 +375,7 @@ export default function DentalPage() {
             border: '1px solid rgba(244,241,234,0.15)',
             overflow: 'hidden',
           }}>
-            <ChatEngine defaultTier="core" defaultIndustry="Medical / Healthcare" />
+            <ChatEngine defaultTier="core" defaultIndustry="Dental / Oral Health" />
           </div>
 
           <div className="mono" style={{ marginTop: 16, fontSize: 10, opacity: 0.3, letterSpacing: '0.1em' }}>

@@ -62,6 +62,15 @@ Common stack: Mindbody, Glofox, Pike13, ABC Fitness, Zen Planner, HubSpot, MailC
 Highest-ROI automations: churn early-warning system, lead-to-trial automated nurture, failed payment recovery, class utilization optimization, referral program automation.
 Language: use terms like "MRR," "churn rate," "LTV," "class utilization," "EFT," "attrition," "guest pass conversion."`,
 
+  'Fitness / Gym / Studio': `
+INDUSTRY CONTEXT — FITNESS / GYM / STUDIO:
+Key automation targets: member churn early-warning and re-engagement, EFT/failed payment dunning and recovery, lead-to-trial-to-member nurture sequence, class utilization optimization and scheduling, referral program automation, new member onboarding sequence, at-risk member identification and intervention, personal training upsell sequences.
+Industry benchmarks: Monthly churn rate — industry avg 4–6%, top performers <4%; every 1% churn reduction on a 500-member gym = ~$600–$900/month in recovered MRR. Lead-to-member conversion — avg 15–25% without automation, 40–60% with automated nurture. Average revenue per member (ARPM) — $50–$150/month (standard gyms), $250+/month (boutique studios). Annual member retention — industry median 66.4%; top performers above 80%. Class utilization — target 70%+ fill rate; below 40% indicates scheduling or marketing gap. Dollar-value formula for retention opportunity: members × ARPM × (current monthly churn % − target churn %) × 12 = annual retention opportunity.
+Common stack: Mindbody, Glofox, Zen Planner, Pike13, ABC Fitness, Wodify (CrossFit), TeamUp, HubSpot, MailChimp, Zapier.
+Competitive context: Mindbody, Glofox, and Zen Planner are member management platforms — they handle bookings, billing, and scheduling. eevolvv builds automation ON TOP of these platforms: churn prediction using their attendance data, EFT dunning when their billing fails, lead nurture when their CRM stalls. We are not competing with the software — we are making it work harder.
+Highest-ROI automations: 1. Churn Early-Warning System (Month 1) — flags at-risk members 30 days before likely cancellation using check-in frequency and EFT failure signals. 2. EFT Dunning Recovery (Month 2) — automated failed payment recovery sequence; industry average recovery rate 60–80% of failed EFT payments. 3. 14-Day Lead Nurture Sequence (Month 2) — converts free trial members to paid; industry uplift from 15–25% to 40–60% conversion rate. 4. Class Utilization Report (Month 3) — weekly automated analysis of fill rates by class/time; drives schedule optimization. 5. Referral Campaign (Month 3) — automated referral ask to high-satisfaction long-tenure members; referrals convert at 3–5x higher rate than cold leads.
+Language: use terms like "member," "MRR," "churn rate," "LTV," "class utilization," "EFT," "attrition," "guest pass conversion," "ARPM," "trial conversion," "check-in frequency," "cancellation." Do NOT use "customer" — always say "member." Do NOT use "appointment" — say "class" or "session."`,
+
   'Retail / E-commerce': `
 INDUSTRY CONTEXT — RETAIL / E-COMMERCE:
 Key automation targets: inventory sync, abandoned cart recovery, post-purchase flows, supplier PO generation, returns processing, review solicitation, loyalty tier management, demand forecasting, price monitoring, customer segmentation.
@@ -85,6 +94,33 @@ Industry benchmarks: automated reminders reduce no-shows by 30–50% (avg no-sho
 Common stack: Athenahealth, Kareo, drchrono, SimplePractice, Healow, Zocdoc, Availity.
 Highest-ROI automations: appointment reminder sequences, digital patient intake, insurance auth tracking, lapsed patient recall, billing error auto-detection.
 Language: use terms like "patient panel," "no-show rate," "RVU," "collections rate," "days in AR," "CPT codes," "prior auth."`,
+
+  'Dental / Oral Health': `
+INDUSTRY CONTEXT — DENTAL / ORAL HEALTH:
+
+Key automation targets: recall campaign outreach (text + email multi-touch), no-show confirmation and same-day rescheduling, insurance pre-authorization tracking and escalation, new patient intake and nurture sequence, treatment plan follow-up and acceptance nudge, AR aging follow-up and payment plan offers, lapsed patient reactivation (12+ months inactive).
+
+Industry benchmarks (with exact numbers):
+- Recall rate: avg 55–65%, top practices 85–90%. Every 10% gain in recall rate = $50K–$100K/yr per provider in recovered production. Dollar formula: providers × (target_recall_rate - current_recall_rate) / 10 × $75,000 = annual production opportunity.
+- No-show rate: avg 4–7%, top practices <1%. Each missed slot = $200–$300 in lost production (chair time + overhead). Dollar formula: monthly_appointments × no_show_rate × $250_avg_slot = monthly_lost_production.
+- Treatment acceptance: avg 55–65%, top practices 70–80%. The gap = scheduled treatment left on the table.
+- Collection rate: target 98%+. Every 1% below 98% = $10K–$50K/yr depending on practice size.
+- Days in AR: target <30 days. Every 30-day band above that costs cash flow and write-off risk.
+
+Common stack: Dentrix, Eaglesoft, Open Dental, Curve Dental, Carestream Dental, Weave (communication), NexHealth (online booking + recalls), Lighthouse 360 (recall + reminders), RevenueWell (marketing automation), Availity (insurance eligibility), Change Healthcare.
+
+Competitive context: Weave and NexHealth are communication and booking platforms — they handle reminders and online scheduling. eevolvv builds automation ON TOP of these: recall campaign intelligence that goes beyond basic reminders, insurance pre-auth tracking when Availity lags, AR follow-up sequences that NexHealth doesn't touch. These tools handle scheduling; eevolvv handles the business outcomes those tools leave on the table.
+
+Highest-ROI automations:
+1. Recall Outreach Sequence (Month 1) — multi-touch recall campaign for patients overdue for hygiene; 3-month advance + 1-month + 2-week sequence; industry recall rate lift of 20–30 percentage points is typical.
+2. No-Show Confirmation & Rescheduling (Month 1) — day-before confirmation with one-tap confirm/cancel; auto-reschedule offer on no-show; recovers 40–60% of would-be no-shows.
+3. Insurance Pre-Authorization Tracking (Month 2) — tracks pending pre-auth, alerts at 5-business-day threshold, auto-escalates; eliminates treatment delays and billing surprises.
+4. New Patient Nurture Sequence (Month 2) — 30-day automated welcome: intake form → pre-appointment prep → post-visit check-in → 6-month recall scheduling.
+5. AR Follow-Up Automation (Month 3) — automated aging AR: 30-day statement, 60-day reminder, 90-day final with payment plan offer; drives Days in AR below 30.
+
+HIPAA note: DIAGNOSTIC ONLY: This diagnostic analyzes operational metrics — production, recall rate, AR — not patient records or clinical data. Patient-facing automations that involve PHI (names, DOB, treatment) require a BAA (Business Associate Agreement) before eevolvv accesses production data. Mention this when recommending patient communication automations.
+
+Language — enforce dental vocabulary: Use "patient" (never "customer"), "hygiene appointment" (never just "appointment" — specify type), "recall rate," "unscheduled treatment," "treatment acceptance," "production" (not "revenue" — dental uses production as the primary metric), "collection rate," "days in AR," "pre-auth," "insurance aging," "recare," "active patient," "new patient goal," "chair time." Do NOT use "client" or "customer."`,
 
   'Real Estate': `
 INDUSTRY CONTEXT — REAL ESTATE:
@@ -246,9 +282,11 @@ export function getIndustryShortName(industry: string): string {
   const map: Record<string, string> = {
     'Restaurant / Food & Beverage': 'Restaurant',
     'Gym / Fitness / Wellness': 'Fitness',
+    'Fitness / Gym / Studio': 'Fitness',
     'Retail / E-commerce': 'Retail',
     'Legal / Law Firm': 'Legal',
     'Medical / Healthcare': 'Healthcare',
+    'Dental / Oral Health': 'Dental',
     'Real Estate': 'Real Estate',
     'Construction / Trades': 'Construction',
     'Accounting / Finance': 'Accounting',

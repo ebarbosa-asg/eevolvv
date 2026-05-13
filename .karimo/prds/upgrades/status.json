@@ -1,0 +1,24 @@
+{
+  "slug": "upgrades",
+  "status": "draft",
+  "created": "2026-05-09",
+  "last_updated": "2026-05-09",
+  "current_wave": null,
+  "gate_status": null,
+  "tasks": {
+    "1a-1": "pending",
+    "1b-1": "pending",
+    "1a-2": "pending",
+    "1a-3": "pending",
+    "1a-4": "pending",
+    "2a-1": "pending",
+    "2a-2": "pending",
+    "2b-1": "pending",
+    "2b-2": "pending",
+    "db-migration": "pending",
+    "3a-1": "pending",
+    "3a-2": "pending",
+    "3b-1": "pending",
+    "3c-1": "pending"
+  }
+}

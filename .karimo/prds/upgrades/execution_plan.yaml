@@ -1,0 +1,199 @@
+slug: upgrades
+title: "eevolvv Upgrades: ClawRouter + Ad/SEO Audit + Video Summary"
+created: "2026-05-09"
+total_waves: 5
+gate_after_wave: 3
+gate_label: "AUDIT CHECKPOINT"
+gate_description: |
+  Human reviews that AD HEALTH and SEO AUDIT sections render correctly
+  in a live report permalink before the video feature build begins.
+  Check: score badge displays, findings format correctly, N/A case
+  handles gracefully. Green light triggers Wave 4.
+
+orchestration:
+  integration_cadence: worktree
+  review_trigger: per-gate
+  review_scope: pr-diff
+  review_provider: null
+  review_none_behavior: manual
+  gate_model: sonnet
+  auto_merge_on_green: false
+
+model_assignments:
+  force_opus:
+    - "2a-1"
+    - "2a-2"
+    - "3a-2"
+  force_sonnet:
+    - "1a-1"
+    - "1a-2"
+    - "1a-3"
+    - "1a-4"
+    - "1b-1"
+    - "2b-1"
+    - "2b-2"
+    - "db-migration"
+    - "3a-1"
+    - "3b-1"
+    - "3c-1"
+
+env_vars_required:
+  - name: CLAW_ROUTER_URL
+    description: "Base URL for self-hosted ClawRouter proxy (dev: http://localhost:8080; prod: Railway URL)"
+    required_by_wave: 2
+    default: null
+  - name: CHEAP_MODEL
+    description: "Model ID for cheap/short calls routed via ClawRouter"
+    required_by_wave: 2
+    default: "claude-haiku-3"
+  - name: DIAGNOSTIC_MODEL
+    description: "Model ID for diagnostic report generation (keep at Sonnet)"
+    required_by_wave: 2
+    default: "claude-sonnet-4-6"
+  - name: HYPERFRAMES_RENDER_URL
+    description: "URL for HyperFrames render endpoint (optional; falls back to npm subprocess)"
+    required_by_wave: 5
+    default: null
+
+supabase_migrations:
+  - file: "supabase/migrations/010_add_audit_scores.sql"
+    run_before_wave: 4
+    instructions: "Run manually via Supabase dashboard SQL editor or `supabase db push`"
+
+waves:
+
+  - wave: 1
+    label: "ClawRouter Infrastructure"
+    parallel: true
+    tasks:
+      - id: "1a-1"
+        branch: "feature/upgrades-1a-1-anthropic-router"
+        title: "Install ClawRouter + create lib/anthropic-router.ts"
+        model: sonnet
+        complexity: 2
+        estimated_minutes: 15
+      - id: "1b-1"
+        branch: "feature/upgrades-1b-1-railway-deploy"
+        title: "Railway deploy config + Vercel env var instructions"
+        model: sonnet
+        complexity: 3
+        estimated_minutes: 20
+
+  - wave: 2
+    label: "Route Patching — Cheap Model Routing"
+    parallel: true
+    tasks:
+      - id: "1a-2"
+        branch: "feature/upgrades-1a-2-patch-extract-intake"
+        title: "Patch extract-intake to use ClawRouter"
+        model: sonnet
+        complexity: 3
+        estimated_minutes: 15
+        depends_on: ["1a-1"]
+      - id: "1a-3"
+        branch: "feature/upgrades-1a-3-patch-chat"
+        title: "Patch chat route to use ClawRouter"
+        model: sonnet
+        complexity: 3
+        estimated_minutes: 15
+        depends_on: ["1a-1"]
+      - id: "1a-4"
+        branch: "feature/upgrades-1a-4-diagnostic-model-config"
+        title: "Document diagnostic route model config"
+        model: sonnet
+        complexity: 2
+        estimated_minutes: 10
+        depends_on: ["1a-1"]
+
+  - wave: 3
+    label: "Ad Health + SEO Audit Sections"
+    parallel: true
+    tasks:
+      - id: "2a-1"
+        branch: "feature/upgrades-2a-1-seo-audit-route"
+        title: "Build seo-audit API route"
+        model: opus
+        complexity: 5
+        estimated_minutes: 45
+        depends_on: []
+      - id: "2a-2"
+        branch: "feature/upgrades-2a-2-ad-health-route"
+        title: "Build ad-health API route"
+        model: opus
+        complexity: 4
+        estimated_minutes: 35
+        depends_on: []
+      - id: "2b-1"
+        branch: "feature/upgrades-2b-1-patch-diagnostic-append"
+        title: "Patch diagnostic route to append audit sections"
+        model: sonnet
+        complexity: 3
+        estimated_minutes: 30
+        depends_on: ["2a-1", "2a-2"]
+      - id: "2b-2"
+        branch: "feature/upgrades-2b-2-format-report-badges"
+        title: "Patch format-report + report page for score badges"
+        model: sonnet
+        complexity: 2
+        estimated_minutes: 20
+        depends_on: ["2b-1"]
+
+  # GATE: AUDIT CHECKPOINT — manual human review before Wave 4
+
+  - wave: 4
+    label: "Database Migration"
+    parallel: false
+    note: "Run migration manually before triggering this wave"
+    tasks:
+      - id: "db-migration"
+        branch: "feature/upgrades-db-migration-audit-video"
+        title: "Supabase migration: audit scores + video_url columns"
+        model: sonnet
+        complexity: 2
+        estimated_minutes: 15
+        depends_on: ["2b-1"]
+
+  - wave: 5
+    label: "Video Summary Feature"
+    parallel: true
+    tasks:
+      - id: "3a-1"
+        branch: "feature/upgrades-3a-1-video-button-component"
+        title: "VideoSummaryButton component + report page integration"
+        model: sonnet
+        complexity: 2
+        estimated_minutes: 25
+        depends_on: ["db-migration"]
+      - id: "3a-2"
+        branch: "feature/upgrades-3a-2-video-summary-route"
+        title: "Build video-summary API route (HyperFrames)"
+        model: opus
+        complexity: 5
+        estimated_minutes: 60
+        depends_on: ["db-migration", "3a-1"]
+      - id: "3b-1"
+        branch: "feature/upgrades-3b-1-video-template-lib"
+        title: "Extract video content template to lib/video-template.ts"
+        model: sonnet
+        complexity: 2
+        estimated_minutes: 15
+        depends_on: ["3a-2"]
+      - id: "3c-1"
+        branch: "feature/upgrades-3c-1-email-permalink-embed"
+        title: "Email video CTA + permalink share button"
+        model: sonnet
+        complexity: 3
+        estimated_minutes: 25
+        depends_on: ["3a-2", "3b-1"]
+
+summary:
+  total_tasks: 13
+  total_complexity: 39
+  estimated_total_minutes: 345
+  waves: 5
+  gates: 1
+  require_review_files_touched:
+    - "app/api/extract-intake/route.ts"
+    - "app/api/chat/route.ts"
+    - "app/api/diagnostic/route.ts"
+    - "lib/supabase.ts"

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
 import { Resend } from 'resend'
 import { buildSystemPrompt } from '@/lib/diagnosticPrompts'
 import { supabase, saveSubmission, markEmailSent } from '@/lib/supabase'
@@ -7,8 +6,8 @@ import { checkRateLimit, checkRateLimitWithSubscription } from '@/lib/rateLimit'
 import { render } from '@react-email/render'
 import { EvolutionReportEmail } from '@/emails/EvolutionReport'
 import { getPostHogClient } from '@/lib/posthog-server'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { anthropic, MODEL } from '@/lib/llm'
+import { traceLLMCall } from '@/lib/langfuse'
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 function getClientIp(req: NextRequest): string {
@@ -143,8 +142,9 @@ Generate their eevolvv report now.`
 
   let rawReport: string
   try {
+    const diagStartMs = Date.now()
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: MODEL.standard,
       max_tokens: 4000,
       system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: userMessage }],
@@ -152,6 +152,20 @@ Generate their eevolvv report now.`
     rawReport = message.content[0].type === 'text'
       ? message.content[0].text
       : 'Report generation failed. Please try again.'
+
+    traceLLMCall({
+      traceId: submissionId ?? crypto.randomUUID(),
+      name: 'diagnostic-report',
+      model: MODEL.standard,
+      systemPrompt,
+      userMessage,
+      output: rawReport,
+      inputTokens: message.usage.input_tokens,
+      outputTokens: message.usage.output_tokens,
+      latencyMs: Date.now() - diagStartMs,
+      userId: email,
+      metadata: { businessType, industry, tier, submissionId },
+    }).catch(() => {})
   } catch (err) {
     console.error('[diagnostic] Claude error:', err)
 
@@ -208,14 +222,66 @@ Generate their eevolvv report now.`
     })()
   }
 
+  // ── Admin notification (non-blocking) ────────────────────────────────────
+  const adminEmail = process.env.ADMIN_EMAIL
+  if (resend && adminEmail) {
+    ;(async () => {
+      try {
+        const revenueStr = revenue || 'Not specified'
+        const teamStr = teamSize || 'Not specified'
+        const isHighValue = ['$500K–$1M', '$1M–$2M', '$2M–$5M', '$5M+', '11–25', '26–50', '50+']
+          .some(m => revenueStr.includes(m) || teamStr.includes(m))
+        const reportPreview = report.replace(/[#*`>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 400)
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
+        const reportUrl = submissionId ? `${baseUrl}/report/${submissionId}` : null
+        const submitTime = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', dateStyle: 'medium', timeStyle: 'short' })
+
+        const { error: adminErr } = await resend.emails.send({
+          from: process.env.FROM_EMAIL ?? 'hello@eevolvv.com',
+          to: adminEmail,
+          subject: `${isHighValue ? '🔥 ' : ''}New diagnostic — ${businessName || businessType} · ${tier || '?'} · ${industry || businessType}`,
+          html: `
+            <div style="font-family:monospace;max-width:600px;margin:0 auto;padding:32px 24px;background:#faf7f0;color:#141413;border:1px solid rgba(20,20,19,0.12);">
+              <div style="font-size:10px;letter-spacing:0.22em;color:#8C2B1A;font-weight:700;margin-bottom:20px;">EEVOLVV · NEW DIAGNOSTIC</div>
+              ${isHighValue ? '<div style="background:#8C2B1A;color:#faf7f0;padding:10px 16px;font-size:12px;font-weight:700;letter-spacing:0.08em;margin-bottom:20px;">⚡ HIGH VALUE LEAD</div>' : ''}
+              <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:24px;">
+                <tr><td style="padding:7px 0;color:rgba(20,20,19,0.45);width:120px;">Name</td><td style="padding:7px 0;font-weight:600;">${name || '—'}</td></tr>
+                <tr style="border-top:1px solid rgba(20,20,19,0.08)"><td style="padding:7px 0;color:rgba(20,20,19,0.45);">Email</td><td style="padding:7px 0;"><a href="mailto:${email}" style="color:#8C2B1A;text-decoration:none;font-weight:600;">${email}</a></td></tr>
+                <tr style="border-top:1px solid rgba(20,20,19,0.08)"><td style="padding:7px 0;color:rgba(20,20,19,0.45);">Business</td><td style="padding:7px 0;">${businessName || '—'}</td></tr>
+                <tr style="border-top:1px solid rgba(20,20,19,0.08)"><td style="padding:7px 0;color:rgba(20,20,19,0.45);">Industry</td><td style="padding:7px 0;">${industry || businessType}</td></tr>
+                <tr style="border-top:1px solid rgba(20,20,19,0.08)"><td style="padding:7px 0;color:rgba(20,20,19,0.45);">Revenue</td><td style="padding:7px 0;">${revenueStr}</td></tr>
+                <tr style="border-top:1px solid rgba(20,20,19,0.08)"><td style="padding:7px 0;color:rgba(20,20,19,0.45);">Team</td><td style="padding:7px 0;">${teamStr}</td></tr>
+                <tr style="border-top:1px solid rgba(20,20,19,0.08)"><td style="padding:7px 0;color:rgba(20,20,19,0.45);">Tier</td><td style="padding:7px 0;"><strong>${tier || '—'}</strong></td></tr>
+              </table>
+              <div style="background:rgba(20,20,19,0.05);border-left:3px solid #8C2B1A;padding:16px;font-size:13px;line-height:1.7;margin-bottom:24px;font-family:sans-serif;">
+                <div style="font-size:10px;letter-spacing:0.14em;color:#8C2B1A;margin-bottom:10px;font-family:monospace;">TOP OPPORTUNITIES (PREVIEW)</div>
+                ${reportPreview}…
+              </div>
+              <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;">
+                <a href="mailto:${email}" style="display:inline-block;background:#141413;color:#faf7f0;padding:12px 20px;font-size:11px;letter-spacing:0.14em;font-weight:600;text-decoration:none;">REPLY TO ${(name || email).toUpperCase().split(' ')[0]} →</a>
+                ${reportUrl ? `<a href="${reportUrl}" style="display:inline-block;border:1px solid #141413;color:#141413;padding:12px 20px;font-size:11px;letter-spacing:0.14em;font-weight:600;text-decoration:none;">VIEW FULL REPORT →</a>` : ''}
+              </div>
+              <div style="font-size:11px;color:rgba(20,20,19,0.4);">
+                ${submitTime} CT · ${durationMs}ms generation time
+              </div>
+            </div>
+          `,
+        })
+        if (adminErr) console.error('[resend] admin notification error:', adminErr)
+      } catch (err) {
+        console.error('[resend] admin notification unexpected error:', err)
+      }
+    })()
+  }
+
   // ── Schedule follow-up email queue (T10) ─────────────────────────────────
   if (submissionId && supabase && email) {
     ;(async () => {
       const now = new Date()
       const rows = [
-        { submission_id: submissionId, email, template: 'followup1', name: name ?? null, business_name: businessName ?? null, send_after: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), status: 'pending' },
-        { submission_id: submissionId, email, template: 'followup2', name: name ?? null, business_name: businessName ?? null, send_after: new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString(), status: 'pending' },
-        { submission_id: submissionId, email, template: 'followup3', name: name ?? null, business_name: businessName ?? null, send_after: new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString(), status: 'pending' },
+        { submission_id: submissionId, email, template: 'followup1', name: name ?? null, business_name: businessName ?? null, industry: industry ?? null, send_after: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), status: 'pending' },
+        { submission_id: submissionId, email, template: 'followup2', name: name ?? null, business_name: businessName ?? null, industry: industry ?? null, send_after: new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString(), status: 'pending' },
+        { submission_id: submissionId, email, template: 'followup3', name: name ?? null, business_name: businessName ?? null, industry: industry ?? null, send_after: new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString(), status: 'pending' },
       ]
       const { error: queueError } = await supabase.from('email_queue').insert(rows)
       if (queueError) console.error('[email_queue] insert error:', queueError.message)

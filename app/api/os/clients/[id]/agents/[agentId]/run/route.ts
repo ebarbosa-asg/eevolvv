@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { anthropic, MODEL } from '@/lib/llm'
 import { supabase } from '@/lib/supabase'
 import { sendRunEmail } from '@/lib/email'
 import { traceAgentRun } from '@/lib/langfuse'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 export async function POST(
   req: NextRequest,
@@ -67,7 +65,7 @@ export async function POST(
 
     const startMs = Date.now()
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: MODEL.standard,
       max_tokens: 4000,
       system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: userMessage }],
@@ -101,7 +99,7 @@ export async function POST(
       agentName: agent.name ?? 'agent',
       clientId: params.id,
       triggeredBy,
-      model: 'claude-sonnet-4-6',
+      model: MODEL.standard,
       systemPrompt,
       userMessage,
       output,

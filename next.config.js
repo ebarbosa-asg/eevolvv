@@ -1,3 +1,6 @@
+// Validate env vars at build time
+require('./env')
+
 const { withSentryConfig } = require('@sentry/nextjs')
 
 /** @type {import('next').NextConfig} */

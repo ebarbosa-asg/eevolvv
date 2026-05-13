@@ -2,6 +2,8 @@ import { Card, CardContent, SectionMarker } from '@/components/ds'
 import { OSTopbar } from '../components/OSTopbar'
 
 const QUICK_LINKS = [
+  { name: 'Studio 23 Preview', tag: 'First client build', url: '/studio-23' },
+  { name: 'First Client Canva', tag: 'Client source asset', url: 'https://canva.link/ruosh2c13ksqw5s' },
   { name: 'eevolvv.com', tag: 'Live site', url: 'https://eevolvv.com' },
   { name: 'HubSpot', tag: 'CRM + pipeline', url: 'https://app.hubspot.com' },
   { name: 'Linear', tag: 'Engineering', url: 'https://linear.app' },

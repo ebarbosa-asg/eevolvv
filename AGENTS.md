@@ -249,3 +249,47 @@ Autonomous agent orchestration for eevolvv feature development.
 - `/karimo:merge --prd <slug>` → final PR to main
 - `/karimo:doctor` → health check
 <!-- KARIMO:END -->
+
+
+<claude-mem-context>
+# Memory Context
+
+# [eevolvv] recent context, 2026-05-13 8:54am CDT
+
+Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
+Format: ID TIME TYPE TITLE
+Fetch details: get_observations([IDs]) | Search: mem-search skill
+
+Stats: 27 obs (10,902t read) | 1,018,883t work | 99% savings
+
+### May 8, 2026
+1052 7:59p ⚖️ eevolvv Massive Design Audit — Scope and Goals Defined
+1053 8:00p 🔵 eevolvv Industry Pages — Massive Copy-Paste Duplication Across 14 Vertical Pages
+1054 8:01p ⚖️ eevolvv Massive Design Audit — Scope and Goals Defined
+1055 " ⚖️ eevolvv Massive Design Audit Initiated — All Pages, UX, and Business Sub-Tab Template
+1056 8:03p ⚖️ eevolvv Massive Design Audit — Full Site Scope Initiated
+1057 " 🔵 eevolvv Sub-Business Verticals Confirmed — Fitness and Dental Among Active Pages
+1058 " 🔵 eevolvv Sub-Business Vertical — Legal Confirmed as Third Active Page
+1060 " 🔵 eevolvv Full Page Inventory Confirmed — 7 Pages Processed Successfully
+1061 8:04p 🔵 eevolvv Design Audit Extract — Full Page Inventory with Content and UX Issues Found
+1062 " ⚖️ eevolvv Massive Design Audit + Business Sub-Tab Template — Scope and Goals Defined
+1063 8:05p 🔵 eevolvv Fitness Vertical Has Hardcoded Namespaced CSS in globals.css — No Shared Template
+1064 " 🔵 eevolvv All 7 Pages Compile and Return 200 — Full Site Functional Pre-Audit
+1065 " 🔵 eevolvv Pricing, Contact, and Signin Page Structure Audited
+1066 " 🔵 eevolvv Vertical Landing Pages Are Copy-Pasted from Fitness — Not Template-Driven
+1067 8:18p 🔵 eevolvv Dev Server Runs on Port 3004 with Turbopack
+1068 8:21p 🔵 ChatEngine Full Architecture Mapped — 4-Phase Diagnostic Flow with PostHog Funnel
+1069 " 🔵 VolvvE Component — Pixel-Art Ghost Mascot with 4 Animation States
+1070 8:22p 🟣 VolvvECard Rebuilt — 6-Mode Interactive Showcase with Auto-Cycling Animations
+1071 " ✅ ChatEngine Opening Messages Stripped of AI Introduction Preamble
+1072 8:23p 🔵 eevolvv Production Build — 62 Static Pages, Full Route Inventory Confirmed
+1073 8:25p 🔴 Stale .next Cache Caused ENOENT Loop in Turbopack Dev Server — Fixed by Clearing Cache
+1084 8:32p 🔄 ChatEngine.tsx — Inline Styles Replaced with CSS Class Tokens (Phase 2)
+1086 " 🟣 eevolvv ChatEngine — Full Diagnostic Console CSS System Added to globals.css
+1087 8:33p 🟣 app/globals.css — Mobile Responsive Rules Added for Diagnostic Console at 760px
+1088 " ✅ app/page.tsx — Section Numbers Resequenced and Process + AgentsSection Restored to Render Order
+1090 " 🔵 eevolvv Diagnostic Console Redesign — Live Preview Confirmed at localhost:3004
+1094 10:59p ⚖️ eevolvv ChatEngine Diagnostic Console — Smooth Transitions Improvement Requested
+
+Access 1019k tokens of past work via get_observations([IDs]) or mem-search skill.
+</claude-mem-context>
