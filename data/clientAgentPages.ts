@@ -14,6 +14,7 @@ export type ClientAgentAction = {
 export type ClientAgentPageConfig = {
   slug: string
   company: string
+  allowedEmails: string[]
   agentName: string
   businessType: string
   stage: 'diagnose' | 'onboard' | 'build' | 'maintain'
@@ -30,6 +31,7 @@ export const CLIENT_AGENT_PAGES: Record<string, ClientAgentPageConfig> = {
   studio23: {
     slug: 'studio23',
     company: 'Studio 23 Roofing and Construction LLC',
+    allowedEmails: ['info@studio23roofing.com'],
     agentName: 'Studio 23 Agent',
     businessType: 'Roofing and construction',
     stage: 'build',
@@ -111,4 +113,14 @@ export const CLIENT_AGENT_PAGES: Record<string, ClientAgentPageConfig> = {
 
 export function getClientAgentPage(slug: string) {
   return CLIENT_AGENT_PAGES[slug]
+}
+
+export function getClientAgentPageByPath(pathname: string) {
+  const match = pathname.match(/^\/os\/([^/]+)(?:\/.*)?$/)
+  if (!match) return null
+  return getClientAgentPage(match[1]) ?? null
+}
+
+export function getAllClientAgentEmails() {
+  return Object.values(CLIENT_AGENT_PAGES).flatMap(client => client.allowedEmails)
 }

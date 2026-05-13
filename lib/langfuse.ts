@@ -27,6 +27,54 @@ async function getClient() {
   }
 }
 
+export interface LLMTraceParams {
+  traceId: string
+  name: string
+  model: string
+  systemPrompt?: string
+  userMessage: string
+  output: string
+  inputTokens: number
+  outputTokens: number
+  latencyMs: number
+  userId?: string
+  metadata?: Record<string, unknown>
+  error?: string
+}
+
+export async function traceLLMCall(params: LLMTraceParams): Promise<void> {
+  const lf = await getClient()
+  if (!lf) return
+
+  try {
+    const trace = lf.trace({
+      id: params.traceId,
+      name: params.name,
+      userId: params.userId,
+      metadata: params.metadata,
+    })
+
+    const input = params.systemPrompt
+      ? [{ role: 'system', content: params.systemPrompt }, { role: 'user', content: params.userMessage }]
+      : [{ role: 'user', content: params.userMessage }]
+
+    trace.generation({
+      name: params.name,
+      model: params.model,
+      input,
+      output: params.output,
+      usage: { input: params.inputTokens, output: params.outputTokens, unit: 'TOKENS' },
+      metadata: { latencyMs: params.latencyMs },
+      level: params.error ? 'ERROR' : 'DEFAULT',
+      statusMessage: params.error,
+    })
+
+    await lf.flushAsync()
+  } catch {
+    // never throw — observability must not break production
+  }
+}
+
 export interface AgentTraceParams {
   runId: string
   agentId: string

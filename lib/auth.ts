@@ -1,5 +1,14 @@
 import NextAuth from 'next-auth'
 import Google from 'next-auth/providers/google'
+import { getAllClientAgentEmails } from '@/data/clientAgentPages'
+
+const OWNER_EMAILS = ['hello@eevolvv.com', 'eduardocbarbosa1998@gmail.com']
+
+function isAllowedEmail(email?: string | null) {
+  if (!email) return false
+  const normalized = email.toLowerCase()
+  return [...OWNER_EMAILS, ...getAllClientAgentEmails()].some(allowed => allowed.toLowerCase() === normalized)
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [Google],
@@ -8,7 +17,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     signIn({ user }) {
-      return user.email === 'hello@eevolvv.com' || user.email === 'eduardocbarbosa1998@gmail.com'
+      return isAllowedEmail(user.email)
     },
   },
 })

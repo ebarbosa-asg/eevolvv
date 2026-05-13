@@ -3,6 +3,7 @@
 **Canonical client route:** `/os/studio23`  
 **Internal client record:** see `08-os-records-draft.md`  
 **Product framing:** Studio 23 is not just buying a website. Studio 23 is buying an operating agent page.
+**Current allowed Google email:** `info@studio23roofing.com`
 
 ---
 
@@ -69,6 +70,7 @@ Avoid this language:
 
 - [x] Create `/os/studio23` as the first client-facing agent page.
 - [x] Remove internal OS chrome from client-facing `/os/[client-slug]` routes.
+- [x] Protect `/os/studio23` with Google OAuth allowlist access.
 - [ ] Connect files to public-safe rendered docs instead of raw markdown paths.
 - [ ] Replace mailto inspection intake with saved lead records.
 - [ ] Add auth/token gate before sending to a real client.

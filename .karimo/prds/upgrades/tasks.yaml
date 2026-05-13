@@ -1,0 +1,630 @@
+slug: upgrades
+title: "eevolvv Upgrades: ClawRouter + Ad/SEO Audit + Video Summary"
+created: "2026-05-09"
+total_complexity: 39
+gate_after_wave: 3
+gate_label: "AUDIT CHECKPOINT — confirm ad/SEO sections render before building video"
+
+tasks:
+
+  # ── Wave 1: ClawRouter Setup ──────────────────────────────────────────────
+
+  - id: "1a-1"
+    wave: 1
+    title: "Install ClawRouter + create lib/anthropic-router.ts"
+    model: sonnet
+    complexity: 2
+    description: |
+      Create `lib/anthropic-router.ts` that exports a cheap-model Anthropic client
+      configured with `baseURL: process.env.CLAW_ROUTER_URL`.
+      If `CLAW_ROUTER_URL` is not set, fall back to the standard Anthropic SDK endpoint.
+      The client should target model `claude-haiku-3` (or env var `CHEAP_MODEL`
+      defaulting to `claude-haiku-3`).
+      Add Docker-based local dev instructions to a new file `.karimo/prds/upgrades/CLAWROUTER_DEV.md`:
+        - `docker run -p 8080:8080 blockrunai/clawrouter:latest`
+        - Set `CLAW_ROUTER_URL=http://localhost:8080` in `.env.local`
+    files_to_create:
+      - "lib/anthropic-router.ts"
+    files_to_modify: []
+    env_vars:
+      - CLAW_ROUTER_URL
+      - CHEAP_MODEL
+    depends_on: []
+    acceptance_criteria:
+      - "lib/anthropic-router.ts exports `anthropicRouter` client"
+      - "Falls back to standard endpoint if CLAW_ROUTER_URL is unset"
+      - "`npm run build` passes with no TS errors"
+
+  - id: "1b-1"
+    wave: 1
+    title: "Railway deploy config for ClawRouter + Vercel env var instructions"
+    model: sonnet
+    complexity: 3
+    description: |
+      Create `.karimo/prds/upgrades/RAILWAY_DEPLOY.md` with step-by-step instructions
+      to deploy ClawRouter on Railway:
+        1. `railway init` in a temp folder
+        2. Use the BlockRunAI/ClawRouter Docker image
+        3. Set Railway env vars (ANTHROPIC_API_KEY, etc.)
+        4. Copy the generated Railway public URL
+        5. Add `CLAW_ROUTER_URL=<railway-url>` to Vercel project environment variables
+      Also create `railway.toml` at project root (if not present) with minimal config
+      for ClawRouter as a separate service (not the Next.js app — document this clearly).
+      Note: railway.toml is for documentation/reference only; the ClawRouter service
+      is a separate Railway project from the eevolvv Next.js app.
+    files_to_create:
+      - ".karimo/prds/upgrades/RAILWAY_DEPLOY.md"
+    files_to_modify: []
+    env_vars:
+      - CLAW_ROUTER_URL
+    depends_on: []
+    acceptance_criteria:
+      - "RAILWAY_DEPLOY.md exists with complete deploy steps"
+      - "Instructions reference correct Docker image blockrunai/clawrouter"
+
+  # ── Wave 2: Route Patching ────────────────────────────────────────────────
+
+  - id: "1a-2"
+    wave: 2
+    title: "Patch extract-intake route to use ClawRouter cheap model"
+    model: sonnet
+    complexity: 3
+    description: |
+      In `app/api/extract-intake/route.ts`:
+        - Import `anthropicRouter` from `lib/anthropic-router`
+        - Replace the `anthropic.messages.create` call (line ~47) with `anthropicRouter.messages.create`
+        - The model inside that call should use `process.env.CHEAP_MODEL ?? 'claude-haiku-3'`
+        - max_tokens can stay at 600 (appropriate for Haiku)
+        - Do NOT change any other logic — only the client and model string
+      The `anthropic` import at the top of the file can be removed if it is no longer used
+      after this patch (check carefully — it may still be referenced).
+    files_to_modify:
+      - "app/api/extract-intake/route.ts"
+    depends_on: ["1a-1"]
+    acceptance_criteria:
+      - "extract-intake uses anthropicRouter client"
+      - "Model string uses CHEAP_MODEL env var with haiku-3 fallback"
+      - "`npm run build` passes"
+      - "`npm run lint` passes"
+
+  - id: "1a-3"
+    wave: 2
+    title: "Patch chat route to use ClawRouter cheap model"
+    model: sonnet
+    complexity: 3
+    description: |
+      In `app/api/chat/route.ts`:
+        - Import `anthropicRouter` from `lib/anthropic-router`
+        - Replace `anthropic.messages.stream(...)` with `anthropicRouter.messages.stream(...)`
+        - Update the model string to `process.env.CHEAP_MODEL ?? 'claude-haiku-3'`
+        - Remove the top-level `const anthropic = new Anthropic(...)` if no longer used
+        - Keep all streaming logic unchanged (SSE headers, ReadableStream pattern)
+        - max_tokens can stay at 400
+    files_to_modify:
+      - "app/api/chat/route.ts"
+    depends_on: ["1a-1"]
+    acceptance_criteria:
+      - "chat route uses anthropicRouter for streaming"
+      - "SSE stream still works (type: delta, type: done pattern preserved)"
+      - "`npm run build` passes"
+
+  - id: "1a-4"
+    wave: 2
+    title: "Document diagnostic route model config (keep Sonnet)"
+    model: sonnet
+    complexity: 2
+    description: |
+      In `app/api/diagnostic/route.ts`:
+        - Add a comment block above the `anthropic.messages.create` call:
+          ```
+          // COST NOTE: This route intentionally uses claude-sonnet-4-6 (not ClawRouter cheap model).
+          // Report quality is critical here. Changing this model requires explicit sign-off.
+          // Model: process.env.DIAGNOSTIC_MODEL ?? 'claude-sonnet-4-6'
+          ```
+        - Refactor the hardcoded model string to:
+          `model: process.env.DIAGNOSTIC_MODEL ?? 'claude-sonnet-4-6'`
+        - Add `DIAGNOSTIC_MODEL` to `.env.local` example comment (do not change actual value)
+      No logic changes — documentation and env-var refactor only.
+    files_to_modify:
+      - "app/api/diagnostic/route.ts"
+    env_vars:
+      - DIAGNOSTIC_MODEL
+    depends_on: ["1a-1"]
+    acceptance_criteria:
+      - "diagnostic route has cost note comment"
+      - "Model string reads from DIAGNOSTIC_MODEL env var"
+      - "`npm run build` passes"
+
+  # ── Wave 3: Ad Health + SEO Audit ────────────────────────────────────────
+
+  - id: "2a-1"
+    wave: 3
+    title: "Build app/api/seo-audit/route.ts — domain-only public SEO checks"
+    model: opus
+    complexity: 5
+    description: |
+      Create `app/api/seo-audit/route.ts` as a POST endpoint.
+
+      Request body: `{ domain: string, businessName?: string, industry?: string }`
+
+      SEO checks to perform (in parallel where possible):
+      1. PageSpeed Insights API (mobile):
+         URL: `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://${domain}&strategy=mobile`
+         Extract: performance score (0-1), FCP, LCP
+      2. Fetch `https://${domain}` and parse:
+         - `<title>` presence and length (50-60 chars = good)
+         - `<meta name="description">` presence and length (150-160 chars = good)
+         - `<meta property="og:title">` and `<meta property="og:description">` presence
+         - `<link rel="canonical">` presence
+         - Structured data: any `<script type="application/ld+json">` present
+      3. HTTPS check: domain starts with https (always true if fetch succeeds at https://)
+
+      Scoring algorithm:
+        - Performance score from PageSpeed: weight 40% (0-40 pts)
+        - Meta completeness: 30% max (title=10, description=10, OG=5, canonical=5)
+        - Structured data present: 15 pts
+        - HTTPS: 15 pts
+        - Total: 0-100
+
+      If PageSpeed API fails (network error or non-200): skip that component,
+      redistribute weight (meta: 50%, structured data: 25%, HTTPS: 25%).
+
+      If domain fetch fails entirely: return `{ score: null, error: "domain_unreachable", findings: [] }`
+
+      Response:
+      ```json
+      {
+        "score": 73,
+        "findings": [
+          "Meta description is missing",
+          "No structured data (JSON-LD) detected",
+          "PageSpeed mobile score: 68/100"
+        ],
+        "recommendation": "Add a meta description and implement LocalBusiness schema markup.",
+        "domain": "example.com"
+      }
+      ```
+
+      Timeout: 8 seconds total for all external calls (use Promise.race with AbortController).
+      No authentication required on this endpoint (public).
+    files_to_create:
+      - "app/api/seo-audit/route.ts"
+    depends_on: []
+    acceptance_criteria:
+      - "Returns { score, findings, recommendation, domain } JSON"
+      - "Handles PageSpeed API failure gracefully"
+      - "Handles unreachable domain gracefully"
+      - "Timeout enforced at 8s"
+      - "`npm run build` passes"
+
+  - id: "2a-2"
+    wave: 3
+    title: "Build app/api/ad-health/route.ts — Claude-inferred ad health score"
+    model: opus
+    complexity: 4
+    description: |
+      Create `app/api/ad-health/route.ts` as a POST endpoint.
+
+      Request body:
+      ```json
+      {
+        "businessType": "string",
+        "industry": "string",
+        "topPains": "string",
+        "revenue": "string",
+        "teamSize": "string"
+      }
+      ```
+
+      Implementation:
+      Use the standard `anthropic` client (claude-sonnet-4-6, NOT ClawRouter —
+      this is a diagnostic quality call) to generate an ad health assessment.
+
+      System prompt:
+      "You are an ad performance analyst. Given a business profile, assess their
+      likely ad health and digital marketing readiness. Return ONLY valid JSON."
+
+      User prompt: structured intake data
+
+      Expected Claude output (enforce with JSON parse):
+      ```json
+      {
+        "score": 45,
+        "findings": [
+          "No evidence of conversion tracking setup for a business of this type",
+          "Revenue range suggests under-investment in paid acquisition",
+          "Pain points indicate manual lead follow-up — high ad waste risk"
+        ],
+        "recommendation": "Implement conversion tracking before scaling ad spend. Focus on retargeting warm leads."
+      }
+      ```
+
+      Score rubric (Claude should infer):
+        - 0-30: Likely no ad presence or significant structural issues
+        - 31-60: Ad presence likely but optimization opportunities exist
+        - 61-80: Reasonable ad health, targeted improvements needed
+        - 81-100: Well-structured campaigns likely
+
+      max_tokens: 400
+
+      Response: forward Claude's JSON directly.
+      Error handling: if Claude fails or returns invalid JSON, return
+      `{ score: null, findings: [], recommendation: "Ad health assessment unavailable." }`
+    files_to_create:
+      - "app/api/ad-health/route.ts"
+    depends_on: []
+    acceptance_criteria:
+      - "Returns { score, findings, recommendation } JSON"
+      - "Uses claude-sonnet-4-6 (not router)"
+      - "Handles Claude failure gracefully"
+      - "`npm run build` passes"
+
+  - id: "2b-1"
+    wave: 3
+    title: "Patch diagnostic route to call seo-audit + ad-health and append report sections"
+    model: sonnet
+    complexity: 3
+    description: |
+      In `app/api/diagnostic/route.ts`, after `rawReport` is generated and before
+      the STATS block is parsed:
+
+      1. Extract `domain` from request body (add to destructuring, optional field).
+
+      2. In parallel (Promise.allSettled), call:
+         - `fetch(\`\${req.nextUrl.origin}/api/seo-audit\`, { method: 'POST', body: JSON.stringify({ domain, businessName, industry }) })`
+         - `fetch(\`\${req.nextUrl.origin}/api/ad-health\`, { method: 'POST', body: JSON.stringify({ businessType, industry, topPains, revenue, teamSize }) })`
+
+      3. Parse responses (handle failures gracefully — both are optional enrichments).
+
+      4. Append to rawReport BEFORE the STATS block:
+         ```
+         ### AD HEALTH
+         SCORE: {score ?? 'N/A'}
+         {findings as bullet list}
+         RECOMMENDATION: {recommendation}
+
+         ### SEO AUDIT
+         SCORE: {score ?? 'N/A'}
+         DOMAIN: {domain ?? 'not provided'}
+         {findings as bullet list}
+         RECOMMENDATION: {recommendation}
+         ```
+
+      5. Store scores in Supabase:
+         ```ts
+         await supabase?.from('submissions').update({
+           ad_health_score: adHealth?.score ?? null,
+           seo_score: seoAudit?.score ?? null,
+           seo_domain: domain ?? null,
+         }).eq('id', submissionId)
+         ```
+         (This update can fail silently — wrap in try/catch.)
+
+      6. Include `adHealthScore` and `seoScore` in the final JSON response.
+
+      IMPORTANT: The seo-audit + ad-health calls must NOT block the main response.
+      Use a 10-second timeout on both parallel calls. If they exceed timeout, append
+      placeholder sections with score "N/A".
+    files_to_modify:
+      - "app/api/diagnostic/route.ts"
+    depends_on: ["2a-1", "2a-2"]
+    acceptance_criteria:
+      - "Both audit calls made in parallel after report generation"
+      - "Sections appended to rawReport before STATS"
+      - "10s timeout enforced on audit calls"
+      - "Supabase update includes ad_health_score, seo_score, seo_domain"
+      - "Response includes adHealthScore and seoScore"
+      - "`npm run build` passes"
+
+  - id: "2b-2"
+    wave: 3
+    title: "Patch format-report.ts and report page to render AD HEALTH + SEO AUDIT sections"
+    model: sonnet
+    complexity: 2
+    description: |
+      1. In `lib/format-report.ts`:
+         Extend the markdown-to-HTML formatter to handle the new section headers
+         `### AD HEALTH` and `### SEO AUDIT`. When these headers are encountered:
+         - Render the header as normal
+         - Parse `SCORE: {n}` line and replace with a score badge:
+           ```html
+           <div class="audit-score-badge mono">
+             {'▓'.repeat(Math.floor(score/10))}{'░'.repeat(10-Math.floor(score/10))} {score}/100
+           </div>
+           ```
+           If score is "N/A", render: `<div class="audit-score-badge mono">—/100 (data unavailable)</div>`
+         - Parse `DOMAIN: {domain}` and render as a muted mono label
+         - Parse `RECOMMENDATION: {text}` and render with accent left-border styling
+
+      2. In `app/report/[id]/page.tsx`:
+         Add CSS for `.audit-score-badge`:
+         ```css
+         font-family: JetBrains Mono;
+         font-size: 13px;
+         color: var(--accent);
+         background: rgba(20,20,19,0.055);
+         border: 1px solid var(--rule);
+         border-left: 3px solid var(--accent);
+         padding: 10px 14px;
+         margin: 12px 0;
+         display: inline-block;
+         ```
+         Add this via a `<style>` tag or inline style object — do not create a new CSS file.
+
+      3. Also fetch `ad_health_score`, `seo_score`, `seo_domain` from submissions query
+         (add to the `.select()` call) for potential future use.
+    files_to_modify:
+      - "lib/format-report.ts"
+      - "app/report/[id]/page.tsx"
+    depends_on: ["2b-1"]
+    acceptance_criteria:
+      - "Score badge renders correctly for numeric scores"
+      - "N/A case renders without crashing"
+      - "RECOMMENDATION line has accent left-border"
+      - "`npm run build` passes"
+
+  # ── GATE: AUDIT CHECKPOINT (between Wave 3 and Wave 4) ───────────────────
+  # Human reviews that AD HEALTH + SEO AUDIT sections render correctly in report
+  # before proceeding to video feature (Wave 4-5).
+
+  # ── Wave 4: Database Migration ────────────────────────────────────────────
+
+  - id: "db-migration"
+    wave: 4
+    title: "Supabase migration: add audit score columns + video_url"
+    model: sonnet
+    complexity: 2
+    description: |
+      Create `supabase/migrations/010_add_audit_scores.sql`:
+
+      ```sql
+      -- Add ad health + SEO audit score columns
+      ALTER TABLE submissions
+        ADD COLUMN IF NOT EXISTS ad_health_score INTEGER,
+        ADD COLUMN IF NOT EXISTS seo_score INTEGER,
+        ADD COLUMN IF NOT EXISTS seo_domain TEXT,
+        ADD COLUMN IF NOT EXISTS video_url TEXT;
+
+      -- Index for future analytics queries
+      CREATE INDEX IF NOT EXISTS idx_submissions_seo_domain ON submissions (seo_domain);
+      ```
+
+      Also update `lib/supabase.ts` SubmissionRow interface to include:
+      ```ts
+      ad_health_score?: number | null
+      seo_score?: number | null
+      seo_domain?: string | null
+      video_url?: string | null
+      ```
+
+      Note: Migration must be run manually via Supabase dashboard SQL editor
+      or `supabase db push`. Add a comment to the migration file noting this.
+    files_to_create:
+      - "supabase/migrations/010_add_audit_scores.sql"
+    files_to_modify:
+      - "lib/supabase.ts"
+    depends_on: ["2b-1"]
+    acceptance_criteria:
+      - "Migration SQL file created and syntactically valid"
+      - "SubmissionRow interface updated"
+      - "`npm run build` passes (interface change is backward compatible)"
+
+  # ── Wave 5: Video Summary ─────────────────────────────────────────────────
+
+  - id: "3a-1"
+    wave: 5
+    title: "Add VideoSummaryButton client component to report permalink page"
+    model: sonnet
+    complexity: 2
+    description: |
+      Create `components/VideoSummaryButton.tsx` as a client component (`'use client'`).
+
+      Props:
+      ```ts
+      interface VideoSummaryButtonProps {
+        submissionId: string
+        businessName: string
+        videoUrl?: string | null  // pre-existing video URL if already generated
+      }
+      ```
+
+      Behavior:
+      - If `videoUrl` is provided: render video player (`<video controls src={videoUrl}>`) +
+        "Regenerate" button
+      - If no `videoUrl`: render "Generate Video Summary" button using `<Button variant="secondary">`
+        from `components/ds/`
+      - On click: POST to `/api/video-summary` with `{ submissionId }`
+      - While loading: show spinner + "Building your 60-second summary..." text
+      - On success: update state to show video player with returned URL
+      - On error: show "Video generation failed. Please try again." with retry button
+      - Loading timeout: 90 seconds (show "This is taking longer than expected..." at 30s)
+
+      Integrate into `app/report/[id]/page.tsx`:
+      - Add `VideoSummaryButton` just before the "Next Step" banner
+      - Pass `submissionId`, `businessName`, and `videoUrl` (from updated submissions query) as props
+      - The page remains a server component; VideoSummaryButton is the only client island
+    files_to_create:
+      - "components/VideoSummaryButton.tsx"
+    files_to_modify:
+      - "app/report/[id]/page.tsx"
+    depends_on: ["db-migration"]
+    acceptance_criteria:
+      - "Button renders correctly with eevolvv DS styles"
+      - "Loading state visible"
+      - "Error state handles gracefully"
+      - "Video player shows when videoUrl is present"
+      - "`npm run build` passes"
+
+  - id: "3a-2"
+    wave: 5
+    title: "Build app/api/video-summary/route.ts — generate HTML scenes + render via HyperFrames"
+    model: opus
+    complexity: 5
+    description: |
+      Create `app/api/video-summary/route.ts` as a POST endpoint.
+
+      Request body: `{ submissionId: string }`
+
+      Step 1 — Fetch submission data:
+      Query Supabase: `business_name, report, tier, email, ad_health_score, seo_score`
+      Parse stats from report text (re-use the STATS block parser pattern from diagnostic/route.ts).
+      Parse top 3 automation opportunities from the `### TOP AUTOMATION OPPORTUNITIES` section
+      (extract first 3 items).
+
+      Step 2 — Generate video HTML via Claude:
+      Use claude-sonnet-4-6 to generate a complete single-file HTML document with 5 scenes.
+
+      System prompt:
+      "You are a motion designer creating HTML/CSS/JS for HyperFrames video rendering.
+      Generate a single HTML file with 5 timed scenes (total 60 seconds).
+      Use eevolvv brand: background #141413 (ink), accent #8C2B1A (brick red), text #faf7f0 (paper).
+      Font: Space Grotesk (load from Google Fonts). No external images.
+      Each scene should animate in with CSS transitions. Use data-scene attributes.
+      Return ONLY the HTML document, no explanation."
+
+      User prompt: Include businessName, automations array (3 items), stats (hoursFreed,
+      automations count, annualSavings), tier, and Stripe checkout URL
+      (`process.env.NEXT_PUBLIC_BASE_URL + '/pricing'`).
+
+      Video scene structure:
+        Scene 1 (0-5s):   Business name large text + "Evolution Report" subtext
+        Scene 2 (5-20s):  "Top 3 Automation Opportunities" — each reveal with 4s delay
+        Scene 3 (20-35s): Stat callouts — hours freed, automations, annual savings (counter animation)
+        Scene 4 (35-55s): "Ready to build it?" headline + Stripe URL as visible text CTA
+        Scene 5 (55-60s): eevolvv wordmark + eevolvv.com
+
+      Step 3 — Render to video:
+      Check `process.env.HYPERFRAMES_RENDER_URL`:
+        - If set: POST the HTML to that URL, receive MP4 binary or URL
+        - If not set: use HyperFrames npm package subprocess:
+          ```
+          import { renderHtml } from '@heygen/hyperframes'
+          const mp4Buffer = await renderHtml(htmlString, { duration: 60, width: 1280, height: 720 })
+          ```
+          (Install @heygen/hyperframes; handle if package unavailable — return error)
+
+      Step 4 — Store video:
+      Upload MP4 to Supabase Storage bucket `report-videos`:
+        - Path: `{submissionId}/summary.mp4`
+        - Bucket must be public-read
+        - Get public URL from Supabase Storage
+      Update `submissions.video_url` with the public URL.
+
+      Step 5 — Return:
+      `{ success: true, videoUrl: string }`
+
+      Error handling:
+        - Missing submission: 404
+        - Claude generation failure: 502
+        - HyperFrames render failure: 502 with `{ error: 'render_failed' }`
+        - Supabase storage failure: return video as base64 data URL as fallback
+
+      Timeout: 90 seconds total (HyperFrames render can be slow).
+    files_to_create:
+      - "app/api/video-summary/route.ts"
+    depends_on: ["db-migration", "3a-1"]
+    acceptance_criteria:
+      - "Fetches submission and parses stats correctly"
+      - "Generates HTML via Claude"
+      - "Handles HYPERFRAMES_RENDER_URL env var (falls back to npm package)"
+      - "Stores video in Supabase Storage and updates submissions.video_url"
+      - "Returns { success, videoUrl }"
+      - "90s timeout enforced"
+      - "`npm run build` passes"
+
+  - id: "3b-1"
+    wave: 5
+    title: "Define and document video content template"
+    model: sonnet
+    complexity: 2
+    description: |
+      This is a supporting task for 3a-2. Extract the video HTML template logic into
+      a dedicated constant in `lib/video-template.ts` so it can be tested independently.
+
+      Create `lib/video-template.ts` that exports:
+      ```ts
+      export interface VideoTemplateData {
+        businessName: string
+        automations: string[]  // exactly 3 items
+        hoursFreed: number
+        automationCount: number
+        annualSavings: number
+        checkoutUrl: string
+      }
+
+      export function buildVideoPrompt(data: VideoTemplateData): string
+      // Returns the user prompt string for Claude, structured with all scene data
+
+      export const VIDEO_SYSTEM_PROMPT: string
+      // The system prompt for HTML generation
+      ```
+
+      The `app/api/video-summary/route.ts` should import from this module instead of
+      defining prompts inline. This decouples the template from the route for easier
+      iteration.
+    files_to_create:
+      - "lib/video-template.ts"
+    files_to_modify:
+      - "app/api/video-summary/route.ts"
+    depends_on: ["3a-2"]
+    acceptance_criteria:
+      - "lib/video-template.ts exports VideoTemplateData, buildVideoPrompt, VIDEO_SYSTEM_PROMPT"
+      - "video-summary route imports from video-template"
+      - "`npm run build` passes"
+    note: "Can be done concurrently with 3a-2 if 3a-2 stubs the imports first."
+
+  - id: "3c-1"
+    wave: 5
+    title: "Embed video in permalink page + add video link to report email"
+    model: sonnet
+    complexity: 3
+    description: |
+      1. Report permalink page (already handled by VideoSummaryButton in 3a-1).
+         Confirm video player renders correctly with eevolvv styling:
+           - Dark background panel, accent border
+           - Caption: "{businessName} — 60-Second Summary"
+           - "Share this video" copy link button (copies window.location.href + '#video')
+
+      2. In `emails/EvolutionReport.tsx`:
+         - Add optional prop `videoUrl?: string` to the email component
+         - If `videoUrl` is provided, add a section before the main CTA:
+           ```
+           ─────────────────────
+           Watch your 60-second summary →
+           [button: VIEW VIDEO SUMMARY → (links to videoUrl)]
+           ─────────────────────
+           ```
+           Use the existing email button styling (dark background, paper text).
+         - If `videoUrl` is null/undefined, render nothing (no section shown)
+
+      3. In `app/api/diagnostic/route.ts`:
+         - The diagnostic route does NOT generate a video automatically (on-demand only).
+         - Confirm that `videoUrl` is not passed to `EvolutionReportEmail` in this route.
+         - Add a TODO comment: "// T-VIDEO: pass videoUrl once video is generated on-demand"
+
+      4. Separately, once a user generates a video via the button (VideoSummaryButton),
+         a follow-up email should be sent. Add a new non-blocking async block in
+         `app/api/video-summary/route.ts` after storing the video URL:
+         ```ts
+         // Send video-ready email
+         if (resend && submission.email) {
+           const html = await render(EvolutionReportEmail({ ..., videoUrl }))
+           await resend.emails.send({
+             from: process.env.FROM_EMAIL ?? 'hello@eevolvv.com',
+             to: submission.email,
+             subject: `Your eevolvv video summary is ready — ${businessName}`,
+             html,
+           })
+         }
+         ```
+    files_to_modify:
+      - "emails/EvolutionReport.tsx"
+      - "app/api/video-summary/route.ts"
+      - "app/report/[id]/page.tsx"
+    depends_on: ["3a-2", "3b-1"]
+    acceptance_criteria:
+      - "Email component accepts optional videoUrl prop"
+      - "Video section renders in email only when videoUrl is set"
+      - "Video-ready email sent after generation (non-blocking)"
+      - "Share link button on permalink page"
+      - "`npm run build` passes"

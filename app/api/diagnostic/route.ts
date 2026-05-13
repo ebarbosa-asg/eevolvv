@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
 import { Resend } from 'resend'
 import { buildSystemPrompt } from '@/lib/diagnosticPrompts'
 import { supabase, saveSubmission, markEmailSent } from '@/lib/supabase'
@@ -7,8 +6,8 @@ import { checkRateLimit, checkRateLimitWithSubscription } from '@/lib/rateLimit'
 import { render } from '@react-email/render'
 import { EvolutionReportEmail } from '@/emails/EvolutionReport'
 import { getPostHogClient } from '@/lib/posthog-server'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { anthropic, MODEL } from '@/lib/llm'
+import { traceLLMCall } from '@/lib/langfuse'
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 function getClientIp(req: NextRequest): string {
@@ -143,8 +142,9 @@ Generate their eevolvv report now.`
 
   let rawReport: string
   try {
+    const diagStartMs = Date.now()
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: MODEL.standard,
       max_tokens: 4000,
       system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: userMessage }],
@@ -152,6 +152,20 @@ Generate their eevolvv report now.`
     rawReport = message.content[0].type === 'text'
       ? message.content[0].text
       : 'Report generation failed. Please try again.'
+
+    traceLLMCall({
+      traceId: submissionId ?? crypto.randomUUID(),
+      name: 'diagnostic-report',
+      model: MODEL.standard,
+      systemPrompt,
+      userMessage,
+      output: rawReport,
+      inputTokens: message.usage.input_tokens,
+      outputTokens: message.usage.output_tokens,
+      latencyMs: Date.now() - diagStartMs,
+      userId: email,
+      metadata: { businessType, industry, tier, submissionId },
+    }).catch(() => {})
   } catch (err) {
     console.error('[diagnostic] Claude error:', err)
 

@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { randomUUID } from 'crypto'
 import { fitnessConfig, dentalConfig } from '@/lib/industries'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { anthropic, MODEL } from '@/lib/llm'
+import { traceLLMCall } from '@/lib/langfuse'
 
 const CHAT_SYSTEM_PROMPT = `You are eevolvv's AI business diagnostic assistant. You are having a brief, warm conversation to understand a business before generating their free eevolvv report.
 
@@ -54,23 +54,42 @@ export async function POST(req: NextRequest) {
     return new Response('messages required', { status: 400 })
   }
 
+  const traceId = randomUUID()
+  const startMs = Date.now()
   const encoder = new TextEncoder()
   const stream = new ReadableStream({
     async start(controller) {
       try {
         const claudeStream = anthropic.messages.stream({
-          model: 'claude-sonnet-4-6',
+          model: MODEL.fast,
           max_tokens: 400,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages,
         })
 
+        let fullOutput = ''
         for await (const chunk of claudeStream) {
           if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+            fullOutput += chunk.delta.text
             const data = JSON.stringify({ type: 'delta', text: chunk.delta.text })
             controller.enqueue(encoder.encode(`data: ${data}\n\n`))
           }
         }
+
+        const finalMsg = await claudeStream.finalMessage()
+        const latencyMs = Date.now() - startMs
+        traceLLMCall({
+          traceId,
+          name: 'chat',
+          model: MODEL.fast,
+          systemPrompt,
+          userMessage: messages[messages.length - 1]?.content ?? '',
+          output: fullOutput,
+          inputTokens: finalMsg.usage.input_tokens,
+          outputTokens: finalMsg.usage.output_tokens,
+          latencyMs,
+          metadata: { messageCount: messages.length, defaultIndustry },
+        }).catch(() => {})
 
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`))
       } catch (err) {

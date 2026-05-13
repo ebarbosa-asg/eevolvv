@@ -1,0 +1,119 @@
+{
+  "slug": "industry-vertical-workflows",
+  "prd_number": "005",
+  "execution_mode": "feature-branch",
+  "feature_branch": "feature/industry-vertical-workflows",
+  "base_branch": "feature/industry-vertical-workflows",
+  "status": "done",
+  "current_wave": 5,
+  "started_at": "2026-05-09T00:00:00Z",
+  "completed_at": "2026-05-10T04:00:00Z",
+  "created_at": "2026-05-09",
+  "research": {
+    "internal": "complete",
+    "external": "complete",
+    "summary": "complete"
+  },
+  "prd": "complete",
+  "tasks": {
+    "IVW-001": {
+      "title": "Fix dental defaultIndustry key",
+      "wave": 1,
+      "complexity": 1,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": []
+    },
+    "IVW-002": {
+      "title": "Create lib/industries/fitness.ts config module",
+      "wave": 1,
+      "complexity": 2,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": []
+    },
+    "IVW-003": {
+      "title": "Supabase migration: industry column on clients table",
+      "wave": 1,
+      "complexity": 1,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": []
+    },
+    "IVW-004": {
+      "title": "Inject fitness intake questions into api/chat/route.ts",
+      "wave": 2,
+      "complexity": 2,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": ["IVW-002"]
+    },
+    "IVW-005": {
+      "title": "Fitness INDUSTRY_CONTEXT entry in diagnosticPrompts.ts",
+      "wave": 2,
+      "complexity": 2,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": ["IVW-002"]
+    },
+    "IVW-006": {
+      "title": "Industry-aware report page — fitness KPI panels",
+      "wave": 3,
+      "complexity": 3,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": ["IVW-002", "IVW-003"],
+      "pr_number": 42
+    },
+    "IVW-007": {
+      "title": "Industry-aware follow-up emails — fitness vocabulary",
+      "wave": 3,
+      "complexity": 2,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": ["IVW-002"],
+      "pr_number": 43
+    },
+    "IVW-008": {
+      "title": "Industry-aware onboarding form — fitness branch",
+      "wave": 4,
+      "complexity": 2,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": ["IVW-002", "IVW-003"],
+      "pr_number": 44
+    },
+    "IVW-009": {
+      "title": "Create lib/industries/dental.ts config",
+      "wave": 5,
+      "complexity": 2,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": ["IVW-001", "IVW-002"],
+      "pr_number": 45
+    },
+    "IVW-010": {
+      "title": "Dental chat intake + INDUSTRY_CONTEXT entry",
+      "wave": 5,
+      "complexity": 2,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": ["IVW-001", "IVW-004", "IVW-005", "IVW-009"],
+      "pr_number": 46
+    },
+    "IVW-011": {
+      "title": "Dental report panels + onboarding branch",
+      "wave": 5,
+      "complexity": 5,
+      "model": "sonnet",
+      "status": "done",
+      "dependencies": ["IVW-006", "IVW-007", "IVW-008", "IVW-009", "IVW-010"],
+      "pr_number": 47
+    }
+  },
+  "active_worktrees": [],
+  "wave_prs": {},
+  "gates_passed": [],
+  "gate_history": [],
+  "recalibrations": []
+}

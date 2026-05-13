@@ -222,6 +222,7 @@ Required:
 
 - `slug`
 - `company`
+- `allowedEmails`
 - `agentName`
 - `businessType`
 - `stage`
@@ -230,6 +231,8 @@ Required:
 - `files`
 - `actions`
 - `paidOptions`
+
+Client agent pages are protected by Google OAuth. Add the client email address or addresses that should be allowed to view the page. eevolvv owner emails retain access for support.
 
 ### Step 3. Add first files
 
