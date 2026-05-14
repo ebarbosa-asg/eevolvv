@@ -549,6 +549,28 @@ input:focus, textarea:focus, select:focus { outline: none; }
 }
 
 /* ── §03 Who we evolve — compact industry/program tiles ─────────────────────── */
+.who-evolve-compact-head {
+  display: grid;
+  grid-template-columns: 60px minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: baseline;
+  border-top: 1px solid var(--ink);
+  padding-top: 24px;
+}
+.who-evolve-compact-title {
+  max-width: 780px;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+}
+.who-evolve-compact-note {
+  max-width: 560px;
+  margin: 18px 0 0 84px;
+  color: rgba(20,20,19,0.58);
+  font-size: 15px;
+  line-height: 1.55;
+}
 .who-evolve-card {
   min-width: 0;
 }
@@ -576,6 +598,17 @@ input:focus, textarea:focus, select:focus { outline: none; }
 .who-evolve-card-line--win {
   color: var(--accent);
   font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  .who-evolve-compact-head {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .who-evolve-compact-note {
+    margin-left: 0;
+  }
 }
 
 /* ── Agents catalog grid (main site §06 — AI agents; not the Talent / human-network section) ── */
@@ -717,7 +750,7 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .grid:not(.keep-grid) { grid-template-columns: 1fr !important; gap: 24px !important; }
   [style*="padding: 0 32px"], [style*="padding: 0 40px"] { padding-left: 20px !important; padding-right: 20px !important; }
   section[style*="padding: 120px 0"] { padding-top: 64px !important; padding-bottom: 64px !important; }
-  section[style*="minHeight"] { min-height: auto !important; padding-top: 96px !important; padding-bottom: 64px !important; }
+  section[style*="min-height"] { min-height: auto !important; padding-top: 96px !important; padding-bottom: 64px !important; }
 
   /* Multi-column “ledger” grids → stacked rows with separators */
   .grid:not(.keep-grid) > .status-cell {
@@ -816,7 +849,8 @@ input:focus, textarea:focus, select:focus { outline: none; }
 
   .chat-messages-panel {
     padding: 22px 18px 8px !important;
-    max-height: min(420px, 52vh) !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
 
   h1 { font-size: clamp(36px, 10vw, 72px) !important; }
@@ -824,6 +858,48 @@ input:focus, textarea:focus, select:focus { outline: none; }
 
   .diagnostic-value-cards { grid-template-columns: 1fr !important; }
   .diagnostic-stat-callouts { grid-template-columns: repeat(3, 1fr) !important; }
+
+  /* "What's in your report" 3-col → 1-col */
+  .what-in-report-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .what-in-report-grid > div {
+    border-right: none !important;
+    border-bottom: 1px solid var(--ink) !important;
+  }
+  .what-in-report-grid > div:last-child {
+    border-bottom: none !important;
+  }
+
+  /* Agents section — Volvv-E intro box */
+  .agents-volvve-intro {
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding: 24px 20px !important;
+    align-items: flex-start !important;
+  }
+
+  /* ChatEngine — report header + extracting phase */
+  .chat-report-header {
+    padding: 20px 18px !important;
+  }
+  .chat-extracting-body {
+    padding: 28px 18px !important;
+  }
+}
+
+/* Footer bottom row — allow wrap on very narrow screens */
+@media (max-width: 480px) {
+  .site-footer-bottom {
+    flex-wrap: wrap !important;
+    row-gap: 4px;
+  }
+}
+
+/* ── "What's in your report" 3-column layout ── */
+.what-in-report-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 /* ── Diagnostic engine — animations + components ─────────────────────────── */
@@ -836,6 +912,42 @@ input:focus, textarea:focus, select:focus { outline: none; }
 @keyframes msgSlideIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes promptReveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes promptAccentSweep {
+  from { transform: translateX(-110%); }
+  to   { transform: translateX(110%); }
+}
+
+@keyframes promptCursorGlow {
+  0%, 100% { opacity: 0.35; transform: scaleY(0.72); }
+  50%      { opacity: 1; transform: scaleY(1); }
+}
+
+@keyframes modeSoftIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+    filter: blur(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
 }
 
 @keyframes scanBeam {
@@ -897,6 +1009,494 @@ input:focus, textarea:focus, select:focus { outline: none; }
   animation: msgSlideIn 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+.diagnostic-console-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  background:
+    linear-gradient(120deg, rgba(140, 43, 26, 0.05), transparent 36%),
+    var(--paper);
+  box-shadow: 0 30px 90px rgba(20, 20, 19, 0.09);
+  transition: box-shadow 0.7s cubic-bezier(0.2,0.8,0.2,1), background 0.7s cubic-bezier(0.2,0.8,0.2,1);
+}
+
+.diagnostic-console-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(20,20,19,0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,20,19,0.026) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.diagnostic-console-topbar {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 22px;
+  min-height: 86px;
+  padding: 18px 24px;
+  color: var(--paper);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(140,43,26,0.6), transparent 32%),
+    linear-gradient(90deg, #141413 0%, #1c1513 55%, #111 100%);
+  border-bottom: 1px solid rgba(250,247,240,0.12);
+}
+
+.diagnostic-console-topbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent 42%, var(--accent));
+  opacity: 0.8;
+}
+
+.diagnostic-console-agent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.diagnostic-console-agent-mark {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: rgba(250,247,240,0.055);
+  border: 1px solid rgba(250,247,240,0.09);
+  transition: background 0.55s cubic-bezier(0.2,0.8,0.2,1), border-color 0.55s cubic-bezier(0.2,0.8,0.2,1);
+}
+
+.diagnostic-console-kicker,
+.diagnostic-console-meta,
+.diagnostic-console-progress-label {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.diagnostic-console-kicker {
+  margin-bottom: 5px;
+  color: color-mix(in oklch, var(--accent) 58%, var(--paper));
+  font-weight: 700;
+}
+
+.diagnostic-console-title {
+  font-size: clamp(20px, 3vw, 32px);
+  line-height: 0.95;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: var(--paper);
+}
+
+.diagnostic-console-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  border: 1px solid rgba(250,247,240,0.1);
+  background: rgba(250,247,240,0.045);
+  color: rgba(250,247,240,0.72);
+  transition: background 0.55s cubic-bezier(0.2,0.8,0.2,1), border-color 0.55s cubic-bezier(0.2,0.8,0.2,1), color 0.55s cubic-bezier(0.2,0.8,0.2,1);
+}
+
+.diagnostic-console-status .mono {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+}
+
+.diagnostic-console-meta {
+  text-align: right;
+  color: rgba(250,247,240,0.34);
+  line-height: 1.8;
+}
+
+.diagnostic-console-progress-label {
+  color: color-mix(in oklch, var(--accent) 48%, var(--paper));
+}
+
+.chat-messages-panel {
+  position: relative;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(250,247,240,0.92), rgba(250,247,240,0.78)),
+    radial-gradient(circle at 84% 6%, rgba(140,43,26,0.08), transparent 28%);
+}
+
+.diagnostic-intro-module {
+  display: grid;
+  grid-template-columns: minmax(170px, 220px) minmax(0, 1fr);
+  gap: clamp(22px, 4vw, 42px);
+  align-items: center;
+  padding: clamp(24px, 5vw, 42px);
+  margin-bottom: 28px;
+  border: 1px solid rgba(20,20,19,0.16);
+  background:
+    linear-gradient(135deg, rgba(20,20,19,0.035), transparent 52%),
+    rgba(250,247,240,0.7);
+}
+
+.diagnostic-intro-orbit {
+  position: relative;
+  min-height: 190px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: rgba(20,20,19,0.035);
+  border: 1px solid rgba(20,20,19,0.08);
+}
+
+.diagnostic-intro-ring {
+  position: absolute;
+  border: 1px solid rgba(140,43,26,0.35);
+  border-radius: 50%;
+  animation: diagnosticOrbit 8s linear infinite;
+}
+
+.diagnostic-intro-ring--outer {
+  width: 150px;
+  height: 150px;
+}
+
+.diagnostic-intro-ring--inner {
+  width: 96px;
+  height: 96px;
+  border-style: dashed;
+  opacity: 0.65;
+  animation-duration: 5.5s;
+  animation-direction: reverse;
+}
+
+.diagnostic-intro-sprite {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 14px 18px rgba(140,43,26,0.18));
+}
+
+.diagnostic-intro-copy {
+  max-width: 720px;
+}
+
+.diagnostic-intro-eyebrow {
+  margin-bottom: 10px;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.diagnostic-intro-copy h3 {
+  margin: 0 0 10px;
+  font-size: clamp(30px, 5vw, 56px);
+  line-height: 0.94;
+  letter-spacing: -0.055em;
+  font-weight: 600;
+}
+
+.diagnostic-intro-copy p {
+  max-width: 620px;
+  margin: 0;
+  color: rgba(20,20,19,0.58);
+  font-size: clamp(16px, 2vw, 19px);
+  line-height: 1.55;
+}
+
+.diagnostic-intro-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 24px;
+  background: rgba(20,20,19,0.16);
+  border: 1px solid rgba(20,20,19,0.16);
+}
+
+.diagnostic-intro-steps > div {
+  min-height: 76px;
+  padding: 14px;
+  background: rgba(250,247,240,0.86);
+}
+
+.diagnostic-intro-steps span {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+}
+
+.diagnostic-intro-steps strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.diagnostic-intro-card-wrap {
+  margin-bottom: 38px;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 34px;
+}
+
+.diagnostic-intro-card-wrap .volvve-card {
+  border-color: rgba(20,20,19,0.14) !important;
+  background:
+    linear-gradient(135deg, rgba(20,20,19,0.025), transparent 52%),
+    rgba(250,247,240,0.74) !important;
+}
+
+.volvve-mode-stage,
+.volvve-mode-copy {
+  animation: modeSoftIn 0.72s cubic-bezier(0.2,0.8,0.2,1) both;
+  will-change: opacity, transform, filter;
+}
+
+.volvve-mode-tab:hover {
+  transform: translateY(-2px);
+}
+
+.diagnostic-ai-message {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.diagnostic-ai-bubble {
+  position: relative;
+  max-width: 940px;
+  padding: 8px 0 18px;
+  border-left: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 5vw, 70px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: 0;
+  white-space: pre-line;
+  animation: promptReveal 0.95s cubic-bezier(0.2,0.8,0.2,1) both;
+}
+
+.diagnostic-ai-bubble::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 4%;
+  bottom: 0;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(20,20,19,0.18);
+}
+
+.diagnostic-ai-bubble::after {
+  content: "";
+  position: absolute;
+  right: -18px;
+  top: 13%;
+  width: 3px;
+  height: 64%;
+  background: var(--accent);
+  transform-origin: center;
+  animation: promptCursorGlow 1.2s ease-in-out infinite;
+}
+
+.diagnostic-ai-message::after {
+  content: "";
+  display: block;
+  width: min(940px, 100%);
+  height: 2px;
+  margin-top: -2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.6;
+  animation: promptAccentSweep 2.8s cubic-bezier(0.65,0,0.35,1) infinite;
+}
+
+.diagnostic-user-bubble {
+  max-width: 72%;
+  padding: 12px 18px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 15px;
+  line-height: 1.5;
+  animation: modeSoftIn 0.5s cubic-bezier(0.2,0.8,0.2,1) both;
+}
+
+.diagnostic-thinking-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  width: fit-content;
+  padding: 15px 0;
+  background: transparent;
+  border-left: 0;
+}
+
+.diagnostic-input-dock {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  min-height: 78px;
+  border-top: 1px solid var(--ink);
+  background: rgba(250,247,240,0.9);
+}
+
+.diagnostic-input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  padding: 20px 24px;
+  background: transparent;
+  color: var(--ink);
+  outline: none;
+  font-family: var(--font-display);
+  font-size: 18px;
+  transition: color 0.35s ease, background 0.35s ease;
+}
+
+.diagnostic-input::placeholder {
+  color: rgba(20,20,19,0.34);
+}
+
+.diagnostic-send-button {
+  min-width: 170px;
+  border: none;
+  border-left: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  padding: 0 28px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  cursor: default;
+  opacity: 0.42;
+  transition: background 0.45s cubic-bezier(0.2,0.8,0.2,1), color 0.45s cubic-bezier(0.2,0.8,0.2,1), opacity 0.45s cubic-bezier(0.2,0.8,0.2,1), transform 0.45s cubic-bezier(0.2,0.8,0.2,1);
+}
+
+.diagnostic-send-button:not(:disabled) {
+  cursor: pointer;
+  opacity: 1;
+  background: linear-gradient(135deg, var(--accent), var(--ink) 72%);
+  color: var(--paper);
+}
+
+.diagnostic-send-button:not(:disabled):hover {
+  background: var(--ink);
+  transform: translateY(-1px);
+}
+
+@keyframes diagnosticOrbit {
+  from { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.04); }
+  to   { transform: rotate(360deg) scale(1); }
+}
+
+@media (max-width: 760px) {
+  .diagnostic-console-topbar {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .diagnostic-console-agent-mark {
+    width: 42px;
+    height: 42px;
+  }
+
+  .diagnostic-console-status,
+  .diagnostic-console-meta {
+    justify-self: start;
+  }
+
+  .diagnostic-console-meta {
+    text-align: left;
+  }
+
+  .diagnostic-intro-module {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .diagnostic-intro-orbit {
+    min-height: 150px;
+  }
+
+  .diagnostic-intro-ring--outer {
+    width: 128px;
+    height: 128px;
+  }
+
+  .diagnostic-intro-ring--inner {
+    width: 84px;
+    height: 84px;
+  }
+
+  .diagnostic-intro-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .diagnostic-ai-message,
+  .diagnostic-user-bubble {
+    max-width: 100%;
+  }
+
+  .diagnostic-ai-bubble {
+    font-size: clamp(30px, 10vw, 46px);
+    line-height: 1.04;
+    padding-right: 18px;
+  }
+
+  .diagnostic-ai-bubble::after {
+    right: 0;
+  }
+
+  .diagnostic-input-dock {
+    grid-template-columns: 1fr;
+  }
+
+  .diagnostic-send-button {
+    min-height: 58px;
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--ink);
+  }
+}
+
+.volvve-card {
+  container-type: inline-size;
+}
+
+.volvve-card button:hover {
+  border-color: var(--accent) !important;
+}
+
+@container (max-width: 620px) {
+  .volvve-card {
+    grid-template-columns: 1fr !important;
+    padding: 24px 20px !important;
+  }
+
+  .volvve-card > div:first-child {
+    min-height: 140px !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(244,241,234,0.1);
+    padding-right: 0 !important;
+    padding-bottom: 18px !important;
+  }
+
+  .volvve-card > div:last-child > div:nth-of-type(4) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
 .diagnostic-value-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -915,7 +1515,11 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .diagnostic-scan-beam,
   .diagnostic-status-dot,
   .diagnostic-status-dot--thinking,
-  .diagnostic-value-badge { animation: none !important; }
+  .diagnostic-value-badge,
+  .diagnostic-intro-ring,
+  .diagnostic-ai-bubble,
+  .diagnostic-ai-bubble::after,
+  .diagnostic-ai-message::after { animation: none !important; }
   .diagnostic-msg-in { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
 

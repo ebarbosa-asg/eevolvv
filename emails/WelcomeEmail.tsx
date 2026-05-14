@@ -72,6 +72,25 @@ export function WelcomeEmail({ name, tier }: WelcomeEmailProps) {
             </Text>
           </Section>
 
+          {/* Kickoff call */}
+          <Section style={{ marginBottom: 32, background: '#141413', padding: '24px' }}>
+            <Text style={{ fontSize: 10, letterSpacing: '0.22em', color: '#8C2B1A', fontWeight: 700, margin: '0 0 10px', textTransform: 'uppercase' as const }}>
+              § 02 · BOOK YOUR KICKOFF CALL
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: 600, color: '#faf7f0', margin: '0 0 8px', letterSpacing: '-0.01em' }}>
+              15 minutes. Your report, your roadmap.
+            </Text>
+            <Text style={{ fontSize: 13, color: 'rgba(250,247,240,0.55)', lineHeight: 1.6, margin: '0 0 20px' }}>
+              We&apos;ll walk through your diagnostic results together and map out exactly what gets built first.
+            </Text>
+            <a
+              href="https://calendly.com/hello-eevolvv"
+              style={{ display: 'inline-block', background: '#8C2B1A', color: '#faf7f0', padding: '14px 24px', fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textDecoration: 'none' }}
+            >
+              BOOK YOUR 15-MIN CALL →
+            </a>
+          </Section>
+
           <Section style={{ marginBottom: 32 }}>
             <Text style={{ fontSize: 13, color: '#141413', lineHeight: 1.6, opacity: 0.6, margin: 0 }}>
               Questions? Reply to this email or reach us at hello@eevolvv.com. E monitors this inbox directly.
