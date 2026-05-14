@@ -23,6 +23,12 @@ const FROM_EMAIL = process.env.FROM_EMAIL ?? 'hello@eevolvv.com'
 type Tier = 'seed' | 'core' | 'evolve'
 export type FollowUpSequence = 1 | 2 | 3
 
+const TIER_LABELS: Record<Tier, string> = {
+  seed: 'Agent One',
+  core: 'Agent Three',
+  evolve: 'Agent Five',
+}
+
 interface EmailResult {
   success: boolean
   error?: string
@@ -44,7 +50,7 @@ export async function sendWelcomeEmail({
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: email,
-      subject: `Welcome to eevolvv — your ${tier.charAt(0).toUpperCase() + tier.slice(1)} build is confirmed`,
+      subject: `Welcome to eevolvv — your ${TIER_LABELS[tier]} agent page is confirmed`,
       html,
     })
     if (error) {
@@ -76,7 +82,7 @@ export async function sendOnboardingEmail({
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: email,
-      subject: `Complete your onboarding — your ${tier.charAt(0).toUpperCase() + tier.slice(1)} build starts when you do`,
+      subject: `Complete your onboarding — your ${TIER_LABELS[tier]} agent page starts when you do`,
       html,
     })
     if (error) {
@@ -106,7 +112,7 @@ export async function sendFollowUpEmail({
   const subjects: Record<FollowUpSequence, string> = {
     1: `Your eevolvv report${businessName ? ` for ${businessName}` : ''} — top 3 opportunities`,
     2: "Still thinking it over? Here's what eevolvv clients found",
-    3: 'Last chance to lock in your eevolvv build',
+    3: 'Last chance to lock in your eevolvv agent page',
   }
 
   const templates: Record<FollowUpSequence, React.ReactElement> = {

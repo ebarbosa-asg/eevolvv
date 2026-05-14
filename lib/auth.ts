@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth'
 import Google from 'next-auth/providers/google'
+import { getAllClientAgentEmails, isOwnerEmail, normalizeEmail } from '@/lib/client-agent-pages'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [Google],
@@ -8,7 +9,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     signIn({ user }) {
-      return user.email === 'hello@eevolvv.com' || user.email === 'eduardocbarbosa1998@gmail.com'
+      const email = normalizeEmail(user.email)
+      const allowedClientEmails = new Set<string>(getAllClientAgentEmails())
+      return isOwnerEmail(email) || allowedClientEmails.has(email)
     },
   },
 })

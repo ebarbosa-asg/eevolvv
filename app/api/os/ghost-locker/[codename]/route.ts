@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 
 const PHASE_FILES: Record<string, string[]> = {
+  products: ['product-locker.md'],
   onboard: ['onboarding.md'],
   intake: ['intake.md'],
   blueprint: ['blueprint.md'],

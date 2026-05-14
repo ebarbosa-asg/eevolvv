@@ -2,11 +2,11 @@ import type { Metadata } from 'next'
 import { PricingTiers } from './PricingTiers'
 
 export const metadata: Metadata = {
-  title: 'Pricing — eevolvv | AI-Managed Business Builds',
-  description: 'Seed from $99/mo, Core from $499/mo, Evolve from $1,999/mo. Annual pricing saves 2 months. AI-built and managed — landing pages, web apps, and full-stack systems.',
+  title: 'Pricing — eevolvv | Client Agent Pages',
+  description: 'Agent One from $499/mo, Agent Three from $999/mo, Agent Five from $1,999/mo. Client agent pages with weekly recommendations, automations, integrations, and tangible product files.',
   openGraph: {
     title: 'Pricing — eevolvv',
-    description: 'AI-built and managed business systems. Seed, Core, and Evolve tiers.',
+    description: 'Client agent pages with weekly recommendations, automations, integrations, and tangible product files.',
     url: 'https://eevolvv.com/pricing',
   },
 }
@@ -21,10 +21,10 @@ export default function PricingPage() {
             § 01 · PRICING
           </div>
           <h1 style={{ fontSize: 'clamp(28px, 5vw, 44px)', fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 12px', color: 'var(--ink)', lineHeight: 1.1 }}>
-            Pick your starting point.
+            The product is the agent page.
           </h1>
           <p style={{ fontSize: 16, opacity: 0.6, maxWidth: 480, margin: 0, lineHeight: 1.55 }}>
-            We build it, host it, and maintain it every month. Not software — a service.
+            Every recommendation, automation, website, SCO action, report, and file becomes visible inside the client portal. Not vague service work. Tangible products.
           </p>
         </div>
 

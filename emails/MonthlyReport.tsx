@@ -58,10 +58,10 @@ export function MonthlyReportEmail({
             {greeting}
           </Text>
 
-          {/* Build Status */}
+          {/* Product Status */}
           <Section style={{ marginBottom: 24, border: '1px solid rgba(20,20,19,0.14)', padding: '20px 24px' }}>
             <Text style={{ fontSize: 10, letterSpacing: '0.22em', color: '#8C2B1A', fontWeight: 700, margin: '0 0 12px', textTransform: 'uppercase' as const }}>
-              § 01 · BUILD STATUS
+              § 01 · PRODUCT STATUS
             </Text>
             <Text style={{ fontSize: 14, color: '#141413', margin: 0, fontWeight: 500 }}>
               Status: {buildStatus.replace('_', ' ').toUpperCase()}

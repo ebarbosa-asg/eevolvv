@@ -1,161 +1,140 @@
 # Stripe Products Setup Guide
 
-**PRD:** autonomous-sidegig-pivot  
-**Task:** T02 — Stripe Billing Setup  
-**Status:** MANUAL STEP REQUIRED by E before Wave 2 runtime tests
+**Status:** update Stripe before taking payments on the revised agent-page model  
+**Core product:** client agent page subscription  
+**Internal tier keys:** keep `seed`, `core`, and `evolve` for code/database compatibility.
 
 ---
 
-## Overview
+## Subscription Products
 
-This document guides E through creating 6 Stripe products in the Stripe dashboard. After creation, price IDs must be populated in `.env.local` and the Vercel project environment variables.
+Create or update these three Stripe products. Each product has a monthly and annual price.
 
-**BLOCKING GATE:** Wave 2 tasks (T03, T04, T07, T10) cannot run end-to-end without these price IDs populated.
+### Product 1: eevolvv Agent One
 
----
+| Field | Monthly | Annual |
+|-------|--------:|------:|
+| Product name | `eevolvv Agent One` | `eevolvv Agent One` |
+| Price | `$499.00 USD` | `$4,990.00 USD` |
+| Billing period | Monthly | Yearly |
+| Lookup key | `seed_monthly` | `seed_annual` |
+| Env var | `STRIPE_PRICE_SEED_MONTHLY` | `STRIPE_PRICE_SEED_ANNUAL` |
 
-## Step 1: Create Products in Stripe Dashboard
+Includes: private agent page, weekly recommendations, 1 active integration/automation, Ghost Locker product view.
 
-Go to: https://dashboard.stripe.com/products
+### Product 2: eevolvv Agent Three
 
-### Product 1: eevolvv Seed (Monthly)
+| Field | Monthly | Annual |
+|-------|--------:|------:|
+| Product name | `eevolvv Agent Three` | `eevolvv Agent Three` |
+| Price | `$999.00 USD` | `$9,990.00 USD` |
+| Billing period | Monthly | Yearly |
+| Lookup key | `core_monthly` | `core_annual` |
+| Env var | `STRIPE_PRICE_CORE_MONTHLY` | `STRIPE_PRICE_CORE_ANNUAL` |
 
-| Field | Value |
-|-------|-------|
-| Product name | `eevolvv Seed` |
-| Price | $99.00 USD |
-| Billing period | Monthly |
-| Lookup key | `seed_monthly` |
+Includes: private agent page, weekly recommendations, 3 active integrations/automations, monthly optimization pass.
 
-### Product 2: eevolvv Seed (Annual)
+### Product 3: eevolvv Agent Five
 
-Add a second price to the same `eevolvv Seed` product:
+| Field | Monthly | Annual |
+|-------|--------:|------:|
+| Product name | `eevolvv Agent Five` | `eevolvv Agent Five` |
+| Price | `$1,999.00 USD` | `$19,990.00 USD` |
+| Billing period | Monthly | Yearly |
+| Lookup key | `evolve_monthly` | `evolve_annual` |
+| Env var | `STRIPE_PRICE_EVOLVE_MONTHLY` | `STRIPE_PRICE_EVOLVE_ANNUAL` |
 
-| Field | Value |
-|-------|-------|
-| Price | $950.00 USD |
-| Billing period | Yearly |
-| Lookup key | `seed_annual` |
-
-_Annual = 10 × $99 = $990 − $40 savings (approximately 2 months free at $238 off)_
-
-### Product 3: eevolvv Core (Monthly)
-
-| Field | Value |
-|-------|-------|
-| Product name | `eevolvv Core` |
-| Price | $499.00 USD |
-| Billing period | Monthly |
-| Lookup key | `core_monthly` |
-
-### Product 4: eevolvv Core (Annual)
-
-Add a second price to the same `eevolvv Core` product:
-
-| Field | Value |
-|-------|-------|
-| Price | $4,790.00 USD |
-| Billing period | Yearly |
-| Lookup key | `core_annual` |
-
-_Annual = 10 × $499 = $4,990 − $200 savings (2 months free, $1,198 off)_
-
-### Product 5: eevolvv Evolve (Monthly)
-
-| Field | Value |
-|-------|-------|
-| Product name | `eevolvv Evolve` |
-| Price | $1,999.00 USD |
-| Billing period | Monthly |
-| Lookup key | `evolve_monthly` |
-
-### Product 6: eevolvv Evolve (Annual)
-
-Add a second price to the same `eevolvv Evolve` product:
-
-| Field | Value |
-|-------|-------|
-| Price | $19,190.00 USD |
-| Billing period | Yearly |
-| Lookup key | `evolve_annual` |
-
-_Annual = 10 × $1,999 = $19,990 − $800 savings (2 months free, $4,798 off)_
+Includes: private agent page, weekly recommendations, up to 5 active integrations/automations, ads/SEO/SCO management.
 
 ---
 
-## Step 2: Copy Price IDs
+## Add-On Products
 
-After creating each price, copy the `price_XXXX` ID from the Stripe dashboard into the table below:
+These can be created as one-time prices or subscription prices. They do not need to be wired into automated checkout on day one; they can be invoiced manually until the add-on checkout UI is built.
 
-| Variable | Stripe Price ID |
-|----------|-----------------|
-| `STRIPE_PRICE_SEED_MONTHLY` | `price_` ← fill in |
-| `STRIPE_PRICE_SEED_ANNUAL` | `price_` ← fill in |
-| `STRIPE_PRICE_CORE_MONTHLY` | `price_` ← fill in |
-| `STRIPE_PRICE_CORE_ANNUAL` | `price_` ← fill in |
-| `STRIPE_PRICE_EVOLVE_MONTHLY` | `price_` ← fill in |
-| `STRIPE_PRICE_EVOLVE_ANNUAL` | `price_` ← fill in |
+| Add-on | Stripe product name | Price | Billing |
+|--------|---------------------|------:|---------|
+| Website Build | `eevolvv Website Build` | `$2,000` | One-time |
+| SCO Management | `eevolvv SCO Management` | `$500` | Monthly |
+| Extra Integration / Automation | `eevolvv Extra Automation` | `$300-$750` | Monthly or one-time scope |
+| Ads Campaign Setup | `eevolvv Ads Campaign Setup` | `$750` | One-time |
+| Custom Dashboard | `eevolvv Custom Dashboard` | `$1,500-$5,000` | One-time |
+
+Tier rule:
+
+- Agent One and Agent Three can buy SCO Management for `$500/mo`.
+- Agent Five includes ads/SEO/SCO management. Ad spend is not included.
+- Every tier can buy the Website Build add-on for `$2,000`.
 
 ---
 
-## Step 3: Populate Environment Variables
+## Environment Variables
 
-### Local development (`.env.local`):
+After creating the subscription prices, copy the `price_...` IDs into `.env.local` and the Vercel production environment:
 
-```
-STRIPE_PRICE_SEED_MONTHLY=price_XXXX
-STRIPE_PRICE_SEED_ANNUAL=price_XXXX
-STRIPE_PRICE_CORE_MONTHLY=price_XXXX
-STRIPE_PRICE_CORE_ANNUAL=price_XXXX
-STRIPE_PRICE_EVOLVE_MONTHLY=price_XXXX
-STRIPE_PRICE_EVOLVE_ANNUAL=price_XXXX
+```bash
+STRIPE_PRICE_SEED_MONTHLY=price_1TX6IR822jgZpeCahXFgOOxK
+STRIPE_PRICE_SEED_ANNUAL=price_1TX6IR822jgZpeCaHncERDAy
+STRIPE_PRICE_CORE_MONTHLY=price_1TX6IS822jgZpeCa91jUkgcT
+STRIPE_PRICE_CORE_ANNUAL=price_1TX6IS822jgZpeCa41GYfbUt
+STRIPE_PRICE_EVOLVE_MONTHLY=price_1TX6IT822jgZpeCaZtr79Mjy
+STRIPE_PRICE_EVOLVE_ANNUAL=price_1TX6IT822jgZpeCaSxyt6jXX
 ```
 
-### Vercel dashboard:
-
-Go to: https://vercel.com/ebarbosa-asg/eevolvv/settings/environment-variables
-
-Add the same 6 variables above for the Production environment.
-
 ---
 
-## Step 4: Webhook Configuration (for T04)
+## Webhook Configuration
 
-1. Go to: https://dashboard.stripe.com/webhooks
-2. Click **Add endpoint**
-3. Endpoint URL: `https://eevolvv.com/api/stripe/webhook`
-4. Select events:
-   - `checkout.session.completed`
-   - `customer.subscription.updated`
-   - `customer.subscription.deleted`
-   - `invoice.payment_failed`
-5. After saving, copy the **Signing secret** (`whsec_...`) into:
-   - `.env.local`: `STRIPE_WEBHOOK_SECRET=whsec_...`
-   - Vercel: same variable
+Endpoint URL:
+
+```txt
+https://eevolvv.com/api/stripe/webhook
+```
+
+Events:
+
+- `checkout.session.completed`
+- `customer.subscription.updated`
+- `customer.subscription.deleted`
+- `invoice.payment_failed`
+
+Store the signing secret as:
+
+```bash
+STRIPE_WEBHOOK_SECRET=whsec_XXXX
+```
 
 ---
 
 ## Pricing Summary
 
-| Tier | Monthly | Annual | Savings |
-|------|---------|--------|---------|
-| Seed | $99/mo | $950/yr | $238 off (2 months free) |
-| Core | $499/mo | $4,790/yr | $1,198 off (2 months free) |
-| Evolve | $1,999/mo | $19,190/yr | $4,798 off (2 months free) |
+| Tier | Monthly | Annual | Included automations/integrations |
+|------|--------:|-------:|----------------------------------:|
+| Agent One | `$499/mo` | `$4,990/yr` | 1 |
+| Agent Three | `$999/mo` | `$9,990/yr` | 3 |
+| Agent Five | `$1,999/mo` | `$19,990/yr` | up to 5 + ads/SEO/SCO |
 
-All annual prices = monthly × 10 (2 months free).
+All annual plans are priced as 10 months paid, 2 months free.
 
 ---
 
-## Lookup Key Reference
+## Live Stripe IDs
 
-These lookup keys are used by the checkout API (T03) to create Stripe Checkout Sessions:
+### Subscription products
 
-| Lookup Key | Tier | Interval |
-|-----------|------|----------|
-| `seed_monthly` | Seed | Monthly |
-| `seed_annual` | Seed | Annual |
-| `core_monthly` | Core | Monthly |
-| `core_annual` | Core | Annual |
-| `evolve_monthly` | Evolve | Monthly |
-| `evolve_annual` | Evolve | Annual |
+| Product | Product ID | Monthly price ID | Annual price ID |
+|---------|------------|------------------|-----------------|
+| eevolvv Agent One | `prod_UToFYtrn3bwAAW` | `price_1TX6IR822jgZpeCahXFgOOxK` | `price_1TX6IR822jgZpeCaHncERDAy` |
+| eevolvv Agent Three | `prod_UToIS9lH0vnkKY` | `price_1TX6IS822jgZpeCa91jUkgcT` | `price_1TX6IS822jgZpeCa41GYfbUt` |
+| eevolvv Agent Five | `prod_UToK25ATIP0tLV` | `price_1TX6IT822jgZpeCaZtr79Mjy` | `price_1TX6IT822jgZpeCaSxyt6jXX` |
+
+### Add-on products
+
+| Add-on | Product ID | Price ID | Payment Link |
+|--------|------------|----------|--------------|
+| Website Build | `prod_UW8axlKgLuFgRs` | `price_1TX6JV822jgZpeCaQUZshWhD` | https://buy.stripe.com/fZu4gtcX79sX1zma7f48000 |
+| SCO Management | `prod_UW8aZtpQ2njtAw` | `price_1TX6JV822jgZpeCab0t3QLi0` | https://buy.stripe.com/00w7sF2it5cHem87Z748001 |
+| Extra Automation — Starter | `prod_UW8ap9v0t3Jc8Z` | `price_1TX6JW822jgZpeCacPOgwFVv` | https://buy.stripe.com/aFaeV73mxdJda5Scfn48002 |
+| Extra Automation — Advanced | `prod_UW8ap9v0t3Jc8Z` | `price_1TX6JW822jgZpeCagOhXMK9J` | https://buy.stripe.com/fZueV7e1b7kP5PC7Z748003 |
+| Ads Campaign Setup | `prod_UW8aU0RHBA29Xc` | `price_1TX6JX822jgZpeCaV8quqgOh` | https://buy.stripe.com/8x2aER8GRbB591O0wF48004 |
+| Custom Dashboard — Base | `prod_UW8a206O9Sj6fY` | `price_1TX6JX822jgZpeCasHQJYUnw` | https://buy.stripe.com/8x26oB5uF34z2Dqbbj48005 |

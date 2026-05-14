@@ -17,7 +17,21 @@ export async function GET(req: NextRequest) {
   const rawTier = searchParams.get('tier') ?? 'core'
   const source = searchParams.get('source') ?? 'email'
 
-  const tierMap: Record<string, Tier> = { seed: 'seed', core: 'core', evolve: 'evolve', grow: 'core', scale: 'evolve', enterprise: 'evolve', retainer: 'evolve' }
+  const tierMap: Record<string, Tier> = {
+    seed: 'seed',
+    core: 'core',
+    evolve: 'evolve',
+    'agent-one': 'seed',
+    one: 'seed',
+    'agent-three': 'core',
+    three: 'core',
+    grow: 'core',
+    'agent-five': 'evolve',
+    five: 'evolve',
+    scale: 'evolve',
+    enterprise: 'evolve',
+    retainer: 'evolve',
+  }
   const tier = tierMap[rawTier] ?? 'core'
   const interval: Interval = 'monthly'
 

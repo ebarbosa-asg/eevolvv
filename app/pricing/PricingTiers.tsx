@@ -2,22 +2,26 @@
 
 import { useState } from 'react'
 import { TIER_CONFIGS, type Tier } from '@/lib/stripe-prices'
+import { ADD_ONS, WEBSITE_ADD_ON } from '@/lib/agent-products'
 
 const DISPLAY_FEATURES: Record<Tier, string[]> = {
   seed: [
-    'Landing page + 1 automation workflow',
-    '24-hour build delivery',
-    'Hosting, monitoring + 1 update/mo',
+    'Private agent page',
+    'Weekly recommendations',
+    '1 active integration / automation',
+    'SCO management available as add-on',
   ],
   core: [
-    'Web app + 3–5 AI agents built for you',
-    '3–5 day build delivery',
-    'CRM integrations + monthly report',
+    'Private agent page',
+    'Weekly recommendations',
+    '3 active integrations / automations',
+    'SCO management available as add-on',
   ],
   evolve: [
-    'Full-stack build + CRM/ERP integrations',
-    '7–10 day build delivery',
-    'Full managed service + quarterly sessions',
+    'Private agent page',
+    'Weekly recommendations',
+    'Up to 5 integrations / automations',
+    'Ads, SEO, and SCO management included',
   ],
 }
 
@@ -106,7 +110,7 @@ export function PricingTiers() {
               <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
                 {config.name}
               </div>
-              <div style={{ fontSize: 13, opacity: 0.55, marginBottom: 20, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 13, opacity: 0.62, marginBottom: 20, lineHeight: 1.45 }}>
                 {config.tagline}
               </div>
 
@@ -162,16 +166,60 @@ export function PricingTiers() {
 
       {/* Post-purchase note */}
       <div className="mono" style={{ marginTop: 14, padding: '12px 18px', background: 'rgba(20,20,19,0.04)', borderLeft: '3px solid var(--accent)', fontSize: 11, letterSpacing: '0.06em', lineHeight: 1.7 }}>
-        → Checkout takes 2 minutes. Build queues immediately. Onboarding doc + client portal link sent to your inbox automatically.
+        → Checkout takes 2 minutes. Your agent page, Ghost Locker, and first product file queue immediately.
+      </div>
+
+      {/* Tangible add-ons */}
+      <div style={{ marginTop: 44 }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 14, fontWeight: 700 }}>
+          § ADD-ONS · TANGIBLE PRODUCTS
+        </div>
+        <div className="pricing-addon-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', border: '1px solid var(--ink)' }}>
+          {[
+            {
+              name: WEBSITE_ADD_ON.name,
+              price: WEBSITE_ADD_ON.price,
+              note: 'One flat website build: design, pages/sections, contact CTA, metadata, launch checklist, and a portal file.',
+            },
+            {
+              name: ADD_ONS['sco-management'].name,
+              price: ADD_ONS['sco-management'].price,
+              note: 'Available on Agent One and Agent Three. Included in Agent Five with ads/SEO management.',
+            },
+            {
+              name: ADD_ONS['extra-automation'].name,
+              price: ADD_ONS['extra-automation'].price,
+              note: 'One extra workflow with one job, one trigger, one destination, one test, and one runbook.',
+            },
+          ].map((addOn, i) => (
+            <div
+              key={addOn.name}
+              style={{
+                padding: 24,
+                borderRight: i < 2 ? '1px solid var(--ink)' : 'none',
+                minHeight: 190,
+              }}
+            >
+              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
+                {addOn.name}
+              </div>
+              <div className="mono" style={{ fontSize: 12, color: 'var(--accent)', letterSpacing: '0.08em', marginBottom: 14 }}>
+                {addOn.price}
+              </div>
+              <p style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.68, margin: 0 }}>{addOn.note}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Compact FAQ */}
       <div style={{ marginTop: 56, display: 'grid', gap: 20 }}>
         {[
-          { q: 'Can I cancel?', a: 'Monthly: cancel anytime, ends at period close. Annual: non-refundable once build starts.' },
-          { q: 'What if the build runs late?', a: 'We extend your subscription by the delay — no charge.' },
-          { q: 'Can I upgrade?', a: 'Yes, from your client portal. Stripe prorates automatically.' },
-          { q: 'What\'s included in "managed"?', a: 'Hosting, monitoring, updates, and a monthly performance report.' },
+          { q: 'Can I cancel?', a: 'Monthly: cancel anytime, ends at period close. Annual: non-refundable once product work starts.' },
+          { q: 'What if a product runs late?', a: 'We extend your subscription by the delay — no charge.' },
+          { q: 'What is the website add-on?', a: 'One flat $2,000 website build. The site becomes a visible product file in your Ghost Locker.' },
+          { q: 'What is SCO management?', a: 'Search and ChatGPT optimization: we turn your services, proof, FAQs, and content into discoverable assets.' },
+          { q: 'What does tangible mean?', a: 'Every service becomes a card or file: scope, status, owner, link, test result, report, or next action.' },
         ].map(({ q, a }) => (
           <div key={q} className="pricing-qa-row" style={{ paddingBottom: 20, borderBottom: '1px solid var(--rule)' }}>
             <div style={{ fontWeight: 600, fontSize: 14 }}>{q}</div>

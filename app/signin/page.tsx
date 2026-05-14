@@ -89,7 +89,7 @@ export default function SignInPage({
           textAlign: 'center',
           lineHeight: 1.6,
         }}>
-          Restricted to hello@eevolvv.com
+          Restricted to authorized eevolvv and client accounts.
         </p>
       </div>
     </div>

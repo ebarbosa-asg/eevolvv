@@ -136,7 +136,7 @@ ${errorPoints || 'Not specified'}
 IF THEY HAD 20 EXTRA HOURS/WEEK, THEY WOULD:
 ${hoursFreed || 'Not specified'}
 
-INTERESTED TIER: ${tier === 'unsure' ? 'Not sure yet — infer best Seed / Grow / Scale / Enterprise fit from their profile' : tier === 'retainer' ? 'Evolve Retainer' : tier || 'grow'}
+INTERESTED TIER: ${tier === 'unsure' ? 'Not sure yet — infer best Agent One / Agent Three / Agent Five / Enterprise fit from their profile' : tier === 'retainer' ? 'Agent Five / managed retainer' : tier || 'agent-three'}
 Contact: ${name || 'Not provided'} — ${email}
 
 Generate their eevolvv report now.`

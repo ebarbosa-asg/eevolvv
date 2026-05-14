@@ -69,7 +69,7 @@ export function FollowUp2Email({ name, businessName }: FollowUp2Props) {
             </Text>
             <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
               We sent your eevolvv report for {biz} a few days ago. No pressure — but here&apos;s
-              what other businesses found when they started with Seed:
+              what other businesses found when they started with an agent page:
             </Text>
             {/* Social proof bullets */}
             <Section
@@ -83,20 +83,19 @@ export function FollowUp2Email({ name, businessName }: FollowUp2Props) {
               <Text
                 style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: '0 0 8px' }}
               >
-                → A local service business automated their client intake form in 72 hours.
-                8 hours/week freed — they used that time to take on 3 more clients.
+                → A local service business turned every inquiry into a clean lead packet.
+                The owner could finally see what happened next.
               </Text>
               <Text
                 style={{ fontSize: 13, color: '#141413', lineHeight: 1.7, margin: 0 }}
               >
-                → A solopreneur launched their first professional landing page in 72 hours.
-                First inbound lead came in within 48 hours of going live.
+                → Another business added weekly recommendations, then picked the first
+                automation from inside their portal instead of starting from a blank page.
               </Text>
             </Section>
             <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
-              The Seed tier ($950/yr) is our lowest-risk starting point. Built in 72 hours,
-              hosted and maintained. If you&apos;re not satisfied in the first 30 days,
-              we&apos;ll make it right.
+              Agent One ($499/mo or $4,990/yr) is the lowest-risk starting point: a client
+              agent page, weekly recommendations, and one active integration or automation.
             </Text>
           </Section>
           <Section style={{ marginBottom: 32, textAlign: 'center' as const }}>

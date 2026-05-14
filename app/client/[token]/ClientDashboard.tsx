@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { TIER_CONFIGS } from '@/lib/stripe-prices'
+import { getProductLocker, getPlanDefinition, WEBSITE_ADD_ON, ADD_ONS } from '@/lib/agent-products'
 
 interface Build {
   id: string
@@ -68,6 +69,10 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
   const totalSteps = STATUS_ORDER.length
   const filledBlocks = Math.max(0, buildStatusIndex + 1)
   const progressBar = '▓'.repeat(filledBlocks) + '░'.repeat(totalSteps - filledBlocks)
+  const planDefinition = getPlanDefinition(client?.tier)
+  const productLocker = getProductLocker(client?.tier)
+  const ownedProducts = productLocker.filter((item) => ['included', 'active', 'paid', 'queued'].includes(item.status))
+  const availableProducts = productLocker.filter((item) => item.status === 'available')
 
   const nextBillingDate = subscription?.current_period_end
     ? new Date(subscription.current_period_end).toLocaleDateString('en-US', {
@@ -128,13 +133,13 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {/* Build Status */}
+      {/* Product Status */}
       <section style={{ border: '1px solid var(--rule)', padding: 28 }}>
         <div
           className="mono"
           style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}
         >
-          § 01 · BUILD STATUS
+          § 01 · PRODUCT STATUS
         </div>
         {latestBuild ? (
           <>
@@ -202,7 +207,7 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
           </>
         ) : (
           <p style={{ opacity: 0.55, fontSize: 14 }}>
-            No build in progress yet. Complete your onboarding to start.
+            No product in progress yet. Complete your onboarding to activate your agent page.
           </p>
         )}
       </section>
@@ -293,14 +298,92 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
         </div>
       </section>
 
-      {/* Build history */}
+      {/* Ghost Locker */}
+      <section style={{ border: '1px solid var(--rule)', padding: 28 }}>
+        <div
+          className="mono"
+          style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}
+        >
+          § 03 · GHOST LOCKER
+        </div>
+        <p style={{ fontSize: 14, opacity: 0.62, lineHeight: 1.6, margin: '0 0 18px' }}>
+          Everything you pay for becomes visible here: what it is, what it does, what status it is in, and what proof exists.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+          <div>
+            <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.5, marginBottom: 4 }}>
+              PLAN
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>{planDefinition.publicName}</div>
+          </div>
+          <div>
+            <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.5, marginBottom: 4 }}>
+              WEBSITE
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>{WEBSITE_ADD_ON.price}</div>
+          </div>
+          <div>
+            <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.5, marginBottom: 4 }}>
+              WORKFLOWS
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>{planDefinition.automationAllowance}</div>
+          </div>
+          <div>
+            <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', opacity: 0.5, marginBottom: 4 }}>
+              SCO
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>
+              {planDefinition.includesSco ? 'Included' : ADD_ONS['sco-management'].price}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {ownedProducts.map((item) => (
+            <div
+              key={item.key}
+              style={{
+                border: '1px solid var(--rule)',
+                padding: '14px 16px',
+                display: 'grid',
+                gridTemplateColumns: '1fr auto',
+                gap: 12,
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>{item.name}</div>
+                <div style={{ fontSize: 12, lineHeight: 1.5, opacity: 0.58 }}>{item.description}</div>
+              </div>
+              <span className="mono" style={{ fontSize: 9, letterSpacing: '0.12em', color: 'var(--accent)', textTransform: 'uppercase' }}>
+                {item.status}
+              </span>
+            </div>
+          ))}
+        </div>
+        {availableProducts.length > 0 && (
+          <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--rule)' }}>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', opacity: 0.5, marginBottom: 12 }}>
+              AVAILABLE ADD-ONS
+            </div>
+            <div style={{ display: 'grid', gap: 10 }}>
+              {availableProducts.slice(0, 3).map((item) => (
+                <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, fontSize: 13 }}>
+                  <span>{item.name}</span>
+                  <span className="mono" style={{ color: 'var(--accent)', whiteSpace: 'nowrap' }}>{item.price}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* Product history */}
       {builds.length > 1 && (
         <section style={{ border: '1px solid var(--rule)', padding: 28 }}>
           <div
             className="mono"
             style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 16, fontWeight: 600 }}
           >
-            § 03 · BUILD HISTORY
+              § 04 · PRODUCT HISTORY
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {builds.map(b => (
@@ -315,7 +398,7 @@ export function ClientDashboard({ token, client, subscription, latestBuild, buil
                 }}
               >
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>{b.tier.toUpperCase()} BUILD</div>
+                  <div style={{ fontSize: 13, fontWeight: 500 }}>{b.tier.toUpperCase()} PRODUCT</div>
                   <div style={{ fontSize: 11, opacity: 0.5 }}>
                     {new Date(b.created_at).toLocaleDateString()}
                   </div>

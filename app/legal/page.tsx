@@ -272,7 +272,7 @@ export default function LegalPage() {
                 n: '03',
                 title: 'We Build It',
                 body: 'Choose your tier. We build every automation from the report — custom agents, integrations, and workflows — within days, not months.',
-                note: 'Seed from $99/mo',
+                note: 'Agent One from $499/mo',
               },
             ].map((step, i) => (
               <div key={i} style={{
