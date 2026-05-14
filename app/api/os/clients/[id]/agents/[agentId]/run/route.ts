@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { supabase } from '@/lib/supabase'
 import { sendRunEmail } from '@/lib/email'
 import { traceAgentRun } from '@/lib/langfuse'
+import { searchMemory, addMemory } from '@/lib/mem0'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -62,8 +63,15 @@ export async function POST(
       })),
     }
 
-    const systemPrompt = agent.instructions ?? 'You are a business intelligence agent. Analyze the provided business context and deliver actionable insights.'
+    const baseSystemPrompt = agent.instructions ?? 'You are a business intelligence agent. Analyze the provided business context and deliver actionable insights.'
     const userMessage = buildContextMessage(inputContext)
+
+    // Retrieve per-client memories and prepend to system prompt
+    const memories = await searchMemory(params.id, userMessage)
+    const memoryBlock = memories.length > 0
+      ? `\n\n## Relevant Client Memory\n${memories.map(m => `- ${m}`).join('\n')}`
+      : ''
+    const systemPrompt = baseSystemPrompt + memoryBlock
 
     const startMs = Date.now()
     const message = await anthropic.messages.create({
@@ -93,6 +101,9 @@ export async function POST(
       last_run_at: new Date().toISOString(),
       run_count: (agent.run_count ?? 0) + 1,
     }).eq('id', params.agentId)
+
+    // Fire-and-forget Mem0 memory storage
+    addMemory(params.id, output).catch(() => {})
 
     // Fire-and-forget Langfuse trace
     traceAgentRun({
