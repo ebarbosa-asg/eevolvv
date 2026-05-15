@@ -611,6 +611,56 @@ input:focus, textarea:focus, select:focus { outline: none; }
   }
 }
 
+/* ── Operating layer section ── */
+.os-layer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--ink);
+  border-left: 1px solid var(--ink);
+}
+
+.os-layer-card {
+  min-height: 180px;
+  padding: 22px 24px;
+  border-right: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  background: rgba(20, 20, 19, 0.018);
+}
+
+.os-terminal {
+  border: 1px solid var(--ink);
+  background: rgba(20, 20, 19, 0.055);
+  border-left: 3px solid var(--accent);
+}
+
+.os-terminal-title {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.os-terminal-body {
+  padding: 20px 22px 22px;
+  font-size: 12px;
+  line-height: 1.95;
+  color: rgba(20, 20, 19, 0.72);
+}
+
+@media (max-width: 960px) {
+  .os-layer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .os-layer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── Agents catalog grid (main site §06 — AI agents; not the Talent / human-network section) ── */
 .agents-grid {
   display: grid;
@@ -825,6 +875,12 @@ input:focus, textarea:focus, select:focus { outline: none; }
   }
   .pricing-retainer-band button {
     width: 100%;
+  }
+
+  .os-layer-intro,
+  .enterprise-wedge-band {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
   }
 
   .diagnostic-report-cta {

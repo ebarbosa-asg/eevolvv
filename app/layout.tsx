@@ -8,21 +8,21 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://eevolvv.com'),
-  title: 'eevolvv — AI Business Transformation',
-  description: 'We map your workflows, deploy AI automation, and permanently rebuild how your business operates—with a structured day-60 review.',
-  keywords: 'AI business transformation, business automation, AI operations, workflow automation, AI integration',
+  title: 'eevolvv — AI Operations Team for Growing Businesses',
+  description: 'We find the ghost work inside your business, build AI agents to run it, and give every client a private agent page, Ghost Locker, reports, and monthly recalibration.',
+  keywords: 'AI operations team, ghost work audit, AI business diagnostic, client agent page, workflow automation, AI agents for business',
   openGraph: {
-    title: 'eevolvv — AI Business Transformation',
-    description: 'We map your workflows, deploy AI automation, and permanently rebuild how your business operates.',
+    title: 'eevolvv — AI Operations Team for Growing Businesses',
+    description: 'We find ghost work, build AI agents, and turn every client engagement into a visible operating layer.',
     type: 'website',
     url: 'https://eevolvv.com',
     siteName: 'eevolvv',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'eevolvv — AI Business Transformation' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'eevolvv — AI operations team for growing businesses' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'eevolvv — AI Business Transformation',
-    description: 'We map your workflows, deploy AI automation, and permanently rebuild how your business operates.',
+    title: 'eevolvv — AI Operations Team for Growing Businesses',
+    description: 'Find the ghost work. Build the agents. Compound forever.',
     images: ['/opengraph-image'],
   },
 }

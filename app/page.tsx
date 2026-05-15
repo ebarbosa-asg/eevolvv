@@ -216,7 +216,7 @@ function BrandLogoFigures({ size = 'md', header }: { size?: 'sm' | 'md'; header?
 
 
 function Header({ onCTA }: { onCTA: () => void }) {
-  const nav: [string, string][] = [['how','PROCESS'],['who','INDUSTRIES'],['pricing','TIERS'],['agents','AGENTS'],['diagnostic','GET REPORT']]
+  const nav: [string, string][] = [['how','PROCESS'],['os','OS'],['who','INDUSTRIES'],['pricing','TIERS'],['agents','AGENTS'],['diagnostic','GET REPORT']]
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -860,7 +860,95 @@ function Process() {
   )
 }
 
-/** §04 industry grid: 3-across on wide screens; 2 on tablet; 1 on narrow viewports. */
+// ─── OperatingLayer ──────────────────────────────────────────────────────────
+
+const OPERATING_LAYER = [
+  {
+    code: 'OS-01',
+    title: 'Evolution Assessment',
+    status: 'LIVE',
+    desc: 'The free diagnostic maps ghost work, ROI, and the first 90 days of automation opportunity.',
+  },
+  {
+    code: 'OS-02',
+    title: 'Client Agent Page',
+    status: 'BUILT',
+    desc: 'Every paying client gets a private page for recommendations, files, automations, and next actions.',
+  },
+  {
+    code: 'OS-03',
+    title: 'Ghost Locker',
+    status: 'BUILT',
+    desc: 'Websites, reports, dashboards, integrations, and add-ons become visible product files with status.',
+  },
+  {
+    code: 'OS-04',
+    title: 'Stripe-backed tiers',
+    status: 'WIRED',
+    desc: 'Agent One, Agent Three, and Agent Five are mapped to live subscriptions and tangible add-ons.',
+  },
+  {
+    code: 'OS-05',
+    title: 'Follow-up engine',
+    status: 'AUTOMATED',
+    desc: 'Diagnostic leads enter a timed email sequence unless they convert into paying clients.',
+  },
+  {
+    code: 'OS-06',
+    title: 'Reports + recalibration',
+    status: 'AUTOMATED',
+    desc: 'Monthly reports, quarterly recalibration, payment recovery, and churn checks keep the loop alive.',
+  },
+] as const
+
+function OperatingLayer() {
+  return (
+    <section id="os" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)' }}>
+      <div className="mx-auto site-rail">
+        <SectionHeader number="04" eyebrow="THE EEVOLVV OPERATING LAYER" title="A service that becomes a system." note="LIVE STACK" />
+        <div className="os-layer-intro" style={{ marginTop: 36, display: 'grid', gridTemplateColumns: 'minmax(0, 0.92fr) minmax(320px, 1.08fr)', gap: 56, alignItems: 'start' }}>
+          <div>
+            <p style={{ fontSize: 17, lineHeight: 1.65, color: 'rgba(20,20,19,0.68)', margin: 0 }}>
+              The landing page, pricing, client portal, Ghost Locker, email loops, Stripe billing, and internal OS now point at one product truth: eevolvv is an AI operations team with a visible operating layer.
+            </p>
+            <div className="mono" style={{ marginTop: 24, fontSize: 11, lineHeight: 1.9, letterSpacing: '0.12em', opacity: 0.58 }}>
+              <div>→ DIAGNOSE THE GHOST WORK</div>
+              <div>→ BUILD THE AGENT PAGE</div>
+              <div>→ SHIP THE WORKFLOWS</div>
+              <div>→ REPORT, RECALIBRATE, COMPOUND</div>
+            </div>
+          </div>
+          <div className="os-terminal">
+            <div className="mono os-terminal-title">eevolvv_os.status</div>
+            <div className="mono os-terminal-body">
+              <div>→ lead enters diagnostic</div>
+              <div>→ report creates automation roadmap</div>
+              <div>→ checkout opens agent page</div>
+              <div>→ Ghost Locker stores tangible products</div>
+              <div>→ follow-up + reports keep momentum alive</div>
+              <div>→ context compounds every month</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="os-layer-grid" style={{ marginTop: 48 }}>
+          {OPERATING_LAYER.map(item => (
+            <div key={item.code} className="os-layer-card">
+              <div className="mono" style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 9, letterSpacing: '0.18em', opacity: 0.5, marginBottom: 12 }}>
+                <span>{item.code}</span>
+                <span style={{ color: 'var(--accent)', opacity: 1 }}>{item.status}</span>
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 8 }}>{item.title}</div>
+              <p style={{ fontSize: 13, lineHeight: 1.58, opacity: 0.66, margin: 0 }}>{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/** Industry grid: 3-across on wide screens; 2 on tablet; 1 on narrow viewports. */
 function useWhoEvolveCols() {
   const [cols, setCols] = useState(3)
   useEffect(() => {
@@ -899,7 +987,7 @@ function WhoItsFor() {
     <section id="who" className="anchor-scroll" style={{ padding: '80px 0', borderBottom: '1px solid var(--rule)' }}>
       <div className="mx-auto site-rail">
         <div className="who-evolve-compact-head">
-          <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 600 }}>§ 04</div>
+          <div className="mono" style={{ fontSize: 11, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 600 }}>§ 05</div>
           <div>
             <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', opacity: 0.55, marginBottom: 10 }}>WHO WE EVOLVE</div>
             <div className="who-evolve-compact-title">Start where the ghost work is loudest.</div>
@@ -1025,7 +1113,7 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
   return (
     <section id="pricing" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="05" eyebrow="PRICING" title="Your business gets an agent page." note="THREE TIERS" />
+        <SectionHeader number="06" eyebrow="PRICING" title="Your business gets an agent page." note="THREE TIERS" />
         <p style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.7, maxWidth: 580, marginTop: 24 }}>
           Weekly recommendations, active automations, files, reports, and paid products all live in one place. Websites are a flat $2,000 add-on.
         </p>
@@ -1119,6 +1207,26 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
           <a href="/pricing" className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--ink)', opacity: 0.55, textDecoration: 'underline', whiteSpace: 'nowrap' }}>
             FULL PRICING DETAILS
           </a>
+        </div>
+
+        <div className="enterprise-wedge-band" style={{ marginTop: 34, border: '1px solid var(--ink)', background: 'var(--ink)', color: 'var(--paper)', padding: 32, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(280px, 0.78fr)', gap: 36, alignItems: 'center' }}>
+          <div>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 12, fontWeight: 700 }}>
+              ENTERPRISE WEDGE · QA + FINANCE AUDIT
+            </div>
+            <div style={{ fontSize: 28, fontWeight: 600, letterSpacing: '-0.025em', lineHeight: 1.12 }}>
+              Too small for Big 4. Too complex for generic SaaS.
+            </div>
+            <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.68, margin: '14px 0 0', maxWidth: 620 }}>
+              For $5M-$50M companies with QA compliance, finance audit, FP&A, board reporting, or multi-system workflow drag, eevolvv runs the diagnostic and builds the AI operating layer behind it.
+            </p>
+          </div>
+          <div className="mono" style={{ fontSize: 11, lineHeight: 1.9, letterSpacing: '0.1em', opacity: 0.82 }}>
+            <div>→ ISO / QA PROGRAMS</div>
+            <div>→ FINANCE AUDIT + CLOSE</div>
+            <div>→ EXECUTIVE REPORTING</div>
+            <div>→ CUSTOM SCOPE · $50K+</div>
+          </div>
         </div>
       </div>
     </section>
@@ -1323,7 +1431,7 @@ function AgentsSection() {
   return (
     <section id="agents" className="anchor-scroll" style={{ padding: '120px 0', borderBottom: '1px solid var(--rule)', background: 'rgba(20,20,19,0.02)' }}>
       <div className="mx-auto site-rail">
-        <SectionHeader number="06" eyebrow="EEVOLVV / AGENTS" title="Agents we build to optimize how you operate." note="12 DEPLOYABLE" />
+        <SectionHeader number="07" eyebrow="EEVOLVV / AGENTS" title="Agents we build to optimize how you operate." note="12 DEPLOYABLE" />
         {/* volvv-e hero intro */}
         <div className="agents-volvve-intro" style={{ display: 'flex', alignItems: 'center', gap: 48, marginTop: 56, marginBottom: 0, padding: '40px 48px', background: 'var(--ink)', color: 'var(--paper)', borderLeft: '4px solid var(--accent)' }}>
           <VolvvE state="idle" scale={7} style={{ flexShrink: 0 }} />
@@ -1360,7 +1468,7 @@ function AgentsSection() {
             <div style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em' }}>Not sure which agents fit first?</div>
             <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6, margin: '6px 0 0' }}>Tell our AI diagnostic what you run — it maps the highest-impact automations for your business.</p>
           </div>
-          <a href="#diagnostic" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 24px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, whiteSpace: 'nowrap' }}>FIND A SPECIALIST →</a>
+          <a href="#diagnostic" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 24px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, whiteSpace: 'nowrap' }}>RUN DIAGNOSTIC →</a>
         </div>
       </div>
     </section>
@@ -1599,7 +1707,8 @@ function GlobalHorizon() {
 
   return (
     <section
-      className="horizon-section relative z-[1]"
+      id="global"
+      className="horizon-section anchor-scroll relative z-[1]"
       style={{ background: 'transparent', color: 'var(--paper)', padding: '80px 0 72px', overflow: 'hidden' }}
     >
       <div className="mx-auto site-rail">
@@ -1728,9 +1837,13 @@ export default function Home() {
       <DiagnosticSection targetTier={targetTier} />
       <Problem />
       <Process />
+      <OperatingLayer />
       <WhoItsFor />
       <Pricing onCTA={tier => scrollToDiagnostic(tier)} />
       <AgentsSection />
+      <div style={{ background: 'var(--ink)', position: 'relative', overflow: 'hidden' }}>
+        <GlobalHorizon />
+      </div>
       <Footer />
     </main>
   )
