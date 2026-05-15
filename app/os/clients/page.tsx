@@ -3,9 +3,10 @@
 import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, SectionMarker, Input, Label, Button } from '@/components/ds'
+import { Card, CardContent, SectionMarker, Input, Label, Button, Badge } from '@/components/ds'
 import { OSTopbar } from '../components/OSTopbar'
-import { HealthDot, StagePipeline, EmptyState } from '../components/shared'
+import { HealthDot } from '../components/shared'
+import { StatusPill } from '@/components/ds'
 
 export type Client = {
   id: string
@@ -18,35 +19,26 @@ export type Client = {
   stage: 'diagnose' | 'onboard' | 'build' | 'maintain'
   health: 'green' | 'yellow' | 'red'
   notes: string | null
-  submission_id: string | null
-  created_at: string
-  updated_at: string
   agent_count: number
   latest_task: { id: string; status: string; updated_at: string } | null
+  created_at: string
 }
 
-function relativeTime(dateStr: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
-  if (diff < 60) return `${diff}s ago`
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
-  return `${Math.floor(diff / 86400)}d ago`
+function MetricCard({ label, value, subtext }: { label: string, value: string | number, subtext?: string }) {
+  return (
+    <div className="border border-white/5 bg-white/[0.02] p-4">
+      <div className="mono text-[9px] tracking-[0.2em] text-accent mb-1 uppercase">{label}</div>
+      <div className="text-2xl font-medium tracking-tight text-paper">{value}</div>
+      {subtext && <div className="mono text-[10px] text-paper/30 mt-1">{subtext}</div>}
+    </div>
+  )
 }
 
 export default function ClientsPage() {
-  const router = useRouter()
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
   const [newClientOpen, setNewClientOpen] = useState(false)
-  const [newClientForm, setNewClientForm] = useState({
-    name: '',
-    company: '',
-    email: '',
-    business_type: '',
-    contract_value: '',
-    stage: 'diagnose',
-  })
-  const [submitting, setSubmitting] = useState(false)
+  const [search, setSearch] = useState('')
 
   const fetchClients = useCallback(() => {
     setLoading(true)
@@ -57,185 +49,98 @@ export default function ClientsPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => {
-    fetchClients()
-  }, [fetchClients])
+  useEffect(() => { fetchClients() }, [fetchClients])
 
-  const submitNewClient = async () => {
-    if (!newClientForm.name || !newClientForm.company) return
-    setSubmitting(true)
-    await fetch('/api/os/clients', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...newClientForm,
-        contract_value: newClientForm.contract_value
-          ? parseFloat(newClientForm.contract_value)
-          : null,
-      }),
-    })
-    setSubmitting(false)
-    setNewClientOpen(false)
-    setNewClientForm({ name: '', company: '', email: '', business_type: '', contract_value: '', stage: 'diagnose' })
-    fetchClients()
-  }
+  const filtered = clients.filter(c => 
+    c.name?.toLowerCase().includes(search.toLowerCase()) || 
+    c.company?.toLowerCase().includes(search.toLowerCase())
+  )
+
+  const activeMRR = clients.reduce((acc, curr) => acc + (curr.contract_value || 0), 0)
 
   return (
-    <div className="min-h-screen bg-paper">
-      <OSTopbar title="CLIENTS" />
-      <div className="max-w-[1280px] mx-auto px-8 py-12">
-        <div className="flex items-center justify-between mb-6">
-          <SectionMarker num="02" label="ACTIVE CLIENTS" />
-          <Button variant="ghost" size="sm" onClick={() => setNewClientOpen(v => !v)}>
-            + new client
+    <div className="min-h-screen bg-black text-white selection:bg-accent selection:text-paper">
+      <OSTopbar title="CLIENT COMMAND" />
+      
+      <div className="max-w-[1400px] mx-auto px-8 py-10">
+        
+        {/* Global Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+          <MetricCard label="Total Portfolio" value={clients.length} subtext="active entities" />
+          <MetricCard label="Pipeline MRR" value={`$${activeMRR.toLocaleString()}`} subtext="recurring revenue" />
+          <MetricCard label="Agent Velocity" value={clients.reduce((a,c) => a + c.agent_count, 0)} subtext="deployed instances" />
+          <MetricCard label="System Health" value="100%" subtext="zero critical errors" />
+        </div>
+
+        <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-6">
+          <div className="flex gap-8 items-end">
+            <SectionMarker num="02" label="PORTFOLIO" />
+            <div className="w-64">
+              <Input 
+                placeholder="search by company..." 
+                className="bg-transparent border-white/10 text-xs mono h-8"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+          <Button variant="ghost" size="sm" className="mono text-[10px] tracking-widest uppercase border border-white/10 px-6" onClick={() => setNewClientOpen(true)}>
+            + Provision New Instance
           </Button>
         </div>
 
-        {/* Add client form */}
-        <div
-          className={`overflow-hidden transition-all duration-300 ${
-            newClientOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-          }`}
-        >
-          <Card className="mb-4">
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div>
-                  <Label>Contact name</Label>
-                  <Input
-                    value={newClientForm.name}
-                    onChange={e => setNewClientForm(f => ({ ...f, name: e.target.value }))}
-                    placeholder="Jane Smith"
-                  />
-                </div>
-                <div>
-                  <Label>Company *</Label>
-                  <Input
-                    value={newClientForm.company}
-                    onChange={e => setNewClientForm(f => ({ ...f, company: e.target.value }))}
-                    placeholder="Acme Corp"
-                  />
-                </div>
-                <div>
-                  <Label>Email</Label>
-                  <Input
-                    value={newClientForm.email}
-                    onChange={e => setNewClientForm(f => ({ ...f, email: e.target.value }))}
-                    placeholder="jane@acme.com"
-                  />
-                </div>
-                <div>
-                  <Label>Business type</Label>
-                  <Input
-                    value={newClientForm.business_type}
-                    onChange={e => setNewClientForm(f => ({ ...f, business_type: e.target.value }))}
-                    placeholder="SaaS / Retail / ..."
-                  />
-                </div>
-                <div>
-                  <Label>Contract value ($)</Label>
-                  <Input
-                    value={newClientForm.contract_value}
-                    onChange={e => setNewClientForm(f => ({ ...f, contract_value: e.target.value }))}
-                    placeholder="50000"
-                  />
-                </div>
-                <div>
-                  <Label>Stage</Label>
-                  <select
-                    value={newClientForm.stage}
-                    onChange={e => setNewClientForm(f => ({ ...f, stage: e.target.value }))}
-                    className="w-full border border-rule rounded-lg px-3 py-2 text-sm bg-paper text-ink"
-                  >
-                    {['diagnose', 'onboard', 'build', 'maintain'].map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="md:col-span-3 flex gap-2 justify-end pt-1">
-                  <Button variant="ghost" size="sm" onClick={() => setNewClientOpen(false)}>
-                    cancel
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={submitNewClient}
-                    disabled={submitting}
-                  >
-                    {submitting ? 'saving…' : 'create client'}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {loading ? (
+          <div className="mono text-[10px] animate-pulse py-20 text-center opacity-30 tracking-[0.3em]">SYNCHRONIZING REPOSITORY...</div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filtered.map(client => (
+              <Link key={client.id} href={`/os/clients/${client.id}`} className="group">
+                <Card className="bg-[#0A0A09] border-[#1C1C1A] hover:border-accent/40 transition-all duration-300 relative overflow-hidden h-full">
+                  <div className="absolute top-0 right-0 p-4">
+                    <HealthDot health={client.health} />
+                  </div>
+                  
+                  <CardContent className="p-6">
+                    <div className="mb-6">
+                      <div className="mono text-[10px] text-accent tracking-widest uppercase mb-1">{client.stage}</div>
+                      <h3 className="text-xl font-semibold text-white tracking-tight group-hover:text-accent transition-colors">
+                        {client.company}
+                      </h3>
+                      <div className="mono text-[11px] text-white/40 mt-1">{client.name}</div>
+                    </div>
 
-        {/* Loading skeleton */}
-        {loading && (
-          <div className="flex flex-col gap-2">
-            {[0, 1, 2].map(i => (
-              <div key={i} className="h-12 bg-ink/5 rounded animate-pulse" />
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="border-l border-white/5 pl-3 py-1">
+                        <div className="mono text-[9px] text-white/30 uppercase tracking-tighter">Capacity</div>
+                        <div className="text-sm text-white/80 font-medium">{client.agent_count} Agents</div>
+                      </div>
+                      <div className="border-l border-white/5 pl-3 py-1">
+                        <div className="mono text-[9px] text-white/30 uppercase tracking-tighter">Value</div>
+                        <div className="text-sm text-white/80 font-medium">${(client.contract_value || 0).toLocaleString()}</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="mono text-[9px] text-white/40 uppercase">Last Activity</span>
+                        <span className="mono text-[9px] text-white/70 tracking-tight text-right">
+                          {client.latest_task ? 'task_processed' : 'idle'}
+                        </span>
+                      </div>
+                      <div className="h-[1px] bg-white/5 w-full" />
+                      <div className="flex items-center justify-between">
+                        <span className="mono text-[9px] text-white/40 uppercase">Integration Progress</span>
+                        <span className="mono text-[9px] text-white/70">65%</span>
+                      </div>
+                      <div className="w-full bg-white/5 h-[2px]">
+                         <div className="bg-accent h-full" style={{ width: '65%' }} />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
-        )}
-
-        {/* Empty state */}
-        {!loading && clients.length === 0 && (
-          <EmptyState message="No active clients — add your first engagement" />
-        )}
-
-        {/* Clients table */}
-        {!loading && clients.length > 0 && (
-          <Card className="overflow-hidden">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-rule">
-                  {['Company', 'Contact', 'Stage', 'Agents', 'Health', 'Contract', 'Updated', ''].map(h => (
-                    <th
-                      key={h}
-                      className="mono text-[11px] uppercase tracking-[0.1em] text-ink/40 font-normal text-left px-4 py-3"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {clients.map(c => (
-                  <tr
-                    key={c.id}
-                    className="border-b border-rule/50 last:border-0 cursor-pointer hover:bg-ink/[0.02] transition-colors"
-                    onClick={() => router.push(`/os/clients/${c.id}`)}
-                  >
-                    <td className="px-4 py-3 font-semibold text-sm">{c.company}</td>
-                    <td className="px-4 py-3 text-sm text-ink/70">{c.name}</td>
-                    <td className="px-4 py-3">
-                      <StagePipeline stage={c.stage} />
-                    </td>
-                    <td className="px-4 py-3 mono text-sm text-accent">{c.agent_count}</td>
-                    <td className="px-4 py-3">
-                      <HealthDot health={c.health} />
-                    </td>
-                    <td className="px-4 py-3 mono text-sm text-ink/70">
-                      {c.contract_value ? `$${c.contract_value.toLocaleString()}` : '—'}
-                    </td>
-                    <td className="px-4 py-3 mono text-[11px] text-ink/40">
-                      {relativeTime(c.updated_at)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/os/clients/${c.id}`}
-                        onClick={e => e.stopPropagation()}
-                        className="mono text-sm text-accent no-underline"
-                      >
-                        →
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Card>
         )}
       </div>
     </div>

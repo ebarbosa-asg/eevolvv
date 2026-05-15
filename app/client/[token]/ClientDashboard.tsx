@@ -51,7 +51,7 @@ const STATUS_LABELS: Record<string, string> = {
   paused: 'Paused',
 }
 
-export function ClientDashboard({ token, client, subscription, latestBuild, builds }: Props) {
+export function ClientDashboard({ token, client, subscription, latestBuild, builds, logs, assets }: Props & { logs?: any[], assets?: any[] }) {
   // Change plan state
   const [showChangePlan, setShowChangePlan] = useState(false)
   const [changePlanLoading, setChangePlanLoading] = useState<string | null>(null)
