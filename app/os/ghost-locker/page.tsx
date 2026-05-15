@@ -19,6 +19,7 @@ type GhostClient = {
   status: string
   notes: string
   phases_complete: {
+    products: boolean
     onboard: boolean
     intake: boolean
     blueprint: boolean
@@ -28,7 +29,7 @@ type GhostClient = {
   }
 }
 
-const PHASES = ['onboard', 'intake', 'blueprint', 'build', 'eval', 'lock'] as const
+const PHASES = ['products', 'onboard', 'intake', 'blueprint', 'build', 'eval', 'lock'] as const
 const MONO = { fontFamily: 'JetBrains Mono, ui-monospace, monospace' } as const
 
 function PhasePip({ complete, label }: { complete: boolean; label: string }) {

@@ -1,5 +1,14 @@
 import { auth } from '@/lib/auth'
 import { NextResponse } from 'next/server'
+import {
+  CLIENT_AGENT_PAGES,
+  canAccessClientAgentPage,
+  getClientAgentPageForEmail,
+  isOwnerEmail,
+  normalizeEmail,
+} from '@/lib/client-agent-pages'
+
+const CLIENT_PAGE_PATHS = new Map(CLIENT_AGENT_PAGES.map((page) => [`/os/${page.slug}`, page.slug]))
 
 export default auth(function middleware(req) {
   // Talent subdomain rewrite — talent.eevolvv.com/* → /talent/*
@@ -15,7 +24,27 @@ export default auth(function middleware(req) {
   if (req.nextUrl.pathname.startsWith('/os')) {
     if (!req.auth) {
       const signInUrl = new URL('/signin', req.url)
+      signInUrl.searchParams.set('callbackUrl', req.nextUrl.pathname)
       return NextResponse.redirect(signInUrl)
+    }
+
+    const email = normalizeEmail(req.auth.user?.email)
+    const currentClientSlug = CLIENT_PAGE_PATHS.get(req.nextUrl.pathname)
+
+    if (isOwnerEmail(email)) {
+      return undefined
+    }
+
+    if (currentClientSlug && canAccessClientAgentPage(email, currentClientSlug)) {
+      return undefined
+    }
+
+    {
+      const ownedPage = getClientAgentPageForEmail(email)
+      const url = req.nextUrl.clone()
+      url.pathname = ownedPage ? `/os/${ownedPage.slug}` : '/signin'
+      if (!ownedPage) url.searchParams.set('error', 'AccessDenied')
+      return NextResponse.redirect(url)
     }
   }
 })

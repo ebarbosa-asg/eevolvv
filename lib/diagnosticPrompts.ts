@@ -27,7 +27,7 @@ OUTPUT STRUCTURE (use these exact headers):
 [3 automations they can implement immediately with minimal technical lift]
 
 ### RECOMMENDED SERVICE TIER
-[Which service tier fits this business and why — Seed / Grow / Scale / Enterprise]
+[Which agent-page tier fits this business and why — Agent One / Agent Three / Agent Five / Enterprise]
 
 ### YOUR ROADMAP
 [Month 1, Month 3, Month 6 milestones for their specific business]

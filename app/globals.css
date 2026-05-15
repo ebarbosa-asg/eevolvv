@@ -1548,6 +1548,18 @@ input:focus, textarea:focus, select:focus { outline: none; }
   border: 1px solid var(--ink);
   padding: 40px;
 }
+.pricing-addon-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.client-agent-hero-grid {
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+}
+.client-agent-locker-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+}
+.client-agent-recommendations-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .pricing-page-main {
   min-height: 100vh;
   background: var(--paper);
@@ -1584,6 +1596,28 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .pricing-qa-row {
     grid-template-columns: 1fr !important;
     gap: 4px !important;
+  }
+  .pricing-addon-grid,
+  .client-agent-hero-grid,
+  .client-agent-locker-grid,
+  .client-agent-recommendations-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .pricing-addon-grid > *,
+  .client-agent-recommendations-grid > * {
+    border-right: none !important;
+  }
+  .pricing-addon-grid > * {
+    border-bottom: 1px solid var(--ink);
+  }
+  .pricing-addon-grid > *:last-child {
+    border-bottom: none;
+  }
+  .client-agent-recommendations-grid > * {
+    border-bottom: 1px solid var(--ink) !important;
+  }
+  .client-agent-recommendations-grid > *:last-child {
+    border-bottom: none !important;
   }
   .report-content { padding: 0 !important; }
 }

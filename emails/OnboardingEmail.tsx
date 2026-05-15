@@ -12,9 +12,9 @@ interface OnboardingEmailProps {
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
 
 const TIER_LABELS: Record<string, string> = {
-  seed: 'Seed',
-  core: 'Core',
-  evolve: 'Evolve',
+  seed: 'Agent One',
+  core: 'Agent Three',
+  evolve: 'Agent Five',
 }
 
 export function OnboardingEmail({ name, tier, token }: OnboardingEmailProps) {
@@ -27,7 +27,7 @@ export function OnboardingEmail({ name, tier, token }: OnboardingEmailProps) {
       <Head>
         <Font fontFamily="Helvetica Neue" fallbackFontFamily="Helvetica" webFont={undefined} fontWeight={400} fontStyle="normal" />
       </Head>
-      <Preview>Complete your onboarding — your {tierLabel} build starts when you do.</Preview>
+      <Preview>Complete your onboarding — your {tierLabel} agent page starts when you do.</Preview>
       <Body style={{ background: '#faf7f0', margin: 0, padding: 0, fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>
         <Container style={{ maxWidth: 600, margin: '0 auto', padding: '40px 24px' }}>
 
@@ -41,13 +41,13 @@ export function OnboardingEmail({ name, tier, token }: OnboardingEmailProps) {
 
           <Section style={{ marginBottom: 32 }}>
             <Heading as="h1" style={{ fontSize: 26, fontWeight: 600, color: '#141413', margin: '0 0 16px', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-              Your build clock starts when you complete onboarding.
+              Your agent page starts when you complete onboarding.
             </Heading>
             <Text style={{ fontSize: 15, color: '#141413', lineHeight: 1.6, margin: '0 0 8px', opacity: 0.8 }}>
               {greeting}
             </Text>
             <Text style={{ fontSize: 15, color: '#141413', lineHeight: 1.6, opacity: 0.8, margin: 0 }}>
-              We need 5 minutes of your time to gather your build requirements. Once you submit, your {tierLabel} build enters the queue and your technician gets to work.
+              We need 5 minutes of your time to gather your access, goals, and first workflow. Once you submit, your {tierLabel} agent page enters the queue and your first product file gets created.
             </Text>
           </Section>
 

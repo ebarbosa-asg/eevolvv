@@ -16,6 +16,7 @@ export type GhostClient = {
   status: string
   notes: string
   phases_complete: {
+    products: boolean
     onboard: boolean
     intake: boolean
     blueprint: boolean
@@ -55,6 +56,7 @@ function parseGhostMd(content: string): GhostClient[] {
       status: fields.status ?? '',
       notes: fields.notes ?? '',
       phases_complete: {
+        products: fs.existsSync(path.join(clientDir, 'product-locker.md')),
         onboard: fs.existsSync(path.join(clientDir, 'onboarding.md')),
         intake: fs.existsSync(path.join(clientDir, 'intake.md')),
         blueprint: fs.existsSync(path.join(clientDir, 'blueprint.md')),

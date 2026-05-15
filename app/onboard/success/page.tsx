@@ -20,7 +20,7 @@ export default function OnboardSuccessPage() {
           You&apos;re in. Book your kickoff call.
         </h1>
         <p style={{ fontSize: 16, opacity: 0.55, margin: '0 auto', maxWidth: 480, lineHeight: 1.6 }}>
-          Your plan is active. Pick a 15-minute slot below — we&apos;ll walk through your report together and map out the first 30 days.
+          Your plan is active. Pick a 15-minute slot below — we&apos;ll walk through your report together and pick the first products for your agent page.
         </p>
       </div>
 
@@ -53,7 +53,7 @@ export default function OnboardSuccessPage() {
             <div>→ Check your email for your onboarding link</div>
             <div>→ Complete the 5-min intake form</div>
             <div>→ Join your 15-min kickoff call (booked above)</div>
-            <div>→ Your build starts the same day</div>
+            <div>→ Your agent page and first product file start the same day</div>
           </div>
         </div>
         <p style={{ fontSize: 13, color: 'var(--ink)', opacity: 0.5, margin: 0 }}>

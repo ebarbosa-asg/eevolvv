@@ -6,6 +6,7 @@ import { SectionMarker } from '@/components/ds'
 import { OSTopbar } from '../../components/OSTopbar'
 
 const PHASES = [
+  { key: 'products', label: 'PRODUCTS', num: '00' },
   { key: 'onboard', label: 'ONBOARD', num: '01' },
   { key: 'intake', label: 'INTAKE', num: '02' },
   { key: 'blueprint', label: 'BLUEPRINT', num: '03' },
@@ -116,19 +117,19 @@ export default function GhostLockerDetailPage({
   params: { codename: string }
 }) {
   const { codename } = params
-  const [activePhase, setActivePhase] = useState<PhaseKey>('onboard')
+  const [activePhase, setActivePhase] = useState<PhaseKey>('products')
   const [phaseData, setPhaseData] = useState<PhaseData | null>(null)
   const [loadingPhase, setLoadingPhase] = useState(false)
   const [phasesComplete, setPhasesComplete] = useState<Record<PhaseKey, boolean>>({
-    onboard: false, intake: false, blueprint: false, build: false, eval: false, lock: false,
+    products: false, onboard: false, intake: false, blueprint: false, build: false, eval: false, lock: false,
   })
 
   useEffect(() => {
     fetch('/api/os/ghost-locker')
       .then((r) => r.json())
-      .then((clients: Array<{ codename: string; phases_complete: Record<PhaseKey, boolean> }>) => {
+      .then((clients: Array<{ codename: string; phases_complete: Partial<Record<PhaseKey, boolean>> }>) => {
         const client = clients.find((c) => c.codename === codename)
-        if (client) setPhasesComplete(client.phases_complete)
+        if (client) setPhasesComplete((prev) => ({ ...prev, ...client.phases_complete }))
       })
       .catch(() => {})
   }, [codename])
@@ -176,7 +177,7 @@ export default function GhostLockerDetailPage({
               letterSpacing: '0.08em',
             }}
           >
-            AGENT MANUFACTURING PIPELINE · {PHASES.filter((p) => phasesComplete[p.key]).length} / 6 PHASES COMPLETE
+            AGENT MANUFACTURING PIPELINE · {PHASES.filter((p) => phasesComplete[p.key]).length} / {PHASES.length} FILE GROUPS COMPLETE
           </div>
         </div>
 

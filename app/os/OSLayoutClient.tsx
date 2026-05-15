@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { usePathname } from 'next/navigation'
 import OSSidebar from './OSSidebar'
 
 const STORAGE_KEY = 'os-sidebar-collapsed'
@@ -9,8 +10,25 @@ const STORAGE_KEY = 'os-sidebar-collapsed'
 export const OS_SIDEBAR_W = 240
 
 export default function OSLayoutClient({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const [isNarrow, setIsNarrow] = useState(false)
+  const internalRoutes = new Set([
+    '/os',
+    '/os/feed',
+    '/os/clients',
+    '/os/builds',
+    '/os/tasks',
+    '/os/pipeline',
+    '/os/finance',
+    '/os/ghost-locker',
+    '/os/links',
+    '/os/investors',
+  ])
+  const isInternalRoute =
+    internalRoutes.has(pathname) ||
+    pathname.startsWith('/os/clients/') ||
+    pathname.startsWith('/os/ghost-locker/')
 
   useEffect(() => {
     try {
@@ -57,7 +75,11 @@ export default function OSLayoutClient({ children }: { children: React.ReactNode
     return () => window.removeEventListener('keydown', onKey)
   }, [collapsed, setPersisted])
 
-  const showOverlay = isNarrow && !collapsed
+  const showOverlay = isInternalRoute && isNarrow && !collapsed
+
+  if (!isInternalRoute) {
+    return <main className="os-main">{children}</main>
+  }
 
   return (
     <div className="os-layout">

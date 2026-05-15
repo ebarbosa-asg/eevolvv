@@ -72,8 +72,8 @@ export function FollowUp1Email({ name, businessName }: FollowUp1Props) {
               don&apos;t get smaller while you wait — they get more expensive to fix.
             </Text>
             <Text style={{ fontSize: 14, color: '#141413', lineHeight: 1.6 }}>
-              If you&apos;re ready to start building: the Seed tier ($950/yr) gets you a live,
-              automated landing page in 72 hours.
+              If you&apos;re ready to start building: Agent One ($499/mo or $4,990/yr) gets you
+              a private agent page, weekly recommendations, and your first active automation.
             </Text>
           </Section>
           <Section style={{ marginBottom: 32, textAlign: 'center' as const }}>

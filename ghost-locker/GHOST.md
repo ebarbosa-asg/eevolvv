@@ -17,3 +17,16 @@ agents: 1
 start_date: 2026-04-12
 status: locked
 notes: QA defect reporting agent. Fully deployed and live in production. Agent processes shift logs nightly and emails supervisors by 6am.
+
+## studio23
+company: Studio 23
+contact: Studio 23
+contact_role: Owner
+email: info@studio23roofing.com
+tier: Agent Three
+contract_value: 9990
+phase: PRODUCTS
+agents: 1
+start_date: 2026-05-14
+status: active
+notes: First canonical client agent page. Product locker tracks agent page, weekly recommendations, automations, SCO add-on, and website add-on as tangible files.

@@ -9,15 +9,15 @@ interface WelcomeEmailProps {
 }
 
 const TIER_LABELS: Record<string, string> = {
-  seed: 'Seed',
-  core: 'Core',
-  evolve: 'Evolve',
+  seed: 'Agent One',
+  core: 'Agent Three',
+  evolve: 'Agent Five',
 }
 
 const TIER_SLAS: Record<string, string> = {
-  seed: '72 hours',
-  core: '7–10 days',
-  evolve: '14–21 days',
+  seed: 'after onboarding',
+  core: 'after onboarding',
+  evolve: 'after onboarding',
 }
 
 export function WelcomeEmail({ name, tier }: WelcomeEmailProps) {
@@ -30,7 +30,7 @@ export function WelcomeEmail({ name, tier }: WelcomeEmailProps) {
       <Head>
         <Font fontFamily="Helvetica Neue" fallbackFontFamily="Helvetica" webFont={undefined} fontWeight={400} fontStyle="normal" />
       </Head>
-      <Preview>Welcome to eevolvv — your {tierLabel} build is confirmed.</Preview>
+      <Preview>Welcome to eevolvv — your {tierLabel} agent page is confirmed.</Preview>
       <Body style={{ background: '#faf7f0', margin: 0, padding: 0, fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}>
         <Container style={{ maxWidth: 600, margin: '0 auto', padding: '40px 24px' }}>
 
@@ -47,7 +47,7 @@ export function WelcomeEmail({ name, tier }: WelcomeEmailProps) {
 
           <Section style={{ marginBottom: 32 }}>
             <Heading as="h1" style={{ fontSize: 28, fontWeight: 600, color: '#141413', margin: '0 0 16px', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-              Your {tierLabel} build is confirmed.
+              Your {tierLabel} agent page is confirmed.
             </Heading>
             <Text style={{ fontSize: 15, color: '#141413', lineHeight: 1.6, margin: '0 0 8px', opacity: 0.8 }}>
               {greeting}
