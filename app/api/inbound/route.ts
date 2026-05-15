@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       message = "I've alerted Eduardo. He will reach out to you directly from his mobile shortly.";
     }
 
-    const twiml = \`<?xml version="1.0" encoding="UTF-8"?><Response><Message>\${message}</Message></Response>\`;
+    const twiml = '<?xml version="1.0" encoding="UTF-8"?><Response><Message>' + message + '</Message></Response>';
 
     return new Response(twiml, {
       headers: { 'Content-Type': 'text/xml' },
