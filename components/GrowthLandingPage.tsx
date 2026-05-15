@@ -1,7 +1,15 @@
+'use client'
+
+import { useEffect } from 'react'
 import { VolvvECard } from '@/components/VolvvE'
 import type { GrowthPage } from '@/lib/growth-pages'
+import { trackCTA, trackGrowthPageView } from '@/lib/analytics'
 
 export function GrowthLandingPage({ page }: { page: GrowthPage }) {
+  useEffect(() => {
+    trackGrowthPageView(page.slug)
+  }, [page.slug])
+
   return (
     <main style={{ background: 'var(--paper)', color: 'var(--ink)' }}>
       <section style={{ padding: '88px 32px 72px', borderBottom: '1px solid var(--ink)' }}>
@@ -19,10 +27,20 @@ export function GrowthLandingPage({ page }: { page: GrowthPage }) {
                 {page.description}
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-                <a href="/pricing" className="mono btn-gradient" style={{ padding: '16px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none' }}>
+                <a
+                  href="/pricing"
+                  onClick={() => trackCTA({ location: 'growth_hero_primary', label: 'START AN AGENT PAGE', target: 'pricing', page: page.slug })}
+                  className="mono btn-gradient"
+                  style={{ padding: '16px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none' }}
+                >
                   START AN AGENT PAGE →
                 </a>
-                <a href="/#diagnostic" className="mono" style={{ padding: '15px 24px', fontSize: 11, letterSpacing: '0.16em', fontWeight: 700, textDecoration: 'none', color: 'var(--ink)', border: '1px solid var(--ink)' }}>
+                <a
+                  href="/#diagnostic"
+                  onClick={() => trackCTA({ location: 'growth_hero_secondary', label: 'FREE ASSESSMENT', target: 'diagnostic', page: page.slug })}
+                  className="mono"
+                  style={{ padding: '15px 24px', fontSize: 11, letterSpacing: '0.16em', fontWeight: 700, textDecoration: 'none', color: 'var(--ink)', border: '1px solid var(--ink)' }}
+                >
                   FREE ASSESSMENT
                 </a>
               </div>
@@ -128,7 +146,12 @@ export function GrowthLandingPage({ page }: { page: GrowthPage }) {
                 {page.tierFit}
               </p>
             </div>
-            <a href="/pricing" className="mono btn-gradient" style={{ padding: '18px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+            <a
+              href="/pricing"
+              onClick={() => trackCTA({ location: 'growth_final_cta', label: 'START AN AGENT PAGE', target: 'pricing', page: page.slug })}
+              className="mono btn-gradient"
+              style={{ padding: '18px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}
+            >
               START AN AGENT PAGE →
             </a>
           </div>

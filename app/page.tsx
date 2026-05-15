@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvE } from '@/components/VolvvE'
+import { trackCTA, trackPricingTier } from '@/lib/analytics'
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -249,6 +250,7 @@ function Header({ onCTA }: { onCTA: () => void }) {
             <button
               type="button"
               onClick={() => {
+                trackCTA({ location: 'header', label: 'EVOLVE NOW', target: 'diagnostic' })
                 closeMenu()
                 onCTA()
               }}
@@ -593,8 +595,8 @@ function Hero({ onCTA }: { onCTA: () => void }) {
             </div>
           </div>
           <div className="flex items-end gap-3 hero-cta-row" style={{ alignSelf: 'end', justifySelf: 'end', flexWrap: 'wrap' }}>
-            <button onClick={onCTA} className="btn-gradient" style={{ padding: '18px 32px', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>GET FREE REPORT →</button>
-            <a href="/pricing" style={{ background: 'transparent', color: 'var(--ink)', padding: '18px 28px', border: '1px solid var(--ink)', cursor: 'pointer', fontSize: 13, fontWeight: 600, letterSpacing: '0.04em', textDecoration: 'none', opacity: 0.7 }}>VIEW PRICING</a>
+            <button onClick={() => { trackCTA({ location: 'hero', label: 'GET FREE REPORT', target: 'diagnostic' }); onCTA() }} className="btn-gradient" style={{ padding: '18px 32px', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>GET FREE REPORT →</button>
+            <a href="/pricing" onClick={() => trackCTA({ location: 'hero', label: 'VIEW PRICING', target: 'pricing' })} style={{ background: 'transparent', color: 'var(--ink)', padding: '18px 28px', border: '1px solid var(--ink)', cursor: 'pointer', fontSize: 13, fontWeight: 600, letterSpacing: '0.04em', textDecoration: 'none', opacity: 0.7 }}>VIEW PRICING</a>
           </div>
         </div>
 
@@ -1131,6 +1133,10 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
               </ul>
               <a
                 href="/pricing"
+                onClick={() => {
+                  trackPricingTier(tier.name.toLowerCase(), 'start')
+                  trackCTA({ location: 'pricing_tier', label: `START WITH ${tier.name.toUpperCase()}`, target: 'tier_checkout', tier: tier.name.toLowerCase() })
+                }}
                 className="mono"
                 style={{
                   display: 'block', textAlign: 'center', width: '100%', padding: '14px 0',
@@ -1150,11 +1156,11 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
         <div style={{ marginTop: 24, border: '1px solid rgba(20,20,19,0.14)', padding: '20px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
           <div style={{ fontSize: 14, opacity: 0.6, lineHeight: 1.5 }}>
             Not sure which tier fits?{' '}
-            <button onClick={() => onCTA('seed')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 14, textDecoration: 'underline', padding: 0 }}>
+            <button onClick={() => { trackPricingTier('seed', 'unsure'); trackCTA({ location: 'pricing_unsure', label: 'Run the free diagnostic first', target: 'diagnostic' }); onCTA('seed') }} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: 14, textDecoration: 'underline', padding: 0 }}>
               Run the free diagnostic first →
             </button>
           </div>
-          <a href="/pricing" className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--ink)', opacity: 0.55, textDecoration: 'underline', whiteSpace: 'nowrap' }}>
+          <a href="/pricing" onClick={() => trackCTA({ location: 'pricing_full_details', label: 'FULL PRICING DETAILS', target: 'pricing' })} className="mono" style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--ink)', opacity: 0.55, textDecoration: 'underline', whiteSpace: 'nowrap' }}>
             FULL PRICING DETAILS
           </a>
         </div>
@@ -1418,7 +1424,7 @@ function AgentsSection() {
             <div style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em' }}>Not sure which agents fit first?</div>
             <p style={{ fontSize: 14, opacity: 0.65, marginTop: 6, margin: '6px 0 0' }}>Tell our AI diagnostic what you run — it maps the highest-impact automations for your business.</p>
           </div>
-          <a href="#diagnostic" className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 24px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, whiteSpace: 'nowrap' }}>RUN DIAGNOSTIC →</a>
+          <a href="#diagnostic" onClick={() => trackCTA({ location: 'process', label: 'RUN DIAGNOSTIC', target: 'diagnostic' })} className="mono" style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '14px 24px', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 600, whiteSpace: 'nowrap' }}>RUN DIAGNOSTIC →</a>
         </div>
       </div>
     </section>
