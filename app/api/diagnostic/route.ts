@@ -7,6 +7,7 @@ import { checkRateLimit, checkRateLimitWithSubscription } from '@/lib/rateLimit'
 import { render } from '@react-email/render'
 import { EvolutionReportEmail } from '@/emails/EvolutionReport'
 import { getPostHogClient } from '@/lib/posthog-server'
+import { scoreLead, scoreBucket } from '@/lib/leadScoring'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
@@ -85,6 +86,9 @@ export async function POST(req: NextRequest) {
     name, email, businessName, businessType, industry,
     revenue, teamSize, topPains, tools, customerJourney,
     errorPoints, hoursFreed, tier,
+    referralSource, partnerId,
+    utmSource, utmMedium, utmCampaign, utmTerm, utmContent,
+    landingPage,
   } = body
 
   if (!businessType?.trim() || !topPains?.trim() || !email?.trim()) {
@@ -94,6 +98,14 @@ export async function POST(req: NextRequest) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 })
   }
+
+  // ── Score the lead ────────────────────────────────────────────────────────
+  const scoring = scoreLead({
+    industry, businessType, revenue, teamSize,
+    topPains, tools, hoursFreed, tier,
+    referralSource, partnerId,
+  })
+  const bucket = scoreBucket(scoring.score)
 
   // ── Persist initial record ────────────────────────────────────────────────
   const submissionId = await saveSubmission({
@@ -108,6 +120,22 @@ export async function POST(req: NextRequest) {
     hours_freed: hoursFreed,
     tier, ip_address: ip,
     status: 'pending',
+    lead_score: scoring.score,
+    lead_segment: scoring.segment,
+    recommended_tier: scoring.recommendedTier,
+    urgency: scoring.urgency,
+    estimated_monthly_revenue: scoring.estimatedMonthlyRevenue,
+    missed_revenue_estimate: scoring.missedRevenueEstimate,
+    tool_count: scoring.toolCount,
+    hours_wasted_per_week: scoring.hoursWastedPerWeek,
+    referral_source: referralSource ?? null,
+    partner_id: partnerId ?? null,
+    utm_source: utmSource ?? null,
+    utm_medium: utmMedium ?? null,
+    utm_campaign: utmCampaign ?? null,
+    utm_term: utmTerm ?? null,
+    utm_content: utmContent ?? null,
+    landing_page: landingPage ?? null,
   })
 
   // ── Generate Claude report ────────────────────────────────────────────────
@@ -215,8 +243,7 @@ Generate their eevolvv report now.`
       try {
         const revenueStr = revenue || 'Not specified'
         const teamStr = teamSize || 'Not specified'
-        const isHighValue = ['$500K–$1M', '$1M–$2M', '$2M–$5M', '$5M+', '11–25', '26–50', '50+']
-          .some(m => revenueStr.includes(m) || teamStr.includes(m))
+        const isHighValue = bucket === 'hot'
         const reportPreview = report.replace(/[#*`>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 400)
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
         const reportUrl = submissionId ? `${baseUrl}/report/${submissionId}` : null
@@ -225,7 +252,7 @@ Generate their eevolvv report now.`
         const { error: adminErr } = await resend.emails.send({
           from: process.env.FROM_EMAIL ?? 'hello@eevolvv.com',
           to: adminEmail,
-          subject: `${isHighValue ? '🔥 ' : ''}New diagnostic — ${businessName || businessType} · ${tier || '?'} · ${industry || businessType}`,
+          subject: `${isHighValue ? '🔥 ' : ''}[${bucket.toUpperCase()} ${scoring.score}] ${businessName || businessType} · ${tier || '?'} · ${industry || businessType}`,
           html: `
             <div style="font-family:monospace;max-width:600px;margin:0 auto;padding:32px 24px;background:#faf7f0;color:#141413;border:1px solid rgba(20,20,19,0.12);">
               <div style="font-size:10px;letter-spacing:0.22em;color:#8C2B1A;font-weight:700;margin-bottom:20px;">EEVOLVV · NEW DIAGNOSTIC</div>
@@ -275,7 +302,21 @@ Generate their eevolvv report now.`
   }
 
   const ph = getPostHogClient()
-  ph.identify({ distinctId: email, properties: { email, name, business_name: businessName, business_type: businessType, industry, tier } })
+  ph.identify({
+    distinctId: email,
+    properties: {
+      email, name, business_name: businessName, business_type: businessType, industry, tier,
+      lead_score: scoring.score,
+      lead_segment: scoring.segment,
+      lead_bucket: bucket,
+      recommended_tier: scoring.recommendedTier,
+      urgency: scoring.urgency,
+      partner_id: partnerId,
+      utm_source: utmSource,
+      utm_medium: utmMedium,
+      utm_campaign: utmCampaign,
+    },
+  })
   ph.capture({
     distinctId: email,
     event: 'diagnostic_report_generated',
@@ -286,6 +327,19 @@ Generate their eevolvv report now.`
       tier,
       duration_ms: durationMs,
       submission_id: submissionId,
+      lead_score: scoring.score,
+      lead_segment: scoring.segment,
+      lead_bucket: bucket,
+      recommended_tier: scoring.recommendedTier,
+      urgency: scoring.urgency,
+      estimated_monthly_revenue: scoring.estimatedMonthlyRevenue,
+      missed_revenue_estimate: scoring.missedRevenueEstimate,
+      tool_count: scoring.toolCount,
+      hours_wasted_per_week: scoring.hoursWastedPerWeek,
+      partner_id: partnerId,
+      utm_source: utmSource,
+      utm_medium: utmMedium,
+      utm_campaign: utmCampaign,
     },
   })
   // T24: report_generated event — distinctId is submissionId/ip, no PII
@@ -311,6 +365,13 @@ Generate their eevolvv report now.`
       submissionId,
       durationMs,
       timestamp: new Date().toISOString(),
+      scoring: {
+        score: scoring.score,
+        bucket,
+        segment: scoring.segment,
+        urgency: scoring.urgency,
+        recommendedTier: scoring.recommendedTier,
+      },
     },
     { headers: { 'X-RateLimit-Remaining': String(remaining) } }
   )
