@@ -54,6 +54,7 @@ These can be created as one-time prices or subscription prices. They do not need
 
 | Add-on | Stripe product name | Price | Billing |
 |--------|---------------------|------:|---------|
+| Report + Roadmap | `eevolvv Report + Roadmap` | `$97` | One-time |
 | Website Build | `eevolvv Website Build` | `$2,000` | One-time |
 | SCO Management | `eevolvv SCO Management` | `$500` | Monthly |
 | Extra Integration / Automation | `eevolvv Extra Automation` | `$300-$750` | Monthly or one-time scope |
@@ -79,6 +80,7 @@ STRIPE_PRICE_CORE_MONTHLY=price_1TX6IS822jgZpeCa91jUkgcT
 STRIPE_PRICE_CORE_ANNUAL=price_1TX6IS822jgZpeCa41GYfbUt
 STRIPE_PRICE_EVOLVE_MONTHLY=price_1TX6IT822jgZpeCaZtr79Mjy
 STRIPE_PRICE_EVOLVE_ANNUAL=price_1TX6IT822jgZpeCaSxyt6jXX
+STRIPE_PRICE_REPORT_ROADMAP=price_XXXX
 ```
 
 ---
@@ -132,6 +134,7 @@ All annual plans are priced as 10 months paid, 2 months free.
 
 | Add-on | Product ID | Price ID | Payment Link |
 |--------|------------|----------|--------------|
+| Report + Roadmap | `TODO` | `STRIPE_PRICE_REPORT_ROADMAP` | wired through `/api/stripe/checkout?product=report-roadmap` |
 | Website Build | `prod_UW8axlKgLuFgRs` | `price_1TX6JV822jgZpeCaQUZshWhD` | https://buy.stripe.com/fZu4gtcX79sX1zma7f48000 |
 | SCO Management | `prod_UW8aZtpQ2njtAw` | `price_1TX6JV822jgZpeCab0t3QLi0` | https://buy.stripe.com/00w7sF2it5cHem87Z748001 |
 | Extra Automation — Starter | `prod_UW8ap9v0t3Jc8Z` | `price_1TX6JW822jgZpeCacPOgwFVv` | https://buy.stripe.com/aFaeV73mxdJda5Scfn48002 |
