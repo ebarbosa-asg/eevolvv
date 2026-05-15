@@ -342,7 +342,8 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
 
   const copyReportLink = () => {
     if (!report?.submissionId) return
-    const url = `${window.location.origin}/report/${report.submissionId}`
+    // Public share page with social card preview (/share/[id])
+    const url = `${window.location.origin}/share/${report.submissionId}`
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)

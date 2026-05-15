@@ -31,6 +31,24 @@ export interface SubmissionRow {
   status?: 'pending' | 'completed' | 'error'
   email_sent?: boolean
   duration_ms?: number
+  // Lead scoring fields (migration 20260516000000)
+  lead_score?: number | null
+  lead_segment?: string | null
+  recommended_tier?: string | null
+  urgency?: string | null
+  estimated_monthly_revenue?: number | null
+  missed_revenue_estimate?: number | null
+  tool_count?: number | null
+  hours_wasted_per_week?: number | null
+  // Source tracking
+  referral_source?: string | null
+  partner_id?: string | null
+  utm_source?: string | null
+  utm_medium?: string | null
+  utm_campaign?: string | null
+  utm_term?: string | null
+  utm_content?: string | null
+  landing_page?: string | null
 }
 
 export async function saveSubmission(data: SubmissionRow): Promise<string | null> {
