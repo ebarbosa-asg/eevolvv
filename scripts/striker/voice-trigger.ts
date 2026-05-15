@@ -21,7 +21,7 @@ async function triggerColdCall(to: string, businessName: string) {
       // We use a TwiML Bin or an API endpoint that provides the instructions
       url: `https://eevolvv.com/api/voice/initial-hook?business=${encodeURIComponent(businessName)}`,
       to: to,
-      from: FROM_NUMBER,
+      from: FROM_NUMBER as string,
       statusCallback: STATUS_CALLBACK,
       statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
     });

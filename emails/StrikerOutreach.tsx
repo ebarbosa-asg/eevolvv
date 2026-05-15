@@ -43,8 +43,8 @@ export const StrikerOutreachEmail = ({
           </Text>
           <Section style={btnContainer}>
             <Button
-              pX={20}
-              pY={12}
+              
+              
               style={button}
               href="https://eevolvv.com/diagnostic"
             >

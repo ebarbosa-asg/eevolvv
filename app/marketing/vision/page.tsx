@@ -1,7 +1,7 @@
 'use client'
 
 import { SectionMarker, Card, CardContent } from '@/components/ds'
-import { OSTopbar } from '../os/components/OSTopbar'
+// import { OSTopbar } from '../os/components/OSTopbar'
 
 function Step({ num, title, body, icon }: { num: string, title: string, body: string, icon: string }) {
   return (
@@ -20,7 +20,7 @@ function Step({ num, title, body, icon }: { num: string, title: string, body: st
 export default function VisionPage() {
   return (
     <div className="min-h-screen bg-black text-white pb-32">
-      <OSTopbar title="THE VISION" />
+      {/* <OSTopbar title="THE VISION" /> */}
       
       <div className="max-w-[800px] mx-auto px-6 py-12">
         

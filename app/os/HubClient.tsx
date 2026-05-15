@@ -625,6 +625,10 @@ export default function HubClient({ submissions, commits }: { submissions: Submi
         </section>
 
         {/* § 08 · INVESTOR */}
+        <section id="investor" className="os-section">
+          <SectionMarker n="08" label="INVESTOR" />
+          <div className="os-card" style={CARD}>
+            <div style={MONO_LABEL}>Investor materials</div>
             <div style={{ display: 'flex', gap: '24px' }}>
               {[{ l: 'Pitch Deck', u: '/investor/pitch.html' }, { l: 'Strategy', u: '/investor/investor-strategy.md' }, { l: 'Calendly', u: 'https://calendly.com/hello-eevolvv' }].map(({ l, u }) => (
                 <a key={l} href={u} target="_blank" rel="noopener noreferrer" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--accent)' }}>→ {l}</a>
