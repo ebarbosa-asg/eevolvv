@@ -19,11 +19,11 @@ export function GrowthLandingPage({ page }: { page: GrowthPage }) {
                 {page.description}
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-                <a href="/#diagnostic" className="mono btn-gradient" style={{ padding: '16px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none' }}>
-                  GET FREE ASSESSMENT →
+                <a href="/pricing" className="mono btn-gradient" style={{ padding: '16px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none' }}>
+                  START AN AGENT PAGE →
                 </a>
-                <a href="/pricing" className="mono" style={{ padding: '15px 24px', fontSize: 11, letterSpacing: '0.16em', fontWeight: 700, textDecoration: 'none', color: 'var(--ink)', border: '1px solid var(--ink)' }}>
-                  VIEW AGENT TIERS
+                <a href="/#diagnostic" className="mono" style={{ padding: '15px 24px', fontSize: 11, letterSpacing: '0.16em', fontWeight: 700, textDecoration: 'none', color: 'var(--ink)', border: '1px solid var(--ink)' }}>
+                  FREE ASSESSMENT
                 </a>
               </div>
             </div>
@@ -122,14 +122,14 @@ export function GrowthLandingPage({ page }: { page: GrowthPage }) {
                 § 05 · START HERE
               </div>
               <h2 style={{ fontSize: 'clamp(30px, 4vw, 54px)', lineHeight: 1.03, letterSpacing: '-0.03em', fontWeight: 700, margin: 0 }}>
-                Run the free assessment. Get the first build map.
+                Choose the agent tier. Start the build map.
               </h2>
               <p style={{ fontSize: 15, lineHeight: 1.65, opacity: 0.66, marginTop: 18, maxWidth: 640 }}>
                 {page.tierFit}
               </p>
             </div>
-            <a href="/#diagnostic" className="mono btn-gradient" style={{ padding: '18px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-              GET FREE ASSESSMENT →
+            <a href="/pricing" className="mono btn-gradient" style={{ padding: '18px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+              START AN AGENT PAGE →
             </a>
           </div>
         </div>

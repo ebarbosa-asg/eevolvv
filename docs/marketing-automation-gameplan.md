@@ -29,7 +29,7 @@ Bring people in through high-intent pages, paid search, partner distribution, di
 
 ### Conversion
 
-Every visitor should be pushed toward the diagnostic. The diagnostic creates the reason to buy: top ghost work, hours wasted, money at stake, and the first workflows to build.
+Every high-intent visitor should see the paid agent page path first. The diagnostic remains the proof path for people who need more certainty before buying.
 
 ### Nurture
 
@@ -44,6 +44,16 @@ Every client win should become a case study, review request, referral prompt, an
 Every weekly recommendation should be able to become an add-on: website, SCO, extra automation, ads setup, dashboard, or content engine.
 
 ## 3. Segments To Attack First
+
+### Locked first 3 verticals
+
+These are the first targets.
+
+1. Contractors / roofing / home services
+2. Cleaning / recurring home services
+3. Gyms / fitness studios
+
+Why these three: they have visible missed-lead pain, high owner urgency, existing page coverage, clear review/local discovery upside, and fast first workflows that can justify Agent One or Agent Three.
 
 ### Local services
 
@@ -95,7 +105,26 @@ Landing pages:
 - `/ai-receptionist-small-business`
 - `/website-and-automation`
 
-CTA: run the free Evolution Assessment.
+CTA rule: money first. Paid-search and high-intent pages send primary traffic to `/pricing`. The free assessment stays available as the secondary path.
+
+Budget: `$50/month` for now.
+
+Allocation:
+
+- `$50/month` to one exact-match Google Search campaign.
+- Start with missed-lead and AI receptionist keywords for contractors/roofing/home services.
+- No display ads.
+- No broad match.
+- No retargeting until there is enough traffic.
+- Pause any keyword that spends `$10` without a diagnostic start, checkout start, or qualified click pattern.
+
+Starting keyword set:
+
+- "missed lead follow up automation"
+- "ai receptionist for small business"
+- "contractor lead follow up"
+- "roofing lead follow up"
+- "small business lead automation"
 
 ### Local SEO + SCO
 
@@ -133,7 +162,7 @@ Each page needs:
 - estimated hours lost
 - first 3 automations
 - sample agent page screenshot or mock
-- diagnostic CTA
+- pricing CTA first, diagnostic CTA second
 - FAQ block for AI discovery
 
 ### Directories
@@ -173,6 +202,14 @@ Partner assets:
 - one-page PDF
 - simple rev-share terms
 - client handoff script
+
+Referral terms:
+
+- 10% of subscription revenue for the first 12 months.
+- 10% of one-time add-ons, including website builds and custom dashboards.
+- Paid only after eevolvv receives payment and the refund/dispute window clears.
+- No commission on ad spend, pass-through software costs, payment processing fees, taxes, or refunds.
+- Partner keeps the client relationship if they brought it; eevolvv owns delivery of the agent page and workflows.
 
 ### Email Nurture
 
@@ -335,6 +372,14 @@ Output:
 
 ## 6. 30-Day Execution Plan
 
+### Locked owner decisions
+
+- First 3 verticals: contractors/roofing/home services, cleaning/home services, gyms/fitness studios.
+- Monthly ad budget: `$50`.
+- Partner referral terms: 10% subscription revenue for 12 months, plus 10% one-time add-ons.
+- Sample report: approve the first clean redacted report that shows Evolution Score, top 3 ghost work findings, estimated hours lost, first recommended workflow, and tier fit.
+- First-call CTA: direct checkout/pricing first for every tier. Calendly is secondary or post-purchase.
+
 ### Executed now
 
 - Homepage growth wedge now points at local and service businesses instead of old enterprise positioning.
@@ -346,6 +391,7 @@ Output:
   - `/ai-receptionist-small-business`
   - `/website-and-automation`
 - A reusable growth landing page system now exists, so new paid-search and SEO pages can be added from data.
+- Growth pages now use direct-checkout-first CTAs, with the free assessment as the secondary path.
 
 ### Week 1
 
@@ -355,6 +401,7 @@ Output:
 - Define lead scoring fields in Supabase.
 - Create first 5 paid-search landing page templates.
 - Create the partner landing page draft.
+- Configure the `$50/month` exact-match Google Search campaign around missed-lead and AI receptionist terms.
 
 ### Week 2
 
@@ -394,10 +441,7 @@ By the end of 90 days, the system should be producing:
 
 ## 8. Little Owner To-Do List
 
-- Approve the first 3 verticals to attack first.
-- Approve monthly ad budget.
-- Approve partner referral terms.
-- Approve one redacted sample report once generated.
-- Decide whether first-call CTA is Calendly or direct checkout for each tier.
+- No open decisions right now.
+- Later: review the first redacted sample report once it exists.
 
 No manual posting required from the owner in this plan.
