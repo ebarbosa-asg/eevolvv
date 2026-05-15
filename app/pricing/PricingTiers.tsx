@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { TIER_CONFIGS, type Tier } from '@/lib/stripe-prices'
 import { ADD_ONS, WEBSITE_ADD_ON } from '@/lib/agent-products'
+import { ReportRoadmapOffer } from '@/components/ReportRoadmapOffer'
 
 const DISPLAY_FEATURES: Record<Tier, string[]> = {
   seed: [
@@ -55,6 +56,9 @@ export function PricingTiers() {
 
   return (
     <>
+      {/* Toggle */}
+      <ReportRoadmapOffer compact />
+
       {/* Toggle */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
         {(['annual', 'monthly'] as const).map(opt => (

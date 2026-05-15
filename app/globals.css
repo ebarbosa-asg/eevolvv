@@ -1554,6 +1554,24 @@ input:focus, textarea:focus, select:focus { outline: none; }
 .client-agent-hero-grid {
   grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
 }
+.client-agent-shell-grid {
+  grid-template-columns: minmax(0, 1fr) 360px;
+}
+.client-agent-proof-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.client-agent-console-grid {
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
+}
+.client-agent-command-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.client-agent-work-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.client-agent-deliverables-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .client-agent-locker-grid {
   grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
 }
@@ -1598,19 +1616,50 @@ input:focus, textarea:focus, select:focus { outline: none; }
     gap: 4px !important;
   }
   .pricing-addon-grid,
+  .client-agent-shell-grid,
+  .client-agent-proof-strip,
+  .client-agent-console-grid,
+  .client-agent-command-grid,
+  .client-agent-work-grid,
+  .client-agent-deliverables-grid,
   .client-agent-hero-grid,
   .client-agent-locker-grid,
   .client-agent-recommendations-grid {
     grid-template-columns: 1fr !important;
   }
   .pricing-addon-grid > *,
+  .client-agent-proof-strip > *,
+  .client-agent-work-grid > *,
+  .client-agent-deliverables-grid > *,
   .client-agent-recommendations-grid > * {
     border-right: none !important;
+  }
+  .client-agent-console-footer {
+    grid-template-columns: 1fr !important;
+  }
+  .client-agent-console-footer a,
+  .client-agent-console-footer button {
+    border-left: none !important;
+    border-top: 1px solid rgba(250,247,240,0.16);
   }
   .pricing-addon-grid > * {
     border-bottom: 1px solid var(--ink);
   }
   .pricing-addon-grid > *:last-child {
+    border-bottom: none;
+  }
+  .client-agent-proof-strip > * {
+    border-bottom: 1px solid rgba(250,247,240,0.14);
+  }
+  .client-agent-work-grid > * {
+    border-bottom: 1px solid var(--ink);
+  }
+  .client-agent-deliverables-grid > * {
+    border-bottom: 1px solid var(--ink) !important;
+  }
+  .client-agent-proof-strip > *:last-child,
+  .client-agent-work-grid > *:last-child,
+  .client-agent-deliverables-grid > *:last-child {
     border-bottom: none;
   }
   .client-agent-recommendations-grid > * {

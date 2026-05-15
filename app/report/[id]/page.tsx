@@ -105,7 +105,7 @@ export default async function ReportPermalinkPage({ params }: PageProps) {
 
         {/* Payment wall */}
         <div style={{ padding: '32px', background: 'var(--paper)' }}>
-          <TierCards email={submission.email} recommendedTier={submission.tier} />
+          <TierCards email={submission.email} recommendedTier={submission.tier} submissionId={submission.id} />
         </div>
       </div>
 

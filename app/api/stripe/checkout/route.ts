@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { getPriceId, type Tier, type Interval } from '@/lib/stripe-prices'
+import { REPORT_ROADMAP_PRODUCT, type CashProductKey } from '@/lib/cash-products'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
 
 const VALID_TIERS: Tier[] = ['seed', 'core', 'evolve']
 const VALID_INTERVALS: Interval[] = ['monthly', 'annual']
+const VALID_PRODUCTS: CashProductKey[] = ['report-roadmap']
+
+function getCashProductPriceId(product: CashProductKey) {
+  if (product === 'report-roadmap') return process.env.STRIPE_PRICE_REPORT_ROADMAP ?? ''
+  return ''
+}
 
 // GET handler — used by email CTA links (?tier=core&source=email)
 export async function GET(req: NextRequest) {
@@ -15,7 +22,38 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url)
   const rawTier = searchParams.get('tier') ?? 'core'
+  const rawProduct = searchParams.get('product')
   const source = searchParams.get('source') ?? 'email'
+  const submissionId = searchParams.get('sid')
+
+  if (rawProduct === REPORT_ROADMAP_PRODUCT.key) {
+    const priceId = getCashProductPriceId(rawProduct)
+    if (!priceId) {
+      return NextResponse.redirect(`${BASE_URL}/pricing?checkout=report-roadmap-missing`)
+    }
+
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: submissionId
+          ? `${BASE_URL}/report/${submissionId}?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`
+          : `${BASE_URL}/pricing?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: submissionId ? `${BASE_URL}/report/${submissionId}` : `${BASE_URL}/pricing`,
+        metadata: {
+          product: REPORT_ROADMAP_PRODUCT.key,
+          source,
+          submission_id: submissionId ?? '',
+        },
+        allow_promotion_codes: true,
+      })
+      if (!session.url) return NextResponse.redirect(`${BASE_URL}/pricing`)
+      return NextResponse.redirect(session.url)
+    } catch (err) {
+      console.error('[stripe/checkout GET report-roadmap] error:', err)
+      return NextResponse.redirect(`${BASE_URL}/pricing`)
+    }
+  }
 
   const tierMap: Record<string, Tier> = {
     seed: 'seed',
@@ -63,7 +101,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Payment service unavailable' }, { status: 503 })
   }
 
-  let body: { tier?: string; interval?: string; email?: string }
+  let body: { tier?: string; interval?: string; email?: string; product?: string; submissionId?: string }
   try {
     body = await req.json()
   } catch {
@@ -71,6 +109,49 @@ export async function POST(req: NextRequest) {
   }
 
   const { email } = body
+  const product = body.product as CashProductKey | undefined
+
+  if (product) {
+    if (!VALID_PRODUCTS.includes(product)) {
+      return NextResponse.json({ error: 'Invalid product' }, { status: 400 })
+    }
+
+    const priceId = getCashProductPriceId(product)
+    if (!priceId) {
+      return NextResponse.json({ error: 'Report + Roadmap checkout is not configured yet.' }, { status: 503 })
+    }
+
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: body.submissionId
+          ? `${BASE_URL}/report/${body.submissionId}?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`
+          : `${BASE_URL}/pricing?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: body.submissionId ? `${BASE_URL}/report/${body.submissionId}` : `${BASE_URL}/pricing`,
+        ...(email ? { customer_email: email } : {}),
+        metadata: {
+          product,
+          source: 'report_roadmap_checkout',
+          submission_id: body.submissionId ?? '',
+        },
+        allow_promotion_codes: true,
+      })
+
+      if (!session.url) {
+        return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 })
+      }
+
+      return NextResponse.json({ url: session.url })
+    } catch (err) {
+      console.error('[stripe/checkout report-roadmap] session creation error:', err)
+      return NextResponse.json(
+        { error: 'Failed to create checkout session. Please try again.' },
+        { status: 500 },
+      )
+    }
+  }
+
   const tier = body.tier as Tier
   const interval = (body.interval ?? 'monthly') as Interval
 

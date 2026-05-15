@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import { TIER_CONFIGS, type Tier } from '@/lib/stripe-prices'
+import { ReportRoadmapOffer } from '@/components/ReportRoadmapOffer'
 import posthog from 'posthog-js'
 
 interface TierCardsProps {
   email?: string
   visible?: boolean
   recommendedTier?: string
+  submissionId?: string
 }
 
 function normalizeToTier(raw?: string): Tier | null {
@@ -16,7 +18,7 @@ function normalizeToTier(raw?: string): Tier | null {
   return map[raw.toLowerCase()] ?? null
 }
 
-export function TierCards({ email, visible = true, recommendedTier }: TierCardsProps) {
+export function TierCards({ email, visible = true, recommendedTier, submissionId }: TierCardsProps) {
   const recommended = normalizeToTier(recommendedTier)
   const [interval, setInterval] = useState<'annual' | 'monthly'>('annual')
   const [loading, setLoading] = useState<Tier | null>(null)
@@ -71,6 +73,8 @@ export function TierCards({ email, visible = true, recommendedTier }: TierCardsP
           Your roadmap is ready. Choose your build tier.
         </div>
       </div>
+
+      <ReportRoadmapOffer email={email} submissionId={submissionId} compact />
 
       {/* Annual/Monthly toggle */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>

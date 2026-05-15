@@ -625,7 +625,7 @@ export default function ChatEngine({ defaultTier, defaultIndustry }: { defaultTi
             transition: 'opacity 0.5s ease, transform 0.5s ease',
           }}
         >
-          <TierCards email={report?.email} visible={revealStage >= 4} recommendedTier={report?.tier} />
+          <TierCards email={report?.email} visible={revealStage >= 4} recommendedTier={report?.tier} submissionId={report?.submissionId} />
         </div>
 
       </div>
