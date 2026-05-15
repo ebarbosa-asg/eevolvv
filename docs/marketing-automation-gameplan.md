@@ -1,295 +1,403 @@
-# eevolvv Business + Marketing Automation Game Plan
+# eevolvv Marketing Automation Game Plan
 
-Status: working plan  
-Updated: May 2026  
-Goal: make eevolvv's growth engine operate like the service itself: diagnose, route, build, report, recalibrate.
+Status: execution plan
+Updated: May 2026
+Focus: SMB, local services, agencies, clinics, trades, restaurants, gyms, salons, real estate, ecommerce, and multi-location operators.
 
-## 1. Business Audit
+## 1. Strategy
 
-### What is strong
+eevolvv should win by becoming the obvious AI operations team for businesses that are drowning in lead follow-up, admin work, customer communication, content, reviews, scheduling, reporting, and scattered tools.
 
-- Positioning is now distinct: "We don't sell software. We become your AI operations team."
-- The villain is memorable: ghost work is clearer than "inefficiency" or "automation."
-- The offer is more tangible than before: diagnostic, private client agent page, Ghost Locker, weekly recommendations, workflow allowance, add-ons.
-- The pricing ladder is simple: Agent One, Agent Three, Agent Five, plus enterprise custom scope.
-- The codebase already supports the operating model: Stripe checkout, client pages, Ghost Locker data, onboarding, monthly reports, follow-up emails, quarterly recalibration, churn detection, and internal OS surfaces.
-- The enterprise wedge is credible: QA programs and finance audit are urgent, budgeted, and underserved by generic SaaS.
+The fastest path is not broad "AI transformation" messaging. It is a practical wedge:
 
-### What is not strong enough yet
+> "You are losing leads, time, and money to ghost work. We find it, build the agent page, and run the workflows."
 
-- Proof is thin. The brand promises hard outcomes, but the public site still needs real case studies, screenshots, redacted reports, and before/after metrics.
-- The funnel has too many implicit handoffs. Diagnostic to follow-up to checkout to onboarding to agent page must feel automatic.
-- Marketing operations are not yet fully closed-loop. Content, outbound, lead scoring, CRM movement, retargeting, referrals, and reporting need one pipeline.
-- Enterprise and SMB messaging still compete for the same homepage oxygen. The current answer is correct: SMB is the brand, enterprise is the revenue. The site should keep the emotional broad promise while giving enterprise buyers a clear QA/finance door.
-- Analytics must become a founder cockpit: traffic, diagnostic starts, completions, booked calls, checkouts, active clients, churn risk, and monthly revenue should be visible every day.
+The offer has to feel concrete:
 
-### Strategic diagnosis
+- Free Evolution Assessment
+- Private client agent page
+- Ghost Locker for websites, reports, automations, add-ons, and files
+- Weekly recommendations
+- 1, 3, or 5 active workflows depending on tier
+- Website build, SCO, ads setup, extra automations, and dashboards as visible add-ons
 
-eevolvv is no longer just a landing page plus diagnostic. It is becoming an AI-native service operating system. The marketing engine should not be a separate activity. It should be one more agent network: find demand, qualify demand, route demand, nurture demand, convert demand, and turn delivery proof back into new demand.
+## 2. The Growth Model
 
-## 2. Core Marketing System
+### Traffic
 
-### Primary funnel
+Bring people in through high-intent pages, paid search, partner distribution, directories, and automated content repurposing.
 
-1. Visitor lands on eevolvv.com.
-2. Visitor runs the Evolution Assessment.
-3. Assessment creates a report, score, recommended tier, and top 3 ghost work findings.
-4. Lead enters segmented follow-up based on industry, company size, urgency, and report score.
-5. Qualified SMB is routed to checkout or Calendly.
-6. Enterprise QA/finance lead is routed to founder-led consultative sales.
-7. New client receives onboarding, client agent page, Ghost Locker, and first recommendations.
-8. Delivery proof becomes case study content, referral prompt, badge, and future benchmark data.
+### Conversion
 
-### Segments
+Every visitor should be pushed toward the diagnostic. The diagnostic creates the reason to buy: top ghost work, hours wasted, money at stake, and the first workflows to build.
 
-- SMB self-serve: local services, restaurants, fitness, agencies, trades, clinics. Route to Agent One / Three / Five.
-- Enterprise wedge: QA, finance audit, FP&A, compliance, multi-system operations. Route to custom diagnostic call.
-- Micro future: WhatsApp-first corner stores and global micro-retail. Keep on long-horizon nurture until product is ready.
-- Partners: accountants, fCFOs, consultants, small agencies. Route to white-label diagnostic and referral/rev-share flow.
+### Nurture
 
-## 3. Automation Architecture
+Every report should trigger segmented follow-up by industry, urgency, and recommended tier.
 
-### Data sources
+### Proof
 
-- Website and diagnostic events: PostHog.
-- Leads and submissions: Supabase.
-- Email delivery: Resend.
-- Payments and subscriptions: Stripe.
-- Booking: Calendly.
-- CRM: HubSpot or Pipedrive.
-- Client work: Ghost Locker and client agent pages.
-- Internal command center: eevolvv OS.
+Every client win should become a case study, review request, referral prompt, and benchmark datapoint.
 
-### Minimum useful automation map
+### Expansion
 
-| Stage | Trigger | Automation | Output |
-| --- | --- | --- | --- |
-| Attract | LinkedIn post / SEO page / referral | UTM capture and page analytics | Source attribution |
-| Diagnose | Assessment completed | Save report, score, top ghosts, recommended tier | Lead profile |
-| Nurture | Report sent | 24h, 72h, 7d follow-up sequence | Booked call or checkout |
-| Qualify | Score, company size, industry | Lead score and segment | SMB / enterprise / partner route |
-| Convert | Checkout or call booked | Create client record and onboarding token | Client start |
-| Onboard | Payment completed | Agent page, Ghost Locker, welcome email | Client operating home |
-| Deliver | Build status changes | Client update email and internal OS event | Visible progress |
-| Retain | Month end / quarter end | Monthly report and recalibration | Renewal proof |
-| Expand | New recommendation accepted | Add-on checkout or invoice | Expansion revenue |
-| Refer | Client win logged | Referral ask and share asset | New diagnostic starts |
+Every weekly recommendation should be able to become an add-on: website, SCO, extra automation, ads setup, dashboard, or content engine.
 
-## 4. Content Machine
+## 3. Segments To Attack First
 
-### Weekly cadence
+### Local services
 
-- Monday: ghost work story with one specific before/after number.
-- Tuesday: enterprise wedge post for CFOs, QA leaders, or operators.
-- Wednesday: founder build-in-public post showing the operating layer.
-- Thursday: educational post: "what we found in X industry."
-- Friday: client/prospect story, teardown, or diagnostic insight.
+Roofing, cleaning, contractors, auto shops, salons, medspas, chiropractic, dental, childcare.
 
-### Monthly pillar assets
+Why: lead response, reviews, booking, missed calls, quotes, and local discovery are obvious pains.
 
-- Ghost Work Index by industry.
-- One redacted Evolution Report teardown.
-- One enterprise wedge article: QA audit, close process, compliance evidence, or finance workflow.
-- One partner-facing asset for accountants/fCFOs/consultants.
-- One product proof post showing the client agent page or Ghost Locker.
+### Owner-led growth businesses
 
-### Automation loop
+Gyms, restaurants, ecommerce shops, agencies, real estate teams.
 
-1. Pull anonymized diagnostic findings from Supabase.
-2. Convert findings into content drafts.
-3. Founder reviews and adds voice.
-4. Schedule posts.
-5. Track reach, comments, clicks, diagnostic starts, and booked calls.
-6. Promote winners into landing page copy, email sequences, and outbound hooks.
+Why: they care about leads and revenue quickly, and they understand the cost of slow follow-up.
 
-## 5. Outbound Machine
+### Multi-location SMBs
 
-### Enterprise list
+Franchises, clinic groups, restaurant groups, service operators with 2-20 locations.
 
-Target $5M-$50M companies with visible QA, finance, compliance, manufacturing, logistics, or multi-location complexity.
+Why: uneven ops across locations creates obvious ghost work and recurring reporting pain.
 
-Required fields:
+### Partners
 
-- Company
-- Industry
-- Revenue estimate
-- Buyer title
-- Buyer name
-- LinkedIn URL
-- Pain hypothesis
-- Compliance trigger
-- Current tool hints
-- Personalization line
-- Outreach status
+Small agencies, web designers, local SEO freelancers, accountants who support small businesses, fractional COOs, and business coaches.
 
-### Sequence
+Why: they already own trust and can route clients into eevolvv.
 
-- Day 1: short LinkedIn connection or email with one pain hypothesis.
-- Day 3: ghost work example from their function.
-- Day 7: enterprise wedge proof or redacted report example.
-- Day 14: "worth mapping this for you?" CTA.
-- Day 30: useful teardown or benchmark, no hard sell.
+## 4. Channel Plan
 
-CTA: "Want me to map the first 3 AI opportunities in your QA/finance process?"
+### Paid Search
 
-## 6. Website Roadmap
+Use this for fast buyer-intent traffic.
 
-### Shipped in this pass
+Campaign themes:
 
-- Homepage now reflects the current operating layer: diagnostic, client agent page, Ghost Locker, Stripe-backed tiers, automated follow-up/reporting loops, and enterprise wedge.
-- Global vision section is now rendered.
-- Metadata now matches the AI operations team / ghost work positioning.
+- AI receptionist for small business
+- missed lead follow-up automation
+- AI booking assistant
+- local business automation
+- AI website and automation package
+- AI agents for small business
+- small business workflow automation
+- automate customer follow-up
+- review request automation
 
-### Next page-level additions
+Landing pages:
 
-- `/case-studies`: redacted reports, before/after metrics, and screenshots.
-- `/enterprise`: QA + finance audit landing page with a custom call CTA.
-- `/partners`: accountant/fCFO/consultant white-label diagnostic offer.
-- `/ghost-work-index`: SEO/GEO content hub by industry.
-- `/diagnostic/share`: report share card for LinkedIn.
+- `/ai-agents-for-small-business`
+- `/missed-lead-follow-up`
+- `/local-business-automation`
+- `/ai-receptionist-small-business`
+- `/website-and-automation`
 
-## 7. Highest-Leverage Automation Builds
+CTA: run the free Evolution Assessment.
 
-### Build 1: Diagnostic share card
+### Local SEO + SCO
 
-Auto-generate a branded image after every report:
+Build pages for each core vertical and each specific workflow.
+
+Vertical pages:
+
+- restaurants
+- gyms
+- dental
+- medspa
+- roofing / contractors
+- cleaning
+- auto shops
+- salons
+- childcare
+- real estate
+- agencies
+- ecommerce
+
+Workflow pages:
+
+- lead intake automation
+- missed lead follow-up
+- review request automation
+- booking and reminder automation
+- website form to CRM
+- local SEO/SCO recommendations
+- weekly owner report
+- customer support assistant
+
+Each page needs:
+
+- one specific ghost work problem
+- estimated hours lost
+- first 3 automations
+- sample agent page screenshot or mock
+- diagnostic CTA
+- FAQ block for AI discovery
+
+### Directories
+
+Submit eevolvv to AI and startup directories, but do not treat this as the main engine. It is cheap baseline traffic and backlink work.
+
+Targets:
+
+- AI tool directories
+- startup directories
+- small business tool directories
+- automation consultant directories
+- local business software directories
+- agency marketplaces
+
+### Partner Marketing
+
+Create one partner offer:
+
+> "Give your clients a free AI ghost work assessment. eevolvv builds the workflows. You keep the relationship."
+
+Partner types:
+
+- local SEO agencies
+- web designers
+- ad freelancers
+- small-business consultants
+- fractional COOs
+- bookkeeping/accounting firms serving SMBs
+- industry-specific coaches
+
+Partner assets:
+
+- co-branded diagnostic link
+- partner landing page
+- referral tracking
+- one-page PDF
+- simple rev-share terms
+- client handoff script
+
+### Email Nurture
+
+Every diagnostic lead should enter one of these tracks:
+
+- local service business
+- appointment-based business
+- ecommerce
+- agency
+- multi-location
+- partner
+- general SMB
+
+Sequence:
+
+- report delivery
+- 24h: top ghost work reminder
+- 72h: suggested first workflow
+- day 7: agent page example
+- day 14: tier recommendation
+- day 30: new benchmark/content asset
+
+### Retargeting
+
+Run retargeting only after conversion tracking is clean.
+
+Audiences:
+
+- visited pricing
+- started diagnostic but did not finish
+- completed diagnostic but did not book/buy
+- visited vertical page
+- clicked paid ad
+
+Ads:
+
+- "Your ghost work report is waiting."
+- "The first workflow usually pays for the agent page."
+- "Missed leads are not a marketing problem. They are an ops problem."
+- "Your business needs an agent page, not another dashboard."
+
+### Automated Content Repurposing
+
+Do not rely on manual posting as the growth engine.
+
+Inputs:
+
+- diagnostic findings
+- client wins
+- vertical page copy
+- FAQ answers
+- weekly recommendations
+- anonymized Ghost Locker product files
+
+Outputs:
+
+- blog draft
+- landing page block
+- email snippet
+- partner email
+- ad angle
+- short social draft for scheduler
+- FAQ schema candidate
+
+Owner involvement should be approval, not manual production.
+
+## 5. Automation Builds
+
+### Build 1: Lead Scoring
+
+Score every diagnostic submission by:
+
+- industry
+- monthly lead volume
+- number of tools
+- hours wasted
+- missed revenue estimate
+- urgency language
+- recommended workflows
+- recommended tier
+
+Output:
+
+- score
+- segment
+- recommended tier
+- next action
+- follow-up sequence
+
+### Build 2: Diagnostic Share Card
+
+Auto-generate a branded card:
 
 - Evolution Score
-- Top 3 ghost work findings
-- Estimated hours recovered
-- CTA: "Get yours at eevolvv.com"
+- top 3 ghost work findings
+- hours wasted per week
+- recommended first workflow
+- CTA: get yours at eevolvv.com
 
-Why: it turns every diagnostic into potential distribution.
+This is the highest-leverage viral loop.
 
-### Build 2: Lead scoring and routing
+### Build 3: Paid Search Landing Pages
 
-Score by:
+Programmatic page framework:
 
-- Company size
-- Industry
-- Urgency language
-- Annual savings estimate
-- Compliance terms
-- Number of workflows
-- Buyer role
+- problem
+- cost of ghost work
+- first workflows
+- sample report
+- tier fit
+- diagnostic CTA
+- FAQ
 
-Routes:
+Use the same layout and swap the vertical/workflow data.
 
-- SMB low-mid score: email nurture and pricing page.
-- SMB high score: Calendly + recommended tier.
-- Enterprise: founder alert + enterprise sequence.
-- Partner: partner intake.
+### Build 4: Partner Funnel
 
-### Build 3: Founder command center
+Create:
 
-One dashboard showing:
+- `/partners`
+- partner intake
+- referral source tracking
+- partner-specific diagnostic links
+- partner follow-up sequence
+- internal partner dashboard view
 
-- Traffic by source
-- Diagnostic starts/completions
-- Report scores
-- Follow-up sequence stage
-- Booked calls
-- Checkout starts/completions
-- MRR/ARR
-- Active client health
-- Case study candidates
-- Referral opportunities
+### Build 5: Owner Command Center
 
-### Build 4: Content extraction engine
+Dashboard should show:
 
-Every report and client win should generate:
+- sessions
+- diagnostic starts
+- diagnostic completions
+- top pages
+- lead source
+- lead score
+- booked calls
+- checkout starts
+- checkout completions
+- active clients
+- add-on opportunities
+- referral opportunities
 
-- LinkedIn draft
-- Email nurture angle
-- Case study note
-- Industry benchmark datapoint
-- Sales objection answer
+### Build 6: Case Study Engine
 
-### Build 5: Referral and badge loop
+Every completed workflow should ask:
 
-After a meaningful win:
+- what was manual before?
+- how many hours did it take?
+- what changed?
+- what proof exists?
+- can this be anonymized?
 
-- Send "Evolution Certified" badge.
-- Generate LinkedIn milestone post.
-- Ask for one peer referral.
-- Offer free quarterly recalibration for a successful intro.
+Output:
 
-## 8. 30/60/90-Day Plan
+- case study card
+- landing page proof block
+- email proof snippet
+- partner proof snippet
 
-### Days 1-30: Close the public funnel
+## 6. 30-Day Execution Plan
 
-- Add analytics events to every key CTA and diagnostic step.
-- Add lead scoring fields to submissions.
-- Add enterprise routing rules.
-- Publish `/enterprise` page.
-- Publish first 10 LinkedIn posts from the brand playbook.
-- Create one redacted sample Evolution Report.
-- Build founder command center MVP with traffic, diagnostics, calls, and Stripe revenue.
+### Executed now
 
-### Days 31-60: Automate nurture and proof
+- Homepage growth wedge now points at local and service businesses instead of old enterprise positioning.
+- Marketing plan now focuses on SMB, local services, agencies, clinics, trades, restaurants, gyms, salons, real estate, ecommerce, and multi-location operators.
+- Five high-intent landing pages are live in code:
+  - `/ai-agents-for-small-business`
+  - `/missed-lead-follow-up`
+  - `/local-business-automation`
+  - `/ai-receptionist-small-business`
+  - `/website-and-automation`
+- A reusable growth landing page system now exists, so new paid-search and SEO pages can be added from data.
 
-- Segment follow-up emails by SMB, enterprise, and partner.
-- Add share card generation to report completion.
-- Start weekly Ghost Work Dispatch.
-- Add case study capture flow to client delivery.
-- Add partner list and first partner sequence.
-- Add automated "book a recalibration" prompt for warm leads.
+### Week 1
 
-### Days 61-90: Turn delivery into distribution
+- Remove old enterprise-wedge positioning from homepage and marketing plan.
+- Add growth wedge copy for local and service businesses.
+- Add PostHog events for all key homepage CTAs.
+- Define lead scoring fields in Supabase.
+- Create first 5 paid-search landing page templates.
+- Create the partner landing page draft.
 
-- Launch Ghost Work Index content hub.
-- Add referral/badge loop.
-- Add retargeting audiences once analytics is clean.
-- Launch enterprise outbound list of 250 accounts.
-- Publish 3 redacted case studies.
-- Review channel ROI and double down on the top 2 sources.
+### Week 2
 
-## 9. KPIs
+- Launch Google Search Ads to the highest-intent pages.
+- Build report share card generation.
+- Segment diagnostic follow-up sequences.
+- Submit eevolvv to 25 relevant directories.
+- Build the founder command center MVP.
 
-### Funnel
+### Week 3
 
-- Visitor to diagnostic start
-- Diagnostic start to completion
-- Report delivered
-- Report to booked call
-- Report to checkout
-- Checkout to onboarding complete
+- Add 10 vertical/workflow SEO pages.
+- Create partner referral tracking.
+- Launch retargeting audiences.
+- Build first redacted sample Evolution Report.
+- Add case study capture fields to client workflow completion.
 
-### Revenue
+### Week 4
 
-- MRR
-- ARR
-- Average revenue per client
-- Add-on attach rate
-- Enterprise pipeline value
-- Conversion by tier
+- Review traffic and conversion by source.
+- Kill low-intent keywords.
+- Double budget on keywords that create diagnostic completions.
+- Launch partner outreach sequence.
+- Publish Ghost Work Index v1 from available diagnostic data.
 
-### Marketing
+## 7. 90-Day Target
 
-- LinkedIn reach per post
-- LinkedIn click-through to diagnostic
-- Organic diagnostic starts
-- Referral-sourced diagnostics
-- Partner-sourced diagnostics
-- Case study views
+By the end of 90 days, the system should be producing:
 
-### Retention
+- 1,000+ qualified site visits/month
+- 150+ diagnostic starts/month
+- 75+ completed reports/month
+- 15+ booked calls or checkout starts/month
+- 5+ new paying clients/month
+- 10+ partner-sourced leads/month
+- 3+ publishable case studies
 
-- Monthly report open/click
-- Recalibration completion
-- Client health score
-- Expansion recommendations accepted
-- Churn-risk alerts
+## 8. Little Owner To-Do List
 
-## 10. Immediate Decision List
+- Approve the first 3 verticals to attack first.
+- Approve monthly ad budget.
+- Approve partner referral terms.
+- Approve one redacted sample report once generated.
+- Decide whether first-call CTA is Calendly or direct checkout for each tier.
 
-- Choose CRM: HubSpot Free is the default unless there is a strong reason to prefer Pipedrive.
-- Decide enterprise CTA: Calendly diagnostic call or "request enterprise audit."
-- Decide first vertical for enterprise wedge: QA programs or finance audit. Do not split founder focus equally.
-- Define the Evolution Score formula.
-- Approve the first redacted sample report.
-- Decide whether the public pricing page should include an enterprise card or keep enterprise as consultative only.
-
-## 11. Operating Principle
-
-Marketing should become the same thing eevolvv sells: a living operating layer. Every campaign creates data. Every lead improves routing. Every client win becomes proof. Every proof asset creates the next lead. The loop is the moat.
+No manual posting required from the owner in this plan.

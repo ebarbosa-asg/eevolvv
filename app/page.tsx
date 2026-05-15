@@ -63,55 +63,6 @@ const HERO_TICKER_QUOTES = [
   `"We eevolvv or we extinct — there is no third option." — Anonymous`,
 ] as const
 
-const TIERS = [
-  {
-    id: 'micro',
-    code: 'T-00',
-    name: 'Micro',
-    label: 'AI Starter',
-    price: '$29–$49/mo',
-    who: 'Corner stores · Bodegas · Solo operators',
-    tagline: 'WhatsApp-native automations. Live in 48 hours.',
-    features: [
-      'AI business diagnostic',
-      'Inventory reorder alerts',
-      'Daily sales summary (WhatsApp)',
-      'Supplier payment tracker',
-      'New automation every 60 days',
-      'English · Spanish · Portuguese — and more soon!',
-    ],
-    highlight: false,
-  },
-  {
-    id: 'seed', code: 'T-01', name: 'Agent One', label: '1 Workflow',
-    price: '$499/mo', who: 'Gyms, restaurants, solo operators',
-    tagline: 'Your first agent page and weekly direction.',
-    features: ['Client agent page', 'Weekly recommendations', '1 integration or automation', 'Ghost Locker product view', 'SCO add-on available'],
-    highlight: false,
-  },
-  {
-    id: 'grow', code: 'T-02', name: 'Agent Three', label: '3 Workflows',
-    price: '$999/mo', who: 'Small business · $500K–$5M revenue',
-    tagline: 'Three connected automations and a real operating layer.',
-    features: ['Client agent page', 'Weekly recommendations', '3 integrations or automations', 'Monthly optimization pass', 'SCO add-on available'],
-    highlight: false,
-  },
-  {
-    id: 'scale', code: 'T-03', name: 'Agent Five', label: '5 Workflows + Growth',
-    price: '$1,999/mo', who: 'SMB to mid-market',
-    tagline: 'Five workflows plus ads, SEO, and SCO management.',
-    features: ['Client agent page', 'Weekly recommendations', 'Up to 5 workflows', 'Ads/SEO/SCO included', 'Monthly growth report'],
-    highlight: true,
-  },
-  {
-    id: 'enterprise', code: 'T-04', name: 'Enterprise', label: 'AI Operations',
-    price: '$50,000–$250,000+', who: 'Multi-location · $10M+',
-    tagline: 'Total organizational transformation.',
-    features: ['Dedicated pod assigned', 'Department-by-department rebuild', 'Custom platform integrations', 'Executive reporting layer', 'Ongoing governance', 'Priority SLA'],
-    highlight: false,
-  },
-]
-
 const STATS = [
   { value: 23, suffix: 'hrs', label: 'wasted per week on automatable tasks (avg).' },
   { value: 270, suffix: '%', label: 'faster growth for AI-optimized businesses.' },
@@ -146,11 +97,10 @@ const PROCESS_STEPS = [
 const INDUSTRIES_LIST = [
   'Restaurant / Food & Beverage', 'Gym / Fitness / Wellness', 'Retail / E-commerce',
   'Legal / Law Firm', 'Medical / Healthcare', 'Real Estate',
-  'Construction / Trades', 'Accounting / Finance', 'Marketing / Agency',
+  'Construction / Trades', 'Marketing / Agency',
   'Manufacturing', 'Logistics / Supply Chain', 'Technology / SaaS',
   'Hospitality / Hotel', 'Education', 'Non-Profit',
-  'Quality / QA Program', 'Finance & FP&A', 'HR & People Ops',
-  'Procurement', 'Compliance & Risk', 'IT & Help Desk', 'Other',
+  'HR & People Ops', 'Procurement', 'IT & Help Desk', 'Other',
 ]
 
 const EXAMPLES = [
@@ -159,19 +109,19 @@ const EXAMPLES = [
   { code: 'I-03', type: 'Law Firm', pain: 'Intake noise & billing gaps', win: 'AI intake + tracked billing' },
   { code: 'I-04', type: 'Construction', pain: 'Quote lag & supplier chaos', win: 'Project AI + instant quotes' },
   { code: 'I-05', type: 'Medical Practice', pain: 'Front-desk load & no-shows', win: 'Scheduling + billing automation' },
-  { code: 'I-06', type: 'Enterprise', pain: 'Siloed teams & report grind', win: 'Unified AI ops layer' },
+  { code: 'I-06', type: 'Multi-location', pain: 'Uneven ops across teams', win: 'One AI playbook + benchmarks' },
   { code: 'I-07', type: 'Logistics / 3PL', pain: 'Dispatch drag & missed SLAs', win: 'AI routing + live visibility' },
   { code: 'I-08', type: 'Real Estate', pain: 'Cold leads & listing busywork', win: 'Nurture AI + CRM sync' },
   { code: 'I-09', type: 'E-Commerce', pain: 'Cart drop-off & stock misses', win: 'Recovery flows + inventory alerts' },
   { code: 'I-10', type: 'Marketing Agency', pain: 'Reporting & update treadmill', win: 'Auto reports + scope guardrails' },
   { code: 'I-11', type: 'Franchise', pain: 'Uneven ops across locations', win: 'One AI playbook + benchmarks' },
-  { code: 'I-12', type: 'Manufacturing', pain: 'Downtime & QC blind spots', win: 'Predictive maintenance + AI QC' },
-  { code: 'P-01', type: 'Quality Program', pain: 'QC sheets & audit scramble', win: 'Digital QC + audit-ready trails' },
-  { code: 'P-02', type: 'Finance & FP&A', pain: 'Close crunch & stale forecasts', win: 'Faster close + live P&L signals' },
-  { code: 'P-03', type: 'HR & People Ops', pain: 'Slow hire & onboarding loops', win: 'AI screening + guided onboarding' },
-  { code: 'P-04', type: 'Procurement', pain: 'PO friction & spend blind spots', win: 'Auto POs + vendor intelligence' },
-  { code: 'P-05', type: 'Compliance & Risk', pain: 'Evidence hunts & policy drift', win: 'Continuous checks + risk alerts' },
-  { code: 'P-06', type: 'IT & Help Desk', pain: 'Ticket pile-ups & repeat fires', win: 'Smart routing + self-serve fixes' },
+  { code: 'I-12', type: 'Manufacturing', pain: 'Downtime & handoff gaps', win: 'Maintenance alerts + floor visibility' },
+  { code: 'P-01', type: 'HR & People Ops', pain: 'Slow hire & onboarding loops', win: 'AI screening + guided onboarding' },
+  { code: 'P-02', type: 'Procurement', pain: 'PO friction & vendor drift', win: 'Auto POs + vendor intelligence' },
+  { code: 'P-03', type: 'Customer Support', pain: 'Repeat questions & slow replies', win: 'FAQ agent + escalation routing' },
+  { code: 'P-04', type: 'Content Ops', pain: 'Blank calendars & late posts', win: 'Idea bank + publish queue' },
+  { code: 'P-05', type: 'IT & Help Desk', pain: 'Ticket pile-ups & repeat fires', win: 'Smart routing + self-serve fixes' },
+  { code: 'P-06', type: 'Owner Ops', pain: 'Too many dashboards, no signal', win: 'Daily owner brief + next actions' },
 ]
 
 const PAIN_POINTS = [
@@ -1209,23 +1159,23 @@ function Pricing({ onCTA }: { onCTA: (tier: string) => void }) {
           </a>
         </div>
 
-        <div className="enterprise-wedge-band" style={{ marginTop: 34, border: '1px solid var(--ink)', background: 'var(--ink)', color: 'var(--paper)', padding: 32, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(280px, 0.78fr)', gap: 36, alignItems: 'center' }}>
+        <div className="growth-wedge-band" style={{ marginTop: 34, border: '1px solid var(--ink)', background: 'var(--ink)', color: 'var(--paper)', padding: 32, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(280px, 0.78fr)', gap: 36, alignItems: 'center' }}>
           <div>
             <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 12, fontWeight: 700 }}>
-              ENTERPRISE WEDGE · QA + FINANCE AUDIT
+              GROWTH WEDGE · LOCAL + SERVICE BUSINESSES
             </div>
             <div style={{ fontSize: 28, fontWeight: 600, letterSpacing: '-0.025em', lineHeight: 1.12 }}>
-              Too small for Big 4. Too complex for generic SaaS.
+              Leads, follow-ups, reviews, websites, and ops. One agent page.
             </div>
             <p style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.68, margin: '14px 0 0', maxWidth: 620 }}>
-              For $5M-$50M companies with QA compliance, finance audit, FP&A, board reporting, or multi-system workflow drag, eevolvv runs the diagnostic and builds the AI operating layer behind it.
+              For growing local businesses, agencies, clinics, trades, gyms, restaurants, and multi-location teams, eevolvv turns scattered marketing and daily operations into visible products, workflows, and weekly recommendations.
             </p>
           </div>
           <div className="mono" style={{ fontSize: 11, lineHeight: 1.9, letterSpacing: '0.1em', opacity: 0.82 }}>
-            <div>→ ISO / QA PROGRAMS</div>
-            <div>→ FINANCE AUDIT + CLOSE</div>
-            <div>→ EXECUTIVE REPORTING</div>
-            <div>→ CUSTOM SCOPE · $50K+</div>
+            <div>→ LEAD INTAKE + FOLLOW-UP</div>
+            <div>→ REVIEWS + LOCAL DISCOVERY</div>
+            <div>→ WEBSITE + SCO ACTIONS</div>
+            <div>→ OWNER BRIEF + NEXT STEPS</div>
           </div>
         </div>
       </div>

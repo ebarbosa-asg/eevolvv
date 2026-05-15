@@ -878,7 +878,7 @@ input:focus, textarea:focus, select:focus { outline: none; }
   }
 
   .os-layer-intro,
-  .enterprise-wedge-band {
+  .growth-wedge-band {
     grid-template-columns: 1fr !important;
     gap: 24px !important;
   }
@@ -1634,6 +1634,56 @@ input:focus, textarea:focus, select:focus { outline: none; }
 .client-agent-recommendations-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+.growth-landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  gap: 56px;
+  align-items: center;
+}
+.growth-landing-stat {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.growth-landing-three {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--ink);
+  border-left: 1px solid var(--ink);
+}
+.growth-landing-three > * {
+  padding: 24px;
+  border-right: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.growth-landing-cell {
+  min-height: 170px;
+  background: rgba(20,20,19,0.018);
+}
+.growth-landing-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(320px, 1.14fr);
+  gap: 52px;
+  align-items: start;
+}
+.growth-landing-proof {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.growth-landing-cta {
+  border: 1px solid var(--ink);
+  padding: 36px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 32px;
+  align-items: center;
+}
 .pricing-page-main {
   min-height: 100vh;
   background: var(--paper);
@@ -1680,8 +1730,25 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .client-agent-deliverables-grid,
   .client-agent-hero-grid,
   .client-agent-locker-grid,
-  .client-agent-recommendations-grid {
+  .client-agent-recommendations-grid,
+  .growth-landing-hero,
+  .growth-landing-stat,
+  .growth-landing-three,
+  .growth-landing-split,
+  .growth-landing-proof,
+  .growth-landing-cta {
     grid-template-columns: 1fr !important;
+  }
+  .growth-landing-cell,
+  .growth-landing-three > * {
+    min-height: auto;
+  }
+  .growth-landing-cta {
+    padding: 24px 20px;
+  }
+  .growth-landing-cta a {
+    text-align: center;
+    white-space: normal !important;
   }
   .pricing-addon-grid > *,
   .client-agent-proof-strip > *,
