@@ -63,6 +63,55 @@ const HERO_TICKER_QUOTES = [
   `"We eevolvv or we extinct — there is no third option." — Anonymous`,
 ] as const
 
+const TIERS = [
+  {
+    id: 'micro',
+    code: 'T-00',
+    name: 'Micro',
+    label: 'AI Starter',
+    price: '$29–$49/mo',
+    who: 'Corner stores · Bodegas · Solo operators',
+    tagline: 'WhatsApp-native automations. Live in 48 hours.',
+    features: [
+      'AI business diagnostic',
+      'Inventory reorder alerts',
+      'Daily sales summary (WhatsApp)',
+      'Supplier payment tracker',
+      'New automation every 60 days',
+      'English · Spanish · Portuguese — and more soon!',
+    ],
+    highlight: false,
+  },
+  {
+    id: 'seed', code: 'T-01', name: 'Agent One', label: '1 Workflow',
+    price: '$499/mo', who: 'Gyms, restaurants, solo operators',
+    tagline: 'Your first agent page and weekly direction.',
+    features: ['Client agent page', 'Weekly recommendations', '1 integration or automation', 'Ghost Locker product view', 'SCO add-on available'],
+    highlight: false,
+  },
+  {
+    id: 'grow', code: 'T-02', name: 'Agent Three', label: '3 Workflows',
+    price: '$999/mo', who: 'Small business · $500K–$5M revenue',
+    tagline: 'Three connected automations and a real operating layer.',
+    features: ['Client agent page', 'Weekly recommendations', '3 integrations or automations', 'Monthly optimization pass', 'SCO add-on available'],
+    highlight: false,
+  },
+  {
+    id: 'scale', code: 'T-03', name: 'Agent Five', label: '5 Workflows + Growth',
+    price: '$1,999/mo', who: 'SMB to mid-market',
+    tagline: 'Five workflows plus ads, SEO, and SCO management.',
+    features: ['Client agent page', 'Weekly recommendations', 'Up to 5 workflows', 'Ads/SEO/SCO included', 'Monthly growth report'],
+    highlight: true,
+  },
+  {
+    id: 'enterprise', code: 'T-04', name: 'Enterprise', label: 'AI Operations',
+    price: '$50,000–$250,000+', who: 'Multi-location · $10M+',
+    tagline: 'Total organizational transformation.',
+    features: ['Dedicated pod assigned', 'Department-by-department rebuild', 'Custom platform integrations', 'Executive reporting layer', 'Ongoing governance', 'Priority SLA'],
+    highlight: false,
+  },
+]
+
 const STATS = [
   { value: 23, suffix: 'hrs', label: 'wasted per week on automatable tasks (avg).' },
   { value: 270, suffix: '%', label: 'faster growth for AI-optimized businesses.' },
