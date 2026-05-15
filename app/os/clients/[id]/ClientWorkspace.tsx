@@ -93,6 +93,26 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
   const [agents, setAgents] = useState<Agent[]>(initialClient.agents ?? [])
   const [tasks, setTasks] = useState<Task[]>(initialClient.service_tasks ?? [])
   const [activity, setActivity] = useState<ActivityEntry[]>(initialClient.activity_log ?? [])
+  const [triggering, setTriggering] = useState(false)
+
+  const triggerAutonomousBuild = async () => {
+    setTriggering(true)
+    try {
+      const res = await fetch('/api/os/trigger-build', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientId: client.id, clientName: client.name })
+      })
+      if (res.ok) {
+        alert('Autonomous build sequence initiated.')
+        window.location.reload()
+      }
+    } catch (e) {
+      console.error('Trigger failed', e)
+    } finally {
+      setTriggering(false)
+    }
+  }
 
   const notesTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -283,6 +303,20 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
               <div className="text-paper/60 text-sm">{client.name}{client.email ? ` · ${client.email}` : ''}</div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
+              <Button 
+                onClick={triggerAutonomousBuild} 
+                className="mono text-[10px] bg-accent text-paper hover:bg-accent/80 transition-colors uppercase tracking-widest px-4 py-2 h-9 rounded-sm"
+                disabled={triggering}
+              >
+                {triggering ? 'Initiating...' : '⚡ Trigger Build'}
+              </Button>
+              {client.submission_id && (
+                <Link href={`/client/${client.submission_id}`} target="_blank">
+                  <Button variant="ghost" size="sm" className="mono border border-white/10 text-white/40">
+                    portal
+                  </Button>
+                </Link>
+              )}
               {client.contract_value && (
                 <span className="mono text-[13px] border border-accent text-accent px-2.5 py-1 rounded-sm">
                   ${client.contract_value.toLocaleString()}

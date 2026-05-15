@@ -82,7 +82,13 @@ export default function OSLayoutClient({ children }: { children: React.ReactNode
   }
 
   return (
-    <div className="os-layout">
+    <div className="os-layout bg-black">
+      <style>{`
+        @media (max-width: 1024px) {
+          .os-sidebar-space { display: none !important; }
+          .os-main { padding-bottom: 80px; width: 100%; }
+        }
+      `}</style>
       <div
         className="os-sidebar-space"
         style={{
@@ -100,6 +106,26 @@ export default function OSLayoutClient({ children }: { children: React.ReactNode
       )}
       <OSSidebar collapsed={collapsed} onToggleCollapse={toggle} width={OS_SIDEBAR_W} />
       <main className="os-main">{children}</main>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 h-16 bg-[#0A0A09] border-t border-white/10 flex items-center justify-around px-6 lg:hidden z-[99]">
+        <Link href="/os" className={`flex flex-col items-center gap-1 ${pathname === '/os' ? 'text-accent' : 'text-white/40'}`}>
+          <div className={`w-3 h-3 border ${pathname === '/os' ? 'border-accent bg-accent' : 'border-white/20'}`} />
+          <span className="mono text-[8px] uppercase tracking-tighter">Home</span>
+        </Link>
+        <Link href="/os/clients" className={`flex flex-col items-center gap-1 ${pathname.startsWith('/os/clients') ? 'text-accent' : 'text-white/40'}`}>
+          <div className={`w-3 h-3 border ${pathname.startsWith('/os/clients') ? 'border-accent bg-accent' : 'border-white/20'}`} />
+          <span className="mono text-[8px] uppercase tracking-tighter">Clients</span>
+        </Link>
+        <Link href="/os/sales" className={`flex flex-col items-center gap-1 ${pathname === '/os/sales' ? 'text-accent' : 'text-white/40'}`}>
+          <div className={`w-3 h-3 border ${pathname === '/os/sales' ? 'border-accent bg-accent' : 'border-white/20'}`} />
+          <span className="mono text-[8px] uppercase tracking-tighter">Sales</span>
+        </Link>
+        <Link href="/os/finance" className={`flex flex-col items-center gap-1 ${pathname === '/os/finance' ? 'text-accent' : 'text-white/40'}`}>
+          <div className={`w-3 h-3 border ${pathname === '/os/finance' ? 'border-accent bg-accent' : 'border-white/20'}`} />
+          <span className="mono text-[8px] uppercase tracking-tighter">Ops</span>
+        </Link>
+      </div>
     </div>
   )
 }

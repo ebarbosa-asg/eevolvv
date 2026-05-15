@@ -33,10 +33,10 @@ export default async function ClientPortalPage({ params }: PageProps) {
     .then()
 
   // Fetch client data in parallel
-  const [clientResult, subscriptionResult, buildsResult] = await Promise.all([
+  const [clientResult, subscriptionResult, buildsResult, logsResult, assetsResult] = await Promise.all([
     supabase
       .from('clients')
-      .select('id, name, email, tier')
+      .select('id, name, email, tier, company')
       .eq('id', clientId)
       .single(),
     supabase
@@ -52,16 +52,33 @@ export default async function ClientPortalPage({ params }: PageProps) {
       .eq('client_id', clientId)
       .order('created_at', { ascending: false })
       .limit(5),
+    supabase
+      .from('build_logs')
+      .select('id, label, status, created_at')
+      .eq('client_id', clientId)
+      .order('created_at', { ascending: true }),
+    supabase
+      .from('deliverables')
+      .select('id, title, type, status, url')
+      .eq('client_id', clientId)
+      .order('created_at', { ascending: true }),
   ])
 
   const client = clientResult.data
   const subscription = subscriptionResult.data
   const builds = buildsResult.data ?? []
   const latestBuild = builds[0] ?? null
+  const logs = (logsResult.data ?? []).map(l => ({
+    id: l.id,
+    label: l.label,
+    status: l.status,
+    timestamp: new Date(l.created_at).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  }))
+  const assets = assetsResult.data ?? []
 
   return (
-    <main style={{ minHeight: '100vh', background: 'var(--paper)', padding: '48px 24px' }}>
-      <div style={{ maxWidth: 800, margin: '0 auto' }}>
+    <main>
+      <div style={{ margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
@@ -87,6 +104,8 @@ export default async function ClientPortalPage({ params }: PageProps) {
           subscription={subscription}
           latestBuild={latestBuild}
           builds={builds}
+          logs={logs}
+          assets={assets}
         />
       </div>
     </main>
