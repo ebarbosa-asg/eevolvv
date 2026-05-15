@@ -728,21 +728,39 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* Stats */}
+          {/* Process Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-            <KPIStat value="2,847" label="HOURS SAVED" />
-            <KPIStat value="$74,320" label="MONEY RECOVERED" />
-            <KPIStat value="47" label="BUSINESSES AUTOMATED" />
-            <KPIStat value="94%" label="CLIENT SATISFACTION" />
+            <KPIStat value="7" label="DAY DIAGNOSTIC" />
+            <KPIStat value="72" label="HOUR DEPLOY" />
+            <KPIStat value="$2K" label="MIN SAVINGS" />
+            <KPIStat value="100%" label="GUARANTEE" />
           </div>
 
-          {/* Testimonials */}
+          {/* Value Props */}
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              { quote: "We were spending 6 hours a week on appointment confirmations. eevolvv's AI handles it all now. Haven't missed an appointment in 3 months.", name: 'Dr. Sarah Chen', title: 'Lakewood Family Dental', location: 'Dallas, TX', savings: '$800/mo' },
-              { quote: "I was skeptical. Then they showed me exactly what I was losing. Now I get 15 hours a week back. That's almost 2 full work days.", name: 'Michael Torres', title: 'Torres Law Group', location: 'Austin, TX', savings: '$3,200/mo' },
-              { quote: "The diagnostic alone was worth it. They found things I didn't even know were problems. Implementation took 3 days.", name: 'Jennifer Walsh', title: 'Walsh Real Estate', location: 'Houston, TX', savings: '$1,800/mo' },
-            ].map((t, i) => (
+              { 
+                icon: '⚡', 
+                title: 'Fast Setup', 
+                desc: '7-day diagnostic, 72-hour implementation. No disruption to current operations.', 
+                metric: '10 days', 
+                label: 'start to finish' 
+              },
+              { 
+                icon: '🎯', 
+                title: 'Proven ROI', 
+                desc: 'Average client recovers 16 hours/week and $2,500/month in the first 30 days.', 
+                metric: '250%', 
+                label: 'avg ROI' 
+              },
+              { 
+                icon: '🛡️', 
+                title: 'Zero Risk', 
+                desc: 'If we don\'t save you at least $2,000/month, we refund 100%. No questions.', 
+                metric: '100%', 
+                label: 'guarantee' 
+              },
+            ].map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -751,17 +769,12 @@ export default function Home() {
                 transition={{ delay: i * 0.1 }}
                 className="bg-paper border border-rule rounded-lg p-6 flex flex-col"
               >
-                <p className="text-ink/70 mb-6 leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
-                <div className="pt-4 border-t border-rule flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-ink">{t.name}</p>
-                    <p className="text-ink/40 text-sm">{t.title}</p>
-                    <p className="text-ink/30 text-xs">{t.location}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-accent font-bold mono">{t.savings}</p>
-                    <p className="text-ink/30 text-xs">saved</p>
-                  </div>
+                <div className="text-4xl mb-4">{item.icon}</div>
+                <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+                <p className="text-ink/60 text-sm leading-relaxed flex-1 mb-4">{item.desc}</p>
+                <div className="pt-4 border-t border-rule">
+                  <p className="text-accent font-bold mono text-2xl">{item.metric}</p>
+                  <p className="text-ink/40 text-xs mono uppercase">{item.label}</p>
                 </div>
               </motion.div>
             ))}
