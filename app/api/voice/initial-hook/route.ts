@@ -1,5 +1,3 @@
-import { VOLVVE_PERSONA } from '../../../../scripts/striker/volvve-core';
-
 /**
  * TWILIO VOICE HOOK - STATIC FAILSAFE
  */
