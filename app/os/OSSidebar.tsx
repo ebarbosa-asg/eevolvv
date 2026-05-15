@@ -12,9 +12,8 @@ const SECTIONS = [
   { n: '03', label: 'CLIENTS', route: '/os/clients' },
   { n: '04', label: 'PIPELINE', route: '/os/pipeline' },
   { n: '05', label: 'FINANCE', route: '/os/finance' },
-  { n: '06', label: 'INVESTORS', route: '/os/investors' },
   { n: '07', label: 'LINKS', route: '/os/links' },
-  { n: '08', label: 'GHOST LOCKER', route: '/os/ghost-locker' },
+  { n: '08', label: 'AGENT MONITOR', route: '/os/agents' },
   { n: '09', label: 'BUILDS', route: '/os/builds' },
 ] as const
 

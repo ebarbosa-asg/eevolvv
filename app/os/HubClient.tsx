@@ -625,17 +625,6 @@ export default function HubClient({ submissions, commits }: { submissions: Submi
         </section>
 
         {/* § 08 · INVESTOR */}
-        <section id="investor" className="os-section">
-          <SectionMarker n="08" label="INVESTOR" />
-          <div className="os-grid-3" style={{ marginBottom: '16px' }}>
-            {([
-              { key: 'target_raise', label: 'Target raise' }, { key: 'commitments', label: 'Commitments' }, { key: 'key_meetings', label: 'Key meetings' },
-            ] as const).map(({ key, label }) => (
-              <div key={key} className="os-card" style={CARD}><EditableField label={label} value={investor[key]} onChange={v => updateInvestor(key, v)} /></div>
-            ))}
-          </div>
-          <div className="os-card" style={{ ...CARD, padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', opacity: 0.5 }}>Option A strategy · SMB brand + enterprise revenue</span>
             <div style={{ display: 'flex', gap: '24px' }}>
               {[{ l: 'Pitch Deck', u: '/investor/pitch.html' }, { l: 'Strategy', u: '/investor/investor-strategy.md' }, { l: 'Calendly', u: 'https://calendly.com/hello-eevolvv' }].map(({ l, u }) => (
                 <a key={l} href={u} target="_blank" rel="noopener noreferrer" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--accent)' }}>→ {l}</a>
