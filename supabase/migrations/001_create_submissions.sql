@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS submissions (
 
   -- Meta
   ip_address TEXT,
-  status TEXT DEFAULT 'completed' CHECK (status IN ('pending', 'completed', 'error')),
+  status TEXT DEFAULT 'completed' CHECK (status IN ('pending', 'processing', 'completed', 'error')),
   email_sent BOOLEAN DEFAULT FALSE,
   duration_ms INTEGER
 );

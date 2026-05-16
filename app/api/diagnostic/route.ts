@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
       hours_freed: body.hoursFreed || null,
       tier,
       ip_address: ip,
-      status: 'processing',
+      status: 'pending',
     })
     .select()
     .single()
