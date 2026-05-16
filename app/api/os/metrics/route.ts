@@ -54,7 +54,8 @@ export async function GET() {
     try {
       const subscriptions = await stripe.subscriptions.list({ status: 'active', limit: 10 })
       for (const sub of subscriptions.data) {
-        const email = sub.customer && typeof sub.customer === 'object' ? sub.customer.email : null
+        const customer = sub.customer as { email?: string } | string | null
+        const email = typeof customer === 'object' && customer ? customer.email : null
         if (!email) continue
         
         const amount = sub.items.data[0]?.price?.unit_amount || 0
