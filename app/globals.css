@@ -11,6 +11,10 @@
   --accent: oklch(0.45 0.13 25);
   --font-display: 'Space Grotesk', sans-serif;
   --font-serif: 'Newsreader', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-arcade: 'Press Start 2P', monospace;
+  --charcoal: #2D2924;
+  --charcoal-soft: #38332C;
   /* Homepage layout rhythm — keep section rails + anchor jumps aligned */
   --site-max: 1280px;
   --site-pad-x: 32px;
