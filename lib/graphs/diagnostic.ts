@@ -1,23 +1,13 @@
 /**
  * LangGraph diagnostic graph for business analysis.
  * 4-node pipeline: snapshot → opportunities → roi → compile
+ *
+ * Uses the unified ai-provider (Groq primary, Anthropic fallback)
+ * instead of ChatAnthropic directly.
  */
 
 import { StateGraph, Annotation } from '@langchain/langgraph'
-import { ChatAnthropic } from '@langchain/anthropic'
-
-// Lazily created — avoids errors when ANTHROPIC_API_KEY is absent at import time
-let _model: ChatAnthropic | null = null
-function getModel(): ChatAnthropic {
-  if (!_model) {
-    _model = new ChatAnthropic({
-      model: 'claude-sonnet-4-6',
-      anthropicApiKey: process.env.ANTHROPIC_API_KEY,
-      maxTokens: 2000,
-    })
-  }
-  return _model
-}
+import { complete } from '@/lib/ai-provider'
 
 // State schema
 const DiagnosticState = Annotation.Root({
@@ -34,25 +24,25 @@ type DiagnosticStateType = typeof DiagnosticState.State
 export function buildDiagnosticGraph() {
   const graph = new StateGraph(DiagnosticState)
     .addNode('snapshot', async (state: DiagnosticStateType) => {
-      const model = getModel()
-      const response = await model.invoke(
-        `Analyze this business and generate a concise 2-3 paragraph snapshot covering current state, strengths, and key challenges:\n\n${state.businessInfo}`
+      const text = await complete(
+        `Analyze this business and generate a concise 2-3 paragraph snapshot covering current state, strengths, and key challenges:\n\n${state.businessInfo}`,
+        { maxTokens: 2000 },
       )
-      return { snapshot: typeof response.content === 'string' ? response.content : JSON.stringify(response.content) }
+      return { snapshot: text }
     })
     .addNode('opportunities', async (state: DiagnosticStateType) => {
-      const model = getModel()
-      const response = await model.invoke(
-        `Based on this business snapshot:\n${state.snapshot}\n\nIdentify the top 3 automation opportunities for a ${state.industry || 'small business'}. For each: name, current pain, proposed automation, estimated hours saved/week.`
+      const text = await complete(
+        `Based on this business snapshot:\n${state.snapshot}\n\nIdentify the top 3 automation opportunities for a ${state.industry || 'small business'}. For each: name, current pain, proposed automation, estimated hours saved/week.`,
+        { maxTokens: 2000 },
       )
-      return { opportunities: typeof response.content === 'string' ? response.content : JSON.stringify(response.content) }
+      return { opportunities: text }
     })
     .addNode('roi', async (state: DiagnosticStateType) => {
-      const model = getModel()
-      const response = await model.invoke(
-        `Based on these automation opportunities:\n${state.opportunities}\n\nProject realistic ROI. Include:\n- HOURS_FREED per month\n- AUTOMATIONS count\n- ANNUAL_SAVINGS estimate in USD\n- Payback period\n\nBe specific and conservative.`
+      const text = await complete(
+        `Based on these automation opportunities:\n${state.opportunities}\n\nProject realistic ROI. Include:\n- HOURS_FREED per month\n- AUTOMATIONS count\n- ANNUAL_SAVINGS estimate in USD\n- Payback period\n\nBe specific and conservative.`,
+        { maxTokens: 2000 },
       )
-      return { roiProjection: typeof response.content === 'string' ? response.content : JSON.stringify(response.content) }
+      return { roiProjection: text }
     })
     .addNode('compile', async (state: DiagnosticStateType) => {
       const sections = [

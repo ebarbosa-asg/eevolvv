@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { complete } from '@/lib/ai-provider'
 
 const EXTRACT_PROMPT = `You are a data extraction assistant. Given a conversation between an AI assistant and a business owner, extract structured intake data as a JSON object.
 
@@ -44,17 +42,10 @@ export async function POST(req: NextRequest) {
 
   let extracted: Record<string, string>
   try {
-    const msg = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 600,
-      messages: [
-        {
-          role: 'user',
-          content: `${EXTRACT_PROMPT}\n\nCONVERSATION:\n${transcript}${tier ? `\n\nPreferred tier hint: ${tier}` : ''}`,
-        },
-      ],
-    })
-    const raw = msg.content[0].type === 'text' ? msg.content[0].text : '{}'
+    const raw = await complete(
+      `${EXTRACT_PROMPT}\n\nCONVERSATION:\n${transcript}${tier ? `\n\nPreferred tier hint: ${tier}` : ''}`,
+      { maxTokens: 600 },
+    )
     const match = raw.match(/\{[\s\S]*\}/)
     extracted = match ? JSON.parse(match[0]) : {}
   } catch (err) {
@@ -71,7 +62,7 @@ export async function POST(req: NextRequest) {
         error: 'The conversation did not capture enough information. Please ensure you provided your email address and business type.',
         extracted,
       },
-      { status: 422 }
+      { status: 422 },
     )
   }
 

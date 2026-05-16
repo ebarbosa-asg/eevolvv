@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { complete } from '@/lib/ai-provider'
 import { supabase } from '@/lib/supabase'
 import { sendRunEmail } from '@/lib/email'
 import { traceAgentRun } from '@/lib/langfuse'
 import { searchMemory, addMemory } from '@/lib/mem0'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string; agentId: string } }
+  { params }: { params: { id: string; agentId: string } },
 ) {
   if (!supabase) return NextResponse.json({ error: 'DB unavailable' }, { status: 503 })
 
@@ -55,11 +53,11 @@ export async function POST(
         business_type: client?.business_type ?? '',
         notes: client?.notes ?? '',
       },
-      tasks: (tasks ?? []).map(t => ({
+      tasks: (tasks ?? []).map((t: { title: string; description: string | null; status: string | null; category: string | null }) => ({
         title: t.title,
-        description: t.description,
-        status: t.status,
-        category: t.category,
+        description: t.description ?? '',
+        status: t.status ?? '',
+        category: t.category ?? '',
       })),
     }
 
@@ -69,30 +67,22 @@ export async function POST(
     // Retrieve per-client memories and prepend to system prompt
     const memories = await searchMemory(params.id, userMessage)
     const memoryBlock = memories.length > 0
-      ? `\n\n## Relevant Client Memory\n${memories.map(m => `- ${m}`).join('\n')}`
+      ? `\n\n## Relevant Client Memory\n${memories.map((m: string) => `- ${m}`).join('\n')}`
       : ''
     const systemPrompt = baseSystemPrompt + memoryBlock
 
     const startMs = Date.now()
-    const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4000,
-      system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
-      messages: [{ role: 'user', content: userMessage }],
+    const output = await complete(userMessage, {
+      systemPrompt,
+      maxTokens: 4000,
     })
     const latencyMs = Date.now() - startMs
-
-    const output = message.content[0]?.type === 'text' ? message.content[0].text : ''
     const outputSummary = output.slice(0, 500)
-    const inputTokens = message.usage.input_tokens
-    const outputTokens = message.usage.output_tokens
 
     await supabase.from('agent_runs').update({
       status: 'success',
       output,
       output_summary: outputSummary,
-      input_tokens: inputTokens,
-      output_tokens: outputTokens,
       latency_ms: latencyMs,
       input_context: inputContext,
     }).eq('id', runId)
@@ -112,12 +102,12 @@ export async function POST(
       agentName: agent.name ?? 'agent',
       clientId: params.id,
       triggeredBy,
-      model: 'claude-sonnet-4-6',
+      model: 'groq/llama-3.3-70b-versatile',
       systemPrompt,
       userMessage,
       output,
-      inputTokens,
-      outputTokens,
+      inputTokens: 0,
+      outputTokens: 0,
       latencyMs,
     }).catch(() => {})
 
@@ -140,7 +130,7 @@ export async function POST(
       }
     }
 
-    return NextResponse.json({ runId, output, outputSummary, inputTokens, outputTokens, latencyMs })
+    return NextResponse.json({ runId, output, outputSummary, latencyMs })
 
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error'

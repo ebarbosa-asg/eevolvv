@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { complete } from '@/lib/ai-provider'
 import { supabase } from '@/lib/supabase'
 import { sendRunEmail } from '@/lib/email'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
 export async function POST(
   _req: NextRequest,
-  { params }: { params: { shareToken: string } }
+  { params }: { params: { shareToken: string } },
 ) {
   if (!supabase) return NextResponse.json({ error: 'DB unavailable' }, { status: 503 })
 
@@ -47,11 +45,11 @@ export async function POST(
         business_type: client?.business_type ?? '',
         notes: client?.notes ?? '',
       },
-      tasks: (tasks ?? []).map(t => ({
+      tasks: (tasks ?? []).map((t: { title: string; description: string | null; status: string | null; category: string | null }) => ({
         title: t.title,
-        description: t.description,
-        status: t.status,
-        category: t.category,
+        description: t.description ?? '',
+        status: t.status ?? '',
+        category: t.category ?? '',
       })),
     }
 
@@ -67,21 +65,13 @@ export async function POST(
     ].filter(Boolean).join('\n')
 
     const startMs = Date.now()
-    const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4000,
-      system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
-      messages: [{ role: 'user', content: lines }],
-    })
+    const output = await complete(lines, { systemPrompt, maxTokens: 4000 })
     const latencyMs = Date.now() - startMs
-    const output = message.content[0]?.type === 'text' ? message.content[0].text : ''
 
     await supabase.from('agent_runs').update({
       status: 'success',
       output,
       output_summary: output.slice(0, 500),
-      input_tokens: message.usage.input_tokens,
-      output_tokens: message.usage.output_tokens,
       latency_ms: latencyMs,
       input_context: inputContext,
     }).eq('id', run.id)

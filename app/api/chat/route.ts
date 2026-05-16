@@ -1,7 +1,5 @@
 import { NextRequest } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { streamChat } from '@/lib/ai-provider'
 
 const CHAT_SYSTEM_PROMPT = `You are eevolvv's AI business diagnostic assistant. You are having a brief, warm conversation to understand a business before generating their free eevolvv report.
 
@@ -38,21 +36,14 @@ export async function POST(req: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const claudeStream = anthropic.messages.stream({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 400,
-          system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+        await streamChat(
           messages,
-        })
-
-        for await (const chunk of claudeStream) {
-          if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-            const data = JSON.stringify({ type: 'delta', text: chunk.delta.text })
+          systemPrompt,
+          (chunk) => {
+            const data = JSON.stringify(chunk)
             controller.enqueue(encoder.encode(`data: ${data}\n\n`))
-          }
-        }
-
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`))
+          },
+        )
       } catch (err) {
         console.error('[chat] stream error:', err)
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', message: 'Stream failed. Please try again.' })}\n\n`))

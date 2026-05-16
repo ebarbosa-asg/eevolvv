@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { complete } from '@/lib/ai-provider'
 import { supabase } from '../../../lib/supabase'
 import { Resend } from 'resend'
 import { getPostHogClient } from '../../../lib/posthog-server'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 function trackServerEvent(event: string, properties: Record<string, unknown> = {}) {
@@ -46,7 +45,7 @@ Calculate hours saved per week, cost savings per month, revenue upside (be speci
 TONE: Direct, confident, consultant-grade. Use specifics from their business. No fluff.`
 
 export async function POST(req: NextRequest) {
-  if (!supabase || !anthropic) {
+  if (!supabase) {
     return NextResponse.json({ error: 'Service configuration missing' }, { status: 503 })
   }
 
@@ -100,7 +99,7 @@ export async function POST(req: NextRequest) {
     if (!activeClient) {
       return NextResponse.json(
         { error: 'Rate limit: 3 reports per hour. Upgrade to bypass limits.' },
-        { status: 429 }
+        { status: 429 },
       )
     }
   }
@@ -133,24 +132,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to create submission' }, { status: 500 })
   }
 
-  // Generate report with Claude
+  // Generate report with AI
   const intakeData = JSON.stringify(body, null, 2)
   let reportMarkdown = ''
 
   try {
-    const msg = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 2500,
-      messages: [
-        {
-          role: 'user',
-          content: `${DIAGNOSTIC_PROMPT}\n\nINTAKE DATA:\n${intakeData}\n\nGenerate the Evolution Report now:`,
-        },
-      ],
-    })
-    reportMarkdown = msg.content[0].type === 'text' ? msg.content[0].text : ''
+    reportMarkdown = await complete(
+      `${DIAGNOSTIC_PROMPT}\n\nINTAKE DATA:\n${intakeData}\n\nGenerate the Evolution Report now:`,
+      { maxTokens: 2500 },
+    )
   } catch (err) {
-    console.error('[diagnostic] Claude error:', err)
+    console.error('[diagnostic] AI error:', err)
     await supabase.from('submissions').update({ status: 'failed' }).eq('id', submission.id)
     return NextResponse.json({ error: 'Report generation failed' }, { status: 502 })
   }
