@@ -2,9 +2,24 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { supabase } from '../../../lib/supabase'
 import { Resend } from 'resend'
+import { getPostHogClient } from '../../../lib/posthog-server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
+
+function trackServerEvent(event: string, properties: Record<string, unknown> = {}) {
+  try {
+    const ph = getPostHogClient()
+    ph.capture({
+      distinctId: properties.email?.toString() || properties.ip?.toString() || 'anonymous',
+      event,
+      properties,
+    })
+    ph.flush()
+  } catch (err) {
+    console.error('[diagnostic] PostHog error:', err)
+  }
+}
 
 const DIAGNOSTIC_PROMPT = `You are eevolvv's diagnostic engine. Generate a comprehensive Evolution Report for a business based on their intake data.
 
@@ -179,8 +194,15 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Track with PostHog (if configured)
-  // posthog.capture('diagnostic_completed', { email, tier, businessType })
+  // Track with PostHog
+  trackServerEvent('diagnostic_completed', {
+    email,
+    tier,
+    businessType,
+    submissionId: submission.id,
+    revenue: body.revenue || 'unknown',
+    teamSize: body.teamSize || 'unknown',
+  })
 
   return NextResponse.json({
     success: true,

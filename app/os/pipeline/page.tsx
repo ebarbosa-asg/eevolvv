@@ -1,257 +1,255 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
-import { Card, CardContent, SectionMarker, Badge, Input, Label, Button, KPIStat } from '@/components/ds'
-import type { BadgeVariant } from '@/components/ds'
-import { OSTopbar } from '../components/OSTopbar'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
-type PipelineDeal = {
+interface Lead {
   id: string
-  company: string
-  contact_name: string | null
-  contact_email: string | null
-  stage: 'lead' | 'discovery' | 'proposal' | 'contract' | 'active' | 'lost'
-  value: number | null
-  notes: string | null
-  last_contact_at: string | null
+  email: string
+  name: string | null
+  company: string | null
+  business_type: string | null
+  stage: string
   created_at: string
-  updated_at: string
+  contract_value: number | null
+  agent_count: number
+  latest_task: { id: string; status: string; updated_at: string } | null
 }
 
-const DEAL_STAGES = ['lead', 'discovery', 'proposal', 'contract', 'active', 'lost'] as const
-
-function dealStageToBadge(stage: string): BadgeVariant {
-  if (stage === 'active') return 'success'
-  if (stage === 'discovery' || stage === 'proposal') return 'warning'
-  if (stage === 'contract') return 'danger'
-  return 'neutral'
+const STAGE_LABELS: Record<string, string> = {
+  cold: 'Cold',
+  contacted: 'Contacted',
+  nurtured: 'Nurtured',
+  qualified: 'Qualified',
+  closed: 'Closed',
+  lost: 'Lost',
 }
 
-function relativeTime(dateStr: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
-  if (diff < 60) return `${diff}s ago`
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
-  return `${Math.floor(diff / 86400)}d ago`
+const STAGE_COLORS: Record<string, string> = {
+  cold: '#a1a1aa',
+  contacted: '#60a5fa',
+  nurtured: '#a78bfa',
+  qualified: '#fbbf24',
+  closed: '#4ade80',
+  lost: '#f87171',
 }
 
 export default function PipelinePage() {
-  const [deals, setDeals] = useState<PipelineDeal[]>([])
+  const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
-  const [newDealOpen, setNewDealOpen] = useState(false)
-  const [newDealForm, setNewDealForm] = useState({
-    company: '',
-    contact_name: '',
-    contact_email: '',
-    stage: 'lead',
-    value: '',
-  })
-  const [dealSubmitting, setDealSubmitting] = useState(false)
-
-  const fetchDeals = useCallback(() => {
-    setLoading(true)
-    fetch('/api/os/pipeline')
-      .then(r => r.json())
-      .then((d: PipelineDeal[]) => setDeals(d))
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
+  const [error, setError] = useState('')
+  const [filter, setFilter] = useState<string>('all')
+  const [updating, setUpdating] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchDeals()
-  }, [fetchDeals])
-
-  const cycleDealStage = useCallback(async (deal: PipelineDeal) => {
-    const idx = DEAL_STAGES.indexOf(deal.stage)
-    const next = DEAL_STAGES[idx + 1] ?? 'lead'
-    const res = await fetch(`/api/os/pipeline/${deal.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ stage: next }),
-    })
-    if (res.ok) setDeals(prev => prev.map(d => d.id === deal.id ? { ...d, stage: next } : d))
+    loadLeads()
   }, [])
 
-  const submitDeal = async () => {
-    if (!newDealForm.company.trim()) return
-    setDealSubmitting(true)
-    const res = await fetch('/api/os/pipeline', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...newDealForm,
-        value: newDealForm.value ? parseFloat(newDealForm.value) : null,
-      }),
-    })
-    if (res.ok) {
-      const d = await res.json()
-      setDeals(prev => [d, ...prev])
-      setNewDealOpen(false)
-      setNewDealForm({ company: '', contact_name: '', contact_email: '', stage: 'lead', value: '' })
+  async function loadLeads() {
+    try {
+      const res = await fetch('/api/os/clients')
+      if (!res.ok) throw new Error('Failed to load leads')
+      const data = await res.json()
+      setLeads(Array.isArray(data) ? data : [])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setLoading(false)
     }
-    setDealSubmitting(false)
   }
 
-  const deleteDeal = async (id: string) => {
-    await fetch(`/api/os/pipeline/${id}`, { method: 'DELETE' })
-    setDeals(prev => prev.filter(d => d.id !== id))
+  async function updateStage(id: string, newStage: string) {
+    setUpdating(id)
+    try {
+      const res = await fetch(`/api/os/clients/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stage: newStage }),
+      })
+      if (!res.ok) throw new Error('Failed to update')
+      setLeads((prev) =>
+        prev.map((l) => (l.id === id ? { ...l, stage: newStage } : l))
+      )
+    } catch (err) {
+      console.error('Update failed:', err)
+    } finally {
+      setUpdating(null)
+    }
   }
 
-  const totalPipelineValue = deals
-    .filter(d => d.stage !== 'lost')
-    .reduce((s, d) => s + (d.value ?? 0), 0)
+  const filteredLeads =
+    filter === 'all' ? leads : leads.filter((l) => l.stage === filter)
+
+  const stageCounts = leads.reduce(
+    (acc, l) => {
+      acc[l.stage] = (acc[l.stage] || 0) + 1
+      return acc
+    },
+    {} as Record<string, number>
+  )
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-paper text-ink p-8">
+        <div className="mono text-xs tracking-widest opacity-40">LOADING PIPELINE...</div>
+      </main>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-paper">
-      <OSTopbar title="PIPELINE" />
-      <div className="max-w-[1280px] mx-auto px-8 py-12">
-        <div className="flex items-center justify-between mb-6">
-          <SectionMarker num="04" label="PIPELINE" />
-          <Button variant="ghost" size="sm" onClick={() => setNewDealOpen(v => !v)}>
-            + new deal
-          </Button>
+    <main className="min-h-screen bg-paper text-ink p-8">
+      {/* Header */}
+      <header className="mb-8">
+        <div className="mono text-[10px] tracking-[0.3em] text-accent mb-4 font-bold">
+          LEAD PIPELINE
         </div>
+        <h1 className="text-4xl font-bold tracking-tight mb-2">Manage Leads</h1>
+        <p className="text-sm opacity-60">
+          {leads.length} total leads · {stageCounts.closed || 0} closed ·{' '}
+          {stageCounts.qualified || 0} qualified
+        </p>
+      </header>
 
-        {/* KPI */}
-        <Card className="mb-6">
-          <CardContent>
-            <KPIStat
-              value={'$' + totalPipelineValue.toLocaleString()}
-              label="TOTAL PIPELINE"
-            />
-          </CardContent>
-        </Card>
+      {/* Stage Summary */}
+      <section className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-8">
+        {Object.entries(STAGE_LABELS).map(([stage, label]) => (
+          <button
+            key={stage}
+            onClick={() => setFilter(filter === stage ? 'all' : stage)}
+            className={`border-2 p-3 text-left transition-colors ${
+              filter === stage ? 'border-ink bg-ink/5' : 'border-ink/10'
+            }`}
+          >
+            <div className="mono text-[8px] tracking-[0.3em] uppercase opacity-40 mb-1">
+              {label}
+            </div>
+            <div className="text-2xl font-bold" style={{ color: STAGE_COLORS[stage] }}>
+              {stageCounts[stage] || 0}
+            </div>
+          </button>
+        ))}
+      </section>
 
-        {/* Add deal form */}
-        <div
-          className={`overflow-hidden transition-all duration-300 ${
-            newDealOpen ? 'max-h-[700px] opacity-100' : 'max-h-0 opacity-0'
+      {/* Filter */}
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setFilter('all')}
+          className={`mono text-[10px] tracking-[0.2em] px-4 py-2 border-2 ${
+            filter === 'all' ? 'border-ink bg-ink text-paper' : 'border-ink/20'
           }`}
         >
-          <Card className="mb-4">
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div>
-                  <Label>Company *</Label>
-                  <Input
-                    value={newDealForm.company}
-                    onChange={e => setNewDealForm(f => ({ ...f, company: e.target.value }))}
-                    placeholder="Acme Corp"
-                  />
-                </div>
-                <div>
-                  <Label>Contact name</Label>
-                  <Input
-                    value={newDealForm.contact_name}
-                    onChange={e => setNewDealForm(f => ({ ...f, contact_name: e.target.value }))}
-                    placeholder="Jane Smith"
-                  />
-                </div>
-                <div>
-                  <Label>Contact email</Label>
-                  <Input
-                    value={newDealForm.contact_email}
-                    onChange={e => setNewDealForm(f => ({ ...f, contact_email: e.target.value }))}
-                    placeholder="jane@acme.com"
-                  />
-                </div>
-                <div>
-                  <Label>Stage</Label>
-                  <select
-                    value={newDealForm.stage}
-                    onChange={e => setNewDealForm(f => ({ ...f, stage: e.target.value }))}
-                    className="w-full border border-rule rounded-lg px-3 py-2 text-sm bg-paper text-ink cursor-pointer"
-                  >
-                    {DEAL_STAGES.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <Label>Value ($)</Label>
-                  <Input
-                    value={newDealForm.value}
-                    onChange={e => setNewDealForm(f => ({ ...f, value: e.target.value }))}
-                    placeholder="50000"
-                  />
-                </div>
-                <div className="flex items-end gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => setNewDealOpen(false)}>
-                    cancel
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={submitDeal}
-                    disabled={dealSubmitting}
-                  >
-                    {dealSubmitting ? 'saving…' : 'add deal'}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {loading && (
-          <div className="flex flex-col gap-2">
-            {[0, 1, 2].map(i => (
-              <div key={i} className="h-12 bg-ink/5 rounded animate-pulse" />
-            ))}
-          </div>
-        )}
-
-        {!loading && deals.length === 0 && (
-          <Card>
-            <CardContent>
-              <p className="mono text-[11px] uppercase tracking-[0.1em] text-ink/25 text-center py-6">
-                No pipeline deals yet
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {!loading && deals.length > 0 && (
-          <Card className="overflow-hidden">
-            {deals.map(deal => (
-              <div
-                key={deal.id}
-                className="flex items-center gap-3 px-4 py-3 border-b border-rule/50 last:border-0 hover:bg-ink/[0.02] transition-colors"
-              >
-                <span className="flex-1 font-semibold text-sm text-ink">{deal.company}</span>
-                {deal.contact_name && (
-                  <span className="text-sm text-ink/60 hidden md:inline">{deal.contact_name}</span>
-                )}
-                {deal.value && (
-                  <span className="mono text-sm text-ink/70">
-                    ${deal.value.toLocaleString()}
-                  </span>
-                )}
-                <span className="mono text-[11px] text-ink/40">
-                  {relativeTime(deal.updated_at)}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => cycleDealStage(deal)}
-                  className="cursor-pointer"
-                >
-                  <Badge variant={dealStageToBadge(deal.stage)}>
-                    {deal.stage}
-                  </Badge>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => deleteDeal(deal.id)}
-                  className="mono text-sm text-ink/20 hover:text-ink/50 transition-colors flex-shrink-0 px-1"
-                  title="delete"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </Card>
-        )}
+          ALL
+        </button>
+        {Object.entries(STAGE_LABELS).map(([stage, label]) => (
+          <button
+            key={stage}
+            onClick={() => setFilter(filter === stage ? 'all' : stage)}
+            className={`mono text-[10px] tracking-[0.2em] px-4 py-2 border-2 ${
+              filter === stage ? 'border-ink bg-ink text-paper' : 'border-ink/20'
+            }`}
+          >
+            {label.toUpperCase()}
+          </button>
+        ))}
       </div>
-    </div>
+
+      {/* Error */}
+      {error && (
+        <div className="border-2 border-red-500 p-4 mb-6 text-red-600 mono text-xs">
+          ERROR: {error}
+        </div>
+      )}
+
+      {/* Leads Table */}
+      <div className="border-2 border-ink/10">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-ink/10">
+              <th className="text-left p-4 mono text-[9px] tracking-[0.26em] opacity-40">
+                BUSINESS
+              </th>
+              <th className="text-left p-4 mono text-[9px] tracking-[0.26em] opacity-40">
+                EMAIL
+              </th>
+              <th className="text-left p-4 mono text-[9px] tracking-[0.26em] opacity-40">
+                TYPE
+              </th>
+              <th className="text-left p-4 mono text-[9px] tracking-[0.26em] opacity-40">
+                STAGE
+              </th>
+              <th className="text-left p-4 mono text-[9px] tracking-[0.26em] opacity-40">
+                VALUE
+              </th>
+              <th className="text-left p-4 mono text-[9px] tracking-[0.26em] opacity-40">
+                DATE
+              </th>
+              <th className="text-right p-4 mono text-[9px] tracking-[0.26em] opacity-40">
+                ACTIONS
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredLeads.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="p-8 text-center opacity-40">
+                  No leads found. Striker will populate this automatically.
+                </td>
+              </tr>
+            ) : (
+              filteredLeads.map((lead) => (
+                <tr key={lead.id} className="border-b border-ink/5 hover:bg-ink/5">
+                  <td className="p-4 font-medium text-sm">
+                    {lead.company || lead.name || '—'}
+                  </td>
+                  <td className="p-4 text-sm opacity-60">{lead.email}</td>
+                  <td className="p-4 text-sm opacity-60">
+                    {lead.business_type || '—'}
+                  </td>
+                  <td className="p-4">
+                    <span
+                      className="inline-block w-2 h-2 rounded-full mr-2"
+                      style={{ background: STAGE_COLORS[lead.stage] || '#a1a1aa' }}
+                    />
+                    <span className="text-sm">
+                      {STAGE_LABELS[lead.stage] || lead.stage}
+                    </span>
+                  </td>
+                  <td className="p-4 text-sm opacity-60">
+                    {lead.contract_value ? `$${lead.contract_value.toLocaleString()}` : '—'}
+                  </td>
+                  <td className="p-4 text-sm opacity-40">
+                    {new Date(lead.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="p-4 text-right">
+                    <select
+                      value={lead.stage}
+                      onChange={(e) => updateStage(lead.id, e.target.value)}
+                      disabled={updating === lead.id}
+                      className="mono text-[10px] border border-ink/20 px-2 py-1 bg-paper"
+                    >
+                      {Object.entries(STAGE_LABELS).map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Actions */}
+      <footer className="mt-8 flex gap-4">
+        <Link
+          href="/os/dashboard"
+          className="mono text-xs tracking-[0.2em] border-2 border-ink px-6 py-3 font-bold hover:bg-ink hover:text-paper transition-colors"
+        >
+          ← BACK TO DASHBOARD
+        </Link>
+      </footer>
+    </main>
   )
 }

@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /os/
+Disallow: /api/
+Disallow: /signin/
+Disallow: /onboard/
+Disallow: /report/
+Disallow: /run/
+Disallow: /share/
+Disallow: /client/
+
+Sitemap: https://eevolvv.com/sitemap.xml
