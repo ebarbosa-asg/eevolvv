@@ -151,7 +151,7 @@ export default function CTAV3() {
               We find <span style={{ color: 'var(--accent)' }}>$2K+/mo</span> in recoverable ghost work — or you pay nothing.
             </div>
           </div>
-          <a href="/diagnostic" className="btn-primary cta-band-btn">
+          <a href="#diagnostic" className="btn-primary cta-band-btn">
             Start free diagnostic →
           </a>
         </div>

@@ -842,7 +842,7 @@ export default function PrivacyPage() {
               ← Back to eevolvv
             </Link>
             <Link
-              href="/talent/terms"
+              href="/terms"
               className="text-sm text-black/40 hover:text-black/70 transition-colors"
             >
               Terms of Service →
