@@ -159,34 +159,56 @@ export async function POST(req: NextRequest) {
     .update({ report: reportMarkdown, status: 'completed' })
     .eq('id', submission.id)
 
-  // Send email with Resend
+  // Send email with Resend + notify Eduardo
   if (resend) {
     try {
+      const clientEmailHtml = `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+        <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #141413;">Your Evolution Report is Ready</h1>
+        <p style="font-size: 16px; line-height: 1.6; color: #52525b; margin-bottom: 24px;">
+          We analyzed ${body.businessName || 'your business'} and identified automation opportunities that could save you hours every week.
+        </p>
+        <a href="https://eevolvv.com/report/${submission.id}" style="display: inline-block; background: #141413; color: #faf7f0; padding: 14px 28px; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 4px; margin-bottom: 32px;">
+          View Your Full Report →
+        </a>
+        <p style="font-size: 14px; color: #a1a1aa; margin-top: 32px; border-top: 1px solid #e4e4e7; padding-top:  padding-top: 16px;">
+          This report is valid for 90 days. Ready to build it? Choose your tier and we start immediately.
+        </p>
+        <p style="margin-top: 20px; text-align: center;">
+          <a href="https://eevolvv.com/pricing?tier=seed&checkout=1" style="display: inline-block; background: #141413; color: #faf7f0; padding: 12px 24px; text-decoration: none; font-weight: 600; font-size: 13px;">Start Agent One — $499/mo →</a>
+        </p>
+      </div>`
       await resend.emails.send({
         from: 'eevolvv <reports@eevolvv.com>',
         to: email,
         subject: `Your Evolution Report is ready — ${body.businessName || businessType}`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-            <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #141413;">Your Evolution Report is Ready</h1>
-            <p style="font-size: 16px; line-height: 1.6; color: #52525b; margin-bottom: 24px;">
-              We analyzed ${body.businessName || 'your business'} and identified ${body.topPains ? '5-7' : 'multiple'} automation opportunities that could save you hours every week.
-            </p>
-            <a href="https://eevolvv.com/report/${submission.id}" style="display: inline-block; background: #141413; color: #faf7f0; padding: 14px 28px; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 4px; margin-bottom: 32px;">
-              View Your Full Report →
-            </a>
-            <p style="font-size: 14px; color: #a1a1aa; margin-top: 32px; border-top: 1px solid #e4e4e7; padding-top: 16px;">
-              This report is valid for 90 days. Ready to build it? Choose your tier and we start immediately.
-            </p>
-          </div>
-        `,
+        html: clientEmailHtml,
       })
     } catch (emailErr) {
       console.error('[diagnostic] Resend error:', emailErr)
-      // Don't fail the request if email fails
+    }
+
+    // Notify Eduardo
+    try {
+      await resend.emails.send({
+        from: 'eevolvv <reports@eevolvv.com>',
+        to: 'hello@eevolvv.com',
+        subject: `New diagnostic: ${body.businessName || businessType} — ${email}`,
+        html: `<div style="font-family: sans-serif;">
+          <h2>New Diagnostic</h2>
+          <p><strong>Business:</strong> ${body.businessName || '—'}</p>
+          <p><strong>Type:</strong> ${businessType}</p>
+          <p><strong>Contact:</strong> ${email}</p>
+          <p><strong>Pain points:</strong> ${body.topPains || '—'}</p>
+          <p><strong>Revenue:</strong> $${body.revenue || '?'}</p>
+          <p><strong>Team:</strong> ${body.teamSize || '?'}</p>
+          <p><a href="https://eevolvv.com/report/${submission.id}">View Report →</a></p>
+          <p>Reply within 2 hours per SOP.</p>
+        </div>`,
+      })
+    } catch (notifErr) {
+      console.error('[diagnostic] Admin notification error:', notifErr)
     }
   }
-
   // Track with PostHog
   trackServerEvent('diagnostic_completed', {
     email,
