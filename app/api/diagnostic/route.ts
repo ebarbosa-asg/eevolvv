@@ -3,6 +3,7 @@ import { complete } from '@/lib/ai-provider'
 import { supabase } from '../../../lib/supabase'
 import { Resend } from 'resend'
 import { getPostHogClient } from '../../../lib/posthog-server'
+import { createContact, searchContact } from '../../../lib/hubspot'
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
@@ -193,8 +194,25 @@ export async function POST(req: NextRequest) {
     businessType,
     submissionId: submission.id,
     revenue: body.revenue || 'unknown',
-    teamSize: body.teamSize || 'unknown',
-  })
+})
+
+  // Sync to HubSpot CRM (non-critical — won't break the response)
+  try {
+    const existing = await searchContact(email)
+    if (!existing) {
+      await createContact({
+        email,
+        firstName: (body as any).name?.split(' ')[0] || '',
+        lastName: (body as any).name?.split(' ').slice(1).join(' ') || '',
+        phone: '',
+        company: (body as any).businessName || '',
+        industry: businessType,
+        message: `Evolution Report: ${(body as any).topPains || 'Business diagnostic'} | Revenue: ${(body as any).revenue || '?'} | Team: ${(body as any).teamSize || '?'}`,
+      })
+    }
+  } catch {
+    // HubSpot sync is non-critical
+  }
 
   return NextResponse.json({
     success: true,

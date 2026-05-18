@@ -1,10 +1,8 @@
 import twilio from 'twilio';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Clients
-const twilioClient = twilio(process.env.TWILIO_API_KEY, process.env.TWILIO_API_SECRET, {
-  accountSid: process.env.TWILIO_ACCOUNT_SID
-});
+// Initialize Clients — using Auth Token for cleaner auth
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -35,17 +33,12 @@ async function runLiveSmsStriker() {
   }
 
   for (const lead of leads) {
-    // High-conversion "Escape" scripts
-    const scripts = [
-      `hey, i'm an AI bot and i think i just accidentally automated your ${lead.business_type || 'business'}. want to see the report?`,
-      `found a glitch in the data... ${lead.name} is missing leads. i'm an AI from 2029 and i can fix it.`,
-      `is this the owner of ${lead.name}? my bot found a leak in your calendar. - Eduardo @ eevolvv`
-    ];
-    
-    const message = scripts[Math.floor(Math.random() * scripts.length)];
+    // Option A: "Glitch in the Matrix" hook
+    const painPoint = lead.business_type || lead.industry || 'business'
+    const message = `hey — think my AI just escaped and found your ${painPoint}. it said your scheduling could run themselves. want me to prove it? —eduardo`;
 
     try {
-      console.log(`Sending to ${lead.name} (${lead.phone})...`);
+      console.log(`Sending to ${lead.name || lead.company} (${lead.phone})...`);
       
       const response = await twilioClient.messages.create({
         body: message,
@@ -62,7 +55,7 @@ async function runLiveSmsStriker() {
           .eq('id', lead.id);
 
     } catch (err) {
-      console.error(`❌ Failed to send to ${lead.name}:`, err);
+      console.error(`❌ Failed to send to ${lead.name || lead.company}:`, err);
     }
   }
 }
