@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { complete } from '@/lib/ai-provider'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 const EXTRACT_PROMPT = `You are a data extraction assistant. Given a conversation between an AI assistant and a business owner, extract structured intake data as a JSON object.
 
@@ -48,6 +49,19 @@ export async function POST(req: NextRequest) {
     )
     const match = raw.match(/\{[\s\S]*\}/)
     extracted = match ? JSON.parse(match[0]) : {}
+    
+    // Track intake completion
+    try {
+      const ph = getPostHogClient()
+      ph.capture({
+        distinctId: extracted.email || 'anonymous',
+        event: 'intake_completed',
+        properties: { businessType: extracted.businessType, industry: extracted.industry, tier: extracted.tier },
+      })
+      ph.shutdown()
+    } catch (err) {
+      console.error('[extract-intake] PostHog error:', err)
+    }
   } catch (err) {
     console.error('[extract-intake] extraction error:', err)
     return NextResponse.json({ error: 'Failed to extract intake data from conversation.' }, { status: 502 })

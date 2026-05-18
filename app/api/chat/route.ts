@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { streamChat } from '@/lib/ai-provider'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 const CHAT_SYSTEM_PROMPT = `You are eevolvv's AI business diagnostic assistant. You are having a brief, warm conversation to understand a business before generating their free eevolvv report.
 
@@ -17,20 +18,35 @@ RULES:
 - Do not explain that you are collecting data or mention the report structure`
 
 export async function POST(req: NextRequest) {
-  let body: { messages: { role: 'user' | 'assistant'; content: string }[]; defaultIndustry?: string }
+  let body: { messages: { role: 'user' | 'assistant'; content: string }[]; defaultIndustry?: string; distinctId?: string }
   try {
     body = await req.json()
   } catch {
     return new Response('Invalid request body', { status: 400 })
   }
 
-  const { messages, defaultIndustry } = body
+  const { messages, defaultIndustry, distinctId = 'anonymous' } = body
   const systemPrompt = defaultIndustry
     ? `${CHAT_SYSTEM_PROMPT}\n\nINDUSTRY OVERRIDE: This user came from the ${defaultIndustry} landing page. Their industry is already confirmed: "${defaultIndustry}". Do NOT ask what kind of business they run — skip that question entirely. Ask their name and business name first, then go straight into their specific pain points, team size, revenue range, current tools, and email.`
     : CHAT_SYSTEM_PROMPT
   if (!messages?.length) {
     return new Response('messages required', { status: 400 })
   }
+
+  // Track diagnostic started
+  try {
+    const ph = getPostHogClient()
+    ph.capture({
+      distinctId,
+      event: 'diagnostic_started',
+      properties: { industry: defaultIndustry || 'unknown', messageCount: messages.length },
+    })
+    ph.shutdown()
+  } catch (err) {
+    console.error('[chat] PostHog error:', err)
+  }
+
+  let completed = false
 
   const encoder = new TextEncoder()
   const stream = new ReadableStream({
@@ -40,6 +56,21 @@ export async function POST(req: NextRequest) {
           messages,
           systemPrompt,
           (chunk) => {
+            // Check if this chunk signals completion
+            if (typeof chunk === 'string' && chunk.includes('[READY]') && !completed) {
+              completed = true
+              try {
+                const ph = getPostHogClient()
+                ph.capture({
+                  distinctId,
+                  event: 'diagnostic_completed',
+                  properties: { industry: defaultIndustry || 'unknown' },
+                })
+                ph.shutdown()
+              } catch (err) {
+                console.error('[chat] PostHog completion error:', err)
+              }
+            }
             const data = JSON.stringify(chunk)
             controller.enqueue(encoder.encode(`data: ${data}\n\n`))
           },
