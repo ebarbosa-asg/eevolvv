@@ -146,14 +146,35 @@ export default function CTAV3() {
         {/* CTA band */}
         <div className="cta-band">
           <div>
-            <div className="cta-band-label">100% MONEY-BACK · ZERO RISK</div>
+            <div className="cta-band-label">$499/MO · CANCEL ANYTIME · LIVE IN 14 DAYS</div>
             <div className="cta-band-headline">
-              We find <span style={{ color: 'var(--accent)' }}>$2K+/mo</span> in recoverable ghost work — or you pay nothing.
+              Skip the call. <span style={{ color: 'var(--accent)' }}>Pick a tier, pay, start.</span>
+            </div>
+            <div style={{ fontSize: 14, opacity: 0.65, marginTop: 8 }}>
+              Or run the free diagnostic if you want the report first — $2K+/mo recovered or your money back.
             </div>
           </div>
-          <a href="#diagnostic" className="btn-primary cta-band-btn">
-            Start free diagnostic →
-          </a>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'stretch' }}>
+            <a href="/pricing" className="btn-primary cta-band-btn">
+              See pricing →
+            </a>
+            <a
+              href="#diagnostic"
+              style={{
+                textAlign: 'center',
+                fontSize: 12,
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                color: 'inherit',
+                opacity: 0.7,
+                textDecoration: 'underline',
+                textUnderlineOffset: 4,
+              }}
+            >
+              Free diagnostic first
+            </a>
+          </div>
         </div>
       </div>
     </section>

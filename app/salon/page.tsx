@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvECard } from '@/components/VolvvE'
+import { PriceStrip } from '@/components/conversion/PriceStrip'
+import { IndustryPricingTiers } from '@/components/conversion/IndustryPricingTiers'
+import { RiskReversal } from '@/components/conversion/RiskReversal'
 
 export const metadata: Metadata = {
   title: 'AI Automation for Salons & Barbershops — eevolvv',
@@ -83,6 +86,8 @@ const STATS = [
 export default function SalonPage() {
   return (
     <main style={{ background: 'var(--paper)' }}>
+      <PriceStrip />
+
 
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <section style={{ borderBottom: '1px solid var(--ink)', padding: '80px 32px 72px' }}>
@@ -351,6 +356,17 @@ export default function SalonPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      
+      {/* ── Pricing tiers (direct buy) ───────────────────────────────────────── */}
+      <IndustryPricingTiers />
+
+      {/* ── Risk reversal block ──────────────────────────────────────────────── */}
+      <section style={{ padding: '48px 32px', borderBottom: '1px solid var(--ink)' }}>
+        <div className="site-rail mx-auto">
+          <RiskReversal />
         </div>
       </section>
 

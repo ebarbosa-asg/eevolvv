@@ -51,9 +51,51 @@ export default function ContactPage() {
 
       <main className="site-rail py-14 md:py-20">
         <div className="mx-auto max-w-lg">
-          <p className="mono text-[11px] uppercase tracking-[0.28em] text-black/40">Contact</p>
-          <h1 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">Get in touch</h1>
-          <p className="mt-2 text-sm text-black/50">We'll reply within one business day.</p>
+          <p className="mono text-[11px] uppercase tracking-[0.28em] text-black/40">Buy now · or get in touch</p>
+          <h1 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">Skip the call. Pick a tier.</h1>
+          <p className="mt-2 text-sm text-black/50">
+            Direct checkout below — no demo required, live in 14 days, cancel anytime. Or send a message if you need help choosing.
+          </p>
+
+          {/* Direct-buy buttons — above the form, where the eye lands */}
+          <div className="mt-8 grid gap-3">
+            <Link
+              href="/pricing?tier=core&checkout=1"
+              className="mono flex items-center justify-between rounded border border-black/15 bg-[var(--ink)] px-4 py-3 text-sm font-semibold text-[var(--paper)] no-underline transition-opacity hover:opacity-90"
+              style={{ letterSpacing: '0.14em' }}
+            >
+              <span>AGENT THREE · $999/MO · MOST POPULAR</span>
+              <span>→</span>
+            </Link>
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                href="/pricing?tier=seed&checkout=1"
+                className="mono flex items-center justify-between rounded border border-black/15 bg-white px-4 py-3 text-xs font-semibold text-[var(--ink)] no-underline transition-colors hover:bg-black/[0.03]"
+                style={{ letterSpacing: '0.14em' }}
+              >
+                <span>AGENT ONE $499/MO</span>
+                <span>→</span>
+              </Link>
+              <Link
+                href="/pricing"
+                className="mono flex items-center justify-between rounded border border-black/15 bg-white px-4 py-3 text-xs font-semibold text-[var(--ink)] no-underline transition-colors hover:bg-black/[0.03]"
+                style={{ letterSpacing: '0.14em' }}
+              >
+                <span>$97 FAST PATH</span>
+                <span>→</span>
+              </Link>
+            </div>
+            <p className="mono text-[10px] text-black/45" style={{ letterSpacing: '0.14em' }}>
+              SECURED BY STRIPE · CANCEL ANYTIME · $2K/MO RECOVERED OR YOUR MONEY BACK
+            </p>
+          </div>
+
+          <div className="mt-10 flex items-center gap-3">
+            <div className="h-px flex-1 bg-black/10" />
+            <div className="mono text-[10px] tracking-[0.22em] text-black/40">OR · MESSAGE US</div>
+            <div className="h-px flex-1 bg-black/10" />
+          </div>
+          <p className="mt-4 text-sm text-black/50">We'll reply within one business day.</p>
 
           {status === 'done' ? (
             <div className="mt-10 rounded border border-black/10 bg-black/[0.03] p-6 text-center space-y-2">

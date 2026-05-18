@@ -43,13 +43,13 @@ function SiteHeader() {
           <img src="/logo.png" alt="eevolvv" style={{ imageRendering: 'pixelated' }} />
         </a>
         <nav className="primary">
-          <a href="#time-leak">The Problem</a>
           <a href="#protocol" className="active">Protocol</a>
           <a href="#industries">Verticals</a>
-          <a href="#diagnostic">Diagnostic</a>
+          <a href="/pricing">Pricing</a>
+          <a href="#diagnostic">Free audit</a>
         </nav>
-        <a href="#diagnostic" className="header-cta">
-          Get free report
+        <a href="/pricing" className="header-cta">
+          See pricing
           <span>→</span>
         </a>
       </div>
@@ -107,17 +107,20 @@ function SiteFooter() {
           <div>
             <div className="footer-col-title">Verticals</div>
             <div className="footer-link-list">
-              <a href="#industries">Dental</a>
-              <a href="#industries">Legal</a>
-              <a href="#industries">Real estate</a>
-              <a href="#industries">+ 5 more</a>
+              <a href="/dental">Dental</a>
+              <a href="/legal">Legal</a>
+              <a href="/real-estate">Real estate</a>
+              <a href="/fitness">Fitness</a>
+              <a href="/restaurant">Restaurant</a>
+              <a href="#industries">+ 9 more</a>
             </div>
           </div>
           <div>
-            <div className="footer-col-title">Systems</div>
+            <div className="footer-col-title">Company</div>
             <div className="footer-link-list">
-              <a href="/os">OS Login</a>
-              <a href="/os/sales">Talent</a>
+              <a href="/pricing">Pricing</a>
+              <a href="/contact">Contact</a>
+              <a href="/signin">Sign in</a>
               <a href="/privacy">Privacy</a>
               <a href="/terms">Terms</a>
             </div>

@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvECard } from '@/components/VolvvE'
+import { PriceStrip } from '@/components/conversion/PriceStrip'
+import { IndustryPricingTiers } from '@/components/conversion/IndustryPricingTiers'
+import { RiskReversal } from '@/components/conversion/RiskReversal'
 
 export const metadata: Metadata = {
   title: 'AI Automation for Real Estate Agents & Brokerages — eevolvv',
@@ -83,6 +86,8 @@ const STATS = [
 export default function RealEstatePage() {
   return (
     <main style={{ background: 'var(--paper)' }}>
+      <PriceStrip />
+
 
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <section style={{ borderBottom: '1px solid var(--ink)', padding: '80px 32px 72px' }}>
@@ -99,11 +104,11 @@ export default function RealEstatePage() {
             marginBottom: 24,
             maxWidth: 820,
           }}>
-            Your real estate business is running on<br />
-            <span style={{ color: 'var(--accent)' }}>ghost work.</span>
+            Real estate teams close<br />
+            <span style={{ color: 'var(--accent)' }}>2–4 extra deals/month</span> with instant lead follow-up.
           </h1>
           <p style={{ fontSize: 18, lineHeight: 1.6, opacity: 0.65, maxWidth: 560, marginBottom: 36 }}>
-            Lead follow-up delays, CRM decay, manual transaction coordination — agents and brokerages lose deals every week to work that should be automated. We find it, name it, and build the fix.
+            5-minute lead response, CRM enrichment, listing-update automation, transaction-coordination workflows — done by AI agents, deployed in 14 days. The 5-minute rule alone lifts conversion 3–5×.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
             <a
@@ -351,6 +356,17 @@ export default function RealEstatePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      
+      {/* ── Pricing tiers (direct buy) ───────────────────────────────────────── */}
+      <IndustryPricingTiers />
+
+      {/* ── Risk reversal block ──────────────────────────────────────────────── */}
+      <section style={{ padding: '48px 32px', borderBottom: '1px solid var(--ink)' }}>
+        <div className="site-rail mx-auto">
+          <RiskReversal />
         </div>
       </section>
 

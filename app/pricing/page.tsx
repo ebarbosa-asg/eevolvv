@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { PricingTiers } from './PricingTiers'
 
 export const metadata: Metadata = {
@@ -28,7 +29,9 @@ export default function PricingPage() {
           </p>
         </div>
 
-        <PricingTiers />
+        <Suspense fallback={<div style={{ minHeight: 600 }} />}>
+          <PricingTiers />
+        </Suspense>
 
         {/* Bottom CTA */}
         <div className="pricing-bottom-cta" style={{ marginTop: 60 }}>

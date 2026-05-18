@@ -4,6 +4,9 @@ import { useEffect } from 'react'
 import { VolvvECard } from '@/components/VolvvE'
 import type { GrowthPage } from '@/lib/growth-pages'
 import { trackCTA, trackGrowthPageView } from '@/lib/analytics'
+import { PriceStrip } from '@/components/conversion/PriceStrip'
+import { IndustryPricingTiers } from '@/components/conversion/IndustryPricingTiers'
+import { RiskReversal } from '@/components/conversion/RiskReversal'
 
 export function GrowthLandingPage({ page }: { page: GrowthPage }) {
   useEffect(() => {
@@ -12,6 +15,7 @@ export function GrowthLandingPage({ page }: { page: GrowthPage }) {
 
   return (
     <main style={{ background: 'var(--paper)', color: 'var(--ink)' }}>
+      <PriceStrip />
       <section style={{ padding: '88px 32px 72px', borderBottom: '1px solid var(--ink)' }}>
         <div className="site-rail mx-auto">
           <div className="growth-landing-hero">
@@ -28,21 +32,32 @@ export function GrowthLandingPage({ page }: { page: GrowthPage }) {
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
                 <a
-                  href="/pricing"
-                  onClick={() => trackCTA({ location: 'growth_hero_primary', label: 'START AN AGENT PAGE', target: 'pricing', page: page.slug })}
+                  href="/pricing?tier=core&checkout=1"
+                  onClick={() => trackCTA({ location: 'growth_hero_primary', label: 'BUY AGENT THREE', target: 'tier_checkout', page: page.slug })}
                   className="mono btn-gradient"
                   style={{ padding: '16px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none' }}
                 >
-                  START AN AGENT PAGE →
+                  BUY AGENT THREE $999/MO →
+                </a>
+                <a
+                  href="/pricing"
+                  onClick={() => trackCTA({ location: 'growth_hero_secondary', label: 'SEE ALL PRICING', target: 'pricing', page: page.slug })}
+                  className="mono"
+                  style={{ padding: '15px 24px', fontSize: 11, letterSpacing: '0.16em', fontWeight: 700, textDecoration: 'none', color: 'var(--ink)', border: '1px solid var(--ink)' }}
+                >
+                  COMPARE TIERS
                 </a>
                 <a
                   href="/#diagnostic"
                   onClick={() => trackCTA({ location: 'growth_hero_secondary', label: 'FREE ASSESSMENT', target: 'diagnostic', page: page.slug })}
                   className="mono"
-                  style={{ padding: '15px 24px', fontSize: 11, letterSpacing: '0.16em', fontWeight: 700, textDecoration: 'none', color: 'var(--ink)', border: '1px solid var(--ink)' }}
+                  style={{ padding: '15px 0', fontSize: 11, letterSpacing: '0.16em', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: 4, color: 'var(--ink)', opacity: 0.6 }}
                 >
-                  FREE ASSESSMENT
+                  Free assessment first
                 </a>
+              </div>
+              <div className="mono" style={{ marginTop: 18, fontSize: 11, letterSpacing: '0.14em', opacity: 0.55, color: 'var(--ink)' }}>
+                FROM $499/MO · CANCEL ANYTIME · LIVE IN 14 DAYS · $2K/MO RECOVERED OR YOUR MONEY BACK
               </div>
             </div>
             <div>
@@ -132,6 +147,14 @@ export function GrowthLandingPage({ page }: { page: GrowthPage }) {
         </div>
       </section>
 
+      <IndustryPricingTiers />
+
+      <section style={{ padding: '54px 32px 0' }}>
+        <div className="site-rail mx-auto">
+          <RiskReversal />
+        </div>
+      </section>
+
       <section style={{ padding: '70px 32px 84px' }}>
         <div className="site-rail mx-auto">
           <div className="growth-landing-cta">
@@ -140,19 +163,19 @@ export function GrowthLandingPage({ page }: { page: GrowthPage }) {
                 § 05 · START HERE
               </div>
               <h2 style={{ fontSize: 'clamp(30px, 4vw, 54px)', lineHeight: 1.03, letterSpacing: '-0.03em', fontWeight: 700, margin: 0 }}>
-                Choose the agent tier. Start the build map.
+                Pick a tier. Pay. Live in 14 days.
               </h2>
               <p style={{ fontSize: 15, lineHeight: 1.65, opacity: 0.66, marginTop: 18, maxWidth: 640 }}>
                 {page.tierFit}
               </p>
             </div>
             <a
-              href="/pricing"
-              onClick={() => trackCTA({ location: 'growth_final_cta', label: 'START AN AGENT PAGE', target: 'pricing', page: page.slug })}
+              href="/pricing?tier=core&checkout=1"
+              onClick={() => trackCTA({ location: 'growth_final_cta', label: 'BUY AGENT THREE', target: 'tier_checkout', page: page.slug })}
               className="mono btn-gradient"
               style={{ padding: '18px 28px', fontSize: 12, letterSpacing: '0.18em', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}
             >
-              START AN AGENT PAGE →
+              BUY AGENT THREE →
             </a>
           </div>
         </div>

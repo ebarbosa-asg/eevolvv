@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvECard } from '@/components/VolvvE'
+import { PriceStrip } from '@/components/conversion/PriceStrip'
+import { IndustryPricingTiers } from '@/components/conversion/IndustryPricingTiers'
+import { RiskReversal } from '@/components/conversion/RiskReversal'
 
 export const metadata: Metadata = {
   title: 'AI Automation for Dental Practices — eevolvv',
@@ -83,6 +86,8 @@ const STATS = [
 export default function DentalPage() {
   return (
     <main style={{ background: 'var(--paper)' }}>
+      <PriceStrip />
+
 
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <section style={{ borderBottom: '1px solid var(--ink)', padding: '80px 32px 72px' }}>
@@ -99,11 +104,11 @@ export default function DentalPage() {
             marginBottom: 24,
             maxWidth: 820,
           }}>
-            Your dental practice is running on<br />
-            <span style={{ color: 'var(--accent)' }}>ghost work.</span>
+            Dental practices recover<br />
+            <span style={{ color: 'var(--accent)' }}>$36K+/year</span> in missed recalls and no-shows.
           </h1>
           <p style={{ fontSize: 18, lineHeight: 1.6, opacity: 0.65, maxWidth: 560, marginBottom: 36 }}>
-            Recall campaigns, no-shows, new patient intake, insurance pre-auth — dental practices lose 15–20 hours every week to tasks that should be automated. We find them, name them, and build the fix.
+            Recalls, no-shows, insurance pre-auth, intake forms — done by AI agents, deployed in 14 days. Most practices recover 15–20 hours/week and $2K–$4K/month in lost revenue.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
             <a
@@ -351,6 +356,17 @@ export default function DentalPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      
+      {/* ── Pricing tiers (direct buy) ───────────────────────────────────────── */}
+      <IndustryPricingTiers />
+
+      {/* ── Risk reversal block ──────────────────────────────────────────────── */}
+      <section style={{ padding: '48px 32px', borderBottom: '1px solid var(--ink)' }}>
+        <div className="site-rail mx-auto">
+          <RiskReversal />
         </div>
       </section>
 

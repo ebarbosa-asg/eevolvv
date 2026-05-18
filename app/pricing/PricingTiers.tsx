@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { TIER_CONFIGS, type Tier } from '@/lib/stripe-prices'
 import { ADD_ONS, WEBSITE_ADD_ON } from '@/lib/agent-products'
 import { ReportRoadmapOffer } from '@/components/ReportRoadmapOffer'
+import { RiskReversal } from '@/components/conversion/RiskReversal'
+import { TrustMarks } from '@/components/conversion/TrustMarks'
 
 const DISPLAY_FEATURES: Record<Tier, string[]> = {
   seed: [
@@ -27,11 +30,14 @@ const DISPLAY_FEATURES: Record<Tier, string[]> = {
 }
 
 export function PricingTiers() {
-  const [interval, setInterval] = useState<'annual' | 'monthly'>('annual')
+  const params = useSearchParams()
+  const initialInterval = params?.get('interval') === 'monthly' ? 'monthly' : 'annual'
+  const [interval, setInterval] = useState<'annual' | 'monthly'>(initialInterval)
   const [loading, setLoading] = useState<Tier | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const autoCheckoutFired = useRef(false)
 
-  async function handleStart(tier: Tier) {
+  async function handleStart(tier: Tier, intervalArg?: 'annual' | 'monthly') {
     setErrors(e => ({ ...e, [tier]: '' }))
     setLoading(tier)
 
@@ -39,7 +45,7 @@ export function PricingTiers() {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier, interval }),
+        body: JSON.stringify({ tier, interval: intervalArg ?? interval }),
       })
       const data = await res.json()
       if (data.url) {
@@ -54,8 +60,26 @@ export function PricingTiers() {
     }
   }
 
+  // Auto-fire checkout when arriving via ?tier=X&checkout=1 deep-links
+  // (used by industry pages, SEO pages, revenue calculator, contact buttons).
+  useEffect(() => {
+    if (autoCheckoutFired.current) return
+    const checkout = params?.get('checkout')
+    const tierParam = params?.get('tier') as Tier | null
+    if (checkout === '1' && tierParam && ['seed', 'core', 'evolve'].includes(tierParam)) {
+      autoCheckoutFired.current = true
+      handleStart(tierParam, initialInterval)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params])
+
   return (
     <>
+      {/* Risk reversal — guarantee + cancel-anytime + delivery SLA */}
+      <div style={{ marginBottom: 28 }}>
+        <RiskReversal />
+      </div>
+
       {/* Toggle */}
       <ReportRoadmapOffer compact />
 
@@ -162,6 +186,7 @@ export function PricingTiers() {
                 >
                   {isLoading ? 'REDIRECTING...' : `START ${config.name.toUpperCase()} →`}
                 </button>
+                <TrustMarks inverted={isCore} />
               </div>
             </div>
           )
@@ -219,11 +244,14 @@ export function PricingTiers() {
       {/* Compact FAQ */}
       <div style={{ marginTop: 56, display: 'grid', gap: 20 }}>
         {[
-          { q: 'Can I cancel?', a: 'Monthly: cancel anytime, ends at period close. Annual: non-refundable once product work starts.' },
-          { q: 'What if a product runs late?', a: 'We extend your subscription by the delay — no charge.' },
+          { q: 'How does the money-back guarantee work?', a: 'If your first audit doesn\'t identify at least $2,000/month in recoverable ghost work, we refund the first month — no questions asked. Applies to all monthly plans and the first 30 days of annual plans.' },
+          { q: 'Can I cancel?', a: 'Monthly: cancel anytime in one click from your billing portal; access continues until the period closes. Annual: full refund within the first 30 days; after that, prorated against work delivered.' },
+          { q: 'What if a product runs late?', a: 'We extend your subscription by the exact delay — no extra charge. 14-day SLA on first agent.' },
+          { q: 'What do I get on day one?', a: 'A private agent page, your first workflow scoped and queued, and a 14-day delivery commitment. No demo call required.' },
+          { q: 'What integrations are supported?', a: 'Anything with an API. Common: Google Workspace, HubSpot, Salesforce, Zapier, Make, Twilio, Stripe, Square, Acuity, Calendly, Slack, QuickBooks, Notion, Airtable. Tell us in onboarding.' },
           { q: 'What is the website add-on?', a: 'One flat $2,000 website build. The site becomes a visible product file in your Ghost Locker.' },
           { q: 'What is SCO management?', a: 'Search and ChatGPT optimization: we turn your services, proof, FAQs, and content into discoverable assets.' },
-          { q: 'What does tangible mean?', a: 'Every service becomes a card or file: scope, status, owner, link, test result, report, or next action.' },
+          { q: 'Who owns the agents and data?', a: 'You do. If you cancel, your agent page, workflows, and data export as a portable bundle.' },
         ].map(({ q, a }) => (
           <div key={q} className="pricing-qa-row" style={{ paddingBottom: 20, borderBottom: '1px solid var(--rule)' }}>
             <div style={{ fontWeight: 600, fontSize: 14 }}>{q}</div>

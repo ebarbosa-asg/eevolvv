@@ -22,10 +22,10 @@ const CHAOS = [
   { icon: '🔄', label: 'Repeat tasks' },
 ]
 
-// ─── Pricing ─────────────────────────────────────────────────────────────────
+// ─── Pricing — tiers match canonical /pricing 1:1 ────────────────────────────
 const PLANS = [
   {
-    name: 'Starter',
+    name: 'Agent One',
     price: '$499',
     period: '/mo',
     line: 'One AI agent. One workflow automated.',
@@ -35,11 +35,12 @@ const PLANS = [
       'Weekly check-in report',
       'Direct line to Eduardo',
     ],
-    cta: 'Start here',
+    cta: 'Buy Agent One',
+    href: '/pricing?tier=seed&checkout=1',
     highlight: false,
   },
   {
-    name: 'Growth',
+    name: 'Agent Three',
     price: '$999',
     period: '/mo',
     line: 'Three agents running while you focus on the work.',
@@ -50,11 +51,12 @@ const PLANS = [
       'Monthly optimization call',
       'Direct line to Eduardo',
     ],
-    cta: 'Most popular',
+    cta: 'Buy Agent Three',
+    href: '/pricing?tier=core&checkout=1',
     highlight: true,
   },
   {
-    name: 'Scale',
+    name: 'Agent Five',
     price: '$1,999',
     period: '/mo',
     line: 'Five agents, ads, SEO — full AI ops layer.',
@@ -65,7 +67,8 @@ const PLANS = [
       'Weekly reports + calls',
       'Priority response',
     ],
-    cta: 'Go full AI',
+    cta: 'Buy Agent Five',
+    href: '/pricing?tier=evolve&checkout=1',
     highlight: false,
   },
 ]
@@ -320,7 +323,7 @@ export default function MarketingPage() {
                   ))}
                 </ul>
                 <a
-                  href="https://eevolvv.com/contact"
+                  href={plan.href}
                   style={{
                     display: 'block', textAlign: 'center',
                     padding: '13px 24px',

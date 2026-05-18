@@ -159,17 +159,34 @@ export default function RevenueCalculatorPage() {
           </div>
         </div>
 
-        {/* CTA */}
+        {/* CTA — direct to checkout from the highest-intent moment on the site */}
         <div className="text-center">
-          <p className="text-lg opacity-60 mb-6">
-            Ready to make this real? Start with a free diagnostic.
+          <p className="text-lg opacity-70 mb-2 font-semibold">
+            That ${(totalMRR * 12).toLocaleString()} is sitting there right now. Let's go capture it.
           </p>
-          <Link
-            href="/ai-agents-for-small-business"
-            className="inline-block bg-ink text-paper px-10 py-5 font-bold text-lg tracking-tight hover:bg-accent transition-colors"
-          >
-            Start Your Free Diagnostic →
-          </Link>
+          <p className="text-sm opacity-50 mb-6">
+            Agent Three deploys all the workflows above — live in 14 days, $2K/mo recovered or your money back.
+          </p>
+          <div className="flex flex-col items-center gap-3">
+            <Link
+              href="/pricing?tier=core&checkout=1"
+              className="inline-block bg-ink text-paper px-10 py-5 font-bold text-lg tracking-tight hover:bg-accent transition-colors"
+            >
+              Start Agent Three — $999/mo →
+            </Link>
+            <div className="flex gap-4 text-sm">
+              <Link href="/pricing" className="opacity-60 underline underline-offset-4 hover:opacity-100">
+                Compare tiers
+              </Link>
+              <span className="opacity-30">·</span>
+              <Link href="/#diagnostic" className="opacity-60 underline underline-offset-4 hover:opacity-100">
+                Free diagnostic first
+              </Link>
+            </div>
+            <p className="mono text-[10px] opacity-40 tracking-[0.18em] uppercase mt-2">
+              Secured by Stripe · Visa · MC · Amex · Cancel anytime
+            </p>
+          </div>
         </div>
       </section>
     </main>

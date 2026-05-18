@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvECard } from '@/components/VolvvE'
+import { PriceStrip } from '@/components/conversion/PriceStrip'
+import { IndustryPricingTiers } from '@/components/conversion/IndustryPricingTiers'
+import { RiskReversal } from '@/components/conversion/RiskReversal'
 
 export const metadata: Metadata = {
   title: 'AI Automation for Law Firms — eevolvv',
@@ -83,6 +86,8 @@ const STATS = [
 export default function LegalPage() {
   return (
     <main style={{ background: 'var(--paper)' }}>
+      <PriceStrip />
+
 
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <section style={{ borderBottom: '1px solid var(--ink)', padding: '80px 32px 72px' }}>
@@ -99,11 +104,11 @@ export default function LegalPage() {
             marginBottom: 24,
             maxWidth: 820,
           }}>
-            Your law firm is running on<br />
-            <span style={{ color: 'var(--accent)' }}>ghost work.</span>
+            Law firms recover<br />
+            <span style={{ color: 'var(--accent)' }}>20+ billable hours/week</span> from intake, follow-up, and collections.
           </h1>
           <p style={{ fontSize: 18, lineHeight: 1.6, opacity: 0.65, maxWidth: 560, marginBottom: 36 }}>
-            Client intake bottlenecks, unbilled time, slow collections, manual document assembly — law firms lose 15–20 hours every week to non-billable work that should be automated. We find it, name it, and build the fix.
+            Client intake, conflict checks, unbilled time capture, doc assembly, collections follow-up — done by AI agents, deployed in 14 days. Most firms recapture 15–20 non-billable hours/week and accelerate AR by 30%.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
             <a
@@ -351,6 +356,17 @@ export default function LegalPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      
+      {/* ── Pricing tiers (direct buy) ───────────────────────────────────────── */}
+      <IndustryPricingTiers />
+
+      {/* ── Risk reversal block ──────────────────────────────────────────────── */}
+      <section style={{ padding: '48px 32px', borderBottom: '1px solid var(--ink)' }}>
+        <div className="site-rail mx-auto">
+          <RiskReversal />
         </div>
       </section>
 

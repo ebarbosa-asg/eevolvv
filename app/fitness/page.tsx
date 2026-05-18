@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvECard } from '@/components/VolvvE'
+import { PriceStrip } from '@/components/conversion/PriceStrip'
+import { IndustryPricingTiers } from '@/components/conversion/IndustryPricingTiers'
+import { RiskReversal } from '@/components/conversion/RiskReversal'
 
 export const metadata: Metadata = {
   title: 'AI Automation for Gyms & Fitness Studios — eevolvv',
@@ -83,6 +86,8 @@ const STATS = [
 export default function FitnessPage() {
   return (
     <main style={{ background: 'var(--paper)' }}>
+      <PriceStrip />
+
 
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <section style={{ borderBottom: '1px solid var(--ink)', padding: '80px 32px 72px' }}>
@@ -99,12 +104,11 @@ export default function FitnessPage() {
             marginBottom: 24,
             maxWidth: 820,
           }}>
-            Your gym is running on<br />
-            <span style={{ color: 'var(--accent)' }}>ghost work.</span>
+            Gyms cut churn by <span style={{ color: 'var(--accent)' }}>30%</span><br />
+            and recover <span style={{ color: 'var(--accent)' }}>$48K/year</span> in failed payments.
           </h1>
           <p style={{ fontSize: 18, lineHeight: 1.6, opacity: 0.65, maxWidth: 560, marginBottom: 36 }}>
-            Member churn, failed payments, lead drop-off, manual scheduling — fitness studios lose
-            15–25 hours every week to tasks that should be automated. We find them, name them, and build the fix.
+            Failed-payment recovery, churn-risk outreach, lead follow-up, class reminders — done by AI agents, deployed in 14 days. Most studios recover 15–25 hours/week and cut member churn by 25–35%.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
             <a
@@ -352,6 +356,17 @@ export default function FitnessPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      
+      {/* ── Pricing tiers (direct buy) ───────────────────────────────────────── */}
+      <IndustryPricingTiers />
+
+      {/* ── Risk reversal block ──────────────────────────────────────────────── */}
+      <section style={{ padding: '48px 32px', borderBottom: '1px solid var(--ink)' }}>
+        <div className="site-rail mx-auto">
+          <RiskReversal />
         </div>
       </section>
 
