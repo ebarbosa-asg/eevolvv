@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { PricingTiers } from './PricingTiers'
+import { AutoCheckoutHandler } from './AutoCheckoutHandler'
 
 export const metadata: Metadata = {
   title: 'Pricing — eevolvv | Client Agent Pages',
@@ -29,9 +30,10 @@ export default function PricingPage() {
           </p>
         </div>
 
-        <Suspense fallback={<div style={{ minHeight: 600 }} />}>
-          <PricingTiers />
+        <Suspense fallback={null}>
+          <AutoCheckoutHandler />
         </Suspense>
+        <PricingTiers />
 
         {/* Bottom CTA */}
         <div className="pricing-bottom-cta" style={{ marginTop: 60 }}>

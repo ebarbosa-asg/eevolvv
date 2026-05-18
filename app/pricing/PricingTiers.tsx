@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState } from 'react'
 import { TIER_CONFIGS, type Tier } from '@/lib/stripe-prices'
 import { ADD_ONS, WEBSITE_ADD_ON } from '@/lib/agent-products'
 import { ReportRoadmapOffer } from '@/components/ReportRoadmapOffer'
@@ -30,14 +29,14 @@ const DISPLAY_FEATURES: Record<Tier, string[]> = {
 }
 
 export function PricingTiers() {
-  const params = useSearchParams()
-  const initialInterval = params?.get('interval') === 'monthly' ? 'monthly' : 'annual'
-  const [interval, setInterval] = useState<'annual' | 'monthly'>(initialInterval)
+  // Default to annual (the 2-months-free framing). Auto-checkout for
+  // deep-links is handled separately by <AutoCheckoutHandler /> so this
+  // component stays SSR-able.
+  const [interval, setInterval] = useState<'annual' | 'monthly'>('annual')
   const [loading, setLoading] = useState<Tier | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const autoCheckoutFired = useRef(false)
 
-  async function handleStart(tier: Tier, intervalArg?: 'annual' | 'monthly') {
+  async function handleStart(tier: Tier) {
     setErrors(e => ({ ...e, [tier]: '' }))
     setLoading(tier)
 
@@ -45,7 +44,7 @@ export function PricingTiers() {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier, interval: intervalArg ?? interval }),
+        body: JSON.stringify({ tier, interval }),
       })
       const data = await res.json()
       if (data.url) {
@@ -59,19 +58,6 @@ export function PricingTiers() {
       setLoading(null)
     }
   }
-
-  // Auto-fire checkout when arriving via ?tier=X&checkout=1 deep-links
-  // (used by industry pages, SEO pages, revenue calculator, contact buttons).
-  useEffect(() => {
-    if (autoCheckoutFired.current) return
-    const checkout = params?.get('checkout')
-    const tierParam = params?.get('tier') as Tier | null
-    if (checkout === '1' && tierParam && ['seed', 'core', 'evolve'].includes(tierParam)) {
-      autoCheckoutFired.current = true
-      handleStart(tierParam, initialInterval)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params])
 
   return (
     <>
