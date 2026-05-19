@@ -513,3 +513,246 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   .footer-grid { grid-template-columns: 1fr; }
   .arcade-track { animation-duration: 50s; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CAPABILITY TRIPTYCH — upgraded animations
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Card 1: Organize (embedded chaos→sort→order) ── */
+.cap-org { border: 1px solid var(--ink); overflow: hidden; }
+.cap-org .org-stage-head { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--rule); background: rgba(20,20,19,.03); }
+.cap-org .org-stage-tag { font-size: 9px; }
+.cap-org .org-stage-state { font-size: 9px; }
+
+.cap-org-canvas {
+  position: relative;
+  height: 236px;
+  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(20,20,19,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,20,19,.035) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Sorted state: subtle green wash */
+.cap-org.org-sorted .cap-org-canvas { background-color: rgba(74,222,128,0.025); transition: background-color 0.8s ease; }
+.cap-org.org-chaos .cap-org-canvas   { background-color: transparent; transition: none; }
+
+/* Volvv-E size override for the smaller canvas */
+.cap-org-vlvv { width: 80px !important; bottom: -88px !important; }
+.cap-org.org-sorting .cap-org-vlvv,
+.cap-org.org-sorted  .cap-org-vlvv { bottom: 6px !important; }
+
+/* Footer data strip */
+.cap-org-foot { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--ink); background: rgba(20,20,19,.02); }
+.cap-org-foot > div { padding: 12px 14px; border-left: 1px solid var(--rule); display: flex; flex-direction: column; gap: 3px; }
+.cap-org-foot > div:first-child { border-left: none; }
+.cap-org-foot-label { font-size: 8px; letter-spacing: .22em; color: rgba(20,20,19,.4); font-weight: 700; text-transform: uppercase; }
+.cap-org-foot-val { font-size: 11px; letter-spacing: .04em; font-weight: 500; color: var(--ink); transition: color .4s ease; }
+.cap-org-foot-val.sorted { color: var(--accent); }
+
+/* Enhance beam glow for the card */
+.cap-org .org-beam { background: var(--accent); box-shadow: 0 0 28px rgba(140,43,26,.9), 0 0 6px rgba(140,43,26,1); width: 3px; }
+
+/* ── Card 2: Website Builder ── */
+.cap-build-anim {
+  border: 1px solid var(--ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  background: rgba(20,20,19,0.02);
+}
+.cap-build-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(20,20,19,0.04);
+}
+.cap-build-dots { display: flex; gap: 5px; }
+.cap-build-dots span { width: 7px; height: 7px; background: var(--accent); opacity: 0.6; }
+.cap-build-url { flex: 1; font-size: 9px; letter-spacing: 0.1em; color: rgba(20,20,19,0.44); }
+.cap-live-badge {
+  background: var(--accent);
+  color: var(--paper);
+  padding: 2px 8px;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+@keyframes livePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.72; } }
+.cap-build-pct { font-size: 9px; letter-spacing: 0.16em; color: var(--accent); font-weight: 700; min-width: 32px; text-align: right; }
+
+.cap-build-canvas {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+  padding: 12px;
+  flex: 1;
+  position: relative;
+}
+.cap-block {
+  min-height: 38px;
+  border: 1px solid rgba(20,20,19,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(20,20,19,0.3);
+  background: transparent;
+  transition: all 0.28s cubic-bezier(0.2,0.8,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.cap-block.wide { grid-column: 1 / -1; min-height: 58px; }
+.cap-block.built {
+  border-color: var(--ink);
+  background: rgba(20,20,19,0.055);
+  color: var(--accent);
+  font-weight: 700;
+  animation: blockPop 0.36s cubic-bezier(0.2,0.8,0.2,1) both;
+}
+.cap-block.pending { opacity: 0.18; }
+@keyframes blockPop {
+  0%   { transform: scale(0.84); opacity: 0; }
+  60%  { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+.cap-block-tag { color: rgba(20,20,19,0.35); font-size: 8px; font-weight: 400; }
+.cap-block.built .cap-block-tag { color: rgba(140,43,26,0.5); }
+
+/* Scan beam that sweeps over the built canvas */
+.cap-build-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, rgba(140,43,26,0.07) 50%, transparent 100%);
+  animation: buildScan 2.8s ease-in-out infinite;
+}
+@keyframes buildScan {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+.cap-build-status {
+  padding: 9px 13px;
+  border-top: 1px solid var(--rule);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(20,20,19,0.3);
+  background: rgba(20,20,19,0.03);
+  opacity: 0;
+  transition: opacity 0.55s ease, color 0.55s ease;
+}
+.cap-build-status.visible { opacity: 1; color: var(--accent); }
+.cap-build-arrow { color: var(--accent); font-weight: 700; margin-right: 2px; }
+
+/* ── Card 3: Marketing Engine ── */
+.cap-mkt-anim {
+  border: 1px solid var(--ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  background: rgba(20,20,19,0.02);
+}
+.cap-mkt-head {
+  display: grid;
+  grid-template-columns: 54px 1fr 90px;
+  gap: 10px;
+  padding: 9px 13px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(20,20,19,0.38);
+  background: rgba(20,20,19,0.03);
+}
+.cap-mkt-row {
+  display: grid;
+  grid-template-columns: 54px 1fr 90px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 13px;
+  border-bottom: 1px solid var(--rule);
+  transition: background 0.28s ease;
+  position: relative;
+}
+.cap-mkt-row:last-of-type { border-bottom: none; }
+.cap-mkt-row.active { background: rgba(140,43,26,0.055); }
+.cap-mkt-row.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+}
+.cap-mkt-name { font-size: 9px; letter-spacing: 0.16em; font-weight: 700; color: var(--accent); text-transform: uppercase; }
+.cap-mkt-sub  { font-size: 8px; letter-spacing: 0.07em; color: rgba(20,20,19,0.42); text-align: right; }
+
+.cap-mkt-track {
+  height: 5px;
+  background: rgba(20,20,19,0.08);
+  position: relative;
+  overflow: hidden;
+}
+.cap-mkt-fill {
+  position: absolute;
+  top: 0; left: 0; height: 100%;
+  width: var(--pct, 0%);
+  background: var(--accent);
+  opacity: 0.65;
+  transition: width 0.6s ease;
+}
+.cap-mkt-row.active .cap-mkt-fill { opacity: 1; }
+.cap-mkt-shine {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 24px;
+  background: linear-gradient(90deg, transparent, rgba(250,247,240,0.55), transparent);
+  animation: mktShine 1.2s ease-out infinite;
+}
+@keyframes mktShine {
+  0%   { left: -24px; opacity: 0; }
+  20%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+.cap-mkt-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 13px;
+  border-top: 1px solid var(--rule);
+  background: rgba(20,20,19,0.025);
+}
+.cap-mkt-leads { display: flex; align-items: baseline; gap: 10px; }
+.cap-mkt-leads-label { font-size: 8px; letter-spacing: 0.22em; color: rgba(20,20,19,0.42); text-transform: uppercase; }
+.cap-mkt-leads b { font-size: 30px; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; transition: transform 0.25s ease; }
+.cap-mkt-leads.pulse b { animation: leadPop 0.4s cubic-bezier(0.2,0.8,0.2,1); }
+@keyframes leadPop { 0% { transform: scale(1); } 40% { transform: scale(1.22); color: var(--accent); } 100% { transform: scale(1); } }
+.cap-mkt-loop-tag { font-size: 8px; letter-spacing: 0.18em; color: rgba(20,20,19,0.38); text-transform: uppercase; }
+
+/* ── Responsive overrides ── */
+@media (max-width: 640px) {
+  .cap-org-canvas { height: 200px; }
+  .cap-org-vlvv { width: 64px !important; }
+  .cap-org-foot { grid-template-columns: 1fr; }
+  .cap-org-foot > div { border-left: none; border-top: 1px solid var(--rule); padding: 10px 14px; }
+  .cap-org-foot > div:first-child { border-top: none; }
+  .cap-build-anim, .cap-mkt-anim { min-height: 240px; }
+  .cap-mkt-row { grid-template-columns: 46px 1fr 72px; gap: 7px; }
+  .cap-mkt-sub { font-size: 7px; }
+}
