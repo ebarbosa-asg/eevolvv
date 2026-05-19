@@ -57,8 +57,7 @@ export async function POST(req: NextRequest) {
           systemPrompt,
           (chunk) => {
             // Check if this chunk signals completion
-            const chunkStr = typeof chunk === 'string' ? chunk : JSON.stringify(chunk)
-            if (chunkStr.includes('[READY]') && !completed) {
+            if (chunk.type === 'delta' && chunk.text?.includes('[READY]') && !completed) {
               completed = true
               try {
                 const ph = getPostHogClient()
