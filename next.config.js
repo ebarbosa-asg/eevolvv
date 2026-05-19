@@ -3,6 +3,13 @@ const { withSentryConfig } = require('@sentry/nextjs')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   skipTrailingSlashRedirect: true,
+  async redirects() {
+    return [
+      // /extract was a half-built page; route all visitors to /pricing
+      // (config-level redirect — Vercel-cache-safe).
+      { source: '/extract', destination: '/pricing', permanent: false },
+    ]
+  },
   async rewrites() {
     return [
       {
