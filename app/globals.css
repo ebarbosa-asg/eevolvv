@@ -54,6 +54,22 @@ body {
 ::-webkit-scrollbar-thumb { background: rgba(20,20,19,0.2); border-radius: 0; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(20,20,19,0.4); }
 
+/* Portal v2 animations */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Timeline vertical line */
+.timeline-line {
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(20,20,19,0.12);
+}
+
 input, textarea, button, select { font: inherit; color: inherit; }
 input:focus, textarea:focus, select:focus { outline: none; }
 
