@@ -106,7 +106,7 @@ export default function OrganizeV3() {
 
         <div className={`org-stage org-${phase}`}>
           <div className="org-stage-head">
-            <span className="live-ops-head-dot" />
+            <span className="org-head-dot" />
             <span className="org-stage-tag">VOLVV-E · MODE 02 / SORTER</span>
             <span className="org-stage-state">{statusText}</span>
           </div>

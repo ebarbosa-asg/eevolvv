@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * Money-back guarantee + trust block. Resolves the conversion buyer's two
- * biggest objections: "what if it doesn't work?" and "what if I want out?"
+ * Free-first trust block. Resolves the conversion buyer's two biggest
+ * objections with useful artifacts and transparent cancellation terms.
  *
  * Use above tier-selection on /pricing, on industry pages near checkout,
  * and on /contact above the form.
@@ -26,9 +26,9 @@ export function RiskReversal({ inverted = false }: { inverted?: boolean }) {
       }}
     >
       <Pillar
-        marker="GUARANTEE"
-        title="$2K/mo or your money back"
-        body="If we don't surface at least $2,000/month in recoverable ghost work in your first audit, you pay nothing and keep the report."
+        marker="FREE FIRST"
+        title="Useful before you pay"
+        body="Start with a free ghost-work scan, report, and roadmap preview. Spend only when the next build step is obvious."
       />
       <Pillar
         marker="MONTHLY · NO LOCK-IN"

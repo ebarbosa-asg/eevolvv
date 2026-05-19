@@ -61,7 +61,7 @@ export function PricingTiers() {
 
   return (
     <>
-      {/* Risk reversal — guarantee + cancel-anytime + delivery SLA */}
+      {/* Free-first trust block + cancel-anytime + delivery SLA */}
       <div style={{ marginBottom: 28 }}>
         <RiskReversal />
       </div>
@@ -230,8 +230,8 @@ export function PricingTiers() {
       {/* Compact FAQ */}
       <div style={{ marginTop: 56, display: 'grid', gap: 20 }}>
         {[
-          { q: 'How does the money-back guarantee work?', a: 'If your first audit doesn\'t identify at least $2,000/month in recoverable ghost work, we refund the first month — no questions asked. Applies to all monthly plans and the first 30 days of annual plans.' },
-          { q: 'Can I cancel?', a: 'Monthly: cancel anytime in one click from your billing portal; access continues until the period closes. Annual: full refund within the first 30 days; after that, prorated against work delivered.' },
+          { q: 'Can I try something free first?', a: 'Yes. Start with the free diagnostic, report, and roadmap preview. It shows the ghost work, the likely recovery, and the first workflows before you choose a paid build.' },
+          { q: 'Can I cancel?', a: 'Monthly plans cancel anytime in one click from your billing portal; access continues until the period closes. Annual plans are handled by the service agreement attached to the engagement.' },
           { q: 'What if a product runs late?', a: 'We extend your subscription by the exact delay — no extra charge. 14-day SLA on first agent.' },
           { q: 'What do I get on day one?', a: 'A private agent page, your first workflow scoped and queued, and a 14-day delivery commitment. No demo call required.' },
           { q: 'What integrations are supported?', a: 'Anything with an API. Common: Google Workspace, HubSpot, Salesforce, Zapier, Make, Twilio, Stripe, Square, Acuity, Calendly, Slack, QuickBooks, Notion, Airtable. Tell us in onboarding.' },

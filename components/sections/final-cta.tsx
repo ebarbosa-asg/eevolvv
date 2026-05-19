@@ -61,11 +61,11 @@ export function FinalCTA() {
                 ))}
               </div>
 
-              {/* Guarantee */}
+              {/* Free-first proof */}
               <div className="bg-green-950/30 border border-green-900/50 rounded-lg p-4 mb-8">
-                <p className="text-green-400 font-bold mb-1">100% Money-Back Guarantee</p>
+                <p className="text-green-400 font-bold mb-1">Free report first</p>
                 <p className="text-gray-400 text-sm">
-                  If we don't save you at least $2,000/month, we'll refund you 100%. No questions asked.
+                  Get the ghost-work scan and roadmap preview before you pick a paid build.
                 </p>
               </div>
 

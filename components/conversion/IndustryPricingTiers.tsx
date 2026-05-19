@@ -62,7 +62,7 @@ export function IndustryPricingTiers({ industryName }: { industryName?: string }
             Three tiers. Pick one. {industryName ? `Live in your ${industryName.toLowerCase()} ` : 'Live in '}14 days.
           </h2>
           <p style={{ fontSize: 15, opacity: 0.62, marginTop: 12, maxWidth: 620, lineHeight: 1.55 }}>
-            Direct checkout — no sales call, no deck, no demo. Cancel monthly anytime. $2K/mo recovered or your money back.
+            Direct checkout — no sales call, no deck, no demo. Run the free report first, then pick the build tier when the next move is obvious.
           </p>
         </div>
 

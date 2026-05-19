@@ -204,7 +204,7 @@ export function SolutionSteps() {
             How it works
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Three steps. Seven days. Zero risk.
+            Three steps. Seven days. Free report first.
           </p>
         </motion.div>
 

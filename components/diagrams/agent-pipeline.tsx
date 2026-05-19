@@ -148,7 +148,7 @@ export function AgentPipeline({ onComplete }: AgentPipelineProps) {
         <h2 className="text-3xl md:text-4xl font-bold">
           We watch. We build. We deploy.
         </h2>
-        <p className="text-ink/50 mt-2">Three stages. Seven days. Zero risk.</p>
+        <p className="text-ink/50 mt-2">Three stages. Seven days. Free report first.</p>
       </div>
 
       {/* Pipeline */}

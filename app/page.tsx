@@ -2,36 +2,8 @@
 
 import './homepage-v3.css'
 import HeroV3 from '@/components/sections/hero-v3'
-import ProtocolV3 from '@/components/sections/protocol-v3'
-import IndustriesV3 from '@/components/sections/industries-v3'
-import OrganizeV3 from '@/components/sections/organize-v3'
+import CapabilityTriptych from '@/components/sections/capability-triptych'
 import CTAV3 from '@/components/sections/cta-v3'
-
-// ── Arcade ticker ─────────────────────────────────────────────────────
-const TICKER_PHRASES = [
-  'A SERVICE NOT SOFTWARE',
-  'EEVOLVVING FORWARD TOGETHER',
-  'FIND THE GHOST WORK',
-  'BUILD THE AGENTS',
-  'COMPOUND FOREVER',
-  'BUSINESS EVOLUTION · NOT AI AUTOMATION',
-]
-const ALL_PHRASES = [...TICKER_PHRASES, ...TICKER_PHRASES]
-
-function ArcadeTicker() {
-  return (
-    <div className="arcade-ticker" aria-hidden="true">
-      <div className="arcade-track">
-        {ALL_PHRASES.map((p, i) => (
-          <span key={i}>
-            <span className="dot">◈</span>
-            {p}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 // ── Header ────────────────────────────────────────────────────────────
 function SiteHeader() {
@@ -43,13 +15,12 @@ function SiteHeader() {
           <img src="/logo.png" alt="eevolvv" style={{ imageRendering: 'pixelated' }} />
         </a>
         <nav className="primary">
-          <a href="#protocol" className="active">Protocol</a>
-          <a href="#industries">Verticals</a>
-          <a href="/pricing">Pricing</a>
-          <a href="#diagnostic">Free audit</a>
+          <a href="#free-report" className="active">Free report</a>
+          <a href="#capabilities">Capabilities</a>
+          <a href="/api/stripe/checkout?product=report-roadmap&source=header">Roadmap</a>
         </nav>
-        <a href="/pricing" className="header-cta">
-          See pricing
+        <a href="/diagnostic" className="header-cta">
+          Get report
           <span>→</span>
         </a>
       </div>
@@ -96,12 +67,11 @@ function SiteFooter() {
             </p>
           </div>
           <div>
-            <div className="footer-col-title">Protocol</div>
+            <div className="footer-col-title">Start</div>
             <div className="footer-link-list">
-              <a href="#protocol">Diagnose</a>
-              <a href="#protocol">Onboard</a>
-              <a href="#protocol">Build agents</a>
-              <a href="#protocol">Maintain</a>
+              <a href="/diagnostic">Free diagnostic</a>
+              <a href="/api/stripe/checkout?product=report-roadmap&source=footer">Roadmap upgrade</a>
+              <a href="/pricing">Build tiers</a>
             </div>
           </div>
           <div>
@@ -154,10 +124,7 @@ export default function Home() {
     <main style={{ background: 'var(--paper)', color: 'var(--ink)', overflowX: 'hidden' }}>
       <SiteHeader />
       <HeroV3 />
-      <ArcadeTicker />
-      <ProtocolV3 />
-      <IndustriesV3 />
-      <OrganizeV3 />
+      <CapabilityTriptych />
       <CTAV3 />
       <SiteFooter />
     </main>

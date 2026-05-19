@@ -165,7 +165,7 @@ export default function RevenueCalculatorPage() {
             That ${(totalMRR * 12).toLocaleString()} is sitting there right now. Let's go capture it.
           </p>
           <p className="text-sm opacity-50 mb-6">
-            Agent Three deploys all the workflows above — live in 14 days, $2K/mo recovered or your money back.
+            Agent Three deploys the workflows above. Want the map first? Run the free diagnostic, then choose the build tier.
           </p>
           <div className="flex flex-col items-center gap-3">
             <Link

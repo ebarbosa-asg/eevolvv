@@ -153,6 +153,28 @@ Use for: brand content, community, social, manifesto, the moments you want to cr
 
 ---
 
+## 5A. Free First, No Refund Promises
+
+**Operating rule:** eevolvv does not use money-back guarantees or refund promises as a marketing crutch. It creates the wrong buyer expectation and pulls attention away from the actual value.
+
+**The replacement strategy:** give people genuinely useful free artifacts that make them want to come back for the deeper build.
+- Free report
+- Free roadmap preview
+- Free workflow scan
+- Free ghost-work teardown
+- Free pricing sanity check
+
+**How to frame it:**
+> "We don't promise your money back. We give you something useful before you spend it."
+
+**Volvv-E visual system:** keep free-offer art extremely subtle. A tiny spray-painted `v` tag can mark "free diagnostic" or a future "free roadmap" subpage, but avoid murals, loud slashes, big price-crossouts, or making the main page feel gimmicky.
+
+**Homepage direction:** less noise, more action. Keep the first move obvious and let Volvv-E Easter eggs be tiny, optional details around conversion points.
+
+**Current homepage strategy:** the main page should be short and free-report-centric. The top CTA sends people to `/diagnostic`, a high-tech but subtle report intake. The $97 roadmap is the post-report upgrade, positioned as a discounted next step after the free diagnostic proves useful. Remove filler dashboards, fake live-ops panels, and random animated metrics from the main page.
+
+---
+
 ## 6. Real LinkedIn Posts — Use These, Don't Template
 
 These are actual posts ready to publish. Adapt the specifics. Never soften the tone.

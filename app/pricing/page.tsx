@@ -42,7 +42,7 @@ export default function PricingPage() {
             <p style={{ fontSize: 14, opacity: 0.6, margin: 0, lineHeight: 1.5 }}>Run the free AI diagnostic — it maps your business and tells you exactly where to start.</p>
           </div>
           <a
-            href="/#diagnostic"
+            href="/diagnostic"
             className="mono"
             style={{ padding: '16px 28px', background: 'var(--ink)', color: 'var(--paper)', textDecoration: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 700, whiteSpace: 'nowrap' }}
           >

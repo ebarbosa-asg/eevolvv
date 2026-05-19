@@ -227,7 +227,7 @@ export function TierCards({ email, visible = true, recommendedTier, submissionId
         → Build starts the moment checkout completes. Onboarding doc + client portal access sent to your inbox automatically.
       </div>
       <div style={{ marginTop: 8, fontSize: 12, opacity: 0.5 }}>
-        All plans include a build delivery guarantee. Cancel anytime after month 3.
+        Start with the free report, then choose the build tier. Cancel anytime after month 3.
       </div>
     </div>
   )
