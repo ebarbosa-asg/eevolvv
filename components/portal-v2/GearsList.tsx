@@ -18,6 +18,9 @@ const DOT: Record<string, { color: string; label: string }> = {
   live: { color: '#22c55e', label: 'Running' },
   building: { color: '#eab308', label: 'Building' },
   planned: { color: '#a1a1aa', label: 'Planned' },
+  intake: { color: '#a1a1aa', label: 'Review' },
+  paid: { color: '#22c55e', label: 'Paid' },
+  recommended: { color: '#a1a1aa', label: 'Available' },
 }
 
 const ICONS: Record<string, string> = {
@@ -55,7 +58,7 @@ export function GearsList({ gears }: Props) {
 
 function GearRow({ gear, last }: { gear: Gear; last: boolean }) {
   const [expanded, setExpanded] = useState(false)
-  const d = DOT[gear.status]
+  const d = DOT[gear.status] || { color: '#a1a1aa', label: gear.status }
 
   return (
     <div>
