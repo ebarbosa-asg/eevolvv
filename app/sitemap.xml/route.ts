@@ -13,6 +13,7 @@ const pages = [
   { url: '/partners', changefreq: 'monthly', priority: 0.6 },
   { url: '/referral', changefreq: 'monthly', priority: 0.5 },
   { url: '/extract', changefreq: 'monthly', priority: 0.6 },
+  { url: '/buy', changefreq: 'monthly', priority: 0.9 },
 ]
 
 const industrySlugs = [
