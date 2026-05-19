@@ -1,38 +1,36 @@
 import { SitemapStream, streamToPromise } from 'sitemap'
 import { Readable } from 'stream'
+import { getAllPosts } from '@/lib/blog'
 
 const pages = [
   { url: '/', changefreq: 'weekly', priority: 1.0 },
   { url: '/pricing', changefreq: 'monthly', priority: 0.9 },
   { url: '/contact', changefreq: 'monthly', priority: 0.7 },
+  { url: '/marketing', changefreq: 'weekly', priority: 0.9 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
-  { url: '/dental', changefreq: 'weekly', priority: 0.8 },
-  { url: '/auto-shop', changefreq: 'weekly', priority: 0.8 },
-  { url: '/chiro', changefreq: 'weekly', priority: 0.8 },
-  { url: '/cleaning', changefreq: 'weekly', priority: 0.8 },
-  { url: '/contractors', changefreq: 'weekly', priority: 0.8 },
-  { url: '/fitness', changefreq: 'weekly', priority: 0.8 },
-  { url: '/legal', changefreq: 'weekly', priority: 0.8 },
-  { url: '/medspa', changefreq: 'weekly', priority: 0.8 },
-  { url: '/real-estate', changefreq: 'weekly', priority: 0.8 },
-  { url: '/restaurant', changefreq: 'weekly', priority: 0.8 },
-  { url: '/salon', changefreq: 'weekly', priority: 0.8 },
-  { url: '/childcare', changefreq: 'weekly', priority: 0.8 },
-  { url: '/ecommerce', changefreq: 'weekly', priority: 0.8 },
-  { url: '/accounting', changefreq: 'weekly', priority: 0.8 },
-  { url: '/marketing', changefreq: 'weekly', priority: 0.8 },
-  { url: '/agency', changefreq: 'weekly', priority: 0.8 },
-  { url: '/ai-agents-for-small-business', changefreq: 'weekly', priority: 0.9 },
-  { url: '/ai-receptionist-small-business', changefreq: 'weekly', priority: 0.9 },
-  { url: '/local-business-automation', changefreq: 'weekly', priority: 0.9 },
-  { url: '/website-and-automation', changefreq: 'weekly', priority: 0.8 },
-  { url: '/recovery', changefreq: 'weekly', priority: 0.7 },
-  { url: '/missed-lead-follow-up', changefreq: 'weekly', priority: 0.7 },
+  { url: '/blog', changefreq: 'weekly', priority: 0.9 },
   { url: '/partners', changefreq: 'monthly', priority: 0.6 },
   { url: '/referral', changefreq: 'monthly', priority: 0.5 },
   { url: '/extract', changefreq: 'monthly', priority: 0.6 },
 ]
+
+const industrySlugs = [
+  'dental', 'legal', 'real-estate', 'fitness', 'restaurant', 'salon',
+  'chiro', 'cleaning', 'contractors', 'medspa', 'auto-shop', 'childcare',
+  'ecommerce', 'accounting', 'recovery', 'missed-lead-follow-up',
+  'website-and-automation', 'ai-agents-for-small-business',
+  'ai-receptionist-small-business', 'local-business-automation',
+]
+
+for (const slug of industrySlugs) {
+  pages.push({ url: `/${slug}`, changefreq: 'weekly', priority: 0.8 })
+}
+
+const posts = getAllPosts()
+for (const post of posts) {
+  pages.push({ url: `/blog/${post.slug}`, changefreq: 'monthly', priority: 0.7 })
+}
 
 export async function GET() {
   const stream = new SitemapStream({ hostname: 'https://eevolvv.com' })

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { serviceSchema } from '@/lib/schemas'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvECard } from '@/components/VolvvE'
 import { PriceStrip } from '@/components/conversion/PriceStrip'
@@ -418,6 +419,10 @@ export default function SalonPage() {
         </div>
       </section>
 
+    <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(serviceSchema({name: "AI Automation for Salons", description: "Salons and barbershops recover hours by automating booking reminders, client follow-ups, and inventory alerts.", providerName: "eevolvv, Inc.", areaServed: "Dallas"}))}}
+        />
     </main>
   )
 }

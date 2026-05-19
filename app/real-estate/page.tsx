@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { serviceSchema } from '@/lib/schemas'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvECard } from '@/components/VolvvE'
 import { PriceStrip } from '@/components/conversion/PriceStrip'
@@ -418,6 +419,10 @@ export default function RealEstatePage() {
         </div>
       </section>
 
+    <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(serviceSchema({name: "AI Automation for Real Estate", description: "Real estate agents recover hours by automating lead follow-up, showing scheduling, and nurture sequences.", providerName: "eevolvv, Inc.", areaServed: "Dallas"}))}}
+        />
     </main>
   )
 }

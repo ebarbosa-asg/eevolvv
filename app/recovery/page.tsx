@@ -1,7 +1,8 @@
 'use client'
 
+import { serviceSchema } from '@/lib/schemas'
 import { useState } from 'react'
-import { SectionMarker, Button, Input } from '@/components/ds'
+import { SectionMarker, Button } from '@/components/ds'
 
 export default function RecoveryPage() {
   const [calls, setCalls] = useState(3)
@@ -103,6 +104,10 @@ export default function RecoveryPage() {
         </p>
 
       </div>
-    </div>
+    <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(serviceSchema({name: "Lead Recovery Automation", description: "Recover lost leads with automated follow-up sequences that re-engage prospects who went cold.", providerName: "eevolvv, Inc.", areaServed: "Dallas"}))}}
+        />
+      </div>
   )
 }

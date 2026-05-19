@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { serviceSchema } from '@/lib/schemas'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvECard } from '@/components/VolvvE'
 import { PriceStrip } from '@/components/conversion/PriceStrip'
@@ -418,6 +419,10 @@ export default function DentalPage() {
         </div>
       </section>
 
+    <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(serviceSchema({name: "AI Automation for Dental Practices", description: "Dental offices recover 15-20 hrs/week by automating recalls, no-shows, and patient intake.", providerName: "eevolvv, Inc.", areaServed: "Dallas"}))}}
+        />
     </main>
   )
 }

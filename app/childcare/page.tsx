@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { serviceSchema } from '@/lib/schemas'
 import ChatEngine from '@/components/ChatEngine'
 import { VolvvECard } from '@/components/VolvvE'
 import { PriceStrip } from '@/components/conversion/PriceStrip'
@@ -418,6 +419,10 @@ export default function ChildcarePage() {
         </div>
       </section>
 
+    <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(serviceSchema({name: "AI Automation for Childcare Centers", description: "Daycares recover hours by automating enrollment follow-ups, attendance tracking, and parent communication.", providerName: "eevolvv, Inc.", areaServed: "Dallas"}))}}
+        />
     </main>
   )
 }

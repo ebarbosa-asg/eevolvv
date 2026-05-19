@@ -33,6 +33,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'LocalBusiness',
+              name: 'eevolvv',
+              alternateName: 'eevolvv, Inc.',
+              url: 'https://eevolvv.com',
+              description: 'AI operations team for growing businesses. We find ghost work, build AI agents, and turn every client engagement into a visible operating layer.',
+              foundingDate: '2025',
+              founder: { '@type': 'Person', name: 'Eduardo Barbosa' },
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: 'Dallas',
+                addressRegion: 'TX',
+                addressCountry: 'US',
+              },
+              telephone: '+18444338658',
+              priceRange: '$499 - $1,999/mo',
+              sameAs: [
+                'https://linkedin.com/company/eevolvv',
+                'https://x.com/eevolvv',
+              ],
+            }),
+          }}
+        />
       </head>
       <body>{children}</body>
     </html>
