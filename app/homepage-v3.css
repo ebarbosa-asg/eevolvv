@@ -619,7 +619,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   font-weight: 700;
   animation: blockPop 0.36s cubic-bezier(0.2,0.8,0.2,1) both;
 }
-.cap-block.pending { opacity: 0.18; }
+.cap-block.pending { opacity: 0.30; }
 @keyframes blockPop {
   0%   { transform: scale(0.84); opacity: 0; }
   60%  { transform: scale(1.03); }
@@ -747,12 +747,50 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 
 /* ── Responsive overrides ── */
 @media (max-width: 640px) {
-  .cap-org-canvas { height: 200px; }
-  .cap-org-vlvv { width: 64px !important; }
-  .cap-org-foot { grid-template-columns: 1fr; }
-  .cap-org-foot > div { border-left: none; border-top: 1px solid var(--rule); padding: 10px 14px; }
-  .cap-org-foot > div:first-child { border-top: none; }
-  .cap-build-anim, .cap-mkt-anim { min-height: 240px; }
-  .cap-mkt-row { grid-template-columns: 46px 1fr 72px; gap: 7px; }
-  .cap-mkt-sub { font-size: 7px; }
+  /* Organize — taller canvas so all 6 rows fit + items don't clip */
+  .cap-org-canvas { height: 222px; }
+  .cap-org-vlvv   { width: 60px !important; }
+
+  /* Hide col headers inside canvas — columns still divide visually */
+  .cap-org-canvas .org-col-header,
+  .cap-org-canvas .org-col-foot { display: none; }
+
+  /* Compact beam on mobile */
+  .cap-org .org-beam { width: 2px; }
+
+  /* Footer: BEFORE/AFTER side-by-side, RUNTIME spans below */
+  .cap-org-foot { grid-template-columns: 1fr 1fr; }
+  .cap-org-foot > div { padding: 9px 12px; border-left: none; border-top: 1px solid var(--rule); }
+  .cap-org-foot > div:first-child  { border-top: none; }
+  .cap-org-foot > div:nth-child(2) { border-top: none; border-left: 1px solid var(--rule); }
+  .cap-org-foot > div:last-child   { grid-column: 1 / -1; }
+  .cap-org-foot-val { font-size: 10px; }
+
+  /* Website builder — enough height so CHECKOUT + status bar never clip */
+  .cap-build-anim   { min-height: 286px; }
+  .cap-block        { min-height: 34px; font-size: 8px; }
+  .cap-block.wide   { min-height: 48px; }
+  .cap-build-canvas { gap: 6px; padding: 10px; }
+
+  /* Marketing — single-line descriptions, tighter grid */
+  .cap-mkt-anim   { min-height: 240px; }
+  .cap-mkt-head   { grid-template-columns: 44px 1fr 74px; gap: 5px; padding: 8px 10px; font-size: 7px; }
+  .cap-mkt-row    { grid-template-columns: 44px 1fr 74px; gap: 5px; padding: 8px 10px; }
+  .cap-mkt-name   { font-size: 8px; }
+  .cap-mkt-sub    { font-size: 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cap-mkt-footer { padding: 10px; }
+  .cap-mkt-leads b { font-size: 26px; }
+}
+
+/* ── Accessibility: respect reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .org-item                  { transition: none !important; }
+  .cap-org .org-beam         { animation: none !important; opacity: 0; }
+  .cap-org-vlvv              { transition: none !important; }
+  .cap-build-scan            { animation: none !important; }
+  .cap-live-badge            { animation: none !important; }
+  .cap-mkt-shine             { animation: none !important; }
+  .cap-mkt-leads.pulse b     { animation: none !important; }
+  .org-head-dot              { animation: none !important; }
+  @keyframes blockPop        { from { opacity: 1; transform: scale(1); } }
 }

@@ -146,6 +146,7 @@ function OrganizeAnim() {
           alt=""
           className="org-vlvv cap-org-vlvv"
           style={{ imageRendering: 'pixelated' }}
+          loading="lazy"
         />
       </div>
       <div className="cap-org-foot">
@@ -178,7 +179,7 @@ const BUILD_BLOCKS = [
   { label: 'Proof',    wide: false, tag: '03' },
   { label: 'FAQ',      wide: false, tag: '04' },
   { label: 'Booking',  wide: false, tag: '05' },
-  { label: 'Checkout', wide: false, tag: '06' },
+  { label: 'Checkout', wide: true,  tag: '06' },
 ]
 
 function WebsiteBuilderAnim() {
@@ -199,10 +200,10 @@ function WebsiteBuilderAnim() {
         setBuilt(count)
         if (count >= BUILD_BLOCKS.length) {
           clearInterval(iv)
-          setTimeout(() => { setLive(true); setScanning(true) }, 380)
-          rt = setTimeout(start, 4200)
+          setTimeout(() => { setLive(true); setScanning(true) }, 350)
+          rt = setTimeout(start, 4800)
         }
-      }, 310)
+      }, 340)
     }
     const init = setTimeout(start, 800)
     return () => { clearTimeout(init); clearInterval(iv); clearTimeout(rt) }
@@ -315,7 +316,7 @@ function MiniVolvvE() {
   return (
     <span className="mini-volvve" aria-hidden="true">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/volvv-e.png" alt="" />
+      <img src="/volvv-e.png" alt="" loading="lazy" />
     </span>
   )
 }
