@@ -23,18 +23,23 @@ export async function scrapeVertical(query: string, limit: number = 10) {
     await page.goto(searchUrl);
     await page.waitForTimeout(5000);
 
-    // 2. Extract Leads
-    const leads = await page.evaluate(() => {
-      const items = Array.from(document.querySelectorAll('.Nv2rb')); // Search result class
-      return items.slice(0, 10).map(item => ({
+    // 2. Extract Leads — wait for results to render
+    await page.waitForSelector('[role="feed"]', { timeout: 10000 }).catch(() => {});
+    await page.waitForTimeout(2000);
+
+    const leads = await page.evaluate((maxItems: number) => {
+      const feed = document.querySelector('[role="feed"]');
+      if (!feed) return [];
+      const items = Array.from(feed.children).filter((child) => child.querySelector('a.hfpxzc'));
+      return items.slice(0, maxItems).map((item) => ({
         company: item.querySelector('.qBF1Pd')?.textContent || 'Unknown',
-        rating: parseFloat(item.querySelector('.MW479')?.textContent || '0'),
-        phone: 'Needs Lookup', // Google Maps obfuscates this, requires secondary hop
+        rating: parseFloat(item.querySelector('.ZkP5Je')?.textContent || '0'),
+        phone: 'Needs Lookup',
         address: 'Service Area',
         stage: 'diagnose',
-        health: 'yellow'
-      })).filter(l => l.company !== 'Unknown');
-    });
+        health: 'yellow',
+      })).filter((l) => l.company !== 'Unknown');
+    }, limit);
 
     console.log(`[Striker] Found ${leads.length} potential targets.`);
 
@@ -43,17 +48,17 @@ export async function scrapeVertical(query: string, limit: number = 10) {
       const { data, error } = await supabase
         .from('clients')
         .insert([{
+          name: lead.company,
           company: lead.company,
           notes: `Striker Auto-Lead: Rating ${lead.rating}`,
           stage: 'diagnose',
-          health: lead.rating < 4 ? 'red' : 'yellow'
+          health: lead.rating < 4 ? 'red' : 'yellow',
         }])
         .select();
 
       if (error) console.error(`[Striker] Failed to push ${lead.company}:`, error.message);
       else console.log(`[Striker] Pushed: ${lead.company}`);
     }
-
   } catch (err) {
     console.error('[Striker] Strike failed:', err);
   } finally {

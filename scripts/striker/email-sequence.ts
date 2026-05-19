@@ -125,7 +125,7 @@ async function runEmailSequence() {
   // Get leads that are in 'cold' or 'contacted' stage and haven't been emailed yet
   const { data: leads, error } = await supabase
     .from('clients')
-    .select('id, email, name, business_name, business_type, stage, notes, created_at')
+    .select('id, email, name, company, business_type, stage, notes, created_at')
     .in('stage', ['cold', 'contacted'])
     .not('notes', 'ilike', '%EMAIL_SENT%')
     .limit(20)
@@ -157,7 +157,7 @@ async function runEmailSequence() {
 
     const { subject, html } = getEmailTemplate(
       touchPoint,
-      lead.business_name || '',
+      lead.company || '',
       lead.name,
       lead.business_type || 'business'
     )
