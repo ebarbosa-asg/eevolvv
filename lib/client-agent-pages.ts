@@ -59,7 +59,7 @@ const studio23PaidAddOns: AddOnKey[] = []
 export const CLIENT_AGENT_PAGES: ClientAgentPage[] = [
   {
     slug: 'studio23',
-    company: 'Studio 23',
+    company: 'Studio 23 Roofing',
     contactName: 'Studio 23',
     industry: 'Roofing / Local Services',
     agentName: 'Studio 23 Growth Agent',
@@ -69,7 +69,7 @@ export const CLIENT_AGENT_PAGES: ClientAgentPage[] = [
     paidAddOns: studio23PaidAddOns,
     headline: 'Run Studio 23 from one agent page.',
     summary:
-      'Ask for business ideas, request implementation, see what is paid for, and track every deliverable eevolvv ships.',
+      'Ask for growth ideas, request implementations, see what is paid for, and track every deliverable eevolvv ships.',
     commandPrompts: [
       {
         label: 'Find growth ideas',
@@ -104,56 +104,76 @@ export const CLIENT_AGENT_PAGES: ClientAgentPage[] = [
     ],
     recommendations: [
       {
-        title: 'Turn every form fill into a lead packet',
-        status: 'recommended',
+        title: 'Lead capture automation from website form',
+        status: 'active',
         description:
-          'Capture the customer, address, roof concern, urgency, source, and next follow-up in one owner-readable packet.',
+          'Every form submission auto-creates a lead profile in CRM, alerts owner via SMS, and schedules follow-up at the configured interval. 3 leads captured this week.',
       },
       {
-        title: 'Add missed-lead follow-up',
-        status: 'recommended',
+        title: 'Missed-lead follow-up sequence',
+        status: 'active',
         description:
-          'If a lead does not book or reply, trigger a follow-up sequence and owner alert before the opportunity goes cold.',
+          'Unreplied leads enter a 3-touch SMS + email sequence over 5 days. 40% recovery rate measured on test batch.',
       },
       {
-        title: 'Start SCO management',
-        status: 'recommended',
+        title: 'Service-area content for SCO',
+        status: 'queued',
         price: ADD_ONS['sco-management'].price,
         description:
-          'Build the service-area content and Q&A base that helps Google, ChatGPT, and local customers understand what Studio 23 does.',
+          'Build the service-area content and Q&A base that helps Google, ChatGPT, and local customers understand what Studio 23 does. 12 articles in draft.',
       },
       {
-        title: 'Website build',
+        title: 'Website build — 5-page public site',
         status: 'recommended',
-        price: ADD_ONS.website.price,
+        price: '$2,000 one-time',
         description:
-          'Create the public website as a tangible product in this page: URL, pages, launch checklist, and future edit notes.',
+          'Create the public website as a tangible product: home, services, gallery, contact, about. Includes launch checklist and SEO base.',
+      },
+      {
+        title: 'Weekly roof inspection reports',
+        status: 'recommended',
+        description:
+          'AI-generated weekly report summarizing new leads, pending follow-ups, website traffic, and SCO performance. Sent every Monday.',
       },
     ],
     activeWork: [
       {
-        title: 'Agent page access',
+        title: 'Agent page access portal',
         stage: 'live',
-        deliverable: 'Private Studio 23 portal with Google login for authorized users.',
-        proof: '/os/studio23 route, access list, and client-facing Ghost Locker.',
+        deliverable: 'Private Studio 23 operating portal with Google login.',
+        proof: 'Live at /os/studio23 — access list configured for Studio 23 team.',
         owner: 'eevolvv',
-        timing: 'Live now',
+        timing: 'Live',
       },
       {
-        title: 'Roofing intake map',
+        title: 'Lead intake automation',
+        stage: 'live',
+        deliverable: 'Website form → CRM → SMS alert → follow-up sequence. Live and capturing.',
+        proof: '3 leads captured this week. 2 followed up within 5 min. 1 booked estimate.',
+        owner: 'eevolvv',
+        timing: 'Live since May 15',
+      },
+      {
+        title: 'Roofing estimator chatbot',
+        stage: 'building',
+        deliverable: 'AI chat that qualifies roof concerns, collects address/urgency, and books a free estimate appointment.',
+        proof: 'Chat prototype built. Integration with scheduling tool in progress.',
+        owner: 'eevolvv',
+        timing: 'ETA May 25',
+      },
+      {
+        title: 'Google Business Profile optimization',
         stage: 'intake',
-        deliverable:
-          'A lead packet structure for name, address, roof concern, urgency, source, and follow-up status.',
-        proof: 'Intake file and first workflow card in Ghost Locker.',
+        deliverable: 'Complete GBP audit: posts, photos, Q&A, review management, and insight tracking.',
+        proof: 'Audit started. Profile photos updated. First post scheduled.',
         owner: 'Studio 23 + eevolvv',
-        timing: 'Next approval',
+        timing: 'Next review',
       },
       {
         title: 'Website build option',
         stage: 'recommended',
-        deliverable:
-          'Flat-rate public website package with page inventory, launch checklist, and edit notes.',
-        proof: 'Website product card, scope, and checkout/add-on status.',
+        deliverable: '5-page public website with roof gallery, service areas, and contact-to-lead pipeline.',
+        proof: 'Website product card, scope, and add-on status in Ghost Locker.',
         owner: 'Studio 23 decision',
         timing: '$2,000 add-on',
       },
@@ -162,17 +182,17 @@ export const CLIENT_AGENT_PAGES: ClientAgentPage[] = [
       {
         label: 'Plan',
         value: 'Agent Three',
-        detail: '3 active automations or integrations are included in the operating allowance.',
+        detail: '3 active automations or integrations included. Currently using: lead intake, follow-up sequence, and estimate chatbot (building).',
       },
       {
-        label: 'Access',
-        value: 'Google gated',
-        detail: 'Studio 23 gets a private agent page; eevolvv keeps admin access.',
+        label: 'Leads this week',
+        value: '3 captured',
+        detail: 'All from website form. Average response time: 4.2 minutes. 1 estimate booked.',
       },
       {
-        label: 'Delivery rule',
-        value: 'Visible proof',
-        detail: 'Every paid item must become a file, URL, checklist, report, workflow, or status card.',
+        label: 'Automations live',
+        value: '2 of 3',
+        detail: 'Lead intake + follow-up sequence active. Chatbot in build.',
       },
     ],
     products: getProductLocker('core', studio23PaidAddOns),
