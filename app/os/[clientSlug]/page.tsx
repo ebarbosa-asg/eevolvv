@@ -10,7 +10,7 @@ export default async function ClientAgentRoute({
   searchParams,
 }: {
   params: { clientSlug: string }
-  searchParams: { v?: string }
+  searchParams: { v?: string; tab?: string }
 }) {
   const page = getClientAgentPage(params.clientSlug)
   if (!page) notFound()
@@ -47,7 +47,7 @@ export default async function ClientAgentRoute({
       paidAddOns: page.paidAddOns,
     }
 
-    return <ClientHub page={hubData} />
+    return <ClientHub page={hubData} initialTab={searchParams.tab} />
   }
 
   return <ClientAgentPage page={page} />

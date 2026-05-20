@@ -8,6 +8,7 @@ import {
 } from '@/lib/client-agent-pages'
 import { findOrCreateClientForAgentPage, normalizeRequestText } from '@/lib/client-agent-server'
 import { requestToDeliverableTemplate } from '@/lib/deliverables'
+import { sendPushToSlug } from '@/lib/webpush'
 
 export async function GET(
   _req: NextRequest,
@@ -143,6 +144,20 @@ export async function POST(
       deliverable_id: deliverable?.id ?? null,
     },
   })
+
+  // Fire-and-forget: notify Eduardo when a client submits a request
+  if (supabase) {
+    sendPushToSlug(
+      page.slug,
+      {
+        title: `${page.company} sent a request`,
+        body: request.slice(0, 100),
+        url: `/os/${page.slug}?tab=activity`,
+        tag: `request-${page.slug}`,
+      },
+      supabase,
+    ).catch(() => {})
+  }
 
   return NextResponse.json({ client, request: task, deliverable }, { status: 201 })
 }
