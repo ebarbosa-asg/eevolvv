@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { ChatIcon, ArrowRightIcon } from './icons'
 
 type Props = {
   slug: string
@@ -52,16 +53,26 @@ export function AskBox({ slug, agentName, onSent }: Props) {
 
   return (
     <div style={{ marginBottom: 24 }}>
+      <div className="mono" style={{
+        fontSize: 10,
+        letterSpacing: '0.18em',
+        color: 'rgba(20,20,19,0.42)',
+        marginBottom: 10,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+      }}>
+        <ChatIcon size={12} />
+        ASK {agentName.toUpperCase()}
+      </div>
       <div style={{ display: 'flex', gap: 0, border: '1px solid var(--ink)' }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           paddingLeft: 14,
-          fontSize: 18,
           color: 'rgba(20,20,19,0.35)',
-          userSelect: 'none',
         }}>
-          💬
+          <ChatIcon size={16} />
         </div>
         <input
           ref={inputRef}
@@ -92,11 +103,12 @@ export function AskBox({ slug, agentName, onSent }: Props) {
             color: 'var(--paper)',
             padding: '0 20px',
             cursor: sending ? 'wait' : 'pointer',
-            fontSize: 16,
             opacity: sending ? 0.6 : 1,
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
-          {sending ? '···' : '→'}
+          {sending ? <span style={{ fontSize: 16, letterSpacing: 2 }}>···</span> : <ArrowRightIcon size={16} />}
         </button>
       </div>
       {feedback && (
