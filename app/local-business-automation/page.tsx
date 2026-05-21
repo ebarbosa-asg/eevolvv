@@ -1,22 +1,21 @@
 import type { Metadata } from 'next'
-import { GrowthLandingPage } from '@/components/GrowthLandingPage'
-import { getGrowthPage } from '@/lib/growth-pages'
-
-const page = getGrowthPage('local-business-automation')
+import { VERTICALS } from '@/lib/vertical-data'
+import VerticalPage from '@/components/VerticalPage'
 
 export const metadata: Metadata = {
-  title: page.metaTitle,
-  description: page.metaDescription,
-  keywords: page.keywords,
-  alternates: { canonical: `https://eevolvv.com/${page.slug}` },
+  title: 'Local Business Automation — eevolvv',
+  description: 'Local business automation for leads, reviews, booking, and weekly reports. Start with a free audit.',
   openGraph: {
-    title: page.metaTitle,
-    description: page.metaDescription,
-    url: `https://eevolvv.com/${page.slug}`,
+    title: 'Local Business Automation — eevolvv',
+    description: 'Local business automation for leads, reviews, booking, and weekly reports. Start with a free audit.',
+    url: 'https://eevolvv.com/local-business-automation',
     type: 'website',
+  },
+  alternates: {
+    canonical: 'https://eevolvv.com/local-business-automation',
   },
 }
 
 export default function LocalBusinessAutomationPage() {
-  return <GrowthLandingPage page={page} />
+  return <VerticalPage data={{...VERTICALS['local-business-automation']}} />
 }

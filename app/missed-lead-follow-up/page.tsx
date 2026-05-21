@@ -1,22 +1,21 @@
 import type { Metadata } from 'next'
-import { GrowthLandingPage } from '@/components/GrowthLandingPage'
-import { getGrowthPage } from '@/lib/growth-pages'
-
-const page = getGrowthPage('missed-lead-follow-up')
+import { VERTICALS } from '@/lib/vertical-data'
+import VerticalPage from '@/components/VerticalPage'
 
 export const metadata: Metadata = {
-  title: page.metaTitle,
-  description: page.metaDescription,
-  keywords: page.keywords,
-  alternates: { canonical: `https://eevolvv.com/${page.slug}` },
+  title: 'Missed Lead Follow-Up Automation — eevolvv',
+  description: 'Automate missed lead follow-up for local service businesses. Capture inquiries, respond quickly, route to the owner.',
   openGraph: {
-    title: page.metaTitle,
-    description: page.metaDescription,
-    url: `https://eevolvv.com/${page.slug}`,
+    title: 'Missed Lead Follow-Up Automation — eevolvv',
+    description: 'Automate missed lead follow-up for local service businesses. Capture inquiries, respond quickly, route to the owner.',
+    url: 'https://eevolvv.com/missed-lead-follow-up',
     type: 'website',
+  },
+  alternates: {
+    canonical: 'https://eevolvv.com/missed-lead-follow-up',
   },
 }
 
 export default function MissedLeadFollowUpPage() {
-  return <GrowthLandingPage page={page} />
+  return <VerticalPage data={{...VERTICALS['missed-lead-follow-up']}} />
 }

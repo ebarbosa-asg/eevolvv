@@ -6,22 +6,21 @@ const pages = [
   { url: '/', changefreq: 'weekly', priority: 1.0 },
   { url: '/pricing', changefreq: 'monthly', priority: 0.9 },
   { url: '/contact', changefreq: 'monthly', priority: 0.7 },
-  { url: '/marketing', changefreq: 'weekly', priority: 0.9 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
   { url: '/blog', changefreq: 'weekly', priority: 0.9 },
   { url: '/partners', changefreq: 'monthly', priority: 0.6 },
   { url: '/referral', changefreq: 'monthly', priority: 0.5 },
-  { url: '/extract', changefreq: 'monthly', priority: 0.6 },
   { url: '/buy', changefreq: 'monthly', priority: 0.9 },
 ]
 
 const industrySlugs = [
-  'dental', 'legal', 'real-estate', 'fitness', 'restaurant', 'salon',
+  'dental', 'law-firms', 'real-estate', 'fitness', 'restaurant', 'salon',
   'chiro', 'cleaning', 'contractors', 'medspa', 'auto-shop', 'childcare',
-  'ecommerce', 'accounting', 'recovery', 'missed-lead-follow-up',
-  'website-and-automation', 'ai-agents-for-small-business',
-  'ai-receptionist-small-business', 'local-business-automation',
+  'ecommerce', 'accounting', 'agency',
+  'local-business-automation', 'ai-agents-for-small-business',
+  'ai-receptionist-small-business', 'missed-lead-follow-up',
+  'website-and-automation',
 ]
 
 for (const slug of industrySlugs) {

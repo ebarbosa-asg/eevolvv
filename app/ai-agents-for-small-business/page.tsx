@@ -1,22 +1,21 @@
 import type { Metadata } from 'next'
-import { GrowthLandingPage } from '@/components/GrowthLandingPage'
-import { getGrowthPage } from '@/lib/growth-pages'
-
-const page = getGrowthPage('ai-agents-for-small-business')
+import { VERTICALS } from '@/lib/vertical-data'
+import VerticalPage from '@/components/VerticalPage'
 
 export const metadata: Metadata = {
-  title: page.metaTitle,
-  description: page.metaDescription,
-  keywords: page.keywords,
-  alternates: { canonical: `https://eevolvv.com/${page.slug}` },
+  title: 'AI Agents for Small Business — eevolvv',
+  description: 'AI agents for small businesses: lead follow-up, booking, reviews, reporting, and recommendations in one private agent page.',
   openGraph: {
-    title: page.metaTitle,
-    description: page.metaDescription,
-    url: `https://eevolvv.com/${page.slug}`,
+    title: 'AI Agents for Small Business — eevolvv',
+    description: 'AI agents for small businesses: lead follow-up, booking, reviews, reporting, and recommendations in one private agent page.',
+    url: 'https://eevolvv.com/ai-agents-for-small-business',
     type: 'website',
+  },
+  alternates: {
+    canonical: 'https://eevolvv.com/ai-agents-for-small-business',
   },
 }
 
 export default function AiAgentsForSmallBusinessPage() {
-  return <GrowthLandingPage page={page} />
+  return <VerticalPage data={{...VERTICALS['ai-agents-for-small-business']}} />
 }
