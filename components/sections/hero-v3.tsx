@@ -1,51 +1,90 @@
 'use client'
 
-const REPORT_POINTS = [
-  ['Ghost work', 'The repeated tasks hiding in plain sight.'],
-  ['First fix', 'The workflow to automate before anything else.'],
-  ['Roadmap', 'A clean next-step path if the report hits.'],
+import { useState, useEffect } from 'react'
+
+const HERO_PHRASES = [
+  'CORNER STORE',
+  'LAW FIRM',
+  'GYM',
+  'RESTAURANT',
+  'DENTAL PRACTICE',
+  'REAL ESTATE TEAM',
+  'BODEGA',
+  'AGENCY',
+  'MED SPA',
+  'CONTRACTOR',
+  'STARTUP',
+  'CHIROPRACTIC',
+  'ENTERPRISE',
 ]
 
-export default function HeroV3() {
+function FlapChar({ char, isWide }: { char: string; isWide: boolean }) {
   return (
-    <section className="hero report-hero" id="free-report">
+    <span className="flap-cell" aria-hidden="true">
+      <span className="flap-half top">
+        <span><i data-wide={isWide ? '1' : '0'}>{char}</i></span>
+      </span>
+      <span className="flap-half bottom">
+        <span><i data-wide={isWide ? '1' : '0'}>{char}</i></span>
+      </span>
+    </span>
+  )
+}
+
+export default function HeroV3() {
+  const [phraseIndex, setPhraseIndex] = useState(0)
+
+  useEffect(() => {
+    const id = setInterval(() => setPhraseIndex(i => (i + 1) % HERO_PHRASES.length), 3400)
+    return () => clearInterval(id)
+  }, [])
+
+  const phrase = HERO_PHRASES[phraseIndex]
+  const isWide = (c: string) => ['M', 'W'].includes(c)
+
+  return (
+    <section className="hero" id="free-report">
       <div className="hero-bg" aria-hidden="true">
         <div className="hero-grid" />
+        <div className="hero-radial" />
       </div>
 
-      <div className="site-rail report-hero-inner report-hero-simple">
-        <div className="report-hero-copy">
-          <div className="hero-head report-hero-head">
-            <span className="hero-head-counter mono">§ 00</span>
-            <span className="hero-head-label mono">Free diagnostic report</span>
-            <span className="hero-head-status">No credit card</span>
+      <div className="site-rail hero-inner" style={{ gap: 32 }}>
+        <div className="hero-head">
+          <span className="hero-head-counter mono">§ 00</span>
+          <span className="hero-head-label mono">Autonomous infrastructure</span>
+          <span className="hero-head-status">
+            <span className="hero-head-dot" />
+            <span>Live 24/7</span>
+          </span>
+        </div>
+
+        <div className="hero-split-main">
+          <div className="hero-split-copy">
+            <p className="hero-split-line serif">
+              We evolve every
+            </p>
+
+            <div className="hero-split-flap-wrap">
+              <span className="flap-stage hero-flap-stage">
+                {phrase.split('').map((char, i) => (
+                  <FlapChar key={`${phraseIndex}-${i}`} char={char} isWide={isWide(char)} />
+                ))}
+              </span>
+            </div>
+
+            <p className="hero-split-line hero-split-line-sub serif">
+              into an autonomous system.
+            </p>
           </div>
 
-          <h1 className="report-hero-title">
-            Find the ghost work.
-            <span>Get the report free.</span>
-          </h1>
-
-          <p className="report-hero-body">
-            Answer a few questions. We turn the messy parts of your operation into a sharp report:
-            what is leaking time, what to fix first, and whether a real AI build is worth it.
-          </p>
-
-          <div className="report-hero-actions">
-            <a className="btn-primary report-primary" href="/diagnostic">
+          <div className="hero-split-cta">
+            <a className="btn-primary" href="/diagnostic">
               <span className="tiny-spray-v tiny-spray-v-inline" aria-hidden="true">v</span>
               Get free report
               <span>→</span>
             </a>
-          </div>
-
-          <div className="report-point-grid">
-            {REPORT_POINTS.map(([title, body]) => (
-              <div key={title} className="report-point">
-                <span className="mono">{title}</span>
-                <p>{body}</p>
-              </div>
-            ))}
+            <p className="hero-split-tag">No signup · Instant report · 10 minutes</p>
           </div>
         </div>
       </div>
