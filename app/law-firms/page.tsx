@@ -9,11 +9,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Stop Running Your Law Firm on Ghost Work — eevolvv',
     description: 'Law firms recover 15–20 hrs/week of non-billable time by automating intake, billing, and document workflows. Free AI audit in 10 minutes.',
-    url: 'https://eevolvv.com/legal',
+    url: 'https://eevolvv.com/law-firms',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://eevolvv.com/legal',
+    canonical: 'https://eevolvv.com/law-firms',
   },
 }
 
