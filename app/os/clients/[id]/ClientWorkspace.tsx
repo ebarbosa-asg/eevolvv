@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { Badge, Button, Input, Textarea, Label, SectionMarker, StatusPill } from '@/components/ds'
 import type { BadgeVariant } from '@/components/ds'
@@ -88,7 +88,179 @@ function PriorityDot({ priority }: { priority: string }) {
   )
 }
 
-export default function ClientWorkspace({ client: initialClient, allSubmissions }: { client: ClientFull; allSubmissions: SubmissionBrief[] }) {
+// ── Types for Gear Panel
+type GearDeliverable = {
+  id: string
+  title: string
+  status: string
+  promise: string
+  delivery_window: string
+  type: string
+}
+
+const GEAR_STATUS_ORDER = ['intake', 'queued', 'building', 'review', 'live'] as const
+type GearStatus = typeof GEAR_STATUS_ORDER[number]
+
+const GEAR_STATUS_COLORS: Record<GearStatus, string> = {
+  intake:   'rgba(161,161,170,0.8)',
+  queued:   'rgba(161,161,170,0.8)',
+  building: '#f59e0b',
+  review:   '#3b82f6',
+  live:     '#4ade80',
+}
+
+function GearPanel({ slug }: { slug: string }) {
+  const [gears, setGears] = useState<GearDeliverable[]>([])
+  const [loading, setLoading] = useState(true)
+  const [updating, setUpdating] = useState<string | null>(null)
+  const [lastPushed, setLastPushed] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch(`/api/os/client-agent/${slug}/deliverables`)
+      .then(r => r.json())
+      .then(d => {
+        const items = (d.deliverables ?? []).filter((g: GearDeliverable) => g.status !== 'recommended')
+        setGears(items)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [slug])
+
+  async function setStatus(gear: GearDeliverable, newStatus: GearStatus) {
+    setUpdating(gear.id)
+    try {
+      const res = await fetch(`/api/os/client-agent/${slug}/deliverables/${gear.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (res.ok) {
+        setGears(prev => prev.map(g => g.id === gear.id ? { ...g, status: newStatus } : g))
+        if (newStatus === 'building' || newStatus === 'live') {
+          setLastPushed(gear.title)
+          setTimeout(() => setLastPushed(null), 3000)
+        }
+      }
+    } finally {
+      setUpdating(null)
+    }
+  }
+
+  async function manualPush(gear: GearDeliverable) {
+    setUpdating(gear.id)
+    try {
+      await fetch('/api/os/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug,
+          title: `Update: ${gear.title}`,
+          body: `Status: ${gear.status}. Check your portal for details.`,
+          url: `/os/${slug}?tab=activity`,
+        }),
+      })
+      setLastPushed(gear.title)
+      setTimeout(() => setLastPushed(null), 3000)
+    } finally {
+      setUpdating(null)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="mono text-[11px] text-paper/30 py-4">Loading gears…</div>
+    )
+  }
+
+  if (gears.length === 0) {
+    return (
+      <div className="mono text-[11px] text-paper/30 py-4">
+        No deliverables yet — they appear here once created.
+      </div>
+    )
+  }
+
+  const idx = (status: string) => GEAR_STATUS_ORDER.indexOf(status as GearStatus)
+
+  return (
+    <div className="flex flex-col gap-2">
+      {lastPushed && (
+        <div className="mono text-[10px] text-[#4ade80] mb-1">
+          ✓ pushed: {lastPushed}
+        </div>
+      )}
+      {gears.map(gear => {
+        const cur = gear.status as GearStatus
+        const curIdx = idx(gear.status)
+        const prev = curIdx > 0 ? GEAR_STATUS_ORDER[curIdx - 1] : null
+        const next = curIdx < GEAR_STATUS_ORDER.length - 1 ? GEAR_STATUS_ORDER[curIdx + 1] : null
+        const isUpdating = updating === gear.id
+
+        return (
+          <div
+            key={gear.id}
+            className="p-3.5 bg-white/[0.04] border border-white/[0.07] hover:bg-white/[0.06] transition-colors"
+          >
+            <div className="flex items-center gap-2.5 mb-2">
+              <span
+                className="inline-block w-2 h-2 rounded-full flex-shrink-0"
+                style={{ background: GEAR_STATUS_COLORS[cur] ?? '#a1a1aa' }}
+              />
+              <span className="font-semibold text-[13px] flex-1">{gear.title}</span>
+              <span
+                className="mono text-[10px] px-1.5 py-0.5 rounded-sm"
+                style={{
+                  background: `${GEAR_STATUS_COLORS[cur] ?? '#a1a1aa'}22`,
+                  color: GEAR_STATUS_COLORS[cur] ?? '#a1a1aa',
+                }}
+              >
+                {gear.status}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {prev && (
+                <button
+                  type="button"
+                  disabled={isUpdating}
+                  onClick={() => setStatus(gear, prev)}
+                  className="mono text-[9px] border border-white/10 text-paper/35 px-2 py-1 hover:bg-white/[0.06] transition-colors disabled:opacity-40 cursor-pointer"
+                >
+                  ← {prev}
+                </button>
+              )}
+              {next && (
+                <button
+                  type="button"
+                  disabled={isUpdating}
+                  onClick={() => setStatus(gear, next)}
+                  className="mono text-[9px] px-2 py-1 transition-colors disabled:opacity-40 cursor-pointer"
+                  style={{
+                    border: `1px solid ${GEAR_STATUS_COLORS[next] ?? '#a1a1aa'}`,
+                    color: GEAR_STATUS_COLORS[next] ?? '#a1a1aa',
+                    background: `${GEAR_STATUS_COLORS[next] ?? '#a1a1aa'}11`,
+                  }}
+                >
+                  {next} →
+                </button>
+              )}
+              <button
+                type="button"
+                disabled={isUpdating}
+                onClick={() => manualPush(gear)}
+                className="mono text-[9px] border border-white/[0.12] text-paper/35 px-2 py-1 ml-auto hover:bg-white/[0.06] transition-colors disabled:opacity-40 cursor-pointer"
+                title="Send push notification to client"
+              >
+                push 🔔
+              </button>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+export default function ClientWorkspace({ client: initialClient, allSubmissions, agentPageSlug }: { client: ClientFull; allSubmissions: SubmissionBrief[]; agentPageSlug?: string }) {
   const [client, setClient] = useState(initialClient)
   const [agents, setAgents] = useState<Agent[]>(initialClient.agents ?? [])
   const [tasks, setTasks] = useState<Task[]>(initialClient.service_tasks ?? [])
@@ -818,9 +990,27 @@ export default function ClientWorkspace({ client: initialClient, allSubmissions 
               </div>
             </div>
 
+            {/* GEAR PANEL — client portal deliverables */}
+            {agentPageSlug && (
+              <div className="mb-8 pl-4 border-l-[3px] border-accent">
+                <div className="flex items-center justify-between mb-4">
+                  <SectionMarker num="E" label="GEAR PANEL" />
+                  <a
+                    href={`/os/${agentPageSlug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mono text-[10px] text-accent no-underline opacity-70 hover:opacity-100"
+                  >
+                    client portal →
+                  </a>
+                </div>
+                <GearPanel slug={agentPageSlug} />
+              </div>
+            )}
+
             {/* ACTIVITY LOG */}
             <div className="mb-8 pl-4 border-l-[3px] border-accent">
-              <SectionMarker num="E" label="ACTIVITY LOG" className="mb-4" />
+              <SectionMarker num={agentPageSlug ? 'F' : 'E'} label="ACTIVITY LOG" className="mb-4" />
               <div className="flex flex-col gap-2 mb-3.5 max-h-[280px] overflow-y-auto">
                 {activity.length === 0 && (
                   <p className="mono text-[11px] text-paper/30">No activity yet</p>
