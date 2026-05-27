@@ -18,6 +18,7 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 const FROM_EMAIL = 'eevolvv <reports@eevolvv.com>'
 const BASE_URL = 'https://eevolvv.com'
+const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL || 'https://calendly.com/hello-eevolvv'
 
 // Email templates for each touch point
 function getEmailTemplate(
@@ -43,8 +44,12 @@ function getEmailTemplate(
               The scan is free and takes about 10 minutes. No signup required.
             </p>
             <div style="text-align: center; margin: 32px 0;">
-              <a href="${BASE_URL}/ai-agents-for-small-business" style="background: #141413; color: #faf7f0; padding: 14px 28px; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 4px; display: inline-block;">
+              <a href="${BASE_URL}/ai-agents-for-small-business" style="background: #141413; color: #faf7f0; padding: 14px 28px; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 4px; display: inline-block; margin-bottom: 12px;">
                 Run Your Free Scan →
+              </a>
+              <br>
+              <a href="${CALENDLY_URL}" style="background: transparent; color: #141413; padding: 14px 28px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid #141413; border-radius: 4px; display: inline-block;">
+                Or Book a Quick Call
               </a>
             </div>
             <p style="font-size: 14px; color: #a1a1aa; margin-top: 32px; border-top: 1px solid #e4e4e7; padding-top: 16px;">
@@ -71,7 +76,7 @@ function getEmailTemplate(
               Want to see what it looks like for ${biz}? I can set up a free demo in 5 minutes.
             </p>
             <div style="text-align: center; margin: 32px 0;">
-              <a href="https://calendly.com/hello-eevolvv" style="background: #141413; color: #faf7f0; padding: 14px 28px; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 4px; display: inline-block;">
+              <a href="${CALENDLY_URL}" style="background: #141413; color: #faf7f0; padding: 14px 28px; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 4px; display: inline-block;">
                 Book a 5-Min Demo →
               </a>
             </div>
