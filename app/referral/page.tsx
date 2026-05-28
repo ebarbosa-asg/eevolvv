@@ -1,7 +1,35 @@
+'use client'
 import Link from 'next/link'
+import { useState } from 'react'
 import { VolvvE } from '@/components/VolvvE'
 
 export default function ReferralPage() {
+  const [email, setEmail] = useState('')
+  const [referralUrl, setReferralUrl] = useState('')
+  const [copied, setCopied] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const generateLink = async () => {
+    if (!email) return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/referral', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (data.url) setReferralUrl(data.url)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const copyLink = async () => {
+    await navigator.clipboard.writeText(referralUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
   return (
     <main className="bg-paper text-ink min-h-screen">
       {/* Hero */}
@@ -17,12 +45,42 @@ export default function ReferralPage() {
           Know a business that&apos;s drowning in manual work? Send them eevolvv.
           When they subscribe, you get <strong>$100 credit</strong> — up to 2 months free.
         </p>
-        <Link
-          href="/signin"
-          className="inline-block bg-ink text-paper px-10 py-5 font-bold text-lg tracking-tight hover:bg-accent transition-colors"
-        >
-          Get Your Referral Link →
-        </Link>
+        {referralUrl ? (
+          <div className="text-center">
+            <p className="text-sm opacity-60 mb-4">Your referral link is ready:</p>
+            <div className="flex items-center justify-center gap-2 max-w-lg mx-auto">
+              <code className="bg-ink/5 px-4 py-3 rounded text-sm font-mono flex-1 truncate border border-ink/10">
+                {referralUrl}
+              </code>
+              <button
+                onClick={copyLink}
+                className="bg-ink text-paper px-6 py-3 font-bold text-sm hover:bg-accent transition-colors"
+              >
+                {copied ? 'Copied!' : 'Copy'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-sm mx-auto">
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && generateLink()}
+                className="flex-1 px-4 py-3 border-2 border-ink/10 bg-transparent text-ink text-sm focus:outline-none focus:border-accent"
+              />
+              <button
+                onClick={generateLink}
+                disabled={loading || !email}
+                className="bg-ink text-paper px-6 py-3 font-bold text-sm hover:bg-accent transition-colors disabled:opacity-40"
+              >
+                {loading ? '...' : 'Get Link →'}
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* How It Works */}
@@ -110,12 +168,24 @@ export default function ReferralPage() {
         <p className="text-lg opacity-60 mb-8">
           Every business owner you know is leaving money on the table.
         </p>
-        <Link
-          href="/signin"
-          className="inline-block bg-ink text-paper px-10 py-5 font-bold text-lg tracking-tight hover:bg-accent transition-colors"
-        >
-          Access Your Dashboard →
-        </Link>
+        {referralUrl ? (
+          <a
+            href={referralUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block bg-ink text-paper px-10 py-5 font-bold text-lg tracking-tight hover:bg-accent transition-colors"
+          >
+            Open Your Link →
+          </a>
+        ) : (
+          <button
+            onClick={generateLink}
+            disabled={loading || !email}
+            className="inline-block bg-ink text-paper px-10 py-5 font-bold text-lg tracking-tight hover:bg-accent transition-colors disabled:opacity-40"
+          >
+            {loading ? 'Generating...' : 'Get Your Link →'}
+          </button>
+        )}
       </section>
 
       {/* Footer */}

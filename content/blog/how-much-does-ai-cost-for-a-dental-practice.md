@@ -1,7 +1,7 @@
 ---
 title: "How Much Does AI Cost for a Dental Practice? Complete 2024 Pricing Guide"
 description: "Discover AI costs for dental practices: from $100/month software to $150K+ imaging systems. Get real pricing data and ROI insights."
-date: 2024-12-19
+date: "2024-12-19"
 author: eevolvv
 tags: ["dental AI", "practice management", "healthcare technology", "dental costs", "AI pricing"]
 ---

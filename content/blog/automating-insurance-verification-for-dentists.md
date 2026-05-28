@@ -1,7 +1,7 @@
 ---
 title: "Automating Insurance Verification for Dentists: A Complete Guide to Streamlining Your Practice"
 description: "Learn how automating insurance verification can save your dental practice time, reduce errors, and improve patient satisfaction while boosting revenue."
-date: 2024-12-19
+date: "2024-12-19"
 author: eevolvv
 tags: ["dental practice management", "insurance verification", "practice automation", "dental software", "healthcare efficiency"]
 ---

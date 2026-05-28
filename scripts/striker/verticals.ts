@@ -56,6 +56,56 @@ export const VERTICALS = [
     query: 'commercial landscaping Dallas', 
     priority: 'low',
     pain_point: 'Quote generation delay'
+  },
+
+  // ROTATED: New verticals (Texas pool saturated, need fresh queries)
+  { 
+    id: 'auto_repair', 
+    query: 'auto repair shop Houston', 
+    priority: 'high',
+    pain_point: 'Manual estimate generation'
+  },
+  { 
+    id: 'restoration', 
+    query: 'water damage restoration Dallas', 
+    priority: 'high',
+    pain_point: 'Slow insurance claim handling'
+  },
+  { 
+    id: 'property_management', 
+    query: 'property management Austin', 
+    priority: 'high',
+    pain_point: 'Maintenance coordination overhead'
+  },
+  { 
+    id: 'tree_service', 
+    query: 'tree service Fort Worth', 
+    priority: 'high',
+    pain_point: 'Scheduling inefficiency'
+  },
+  { 
+    id: 'locksmith', 
+    query: 'locksmith San Antonio', 
+    priority: 'high',
+    pain_point: 'Missed emergency calls'
+  },
+  { 
+    id: 'pest_control', 
+    query: 'pest control Dallas', 
+    priority: 'high',
+    pain_point: 'Route optimization'
+  },
+  { 
+    id: 'roofing', 
+    query: 'roofing contractor Houston', 
+    priority: 'high',
+    pain_point: 'Lead follow-up speed'
+  },
+  { 
+    id: 'garage_door', 
+    query: 'garage door repair Austin', 
+    priority: 'high',
+    pain_point: 'High call volume handling'
   }
 ];
 

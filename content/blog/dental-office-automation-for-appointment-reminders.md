@@ -1,7 +1,7 @@
 ---
 title: "Dental Office Automation for Appointment Reminders: A Complete Guide"
 description: "Learn how automated appointment reminders can reduce no-shows, improve patient satisfaction, and streamline your dental practice operations."
-date: 2024-12-28
+date: "2024-12-28"
 author: eevolvv
 tags: ["dental automation", "appointment reminders", "practice management", "patient communication", "dental technology"]
 ---

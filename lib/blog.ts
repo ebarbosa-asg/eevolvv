@@ -24,7 +24,11 @@ export function getAllPosts(): BlogPost[] {
       slug: file.replace('.md', ''),
       title: data.title || '',
       description: data.description || '',
-      date: data.date || '',
+      date: data.date
+        ? (typeof data.date === 'object' && data.date instanceof Date
+          ? data.date.toISOString().split('T')[0]
+          : String(data.date))
+        : '',
       author: data.author || 'eevolvv',
       tags: data.tags || [],
       content: content || '',

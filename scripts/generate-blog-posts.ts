@@ -236,7 +236,7 @@ async function generatePost(topic: string, industry: string): Promise<string | n
 Requirements:
 - 800-1200 words
 - 3-5 subheadings (## subheading)
-- YAML frontmatter with: title, description (<155 chars), date (today YYYY-MM-DD), author (eevolvv), tags (array of 3-5)
+- YAML frontmatter with: title, description (<155 chars), date (today YYYY-MM-DD, QUOTED), author (eevolvv), tags (array of 3-5)
 - One internal link to https://eevolvv.com/diagnostic somewhere in the body
 - Genuinely useful, not promotional
 - Natural language, readable

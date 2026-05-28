@@ -1,7 +1,7 @@
 ---
 title: "How to Reduce Dental No-Shows with AI: A Complete Guide for Modern Practices"
 description: "Discover proven AI strategies to reduce dental no-shows by up to 40%. Learn automated reminders, predictive analytics, and patient engagement tools."
-date: 2024-12-19
+date: "2024-12-19"
 author: eevolvv
 tags: ["dental practice management", "AI healthcare", "patient scheduling", "dental technology", "practice efficiency"]
 ---
