@@ -13,6 +13,8 @@ import { PaymentFailedEmail } from '@/emails/PaymentFailed'
 import { WinBackEmail } from '@/emails/WinBack'
 import { MonthlyReportEmail } from '@/emails/MonthlyReport'
 import { QuarterlyRecalibrationEmail } from '@/emails/QuarterlyRecalibration'
+import { FirstFixWelcomeEmail } from '@/emails/FirstFixWelcome'
+import { TestimonialRequestEmail } from '@/emails/TestimonialRequest'
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -356,6 +358,59 @@ export async function sendMonthlyReport({
     return { success: true }
   } catch (err) {
     console.error('[email-helpers] sendMonthlyReport unexpected error:', err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendFirstFixWelcome({
+  email,
+  name,
+  businessName,
+}: {
+  email: string
+  name?: string
+  businessName?: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+  const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL ?? 'https://calendly.com/hello-eevolvv'
+  try {
+    const html = await render(FirstFixWelcomeEmail({ name, businessName, calendlyUrl }))
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: 'Your First Fix is confirmed — scoping call inside',
+      html,
+    })
+    if (error) { console.error('[email-helpers] sendFirstFixWelcome error:', error); return { success: false, error: String(error) } }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendFirstFixWelcome unexpected:', err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendTestimonialRequest({
+  email,
+  name,
+  token,
+}: {
+  email: string
+  name?: string
+  token: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+  try {
+    const html = await render(TestimonialRequestEmail({ name, token }))
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: 'Quick question about your First Fix — 2 minutes',
+      html,
+    })
+    if (error) { console.error('[email-helpers] sendTestimonialRequest error:', error); return { success: false, error: String(error) } }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendTestimonialRequest unexpected:', err)
     return { success: false, error: String(err) }
   }
 }

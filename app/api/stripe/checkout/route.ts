@@ -1,17 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { getPriceId, type Tier, type Interval } from '@/lib/stripe-prices'
-import { REPORT_ROADMAP_PRODUCT, type CashProductKey } from '@/lib/cash-products'
+import { REPORT_ROADMAP_PRODUCT, FIRST_FIX_PRODUCT, type CashProductKey } from '@/lib/cash-products'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
 
 const VALID_TIERS: Tier[] = ['seed', 'core', 'evolve']
 const VALID_INTERVALS: Interval[] = ['monthly', 'annual']
-const VALID_PRODUCTS: CashProductKey[] = ['report-roadmap']
+const VALID_PRODUCTS: CashProductKey[] = ['report-roadmap', 'first-fix']
 
 function getCashProductPriceId(product: CashProductKey) {
   if (product === 'report-roadmap') return process.env.STRIPE_PRICE_REPORT_ROADMAP ?? ''
+  if (product === 'first-fix') return process.env.STRIPE_PRICE_FIRST_FIX ?? ''
   return ''
+}
+
+function getCashProductSuccessUrl(product: CashProductKey, submissionId?: string) {
+  if (product === 'first-fix') {
+    return `${BASE_URL}/onboard/success?product=first-fix&session_id={CHECKOUT_SESSION_ID}`
+  }
+  return submissionId
+    ? `${BASE_URL}/report/${submissionId}?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`
+    : `${BASE_URL}/pricing?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`
+}
+
+function getCashProductCancelUrl(product: CashProductKey, submissionId?: string) {
+  if (product === 'first-fix') return `${BASE_URL}/pricing`
+  return submissionId ? `${BASE_URL}/report/${submissionId}` : `${BASE_URL}/pricing`
 }
 
 // GET handler — used by email CTA links (?tier=core&source=email)
@@ -26,31 +41,26 @@ export async function GET(req: NextRequest) {
   const source = searchParams.get('source') ?? 'email'
   const submissionId = searchParams.get('sid')
 
-  if (rawProduct === REPORT_ROADMAP_PRODUCT.key) {
-    const priceId = getCashProductPriceId(rawProduct)
+  if (rawProduct === REPORT_ROADMAP_PRODUCT.key || rawProduct === FIRST_FIX_PRODUCT.key) {
+    const product = rawProduct as CashProductKey
+    const priceId = getCashProductPriceId(product)
     if (!priceId) {
-      return NextResponse.redirect(`${BASE_URL}/pricing?checkout=report-roadmap-missing`)
+      return NextResponse.redirect(`${BASE_URL}/pricing?checkout=${product}-missing`)
     }
 
     try {
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: submissionId
-          ? `${BASE_URL}/report/${submissionId}?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`
-          : `${BASE_URL}/pricing?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: submissionId ? `${BASE_URL}/report/${submissionId}` : `${BASE_URL}/pricing`,
-        metadata: {
-          product: REPORT_ROADMAP_PRODUCT.key,
-          source,
-          submission_id: submissionId ?? '',
-        },
+        success_url: getCashProductSuccessUrl(product, submissionId ?? undefined),
+        cancel_url: getCashProductCancelUrl(product, submissionId ?? undefined),
+        metadata: { product, source, submission_id: submissionId ?? '' },
         allow_promotion_codes: true,
       })
       if (!session.url) return NextResponse.redirect(`${BASE_URL}/pricing`)
       return NextResponse.redirect(session.url)
     } catch (err) {
-      console.error('[stripe/checkout GET report-roadmap] error:', err)
+      console.error(`[stripe/checkout GET ${product}] error:`, err)
       return NextResponse.redirect(`${BASE_URL}/pricing`)
     }
   }
@@ -118,21 +128,19 @@ export async function POST(req: NextRequest) {
 
     const priceId = getCashProductPriceId(product)
     if (!priceId) {
-      return NextResponse.json({ error: 'Report + Roadmap checkout is not configured yet.' }, { status: 503 })
+      return NextResponse.json({ error: `${product} checkout is not configured yet.` }, { status: 503 })
     }
 
     try {
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: body.submissionId
-          ? `${BASE_URL}/report/${body.submissionId}?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`
-          : `${BASE_URL}/pricing?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: body.submissionId ? `${BASE_URL}/report/${body.submissionId}` : `${BASE_URL}/pricing`,
+        success_url: getCashProductSuccessUrl(product, body.submissionId),
+        cancel_url: getCashProductCancelUrl(product, body.submissionId),
         ...(email ? { customer_email: email } : {}),
         metadata: {
           product,
-          source: 'report_roadmap_checkout',
+          source: product === 'first-fix' ? 'first_fix_checkout' : 'report_roadmap_checkout',
           submission_id: body.submissionId ?? '',
         },
         allow_promotion_codes: true,

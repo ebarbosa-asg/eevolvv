@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { TIER_CONFIGS, type Tier } from '@/lib/stripe-prices'
 import { ADD_ONS, WEBSITE_ADD_ON } from '@/lib/agent-products'
+import { FIRST_FIX_PRODUCT } from '@/lib/cash-products'
 import { ReportRoadmapOffer } from '@/components/ReportRoadmapOffer'
 import { RiskReversal } from '@/components/conversion/RiskReversal'
 import { TrustMarks } from '@/components/conversion/TrustMarks'
@@ -29,12 +30,29 @@ const DISPLAY_FEATURES: Record<Tier, string[]> = {
 }
 
 export function PricingTiers() {
-  // Default to annual (the 2-months-free framing). Auto-checkout for
-  // deep-links is handled separately by <AutoCheckoutHandler /> so this
-  // component stays SSR-able.
   const [interval, setInterval] = useState<'annual' | 'monthly'>('annual')
   const [loading, setLoading] = useState<Tier | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [firstFixLoading, setFirstFixLoading] = useState(false)
+  const [firstFixError, setFirstFixError] = useState('')
+
+  async function handleFirstFix() {
+    setFirstFixError('')
+    setFirstFixLoading(true)
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: 'first-fix' }),
+      })
+      const data = await res.json()
+      if (data.url) { window.location.href = data.url }
+      else { setFirstFixError(data.error ?? 'Something went wrong.'); setFirstFixLoading(false) }
+    } catch {
+      setFirstFixError('Network error. Please try again.')
+      setFirstFixLoading(false)
+    }
+  }
 
   async function handleStart(tier: Tier) {
     setErrors(e => ({ ...e, [tier]: '' }))
@@ -91,6 +109,40 @@ export function PricingTiers() {
             2 MONTHS FREE
           </span>
         )}
+      </div>
+
+      {/* First Fix — bridge between $97 and subscriptions */}
+      <div style={{ border: '2px solid var(--accent)', padding: 32, marginBottom: 32, position: 'relative' }}>
+        <div className="mono" style={{ position: 'absolute', top: -11, left: 24, background: 'var(--paper)', padding: '0 10px', fontSize: 9, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 700 }}>
+          FASTEST PATH TO RESULTS
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'center' }}>
+          <div>
+            <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
+              {FIRST_FIX_PRODUCT.name} — {FIRST_FIX_PRODUCT.price} <span style={{ fontSize: 13, fontWeight: 400, opacity: 0.5 }}>one-time</span>
+            </div>
+            <div style={{ fontSize: 13, opacity: 0.65, marginBottom: 16, lineHeight: 1.5 }}>
+              {FIRST_FIX_PRODUCT.tagline} We scope one automation from your diagnostic, build it, integrate it, test it, and hand it off documented.
+            </div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexWrap: 'wrap' as const, gap: '4px 20px' }}>
+              {FIRST_FIX_PRODUCT.features.map((f, i) => (
+                <li key={i} className="mono" style={{ fontSize: 10, color: 'var(--accent)', letterSpacing: '0.06em' }}>→ {f}</li>
+              ))}
+            </ul>
+          </div>
+          <div style={{ minWidth: 180, textAlign: 'right' as const }}>
+            {firstFixError && <div style={{ fontSize: 11, color: 'var(--accent)', marginBottom: 8 }}>{firstFixError}</div>}
+            <button
+              onClick={handleFirstFix}
+              disabled={firstFixLoading}
+              className="mono"
+              style={{ padding: '14px 24px', background: 'var(--accent)', color: 'var(--paper)', border: 'none', fontSize: 11, letterSpacing: '0.18em', fontWeight: 700, cursor: firstFixLoading ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' as const }}
+            >
+              {firstFixLoading ? 'REDIRECTING...' : 'GET FIRST FIX →'}
+            </button>
+            <div className="mono" style={{ fontSize: 9, opacity: 0.5, marginTop: 8, letterSpacing: '0.1em' }}>NO SUBSCRIPTION</div>
+          </div>
+        </div>
       </div>
 
       {/* Tier grid */}
@@ -173,6 +225,11 @@ export function PricingTiers() {
                   {isLoading ? 'REDIRECTING...' : `START ${config.name.toUpperCase()} →`}
                 </button>
                 <TrustMarks inverted={isCore} />
+                {interval === 'annual' && (
+                  <div className="mono" style={{ fontSize: 9, marginTop: 8, letterSpacing: '0.08em', opacity: 0.55, textAlign: 'center' as const }}>
+                    → 30-DAY MONEY-BACK ON ANNUAL PLANS
+                  </div>
+                )}
               </div>
             </div>
           )

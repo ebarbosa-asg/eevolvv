@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Tier, Interval } from '@/lib/stripe-prices'
 import { TIER_CONFIGS } from '@/lib/stripe-prices'
+import { FIRST_FIX_PRODUCT } from '@/lib/cash-products'
 import { RiskReversal } from '@/components/conversion/RiskReversal'
 import { TrustMarks } from '@/components/conversion/TrustMarks'
 
@@ -31,6 +32,26 @@ export default function BuyPage() {
   const [interval, setInterval] = useState<Interval>('annual')
   const [loading, setLoading] = useState<Tier | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [firstFixLoading, setFirstFixLoading] = useState(false)
+  const [firstFixError, setFirstFixError] = useState('')
+
+  async function handleFirstFix() {
+    setFirstFixError('')
+    setFirstFixLoading(true)
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: 'first-fix' }),
+      })
+      const data = await res.json()
+      if (data.url) { window.location.href = data.url }
+      else { setFirstFixError(data.error ?? 'Something went wrong.'); setFirstFixLoading(false) }
+    } catch {
+      setFirstFixError('Network error. Please try again.')
+      setFirstFixLoading(false)
+    }
+  }
 
   async function handleBuy(tier: Tier) {
     setErrors(e => ({ ...e, [tier]: '' }))
@@ -87,6 +108,34 @@ export default function BuyPage() {
         {/* Trust signals */}
         <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'center' }}>
           <RiskReversal />
+        </div>
+
+        {/* First Fix */}
+        <div style={{ border: '2px solid var(--accent)', padding: 28, marginBottom: 32, position: 'relative', maxWidth: 960, margin: '0 auto 32px' }}>
+          <div className="mono" style={{ position: 'absolute', top: -11, left: 24, background: 'var(--paper)', padding: '0 10px', fontSize: 9, letterSpacing: '0.22em', color: 'var(--accent)', fontWeight: 700 }}>
+            NOT READY FOR A SUBSCRIPTION?
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'center' }}>
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 }}>
+                {FIRST_FIX_PRODUCT.name} — {FIRST_FIX_PRODUCT.price} <span style={{ fontSize: 13, fontWeight: 400, opacity: 0.5 }}>one-time</span>
+              </div>
+              <div style={{ fontSize: 13, opacity: 0.65, lineHeight: 1.5 }}>
+                One automation, scoped from your diagnostic, built and live in 7 days. No subscription required.
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' as const }}>
+              {firstFixError && <div style={{ fontSize: 11, color: 'var(--accent)', marginBottom: 6 }}>{firstFixError}</div>}
+              <button
+                onClick={handleFirstFix}
+                disabled={firstFixLoading}
+                className="mono"
+                style={{ padding: '14px 22px', background: 'var(--accent)', color: 'var(--paper)', border: 'none', fontSize: 11, letterSpacing: '0.16em', fontWeight: 700, cursor: firstFixLoading ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' as const }}
+              >
+                {firstFixLoading ? 'REDIRECTING...' : 'GET FIRST FIX →'}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Toggle */}
@@ -244,6 +293,11 @@ export default function BuyPage() {
                       : `START ${config.name.toUpperCase()} →`}
                   </button>
                   <TrustMarks inverted={isCore} />
+                  {interval === 'annual' && (
+                    <div className="mono" style={{ fontSize: 9, marginTop: 8, letterSpacing: '0.08em', opacity: 0.55, textAlign: 'center' as const }}>
+                      → 30-DAY MONEY-BACK ON ANNUAL PLANS
+                    </div>
+                  )}
                 </div>
               </div>
             )

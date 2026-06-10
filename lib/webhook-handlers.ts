@@ -1,7 +1,7 @@
 import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'
 import { getTierFromPriceId, type Tier } from '@/lib/stripe-prices'
-import { sendWelcomeEmail, sendOnboardingEmail, sendPaymentFailed } from '@/lib/email-helpers'
+import { sendWelcomeEmail, sendOnboardingEmail, sendPaymentFailed, sendFirstFixWelcome } from '@/lib/email-helpers'
 import { stripe } from '@/lib/stripe'
 import { getPostHogClient } from '@/lib/posthog-server'
 
@@ -176,11 +176,117 @@ export async function createClientRecord(
 }
 
 /**
+ * Handle First Fix one-time purchase.
+ * Creates a client record (no subscription), a build record, sends welcome email,
+ * and creates a testimonial row so the 14-day request can fire later.
+ */
+export async function handleFirstFixCompleted(
+  session: Stripe.Checkout.Session
+): Promise<void> {
+  if (!supabase) { console.error('[webhook-handlers] Supabase not configured'); return }
+
+  const email = session.customer_details?.email ?? session.customer_email ?? ''
+  const name = session.customer_details?.name ?? ''
+  const stripeCustomerId =
+    typeof session.customer === 'string'
+      ? session.customer
+      : (session.customer as Stripe.Customer | null)?.id ?? ''
+
+  if (!email) { console.error('[webhook-handlers] handleFirstFixCompleted: no email on session', session.id); return }
+
+  // Idempotency: check if we already processed this session
+  const { data: existingBuild } = await supabase
+    .from('builds')
+    .select('id')
+    .eq('stripe_session_id', session.id)
+    .maybeSingle()
+
+  if (existingBuild) {
+    console.log('[webhook-handlers] handleFirstFixCompleted: already processed', session.id)
+    return
+  }
+
+  // Create or find client
+  let clientId: string
+  const { data: existingClient } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('email', email)
+    .maybeSingle()
+
+  if (existingClient) {
+    clientId = existingClient.id
+    await supabase.from('clients').update({ stripe_customer_id: stripeCustomerId || undefined }).eq('id', clientId)
+  } else {
+    const { data: newClient, error: clientErr } = await supabase
+      .from('clients')
+      .insert({ email, name, company: name, stripe_customer_id: stripeCustomerId || undefined, tier: 'first-fix', churn_risk: false })
+      .select('id')
+      .single()
+    if (clientErr || !newClient) { console.error('[webhook-handlers] handleFirstFixCompleted: client insert error:', clientErr?.message); return }
+    clientId = newClient.id
+  }
+
+  // Create build record flagged as first-fix
+  await supabase.from('builds').insert({
+    client_id: clientId,
+    tier: 'seed',
+    status: 'queued',
+    stripe_session_id: session.id,
+    notes: 'first-fix',
+  })
+
+  // Create testimonial row with token (will send request email at T+14d via cron)
+  await supabase.from('testimonials').insert({
+    client_email: email,
+    client_name: name || undefined,
+    source: 'first-fix',
+    published: false,
+  })
+
+  // Notify admin
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
+  console.log('[webhook-handlers] handleFirstFixCompleted complete', { clientId, email, adminUrl: `${BASE_URL}/os` })
+
+  // Send welcome email (non-blocking)
+  ;(async () => {
+    try {
+      await sendFirstFixWelcome({ email, name: name || undefined })
+    } catch (err) {
+      console.error('[webhook-handlers] handleFirstFixCompleted welcome email error:', err)
+    }
+  })()
+
+  // PostHog event
+  const ph = getPostHogClient()
+  const distinctId = (typeof session.customer === 'string' ? session.customer : null) ?? session.id
+  ph.capture({ distinctId, event: 'first_fix_purchased', properties: { amount: session.amount_total != null ? session.amount_total / 100 : null } })
+  await ph.shutdown()
+}
+
+/**
  * Handle checkout.session.completed
  */
 export async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
 ): Promise<void> {
+  // Route by product type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const product = (session as Record<string, any>).metadata?.product
+  if (product === 'first-fix') {
+    await handleFirstFixCompleted(session)
+    return
+  }
+
+  // One-time non-subscription products (report-roadmap etc.) don't need a client record
+  if (product && product !== 'first-fix') {
+    const ph = getPostHogClient()
+    const distinctId = (typeof session.customer === 'string' ? session.customer : null) ?? session.id
+    ph.capture({ distinctId, event: 'cash_product_purchased', properties: { product, amount: session.amount_total != null ? session.amount_total / 100 : null } })
+    await ph.shutdown()
+    return
+  }
+
   await createClientRecord(session)
 
   // T24: checkout_completed — distinctId is Stripe customer ID (opaque, no PII)
