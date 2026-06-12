@@ -9,22 +9,22 @@ import { TrustMarks } from '@/components/conversion/TrustMarks'
 
 const FEATURES: Record<Tier, string[]> = {
   seed: [
-    'Private agent page',
-    'Weekly recommendations',
-    '1 active integration / automation',
-    'SCO management available as add-on',
+    'Client Dashboard (private URL)',
+    'Weekly performance report',
+    '1 active automation (built and documented)',
+    'Search + ChatGPT optimization available as add-on',
   ],
   core: [
-    'Private agent page',
-    'Weekly recommendations',
-    '3 active integrations / automations',
-    'SCO management available as add-on',
+    'Client Dashboard (private URL)',
+    'Weekly performance report',
+    '3 active automations (built and documented)',
+    'Search + ChatGPT optimization available as add-on',
   ],
   evolve: [
-    'Private agent page',
-    'Weekly recommendations',
-    'Up to 5 integrations / automations',
-    'Ads, SEO, and SCO management included',
+    'Client Dashboard (private URL)',
+    'Weekly performance report',
+    'Up to 5 automations (built and documented)',
+    'Ads, SEO, and Search + ChatGPT optimization included',
   ],
 }
 
@@ -319,7 +319,7 @@ export default function BuyPage() {
             margin: '14px auto 0',
           }}
         >
-          → Checkout takes 2 minutes. Your agent page, Ghost Locker, and first product file queue immediately.
+          → Checkout takes 2 minutes. Your Client Dashboard and first automation queue immediately.
         </div>
 
         {/* Bottom CTA for undecided */}

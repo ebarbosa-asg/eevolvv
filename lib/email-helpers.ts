@@ -15,6 +15,9 @@ import { MonthlyReportEmail } from '@/emails/MonthlyReport'
 import { QuarterlyRecalibrationEmail } from '@/emails/QuarterlyRecalibration'
 import { FirstFixWelcomeEmail } from '@/emails/FirstFixWelcome'
 import { TestimonialRequestEmail } from '@/emails/TestimonialRequest'
+import { IntakePilotKickoffEmail } from '@/emails/IntakePilotKickoff'
+import { TextbackPilotKickoffEmail } from '@/emails/TextbackPilotKickoff'
+import { WeeklyReportEmail } from '@/emails/WeeklyReport'
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -411,6 +414,112 @@ export async function sendTestimonialRequest({
     return { success: true }
   } catch (err) {
     console.error('[email-helpers] sendTestimonialRequest unexpected:', err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendIntakePilotKickoff({
+  email,
+  name,
+}: {
+  email: string
+  name?: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+  try {
+    const html = await render(IntakePilotKickoffEmail({ name, email }))
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: 'Your AI Intake Pilot is confirmed — here\'s what happens next',
+      html,
+    })
+    if (error) { console.error('[email-helpers] sendIntakePilotKickoff error:', error); return { success: false, error: String(error) } }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendIntakePilotKickoff unexpected:', err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendTextbackPilotKickoff({
+  email,
+  name,
+}: {
+  email: string
+  name?: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+  try {
+    const html = await render(TextbackPilotKickoffEmail({ name, email }))
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: 'Your Missed-Call Textback Pilot is confirmed — here\'s what happens next',
+      html,
+    })
+    if (error) { console.error('[email-helpers] sendTextbackPilotKickoff error:', error); return { success: false, error: String(error) } }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendTextbackPilotKickoff unexpected:', err)
+    return { success: false, error: String(err) }
+  }
+}
+
+export async function sendWeeklyReport({
+  email,
+  name,
+  weekLabel,
+  pilotProduct,
+  metricName,
+  metricValue,
+  responseTime,
+  automationRuns,
+  summary,
+  recommendation,
+  portalUrl,
+}: {
+  email: string
+  name?: string
+  weekLabel: string
+  pilotProduct?: string
+  metricName?: string
+  metricValue?: string
+  responseTime?: string
+  automationRuns?: number
+  summary?: string
+  recommendation?: string
+  portalUrl?: string
+}): Promise<EmailResult> {
+  if (!resend) return { success: false, error: 'Email service not configured' }
+  try {
+    const html = await render(
+      WeeklyReportEmail({
+        name,
+        weekLabel,
+        pilotProduct,
+        metricName,
+        metricValue,
+        responseTime,
+        automationRuns,
+        summary,
+        recommendation,
+        portalUrl,
+      }),
+    )
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: `Your eevolvv weekly update — ${weekLabel}`,
+      html,
+    })
+    if (error) {
+      console.error('[email-helpers] sendWeeklyReport error:', error)
+      return { success: false, error: String(error) }
+    }
+    return { success: true }
+  } catch (err) {
+    console.error('[email-helpers] sendWeeklyReport unexpected error:', err)
     return { success: false, error: String(err) }
   }
 }

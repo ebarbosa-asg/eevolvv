@@ -4,7 +4,10 @@ import { getAllPosts } from '@/lib/blog'
 
 const pages = [
   { url: '/', changefreq: 'weekly', priority: 1.0 },
-  { url: '/pricing', changefreq: 'monthly', priority: 0.9 },
+  { url: '/pricing', changefreq: 'weekly', priority: 0.9 },
+  { url: '/diagnostic', changefreq: 'weekly', priority: 0.85 },
+  { url: '/intake', changefreq: 'weekly', priority: 0.9 },
+  { url: '/textback', changefreq: 'weekly', priority: 0.9 },
   { url: '/contact', changefreq: 'monthly', priority: 0.7 },
   { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
   { url: '/terms', changefreq: 'yearly', priority: 0.3 },
@@ -12,6 +15,8 @@ const pages = [
   { url: '/partners', changefreq: 'monthly', priority: 0.6 },
   { url: '/referral', changefreq: 'monthly', priority: 0.5 },
   { url: '/buy', changefreq: 'monthly', priority: 0.9 },
+  { url: '/revenue-calculator', changefreq: 'monthly', priority: 0.7 },
+  { url: '/ghost-work-receipt', changefreq: 'monthly', priority: 0.7 },
 ]
 
 const industrySlugs = [
@@ -29,7 +34,7 @@ for (const slug of industrySlugs) {
 
 const posts = getAllPosts()
 for (const post of posts) {
-  pages.push({ url: `/blog/${post.slug}`, changefreq: 'monthly', priority: 0.7 })
+  pages.push({ url: `/blog/${post.slug}`, changefreq: 'monthly', priority: 0.6 })
 }
 
 export async function GET() {

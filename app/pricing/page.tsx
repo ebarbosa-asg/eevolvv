@@ -4,11 +4,11 @@ import { PricingTiers } from './PricingTiers'
 import { AutoCheckoutHandler } from './AutoCheckoutHandler'
 
 export const metadata: Metadata = {
-  title: 'Pricing — eevolvv | Client Agent Pages',
-  description: 'Agent One from $499/mo, Agent Three from $999/mo, Agent Five from $1,999/mo. Client agent pages with weekly recommendations, automations, integrations, and tangible product files.',
+  title: 'What to get first — eevolvv',
+  description: 'Named vertical outcomes, a $97 diagnostic report, First Fix builds, and managed agent plans. Start free or pick a scoped pilot — every product is built and handed off in 30 days or less.',
   openGraph: {
-    title: 'Pricing — eevolvv',
-    description: 'Client agent pages with weekly recommendations, automations, integrations, and tangible product files.',
+    title: 'What to get first — eevolvv',
+    description: 'Named vertical outcomes, a $97 diagnostic report, First Fix builds, and managed agent plans. Start free or pick a scoped pilot.',
     url: 'https://eevolvv.com/pricing',
   },
 }
@@ -20,13 +20,13 @@ export default function PricingPage() {
         {/* Header */}
         <div style={{ marginBottom: 48 }}>
           <div className="mono" style={{ fontSize: 10, letterSpacing: '0.22em', color: 'var(--accent)', marginBottom: 14, fontWeight: 600 }}>
-            § 01 · PRICING
+            § 00 · MENU
           </div>
           <h1 style={{ fontSize: 'clamp(28px, 5vw, 44px)', fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 12px', color: 'var(--ink)', lineHeight: 1.1 }}>
-            The product is the agent page.
+            Pick your outcome. Start in 30 days.
           </h1>
-          <p style={{ fontSize: 16, opacity: 0.6, maxWidth: 480, margin: 0, lineHeight: 1.55 }}>
-            Every recommendation, automation, website, SCO action, report, and file becomes visible inside the client portal. Not vague service work. Tangible products.
+          <p style={{ fontSize: 16, opacity: 0.6, maxWidth: 540, margin: 0, lineHeight: 1.55 }}>
+            Choose a named, measurable outcome — or start free with the diagnostic. Every product is scoped, built, and handed off with documentation.
           </p>
         </div>
 

@@ -1,23 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { getPriceId, type Tier, type Interval } from '@/lib/stripe-prices'
-import { REPORT_ROADMAP_PRODUCT, FIRST_FIX_PRODUCT, type CashProductKey } from '@/lib/cash-products'
+import {
+  REPORT_ROADMAP_PRODUCT,
+  FIRST_FIX_PRODUCT,
+  INTAKE_PILOT_PRODUCT,
+  INTAKE_MONTHLY_PRODUCT,
+  TEXTBACK_PILOT_PRODUCT,
+  TEXTBACK_MONTHLY_PRODUCT,
+  type CashProductKey,
+} from '@/lib/cash-products'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
 
 const VALID_TIERS: Tier[] = ['seed', 'core', 'evolve']
 const VALID_INTERVALS: Interval[] = ['monthly', 'annual']
-const VALID_PRODUCTS: CashProductKey[] = ['report-roadmap', 'first-fix']
+const VALID_PRODUCTS: CashProductKey[] = [
+  'report-roadmap',
+  'first-fix',
+  'intake-pilot',
+  'intake-monthly',
+  'textback-pilot',
+  'textback-monthly',
+]
 
 function getCashProductPriceId(product: CashProductKey) {
   if (product === 'report-roadmap') return process.env.STRIPE_PRICE_REPORT_ROADMAP ?? ''
   if (product === 'first-fix') return process.env.STRIPE_PRICE_FIRST_FIX ?? ''
+  if (product === 'intake-pilot') return process.env.STRIPE_PRICE_INTAKE_PILOT ?? ''
+  if (product === 'intake-monthly') return process.env.STRIPE_PRICE_INTAKE_MONTHLY ?? ''
+  if (product === 'textback-pilot') return process.env.STRIPE_PRICE_TEXTBACK_PILOT ?? ''
+  if (product === 'textback-monthly') return process.env.STRIPE_PRICE_TEXTBACK_MONTHLY ?? ''
   return ''
 }
 
 function getCashProductSuccessUrl(product: CashProductKey, submissionId?: string) {
   if (product === 'first-fix') {
     return `${BASE_URL}/onboard/success?product=first-fix&session_id={CHECKOUT_SESSION_ID}`
+  }
+  if (product === 'intake-pilot' || product === 'intake-monthly') {
+    return `${BASE_URL}/onboard/success?product=${product}&session_id={CHECKOUT_SESSION_ID}`
+  }
+  if (product === 'textback-pilot' || product === 'textback-monthly') {
+    return `${BASE_URL}/onboard/success?product=${product}&session_id={CHECKOUT_SESSION_ID}`
   }
   return submissionId
     ? `${BASE_URL}/report/${submissionId}?paid=roadmap&session_id={CHECKOUT_SESSION_ID}`
@@ -26,6 +51,8 @@ function getCashProductSuccessUrl(product: CashProductKey, submissionId?: string
 
 function getCashProductCancelUrl(product: CashProductKey, submissionId?: string) {
   if (product === 'first-fix') return `${BASE_URL}/pricing`
+  if (product === 'intake-pilot' || product === 'intake-monthly') return `${BASE_URL}/intake`
+  if (product === 'textback-pilot' || product === 'textback-monthly') return `${BASE_URL}/textback`
   return submissionId ? `${BASE_URL}/report/${submissionId}` : `${BASE_URL}/pricing`
 }
 
@@ -41,7 +68,14 @@ export async function GET(req: NextRequest) {
   const source = searchParams.get('source') ?? 'email'
   const submissionId = searchParams.get('sid')
 
-  if (rawProduct === REPORT_ROADMAP_PRODUCT.key || rawProduct === FIRST_FIX_PRODUCT.key) {
+  if (
+    rawProduct === REPORT_ROADMAP_PRODUCT.key ||
+    rawProduct === FIRST_FIX_PRODUCT.key ||
+    rawProduct === INTAKE_PILOT_PRODUCT.key ||
+    rawProduct === INTAKE_MONTHLY_PRODUCT.key ||
+    rawProduct === TEXTBACK_PILOT_PRODUCT.key ||
+    rawProduct === TEXTBACK_MONTHLY_PRODUCT.key
+  ) {
     const product = rawProduct as CashProductKey
     const priceId = getCashProductPriceId(product)
     if (!priceId) {
@@ -140,7 +174,7 @@ export async function POST(req: NextRequest) {
         ...(email ? { customer_email: email } : {}),
         metadata: {
           product,
-          source: product === 'first-fix' ? 'first_fix_checkout' : 'report_roadmap_checkout',
+          source: `${product}_checkout`,
           submission_id: body.submissionId ?? '',
         },
         allow_promotion_codes: true,

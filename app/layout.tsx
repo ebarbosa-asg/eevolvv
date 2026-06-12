@@ -9,7 +9,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://eevolvv.com'),
   title: 'eevolvv — AI Operations Team for Growing Businesses',
-  description: 'We find the ghost work inside your business, build AI agents to run it, and give every client a private agent page, Ghost Locker, reports, and monthly recalibration.',
+  description: 'We find the ghost work inside your business, build AI agents to run it, and give every client a private Client Dashboard, weekly reports, and monthly recalibration.',
   keywords: 'AI operations team, ghost work audit, AI business diagnostic, client agent page, workflow automation, AI agents for business',
   openGraph: {
     title: 'eevolvv — AI Operations Team for Growing Businesses',

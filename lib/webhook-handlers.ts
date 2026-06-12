@@ -1,9 +1,18 @@
 import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'
 import { getTierFromPriceId, type Tier } from '@/lib/stripe-prices'
-import { sendWelcomeEmail, sendOnboardingEmail, sendPaymentFailed, sendFirstFixWelcome } from '@/lib/email-helpers'
+import {
+  sendWelcomeEmail,
+  sendOnboardingEmail,
+  sendPaymentFailed,
+  sendFirstFixWelcome,
+  sendIntakePilotKickoff,
+  sendTextbackPilotKickoff,
+} from '@/lib/email-helpers'
 import { stripe } from '@/lib/stripe'
 import { getPostHogClient } from '@/lib/posthog-server'
+
+type PilotProductType = 'intake-pilot' | 'textback-pilot'
 
 /**
  * Create client record, subscription, onboarding token, and initial build entry
@@ -265,6 +274,148 @@ export async function handleFirstFixCompleted(
 }
 
 /**
+ * Handle pilot product purchases (intake-pilot, textback-pilot).
+ * Creates client record, build entry (with product_type + stripe_session_id),
+ * onboarding token (product_type-aware), testimonials row, and sends kickoff email.
+ */
+export async function handlePilotCompleted(
+  session: Stripe.Checkout.Session,
+  productType: PilotProductType
+): Promise<void> {
+  if (!supabase) { console.error('[webhook-handlers] handlePilotCompleted: Supabase not configured'); return }
+
+  const email = session.customer_details?.email ?? session.customer_email ?? ''
+  const name = session.customer_details?.name ?? ''
+  const stripeCustomerId =
+    typeof session.customer === 'string'
+      ? session.customer
+      : (session.customer as Stripe.Customer | null)?.id ?? ''
+
+  if (!email) {
+    console.error('[webhook-handlers] handlePilotCompleted: no email on session', session.id)
+    return
+  }
+
+  // Idempotency: check if we already processed this session
+  const { data: existingBuild } = await supabase
+    .from('builds')
+    .select('id')
+    .eq('stripe_session_id', session.id)
+    .maybeSingle()
+
+  if (existingBuild) {
+    console.log('[webhook-handlers] handlePilotCompleted: already processed', session.id)
+    return
+  }
+
+  // Create or find client
+  let clientId: string
+  const { data: existingClient } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('email', email)
+    .maybeSingle()
+
+  if (existingClient) {
+    clientId = existingClient.id
+    await supabase.from('clients').update({
+      stripe_customer_id: stripeCustomerId || undefined,
+    }).eq('id', clientId)
+  } else {
+    const { data: newClient, error: clientErr } = await supabase
+      .from('clients')
+      .insert({
+        email,
+        name,
+        company: name,
+        stripe_customer_id: stripeCustomerId || undefined,
+        tier: 'seed', // pilot clients default to seed tier for portal access
+        churn_risk: false,
+      })
+      .select('id')
+      .single()
+    if (clientErr || !newClient) {
+      console.error('[webhook-handlers] handlePilotCompleted: client insert error:', clientErr?.message)
+      return
+    }
+    clientId = newClient.id
+  }
+
+  // Create build record — tier maps to the pilot product type
+  const tierForBuild = productType === 'intake-pilot' ? 'intake-pilot' : 'textback-pilot'
+  const { error: buildErr } = await supabase.from('builds').insert({
+    client_id: clientId,
+    tier: tierForBuild,
+    status: 'queued',
+    stripe_session_id: session.id,
+    product_type: productType,
+    notes: `${productType} — auto-created from Stripe checkout ${session.id}`,
+  })
+  if (buildErr) {
+    console.error('[webhook-handlers] handlePilotCompleted: build insert error:', buildErr.message)
+    // Non-fatal — continue to token + email
+  }
+
+  // Create onboarding token with product_type so the intake form asks the right questions
+  const { data: tokenRow, error: tokenErr } = await supabase
+    .from('onboarding_tokens')
+    .insert({
+      client_id: clientId,
+      status: 'pending',
+      product_type: productType,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    })
+    .select('token')
+    .single()
+
+  if (tokenErr || !tokenRow) {
+    console.error('[webhook-handlers] handlePilotCompleted: token insert error:', tokenErr?.message)
+  }
+
+  // Create testimonial row for T+14d request
+  await supabase.from('testimonials').insert({
+    client_email: email,
+    client_name: name || undefined,
+    source: productType,
+    published: false,
+  }).then(({ error }) => {
+    if (error) console.error('[webhook-handlers] handlePilotCompleted: testimonial insert error:', error.message)
+  })
+
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://eevolvv.com'
+  const onboardingUrl = tokenRow ? `${BASE_URL}/onboard/${tokenRow.token}` : `${BASE_URL}/onboard/success?product=${productType}`
+  console.log('[webhook-handlers] handlePilotCompleted complete', { clientId, email, productType, onboardingUrl })
+
+  // Send kickoff email (non-blocking)
+  ;(async () => {
+    try {
+      const firstName = name.split(' ')[0] || 'there'
+      if (productType === 'intake-pilot') {
+        await sendIntakePilotKickoff({ email, name: firstName })
+      } else {
+        await sendTextbackPilotKickoff({ email, name: firstName })
+      }
+    } catch (err) {
+      console.error('[webhook-handlers] handlePilotCompleted kickoff email error:', err)
+    }
+  })()
+
+  // PostHog event
+  const ph = getPostHogClient()
+  const distinctId = (typeof session.customer === 'string' ? session.customer : null) ?? session.id
+  ph.capture({
+    distinctId,
+    event: 'pilot_purchased',
+    properties: {
+      product_type: productType,
+      amount: session.amount_total != null ? session.amount_total / 100 : null,
+      client_id: clientId,
+    },
+  })
+  await ph.shutdown()
+}
+
+/**
  * Handle checkout.session.completed
  */
 export async function handleCheckoutSessionCompleted(
@@ -273,13 +424,21 @@ export async function handleCheckoutSessionCompleted(
   // Route by product type
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const product = (session as Record<string, any>).metadata?.product
+
+  // Pilot products — create client record + build + kickoff email
+  if (product === 'intake-pilot' || product === 'textback-pilot') {
+    await handlePilotCompleted(session, product as PilotProductType)
+    return
+  }
+
+  // First Fix — custom one-time build
   if (product === 'first-fix') {
     await handleFirstFixCompleted(session)
     return
   }
 
-  // One-time non-subscription products (report-roadmap etc.) don't need a client record
-  if (product && product !== 'first-fix') {
+  // Report-roadmap and other simple one-time products — no client record needed
+  if (product === 'report-roadmap' || product === 'intake-monthly' || product === 'textback-monthly') {
     const ph = getPostHogClient()
     const distinctId = (typeof session.customer === 'string' ? session.customer : null) ?? session.id
     ph.capture({ distinctId, event: 'cash_product_purchased', properties: { product, amount: session.amount_total != null ? session.amount_total / 100 : null } })
@@ -287,6 +446,7 @@ export async function handleCheckoutSessionCompleted(
     return
   }
 
+  // No product metadata → subscription checkout
   await createClientRecord(session)
 
   // T24: checkout_completed — distinctId is Stripe customer ID (opaque, no PII)
