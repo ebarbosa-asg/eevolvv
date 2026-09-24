@@ -27,6 +27,19 @@ export function legalAddress() {
   return configuredEnv(process.env.NEXT_PUBLIC_LEGAL_ADDRESS);
 }
 
+export function legalEntity() {
+  return configuredEnv(process.env.NEXT_PUBLIC_LEGAL_ENTITY);
+}
+
+export function legalState() {
+  return configuredEnv(process.env.NEXT_PUBLIC_LEGAL_STATE);
+}
+
+/** Legal actor in sentences. No entity type or state while the env is TODO. */
+export function legalParty() {
+  return legalEntity() || "the company operating eevolvv";
+}
+
 export function plausibleDomain() {
   return configuredEnv(process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN);
 }
@@ -68,31 +81,43 @@ export function pageMeta(opts: { title: string; description: string; path: strin
 }
 
 export function organizationGraph() {
+  const entity = legalEntity();
+  const address = legalAddress();
+  const orgName = entity || SITE_NAME;
+  const organization: Record<string, unknown> = {
+    "@type": "Organization",
+    name: orgName,
+    url: SITE_URL,
+    email: contactEmail(),
+    brand: { "@type": "Brand", name: SITE_NAME },
+    description:
+      "Done-for-you short-form clipping and posting. Your content is the place to stand; our automation is the lever.",
+  };
+  if (entity) {
+    organization.legalName = entity;
+    organization.alternateName = SITE_NAME;
+  } else {
+    organization.alternateName = "eevolvv 2.0";
+  }
+  if (address) {
+    organization.address = { "@type": "PostalAddress", streetAddress: address };
+  }
   return {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "Organization",
-        name: SITE_NAME,
-        alternateName: "eevolvv 2.0",
-        url: SITE_URL,
-        email: contactEmail(),
-        brand: { "@type": "Brand", name: SITE_NAME },
-        description:
-          "Done-for-you short-form clipping and posting. Your content is the place to stand; our automation is the lever.",
-      },
+      organization,
       {
         "@type": "WebSite",
         name: SITE_NAME,
         url: SITE_URL,
-        publisher: { "@type": "Organization", name: SITE_NAME },
+        publisher: { "@type": "Organization", name: orgName },
       },
       {
         "@type": "Service",
         name: "eevolvv clipping retainers",
         serviceType: "Short-form video clipping and distribution",
         areaServed: "Worldwide",
-        provider: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+        provider: { "@type": "Organization", name: orgName, url: SITE_URL },
         offers: [packages.ship, packages.dominate].map((pack) => ({
           "@type": "Offer",
           name: pack.name,

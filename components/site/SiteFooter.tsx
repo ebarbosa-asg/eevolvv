@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/site/Wordmark";
-import { contactEmail } from "@/lib/seo";
+import { contactEmail, legalEntity } from "@/lib/seo";
 
 export function SiteFooter() {
   const email = contactEmail();
@@ -13,7 +13,7 @@ export function SiteFooter() {
         <span className="footer-domain">eevolvv.com</span>
       </div>
       <div className="wrap footer-bottom">
-        <span>© {new Date().getFullYear()} eevolvv, Inc.</span>
+        <span>© {new Date().getFullYear()} {legalEntity() || "eevolvv"}</span>
         <nav className="footer-links" aria-label="Footer">
           <Link href="/packages/clip-and-ship">Clip & Ship</Link>
           <Link href="/packages/clip-and-dominate">Clip & Dominate</Link>

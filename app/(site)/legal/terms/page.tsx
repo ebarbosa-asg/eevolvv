@@ -1,11 +1,15 @@
 /**
  * DRAFT for E's review. Not legal advice and not a signed agreement.
- * Unknown mailing address stays on NEXT_PUBLIC_LEGAL_ADDRESS (TODO until set).
- * Do not invent an address, a notice period, or a legal entity.
+ * NEXT_PUBLIC_LEGAL_ENTITY, NEXT_PUBLIC_LEGAL_STATE, and NEXT_PUBLIC_LEGAL_ADDRESS
+ * stay TODO until a real company is on record. Do not invent an entity type, a state, or an address.
  */
 import type { Metadata } from "next";
-import { contactEmail, legalAddress, pageMeta } from "@/lib/seo";
+import { contactEmail, legalAddress, legalParty, legalState, pageMeta } from "@/lib/seo";
 import { formatUsd, packages } from "@/lib/packages";
+
+function sentence(party: string) {
+  return party.charAt(0).toUpperCase() + party.slice(1);
+}
 
 export const metadata: Metadata = pageMeta({
   title: "Terms",
@@ -16,6 +20,8 @@ export const metadata: Metadata = pageMeta({
 
 export default function TermsPage() {
   const email = contactEmail();
+  const party = legalParty();
+  const state = legalState();
   const address = legalAddress();
   return (
     <section className="page-hero">
@@ -23,7 +29,8 @@ export default function TermsPage() {
         <p className="eyebrow">Legal</p>
         <h1>Terms</h1>
         <p>
-          These terms cover the marketing site and the clipping retainers sold by eevolvv, Inc., a Delaware corporation. A signed statement of work controls if it conflicts with this page.
+          These terms cover the marketing site and the clipping retainers sold under the service name eevolvv by {party}. A signed statement of work controls if it conflicts with this page.
+          {state ? ` ${sentence(party)} is organized in ${state}.` : null}
         </p>
 
         <h2>The service</h2>
@@ -33,12 +40,12 @@ export default function TermsPage() {
 
         <h2>Your content stays yours</h2>
         <p>
-          You keep all rights in your recordings, your accounts, and the clips made from them. eevolvv, Inc. does not take ownership of your content.
+          You keep all rights in your recordings, your accounts, and the clips made from them. {sentence(party)} does not take ownership of your content.
         </p>
 
         <h2>License to edit and post</h2>
         <p>
-          You grant eevolvv, Inc. a license, limited to the engagement, to edit the source you send and to post the clips you approve on the accounts you name. You are responsible for the rights to music, guests, and trademarks in that source. The license to post new clips ends when the engagement ends.
+          You grant {party} a license, limited to the engagement, to edit the source you send and to post the clips you approve on the accounts you name. You are responsible for the rights to music, guests, and trademarks in that source. The license to post new clips ends when the engagement ends.
         </p>
 
         <h2>Monthly billing</h2>
@@ -61,7 +68,8 @@ export default function TermsPage() {
 
         <h2>Law</h2>
         <p>
-          Delaware law governs. Contact <a href={`mailto:${email}`}>{email}</a>.
+          {state ? `${state} law governs. ` : null}
+          Contact <a href={`mailto:${email}`}>{email}</a>.
           {address ? ` ${address}.` : null}
         </p>
       </div>

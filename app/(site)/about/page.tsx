@@ -1,23 +1,35 @@
 import type { Metadata } from "next";
 import { LeverArt } from "@/components/site/art";
-import { pageMeta } from "@/lib/seo";
+import { legalEntity, legalParty, legalState, pageMeta } from "@/lib/seo";
+
+const entity = legalEntity();
+const state = legalState();
 
 export const metadata: Metadata = pageMeta({
   title: "About",
-  description: "eevolvv, Inc. is a short-form clipping and distribution practice. Your content is the place to stand. Automation is the lever.",
+  description: entity
+    ? `${entity} operates eevolvv, a short-form clipping and distribution service.${state ? ` Organized in ${state}.` : ""}`
+    : "eevolvv is a short-form clipping and distribution service. Your content is the place to stand. Automation is the lever.",
   path: "/about",
 });
 
+function sentence(party: string) {
+  return party.charAt(0).toUpperCase() + party.slice(1);
+}
+
 export default function AboutPage() {
+  const party = legalParty();
+  const organized = legalState();
   return (
     <>
       <section className="page-hero">
         <div className="wrap split">
           <div>
-            <p className="eyebrow">eevolvv, Inc.</p>
+            <p className="eyebrow">eevolvv</p>
             <h1>The lever, not a login</h1>
             <p className="lead">
-              eevolvv, Inc. is a Delaware corporation. The public offer is done-for-you clipping and posting for people who already record and do not post enough.
+              eevolvv is a done-for-you clipping and posting service for people who already record and do not post enough. The offer is made by {party}.
+              {organized ? ` ${sentence(party)} is organized in ${organized}.` : null}
             </p>
             <p className="lead">
               Give me a lever and a place to stand, and I’ll move the world. Here, the place to stand is the long-form you already made. The lever is the system that captions it, titles it, and puts it on your accounts.

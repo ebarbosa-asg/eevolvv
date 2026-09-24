@@ -1,19 +1,30 @@
 /**
  * DRAFT for E's review. Not legal advice.
- * Unknown mailing address stays on NEXT_PUBLIC_LEGAL_ADDRESS (TODO until set).
- * Do not invent an address or a legal entity.
+ * NEXT_PUBLIC_LEGAL_ENTITY, NEXT_PUBLIC_LEGAL_STATE, and NEXT_PUBLIC_LEGAL_ADDRESS
+ * stay TODO until a real company is on record. Do not invent an entity type, a state, or an address.
  */
 import type { Metadata } from "next";
-import { contactEmail, legalAddress, pageMeta } from "@/lib/seo";
+import { contactEmail, legalAddress, legalEntity, legalParty, legalState, pageMeta } from "@/lib/seo";
+
+const entity = legalEntity();
+const state = legalState();
 
 export const metadata: Metadata = pageMeta({
   title: "Privacy",
-  description: "Privacy policy for eevolvv, Inc., a Delaware corporation offering short-form clipping and distribution.",
+  description: entity
+    ? `Privacy policy for ${entity}${state ? `, organized in ${state}` : ""}, offering short-form clipping and distribution under the service name eevolvv.`
+    : "Privacy policy for eevolvv, a short-form clipping and distribution service.",
   path: "/legal/privacy",
 });
 
+function sentence(party: string) {
+  return party.charAt(0).toUpperCase() + party.slice(1);
+}
+
 export default function PrivacyPage() {
   const email = contactEmail();
+  const party = legalParty();
+  const organized = legalState();
   const address = legalAddress();
   return (
     <section className="page-hero">
@@ -21,7 +32,8 @@ export default function PrivacyPage() {
         <p className="eyebrow">Legal</p>
         <h1>Privacy</h1>
         <p>
-          eevolvv, Inc. (“eevolvv”) is a Delaware corporation. This page describes the marketing site at eevolvv.com and the clipping work that starts from it.
+          This page describes the marketing site at eevolvv.com and the clipping work that starts from it. eevolvv is the service name. The offer is made by {party}.
+          {organized ? ` ${sentence(party)} is organized in ${organized}.` : null}
           {address ? ` Mailing address: ${address}.` : null}
         </p>
 

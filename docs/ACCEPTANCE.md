@@ -1,6 +1,6 @@
 # eevolvv 2.0 acceptance
 
-Public brand is **eevolvv** only. Legal entity in the footer and legal pages is **eevolvv, Inc.**
+Public brand is **eevolvv** only. Legal name, state, and mailing address come from `NEXT_PUBLIC_LEGAL_ENTITY`, `NEXT_PUBLIC_LEGAL_STATE`, and `NEXT_PUBLIC_LEGAL_ADDRESS`. While those are TODO, the site says eevolvv and “the company operating eevolvv,” with no entity type or state.
 
 ## Routes
 
