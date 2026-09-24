@@ -9,15 +9,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     env:
-      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
-      SUPABASE_URL: https://example.supabase.co
-      SUPABASE_ANON_KEY: dummy
-      SUPABASE_SERVICE_ROLE_KEY: dummy
       NEXT_PUBLIC_SITE_URL: https://eevolvv.com
-      NEXT_PUBLIC_CAL_URL: TODO
-      NEXT_PUBLIC_PLAUSIBLE_DOMAIN: TODO
-      NEXT_PUBLIC_STRIPE_LINK_SHIP: TODO
-      NEXT_PUBLIC_STRIPE_LINK_DOMINATE: TODO
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

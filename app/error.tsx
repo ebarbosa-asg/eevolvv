@@ -1,17 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
-
 /**
  * Route-level error boundary (App Router). Catches errors in segments below the root layout.
  * global-error.tsx handles root layout failures only; without this file, dev can fall back to
  * Next’s “missing required error components, refreshing...” screen when error UI can’t load.
  */
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  useEffect(() => {
-    void import('@sentry/nextjs').then((Sentry) => Sentry.captureException(error))
-  }, [error])
-
   return (
     <div
       style={{
@@ -49,7 +43,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
           </pre>
         )}
         <p style={{ color: '#888', fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
-          An unexpected error occurred. Our team has been notified.
+          An unexpected error occurred.
         </p>
         <button
           type="button"

@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/os/", "/api/", "/signin/", "/onboard/", "/report/", "/run/", "/share/", "/client/"],
+      disallow: ["/api/", "/proof"],
     },
     sitemap: "https://eevolvv.com/sitemap.xml",
   };
