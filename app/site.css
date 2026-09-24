@@ -339,8 +339,7 @@ span.logo-mark {
 
 .hero-copy {
   display: grid;
-  width: 100%;
-  grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.7fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
   grid-template-areas:
     "chips art"
     "title art"
@@ -382,7 +381,7 @@ span.logo-mark {
 .hero h1 {
   grid-area: title;
   font-family: var(--sans);
-  font-size: clamp(44px, 5.4vw, 76px);
+  font-size: clamp(34px, 4.6vw, 64px);
   font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 0.98;
