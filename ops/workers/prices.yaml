@@ -1,0 +1,23 @@
+# Verified vendor rates. Do not invent prices. Unknown SKUs must fail closed.
+# usd_per_unit is a decimal string so the loader never passes through binary float.
+skus:
+  assemblyai.universal-2.audio_hour:
+    usd_per_unit: "0.15"
+    unit: audio_hour
+    verified_on: "2026-09-24"
+    source: "https://www.assemblyai.com/docs/getting-started/models"
+  assemblyai.universal-3-pro.audio_hour:
+    usd_per_unit: "0.21"
+    unit: audio_hour
+    verified_on: "2026-09-24"
+    source: "https://www.assemblyai.com/docs/getting-started/models"
+  anthropic.claude-sonnet-4-6.input_mtok:
+    usd_per_unit: "3"
+    unit: million_tokens
+    verified_on: "2026-09-24"
+    source: "https://platform.claude.com/docs/en/about-claude/pricing"
+  anthropic.claude-sonnet-4-6.output_mtok:
+    usd_per_unit: "15"
+    unit: million_tokens
+    verified_on: "2026-09-24"
+    source: "https://platform.claude.com/docs/en/about-claude/pricing"

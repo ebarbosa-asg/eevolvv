@@ -1,0 +1,56 @@
+{
+  "s01": {
+    "youtube_title": "Send the episode",
+    "youtube_description": "A clip about intake.",
+    "instagram_caption": "Send the episode",
+    "tiktok_caption": "Send the episode",
+    "hashtags": [
+      "eevolvv",
+      "intake"
+    ],
+    "claims": [
+      {
+        "text": "Send the episode",
+        "sentence_ids": [
+          "s01"
+        ]
+      }
+    ]
+  },
+  "s07": {
+    "youtube_title": "Client approves",
+    "youtube_description": "A clip about approval.",
+    "instagram_caption": "Client approves",
+    "tiktok_caption": "Client approves",
+    "hashtags": [
+      "eevolvv",
+      "approval"
+    ],
+    "claims": [
+      {
+        "text": "Client approves",
+        "sentence_ids": [
+          "s07"
+        ]
+      }
+    ]
+  },
+  "s13": {
+    "youtube_title": "Cite the sentence",
+    "youtube_description": "A clip about metadata.",
+    "instagram_caption": "Cite the sentence",
+    "tiktok_caption": "Cite the sentence",
+    "hashtags": [
+      "eevolvv",
+      "metadata"
+    ],
+    "claims": [
+      {
+        "text": "Cite the sentence",
+        "sentence_ids": [
+          "s13"
+        ]
+      }
+    ]
+  }
+}

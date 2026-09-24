@@ -1,19 +1,11 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
-import { useEffect } from 'react'
-
 export default function GlobalError({
-  error,
   reset,
 }: {
   error: Error & { digest?: string }
   reset: () => void
 }) {
-  useEffect(() => {
-    Sentry.captureException(error)
-  }, [error])
-
   return (
     <html>
       <body style={{ background: '#080808', color: '#f5f5f5', fontFamily: 'monospace', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', margin: 0 }}>
@@ -23,7 +15,7 @@ export default function GlobalError({
           </div>
           <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px' }}>Something went wrong</h2>
           <p style={{ color: '#888', fontSize: '14px', marginBottom: '24px', lineHeight: 1.6 }}>
-            An unexpected error occurred. Our team has been notified.
+            An unexpected error occurred.
           </p>
           <button
             onClick={reset}

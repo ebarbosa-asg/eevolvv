@@ -1,0 +1,1059 @@
+{
+  "words": [
+    {
+      "id": "w001",
+      "start_ms": 0,
+      "end_ms": 970,
+      "speaker": "A",
+      "text": "Send"
+    },
+    {
+      "id": "w002",
+      "start_ms": 1010,
+      "end_ms": 1980,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w003",
+      "start_ms": 2020,
+      "end_ms": 2990,
+      "speaker": "A",
+      "text": "full"
+    },
+    {
+      "id": "w004",
+      "start_ms": 3030,
+      "end_ms": 4000,
+      "speaker": "A",
+      "text": "episode"
+    },
+    {
+      "id": "w005",
+      "start_ms": 4000,
+      "end_ms": 4465,
+      "speaker": "A",
+      "text": "We"
+    },
+    {
+      "id": "w006",
+      "start_ms": 4505,
+      "end_ms": 4970,
+      "speaker": "A",
+      "text": "listen"
+    },
+    {
+      "id": "w007",
+      "start_ms": 5010,
+      "end_ms": 5475,
+      "speaker": "A",
+      "text": "for"
+    },
+    {
+      "id": "w008",
+      "start_ms": 5515,
+      "end_ms": 5980,
+      "speaker": "A",
+      "text": "a"
+    },
+    {
+      "id": "w009",
+      "start_ms": 6020,
+      "end_ms": 6485,
+      "speaker": "A",
+      "text": "moment"
+    },
+    {
+      "id": "w010",
+      "start_ms": 6525,
+      "end_ms": 6990,
+      "speaker": "A",
+      "text": "that"
+    },
+    {
+      "id": "w011",
+      "start_ms": 7030,
+      "end_ms": 7495,
+      "speaker": "A",
+      "text": "stands"
+    },
+    {
+      "id": "w012",
+      "start_ms": 7535,
+      "end_ms": 8000,
+      "speaker": "A",
+      "text": "alone"
+    },
+    {
+      "id": "w013",
+      "start_ms": 8000,
+      "end_ms": 8537,
+      "speaker": "A",
+      "text": "A"
+    },
+    {
+      "id": "w014",
+      "start_ms": 8577,
+      "end_ms": 9114,
+      "speaker": "A",
+      "text": "strong"
+    },
+    {
+      "id": "w015",
+      "start_ms": 9154,
+      "end_ms": 9691,
+      "speaker": "A",
+      "text": "hook"
+    },
+    {
+      "id": "w016",
+      "start_ms": 9731,
+      "end_ms": 10268,
+      "speaker": "A",
+      "text": "names"
+    },
+    {
+      "id": "w017",
+      "start_ms": 10308,
+      "end_ms": 10845,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w018",
+      "start_ms": 10885,
+      "end_ms": 11422,
+      "speaker": "A",
+      "text": "tension"
+    },
+    {
+      "id": "w019",
+      "start_ms": 11462,
+      "end_ms": 11999,
+      "speaker": "A",
+      "text": "first"
+    },
+    {
+      "id": "w020",
+      "start_ms": 12000,
+      "end_ms": 12408,
+      "speaker": "A",
+      "text": "The"
+    },
+    {
+      "id": "w021",
+      "start_ms": 12448,
+      "end_ms": 12856,
+      "speaker": "A",
+      "text": "cut"
+    },
+    {
+      "id": "w022",
+      "start_ms": 12896,
+      "end_ms": 13304,
+      "speaker": "A",
+      "text": "starts"
+    },
+    {
+      "id": "w023",
+      "start_ms": 13344,
+      "end_ms": 13752,
+      "speaker": "A",
+      "text": "and"
+    },
+    {
+      "id": "w024",
+      "start_ms": 13792,
+      "end_ms": 14200,
+      "speaker": "A",
+      "text": "ends"
+    },
+    {
+      "id": "w025",
+      "start_ms": 14240,
+      "end_ms": 14648,
+      "speaker": "A",
+      "text": "on"
+    },
+    {
+      "id": "w026",
+      "start_ms": 14688,
+      "end_ms": 15096,
+      "speaker": "A",
+      "text": "a"
+    },
+    {
+      "id": "w027",
+      "start_ms": 15136,
+      "end_ms": 15544,
+      "speaker": "A",
+      "text": "full"
+    },
+    {
+      "id": "w028",
+      "start_ms": 15584,
+      "end_ms": 15992,
+      "speaker": "A",
+      "text": "thought"
+    },
+    {
+      "id": "w029",
+      "start_ms": 16000,
+      "end_ms": 16537,
+      "speaker": "A",
+      "text": "Captions"
+    },
+    {
+      "id": "w030",
+      "start_ms": 16577,
+      "end_ms": 17114,
+      "speaker": "A",
+      "text": "follow"
+    },
+    {
+      "id": "w031",
+      "start_ms": 17154,
+      "end_ms": 17691,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w032",
+      "start_ms": 17731,
+      "end_ms": 18268,
+      "speaker": "A",
+      "text": "words"
+    },
+    {
+      "id": "w033",
+      "start_ms": 18308,
+      "end_ms": 18845,
+      "speaker": "A",
+      "text": "that"
+    },
+    {
+      "id": "w034",
+      "start_ms": 18885,
+      "end_ms": 19422,
+      "speaker": "A",
+      "text": "were"
+    },
+    {
+      "id": "w035",
+      "start_ms": 19462,
+      "end_ms": 19999,
+      "speaker": "A",
+      "text": "said"
+    },
+    {
+      "id": "w036",
+      "start_ms": 20000,
+      "end_ms": 20465,
+      "speaker": "A",
+      "text": "That"
+    },
+    {
+      "id": "w037",
+      "start_ms": 20505,
+      "end_ms": 20970,
+      "speaker": "A",
+      "text": "is"
+    },
+    {
+      "id": "w038",
+      "start_ms": 21010,
+      "end_ms": 21475,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w039",
+      "start_ms": 21515,
+      "end_ms": 21980,
+      "speaker": "A",
+      "text": "point"
+    },
+    {
+      "id": "w040",
+      "start_ms": 22020,
+      "end_ms": 22485,
+      "speaker": "A",
+      "text": "of"
+    },
+    {
+      "id": "w041",
+      "start_ms": 22525,
+      "end_ms": 22990,
+      "speaker": "A",
+      "text": "a"
+    },
+    {
+      "id": "w042",
+      "start_ms": 23030,
+      "end_ms": 23495,
+      "speaker": "A",
+      "text": "careful"
+    },
+    {
+      "id": "w043",
+      "start_ms": 23535,
+      "end_ms": 24000,
+      "speaker": "A",
+      "text": "clip"
+    },
+    {
+      "id": "w044",
+      "start_ms": 28000,
+      "end_ms": 28465,
+      "speaker": "A",
+      "text": "The"
+    },
+    {
+      "id": "w045",
+      "start_ms": 28505,
+      "end_ms": 28970,
+      "speaker": "A",
+      "text": "client"
+    },
+    {
+      "id": "w046",
+      "start_ms": 29010,
+      "end_ms": 29475,
+      "speaker": "A",
+      "text": "approves"
+    },
+    {
+      "id": "w047",
+      "start_ms": 29515,
+      "end_ms": 29980,
+      "speaker": "A",
+      "text": "before"
+    },
+    {
+      "id": "w048",
+      "start_ms": 30020,
+      "end_ms": 30485,
+      "speaker": "A",
+      "text": "a"
+    },
+    {
+      "id": "w049",
+      "start_ms": 30525,
+      "end_ms": 30990,
+      "speaker": "A",
+      "text": "post"
+    },
+    {
+      "id": "w050",
+      "start_ms": 31030,
+      "end_ms": 31495,
+      "speaker": "A",
+      "text": "is"
+    },
+    {
+      "id": "w051",
+      "start_ms": 31535,
+      "end_ms": 32000,
+      "speaker": "A",
+      "text": "queued"
+    },
+    {
+      "id": "w052",
+      "start_ms": 32000,
+      "end_ms": 32408,
+      "speaker": "A",
+      "text": "A"
+    },
+    {
+      "id": "w053",
+      "start_ms": 32448,
+      "end_ms": 32856,
+      "speaker": "A",
+      "text": "promise"
+    },
+    {
+      "id": "w054",
+      "start_ms": 32896,
+      "end_ms": 33304,
+      "speaker": "A",
+      "text": "we"
+    },
+    {
+      "id": "w055",
+      "start_ms": 33344,
+      "end_ms": 33752,
+      "speaker": "A",
+      "text": "cannot"
+    },
+    {
+      "id": "w056",
+      "start_ms": 33792,
+      "end_ms": 34200,
+      "speaker": "A",
+      "text": "support"
+    },
+    {
+      "id": "w057",
+      "start_ms": 34240,
+      "end_ms": 34648,
+      "speaker": "A",
+      "text": "waits"
+    },
+    {
+      "id": "w058",
+      "start_ms": 34688,
+      "end_ms": 35096,
+      "speaker": "A",
+      "text": "for"
+    },
+    {
+      "id": "w059",
+      "start_ms": 35136,
+      "end_ms": 35544,
+      "speaker": "A",
+      "text": "a"
+    },
+    {
+      "id": "w060",
+      "start_ms": 35584,
+      "end_ms": 35992,
+      "speaker": "A",
+      "text": "person"
+    },
+    {
+      "id": "w061",
+      "start_ms": 36000,
+      "end_ms": 36537,
+      "speaker": "A",
+      "text": "Rights"
+    },
+    {
+      "id": "w062",
+      "start_ms": 36577,
+      "end_ms": 37114,
+      "speaker": "A",
+      "text": "are"
+    },
+    {
+      "id": "w063",
+      "start_ms": 37154,
+      "end_ms": 37691,
+      "speaker": "A",
+      "text": "confirmed"
+    },
+    {
+      "id": "w064",
+      "start_ms": 37731,
+      "end_ms": 38268,
+      "speaker": "A",
+      "text": "on"
+    },
+    {
+      "id": "w065",
+      "start_ms": 38308,
+      "end_ms": 38845,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w066",
+      "start_ms": 38885,
+      "end_ms": 39422,
+      "speaker": "A",
+      "text": "source"
+    },
+    {
+      "id": "w067",
+      "start_ms": 39462,
+      "end_ms": 39999,
+      "speaker": "A",
+      "text": "file"
+    },
+    {
+      "id": "w068",
+      "start_ms": 40000,
+      "end_ms": 40537,
+      "speaker": "A",
+      "text": "We"
+    },
+    {
+      "id": "w069",
+      "start_ms": 40577,
+      "end_ms": 41114,
+      "speaker": "A",
+      "text": "only"
+    },
+    {
+      "id": "w070",
+      "start_ms": 41154,
+      "end_ms": 41691,
+      "speaker": "A",
+      "text": "take"
+    },
+    {
+      "id": "w071",
+      "start_ms": 41731,
+      "end_ms": 42268,
+      "speaker": "A",
+      "text": "files"
+    },
+    {
+      "id": "w072",
+      "start_ms": 42308,
+      "end_ms": 42845,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w073",
+      "start_ms": 42885,
+      "end_ms": 43422,
+      "speaker": "A",
+      "text": "client"
+    },
+    {
+      "id": "w074",
+      "start_ms": 43462,
+      "end_ms": 43999,
+      "speaker": "A",
+      "text": "authorized"
+    },
+    {
+      "id": "w075",
+      "start_ms": 44000,
+      "end_ms": 44537,
+      "speaker": "A",
+      "text": "The"
+    },
+    {
+      "id": "w076",
+      "start_ms": 44577,
+      "end_ms": 45114,
+      "speaker": "A",
+      "text": "crop"
+    },
+    {
+      "id": "w077",
+      "start_ms": 45154,
+      "end_ms": 45691,
+      "speaker": "A",
+      "text": "stays"
+    },
+    {
+      "id": "w078",
+      "start_ms": 45731,
+      "end_ms": 46268,
+      "speaker": "A",
+      "text": "on"
+    },
+    {
+      "id": "w079",
+      "start_ms": 46308,
+      "end_ms": 46845,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w080",
+      "start_ms": 46885,
+      "end_ms": 47422,
+      "speaker": "A",
+      "text": "person"
+    },
+    {
+      "id": "w081",
+      "start_ms": 47462,
+      "end_ms": 47999,
+      "speaker": "A",
+      "text": "speaking"
+    },
+    {
+      "id": "w082",
+      "start_ms": 48000,
+      "end_ms": 48633,
+      "speaker": "A",
+      "text": "A"
+    },
+    {
+      "id": "w083",
+      "start_ms": 48673,
+      "end_ms": 49306,
+      "speaker": "A",
+      "text": "long"
+    },
+    {
+      "id": "w084",
+      "start_ms": 49346,
+      "end_ms": 49979,
+      "speaker": "A",
+      "text": "silent"
+    },
+    {
+      "id": "w085",
+      "start_ms": 50019,
+      "end_ms": 50652,
+      "speaker": "A",
+      "text": "open"
+    },
+    {
+      "id": "w086",
+      "start_ms": 50692,
+      "end_ms": 51325,
+      "speaker": "A",
+      "text": "is"
+    },
+    {
+      "id": "w087",
+      "start_ms": 51365,
+      "end_ms": 51998,
+      "speaker": "A",
+      "text": "dropped"
+    },
+    {
+      "id": "w088",
+      "start_ms": 56000,
+      "end_ms": 56537,
+      "speaker": "A",
+      "text": "Metadata"
+    },
+    {
+      "id": "w089",
+      "start_ms": 56577,
+      "end_ms": 57114,
+      "speaker": "A",
+      "text": "points"
+    },
+    {
+      "id": "w090",
+      "start_ms": 57154,
+      "end_ms": 57691,
+      "speaker": "A",
+      "text": "at"
+    },
+    {
+      "id": "w091",
+      "start_ms": 57731,
+      "end_ms": 58268,
+      "speaker": "A",
+      "text": "sentences"
+    },
+    {
+      "id": "w092",
+      "start_ms": 58308,
+      "end_ms": 58845,
+      "speaker": "A",
+      "text": "in"
+    },
+    {
+      "id": "w093",
+      "start_ms": 58885,
+      "end_ms": 59422,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w094",
+      "start_ms": 59462,
+      "end_ms": 59999,
+      "speaker": "A",
+      "text": "clip"
+    },
+    {
+      "id": "w095",
+      "start_ms": 60000,
+      "end_ms": 60408,
+      "speaker": "A",
+      "text": "A"
+    },
+    {
+      "id": "w096",
+      "start_ms": 60448,
+      "end_ms": 60856,
+      "speaker": "A",
+      "text": "title"
+    },
+    {
+      "id": "w097",
+      "start_ms": 60896,
+      "end_ms": 61304,
+      "speaker": "A",
+      "text": "can"
+    },
+    {
+      "id": "w098",
+      "start_ms": 61344,
+      "end_ms": 61752,
+      "speaker": "A",
+      "text": "stay"
+    },
+    {
+      "id": "w099",
+      "start_ms": 61792,
+      "end_ms": 62200,
+      "speaker": "A",
+      "text": "short"
+    },
+    {
+      "id": "w100",
+      "start_ms": 62240,
+      "end_ms": 62648,
+      "speaker": "A",
+      "text": "and"
+    },
+    {
+      "id": "w101",
+      "start_ms": 62688,
+      "end_ms": 63096,
+      "speaker": "A",
+      "text": "still"
+    },
+    {
+      "id": "w102",
+      "start_ms": 63136,
+      "end_ms": 63544,
+      "speaker": "A",
+      "text": "be"
+    },
+    {
+      "id": "w103",
+      "start_ms": 63584,
+      "end_ms": 63992,
+      "speaker": "A",
+      "text": "clear"
+    },
+    {
+      "id": "w104",
+      "start_ms": 64000,
+      "end_ms": 64465,
+      "speaker": "A",
+      "text": "Hashtags"
+    },
+    {
+      "id": "w105",
+      "start_ms": 64505,
+      "end_ms": 64970,
+      "speaker": "A",
+      "text": "stay"
+    },
+    {
+      "id": "w106",
+      "start_ms": 65010,
+      "end_ms": 65475,
+      "speaker": "A",
+      "text": "few"
+    },
+    {
+      "id": "w107",
+      "start_ms": 65515,
+      "end_ms": 65980,
+      "speaker": "A",
+      "text": "so"
+    },
+    {
+      "id": "w108",
+      "start_ms": 66020,
+      "end_ms": 66485,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w109",
+      "start_ms": 66525,
+      "end_ms": 66990,
+      "speaker": "A",
+      "text": "caption"
+    },
+    {
+      "id": "w110",
+      "start_ms": 67030,
+      "end_ms": 67495,
+      "speaker": "A",
+      "text": "is"
+    },
+    {
+      "id": "w111",
+      "start_ms": 67535,
+      "end_ms": 68000,
+      "speaker": "A",
+      "text": "readable"
+    },
+    {
+      "id": "w112",
+      "start_ms": 68000,
+      "end_ms": 68537,
+      "speaker": "A",
+      "text": "The"
+    },
+    {
+      "id": "w113",
+      "start_ms": 68577,
+      "end_ms": 69114,
+      "speaker": "A",
+      "text": "same"
+    },
+    {
+      "id": "w114",
+      "start_ms": 69154,
+      "end_ms": 69691,
+      "speaker": "A",
+      "text": "moment"
+    },
+    {
+      "id": "w115",
+      "start_ms": 69731,
+      "end_ms": 70268,
+      "speaker": "A",
+      "text": "should"
+    },
+    {
+      "id": "w116",
+      "start_ms": 70308,
+      "end_ms": 70845,
+      "speaker": "A",
+      "text": "not"
+    },
+    {
+      "id": "w117",
+      "start_ms": 70885,
+      "end_ms": 71422,
+      "speaker": "A",
+      "text": "ship"
+    },
+    {
+      "id": "w118",
+      "start_ms": 71462,
+      "end_ms": 71999,
+      "speaker": "A",
+      "text": "twice"
+    },
+    {
+      "id": "w119",
+      "start_ms": 72000,
+      "end_ms": 72465,
+      "speaker": "A",
+      "text": "Loudness"
+    },
+    {
+      "id": "w120",
+      "start_ms": 72505,
+      "end_ms": 72970,
+      "speaker": "A",
+      "text": "is"
+    },
+    {
+      "id": "w121",
+      "start_ms": 73010,
+      "end_ms": 73475,
+      "speaker": "A",
+      "text": "checked"
+    },
+    {
+      "id": "w122",
+      "start_ms": 73515,
+      "end_ms": 73980,
+      "speaker": "A",
+      "text": "before"
+    },
+    {
+      "id": "w123",
+      "start_ms": 74020,
+      "end_ms": 74485,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w124",
+      "start_ms": 74525,
+      "end_ms": 74990,
+      "speaker": "A",
+      "text": "clip"
+    },
+    {
+      "id": "w125",
+      "start_ms": 75030,
+      "end_ms": 75495,
+      "speaker": "A",
+      "text": "moves"
+    },
+    {
+      "id": "w126",
+      "start_ms": 75535,
+      "end_ms": 76000,
+      "speaker": "A",
+      "text": "on"
+    },
+    {
+      "id": "w127",
+      "start_ms": 76000,
+      "end_ms": 76633,
+      "speaker": "A",
+      "text": "A"
+    },
+    {
+      "id": "w128",
+      "start_ms": 76673,
+      "end_ms": 77306,
+      "speaker": "A",
+      "text": "person"
+    },
+    {
+      "id": "w129",
+      "start_ms": 77346,
+      "end_ms": 77979,
+      "speaker": "A",
+      "text": "still"
+    },
+    {
+      "id": "w130",
+      "start_ms": 78019,
+      "end_ms": 78652,
+      "speaker": "A",
+      "text": "reviews"
+    },
+    {
+      "id": "w131",
+      "start_ms": 78692,
+      "end_ms": 79325,
+      "speaker": "A",
+      "text": "the"
+    },
+    {
+      "id": "w132",
+      "start_ms": 79365,
+      "end_ms": 79998,
+      "speaker": "A",
+      "text": "cut"
+    }
+  ],
+  "sentences": [
+    {
+      "id": "s01",
+      "start_ms": 0,
+      "end_ms": 4000,
+      "speaker": "A",
+      "text": "Send the full episode."
+    },
+    {
+      "id": "s02",
+      "start_ms": 4000,
+      "end_ms": 8000,
+      "speaker": "A",
+      "text": "We listen for a moment that stands alone."
+    },
+    {
+      "id": "s03",
+      "start_ms": 8000,
+      "end_ms": 12000,
+      "speaker": "A",
+      "text": "A strong hook names the tension first."
+    },
+    {
+      "id": "s04",
+      "start_ms": 12000,
+      "end_ms": 16000,
+      "speaker": "A",
+      "text": "The cut starts and ends on a full thought."
+    },
+    {
+      "id": "s05",
+      "start_ms": 16000,
+      "end_ms": 20000,
+      "speaker": "A",
+      "text": "Captions follow the words that were said."
+    },
+    {
+      "id": "s06",
+      "start_ms": 20000,
+      "end_ms": 24000,
+      "speaker": "A",
+      "text": "That is the point of a careful clip."
+    },
+    {
+      "id": "s07",
+      "start_ms": 28000,
+      "end_ms": 32000,
+      "speaker": "A",
+      "text": "The client approves before a post is queued."
+    },
+    {
+      "id": "s08",
+      "start_ms": 32000,
+      "end_ms": 36000,
+      "speaker": "A",
+      "text": "A promise we cannot support waits for a person."
+    },
+    {
+      "id": "s09",
+      "start_ms": 36000,
+      "end_ms": 40000,
+      "speaker": "A",
+      "text": "Rights are confirmed on the source file."
+    },
+    {
+      "id": "s10",
+      "start_ms": 40000,
+      "end_ms": 44000,
+      "speaker": "A",
+      "text": "We only take files the client authorized."
+    },
+    {
+      "id": "s11",
+      "start_ms": 44000,
+      "end_ms": 48000,
+      "speaker": "A",
+      "text": "The crop stays on the person speaking."
+    },
+    {
+      "id": "s12",
+      "start_ms": 48000,
+      "end_ms": 52000,
+      "speaker": "A",
+      "text": "A long silent open is dropped."
+    },
+    {
+      "id": "s13",
+      "start_ms": 56000,
+      "end_ms": 60000,
+      "speaker": "A",
+      "text": "Metadata points at sentences in the clip."
+    },
+    {
+      "id": "s14",
+      "start_ms": 60000,
+      "end_ms": 64000,
+      "speaker": "A",
+      "text": "A title can stay short and still be clear."
+    },
+    {
+      "id": "s15",
+      "start_ms": 64000,
+      "end_ms": 68000,
+      "speaker": "A",
+      "text": "Hashtags stay few so the caption is readable."
+    },
+    {
+      "id": "s16",
+      "start_ms": 68000,
+      "end_ms": 72000,
+      "speaker": "A",
+      "text": "The same moment should not ship twice."
+    },
+    {
+      "id": "s17",
+      "start_ms": 72000,
+      "end_ms": 76000,
+      "speaker": "A",
+      "text": "Loudness is checked before the clip moves on."
+    },
+    {
+      "id": "s18",
+      "start_ms": 76000,
+      "end_ms": 80000,
+      "speaker": "A",
+      "text": "A person still reviews the cut."
+    }
+  ],
+  "speakers": [
+    "A"
+  ]
+}
