@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
-import { CaptureMark, LeverArt, PhoneWall, PillDuo } from "@/components/site/art";
+import { CaptureMark, FunnelGraphic, LeverArt, LeverTriad, PhoneWall, PillDuo } from "@/components/site/art";
 import { BookPanel } from "@/components/site/BookPanel";
 import { FaqList } from "@/components/site/FaqList";
 import { HeroRain } from "@/components/site/HeroRain";
@@ -66,6 +66,19 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="section" id="stand">
+        <div className="wrap">
+          <div className="section-head center">
+            <p className="kicker">The lever</p>
+            <h2>A small force, applied well.</h2>
+            <p className="lead">
+              The recording already exists. The lever is the cut, the caption, and the post.
+            </p>
+          </div>
+          <LeverTriad />
+        </div>
+      </section>
+
       <section className="section" id="packages">
         <div className="wrap">
           <div className="section-head center">
@@ -99,12 +112,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="audience">
-            <ol className="audience-bars">
-              <li className="viewer">Viewer</li>
-              <li className="follower">Follower</li>
-              <li className="sub">Sub / email</li>
-              <li className="customer">Customer</li>
-            </ol>
+            <FunnelGraphic />
             <div className="capture-side">
               <CaptureMark />
               <ul className="tool-chips">

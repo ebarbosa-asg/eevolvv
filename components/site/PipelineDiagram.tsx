@@ -71,6 +71,12 @@ export function PipelineDiagram() {
           </li>
         ))}
       </ol>
+      <ul className="platforms" aria-label="Where clips are posted">
+        <li>YouTube Shorts</li>
+        <li>TikTok</li>
+        <li>Instagram Reels</li>
+        <li>LinkedIn on Dominate</li>
+      </ul>
       <div className="winners">
         <span className="winners-orb" aria-hidden="true" />
         <p>
