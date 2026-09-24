@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { formatKpiValue, isStale, parseSnapshot, type ProofKpi } from "@/lib/proof";
+import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: { absolute: "Proof · eevolvv" },
   description: "Receipts from eevolvv’s own channels. Missing data stays missing.",
+  alternates: { canonical: absoluteUrl("/proof") },
   robots: { index: false, follow: false },
 };
 

@@ -23,6 +23,10 @@ export function bookingUrl() {
   return configuredEnv(process.env.NEXT_PUBLIC_CAL_URL) || configuredEnv(process.env.NEXT_PUBLIC_CALENDLY_URL);
 }
 
+export function legalAddress() {
+  return configuredEnv(process.env.NEXT_PUBLIC_LEGAL_ADDRESS);
+}
+
 export function plausibleDomain() {
   return configuredEnv(process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN);
 }
@@ -51,11 +55,13 @@ export function pageMeta(opts: { title: string; description: string; path: strin
       siteName: SITE_NAME,
       type: "website",
       locale: "en_US",
+      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "eevolvv — your content is the place to stand" }],
     },
     twitter: {
       card: "summary_large_image",
       title: full,
       description: opts.description,
+      images: ["/opengraph-image"],
     },
     robots: { index: true, follow: true },
   };

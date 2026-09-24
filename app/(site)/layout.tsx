@@ -1,18 +1,10 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Martian_Mono } from "next/font/google";
-import { GeistSans } from "geist/font/sans";
 import { SiteHeader, StickyBook } from "@/components/site/chrome";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { mono, sans } from "@/components/site/fonts";
 import { jsonLdScript, organizationGraph, plausibleDomain, SITE_NAME, SITE_URL } from "@/lib/seo";
 import "../site.css";
-
-const mono = Martian_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-  variable: "--font-mono",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -26,13 +18,18 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     type: "website",
     url: SITE_URL,
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "eevolvv — your content is the place to stand" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/opengraph-image"],
   },
   robots: { index: true, follow: true },
 };
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`eevolvv-site ${GeistSans.variable} ${mono.variable}`}>
+    <div className={`eevolvv-site ${sans.variable} ${mono.variable}`}>
       <a className="skip" href="#main">
         Skip to content
       </a>

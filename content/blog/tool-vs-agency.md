@@ -12,7 +12,7 @@ This is a draft outline. Replace bullet claims with cited figures before treatin
 ## Outline
 
 - Define the two products: file export versus owned posting plus judgment.
-- Cost comparison: roughly $15–$39/mo tools versus the $1,497 and $3,497 retainers. Cite live pricing pages before publishing numbers.
+- Cost comparison: cite live tool pricing pages before naming a tool price. eevolvv retainers are Clip & Ship at $1,497/mo and Clip & Dominate at $3,497/mo.
 - When DIY wins: low volume, a strong internal editor, and someone who likes the edit bay.
 - When an agency wins: consistency under load, multi-platform posting, and hook testing.
 - eevolvv uses tools. Clients buy the lever — the ops — not a login.

@@ -8,14 +8,21 @@ import { HeroRain } from "@/components/site/HeroRain";
 import { PillChooser } from "@/components/site/PillChooser";
 import { PipelineDiagram } from "@/components/site/PipelineDiagram";
 import { homeFaqs } from "@/lib/packages";
-import { faqGraph, jsonLdScript } from "@/lib/seo";
+import { faqGraph, jsonLdScript, pageMeta } from "@/lib/seo";
 import { niches } from "@/lib/niches";
+
+export const metadata = pageMeta({
+  title: "eevolvv — your show is the place to stand",
+  description:
+    "Daily Shorts, TikToks, Reels, and LinkedIn clips cut from the episodes you already record. Posted on your accounts, after you approve. Clip & Ship $1,497/mo · Clip & Dominate $3,497/mo.",
+  path: "/",
+});
 
 const transcript = fs.readFileSync(path.join(process.cwd(), "content/rain/episode-01.txt"), "utf8");
 const FOOTNOTE =
   "Legally. There's no secret setting. The hack is showing up every day with clips worth watching, then turning viewers into people you can reach again.";
 
-const captureTools = ["Hooks", "Series", "CTAs", "Pinned comments", "Link-in-bio", "Retarget winners"];
+const captureTools = ["Hooks", "Series", "CTAs", "Pinned comments", "Link-in-bio", "Retarget posts"];
 
 export default function HomePage() {
   return (
@@ -106,9 +113,9 @@ export default function HomePage() {
             <p className="kicker">Audience</p>
             <h2>Views are motion. Audience is the move.</h2>
             <p className="lead">
-              Volume + consistency gets you seen.
+              Views are not a promise.
               <br />
-              The premium extras are about audience capture.
+              The extras are for turning attention into people you can reach again.
             </p>
           </div>
           <div className="audience">

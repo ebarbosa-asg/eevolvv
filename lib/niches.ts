@@ -43,7 +43,7 @@ export const niches: readonly Niche[] = [
     ],
     packageId: "ship",
     packageNote:
-      "Clip & Ship: 24 clips, Shorts + TikTok + Reels, monthly Loom. Upgrade to Clip & Dominate for LinkedIn, hook tests, and network boost.",
+      "Clip & Ship: 24 clips, Shorts + TikTok + Reels, monthly report. Upgrade to Clip & Dominate for LinkedIn, hook tests, and network boost.",
     faqs: [
       {
         q: "What is a podcast clipping service?",
@@ -51,11 +51,11 @@ export const niches: readonly Niche[] = [
       },
       {
         q: "How many clips from one episode?",
-        a: "Most hour-long interviews yield several strong standalone moments. Clip & Ship targets about 6 clips per weekly episode as part of a 24-clip monthly package.",
+        a: "Most hour-long interviews yield several strong standalone moments. Clip & Ship is 24 clips a month. How they split across episodes depends on the show. We do not promise a fixed count from every episode.",
       },
       {
         q: "Do you guarantee more listeners?",
-        a: "No. Clips improve discovery odds by putting moments in the feed. Listener growth depends on hooks, niche, and the show itself.",
+        a: "No. We post clips to your accounts. We do not guarantee more listeners.",
       },
     ],
   },
@@ -68,13 +68,13 @@ export const niches: readonly Niche[] = [
     description:
       "SaaS clipping for founders. Demos, webinars, and interviews turned into LinkedIn and short-form posts on your accounts.",
     h1: "Short-form distribution for SaaS & AI founders",
-    lead: "Buyers shortlist vendors early. Your recordings are the place to stand. We get demos and founder takes into LinkedIn and the short-form feed.",
+    lead: "Your recordings are the place to stand. We turn demos and founder takes into LinkedIn and short-form posts on your accounts.",
     diagramTitle: "Demo in. Buyer feed out.",
     steps: [
       { label: "Recording", caption: "Demo, webinar, or interview" },
       { label: "Product moment", caption: "Screen + the claim" },
       { label: "Native post", caption: "LinkedIn and vertical clips" },
-      { label: "Shortlist", caption: "You show up before the RFP" },
+      { label: "Feed", caption: "Posted on your accounts" },
     ],
     points: [
       "Screen + face layouts for product moments",
@@ -84,11 +84,11 @@ export const niches: readonly Niche[] = [
     ],
     packageId: "dominate",
     packageNote:
-      "48 clips, LinkedIn + short-form, hook A/B, SEO titles, biweekly strategy, up to $500 network boost. Earlier-stage founders can start on Clip & Ship and upgrade when LinkedIn volume matters.",
+      "48 clips, LinkedIn + short-form, hook tests, SEO titles, biweekly strategy, up to $500 network boost. Earlier-stage founders can start on Clip & Ship and upgrade when LinkedIn volume matters.",
     faqs: [
       {
         q: "What is a SaaS clipping agency?",
-        a: "It turns founder interviews, demos, and webinars into short-form posts for LinkedIn, Shorts, TikTok, and Reels so buyers see you before they shortlist vendors.",
+        a: "It turns founder interviews, demos, and webinars into short-form posts for LinkedIn, Shorts, TikTok, and Reels, and posts them to your accounts.",
       },
       {
         q: "Do I need a podcast?",
@@ -110,7 +110,7 @@ export const niches: readonly Niche[] = [
       "Clipping for coaches and course sellers. Webinars and teaching sessions become weekly Shorts and Reels, posted for you.",
     h1: "Clipping for coaches & course sellers",
     lead: "Webinars and teaching sessions pile up. We clip, caption, and post so your expertise shows up in the scroll—without you living in an editor.",
-    diagramTitle: "One session. A week of posts.",
+    diagramTitle: "One session. Posts for the feed.",
     steps: [
       { label: "Session", caption: "Webinar, VSL, or lesson" },
       { label: "Teaching cut", caption: "A moment that stands alone" },

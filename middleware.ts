@@ -42,11 +42,31 @@ const REDIRECTS: Record<string, string> = {
   "/os": "/",
   "/signin": "/",
   "/onboard": "/",
+  "/talent": "/",
+  "/investor": "/",
+  "/client": "/",
+  "/report": "/",
+  "/run": "/",
+  "/share": "/",
+  "/testimonial": "/",
 };
 
 export function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-  const retiredPrefix = ["/diagnostic/", "/marketing/", "/os/", "/onboard/", "/signin/"];
+  const retiredPrefix = [
+    "/diagnostic/",
+    "/marketing/",
+    "/os/",
+    "/onboard/",
+    "/signin/",
+    "/client/",
+    "/report/",
+    "/run/",
+    "/share/",
+    "/testimonial/",
+    "/talent/",
+    "/investor/",
+  ];
   const destination =
     REDIRECTS[pathname] || (retiredPrefix.some((prefix) => pathname.startsWith(prefix)) ? "/" : undefined);
   if (!destination) return NextResponse.next();
@@ -59,5 +79,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)", "/investor/:path*"],
 };

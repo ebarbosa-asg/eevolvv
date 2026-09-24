@@ -5,7 +5,7 @@ import { pageMeta } from "@/lib/seo";
 export const metadata: Metadata = pageMeta({
   title: "Clip & Ship — $1,497/mo",
   description:
-    "Clip & Ship: 24 clips a month posted to YouTube Shorts, TikTok, and Instagram Reels, with captions, titles, and a monthly Loom report.",
+    "Clip & Ship: 24 clips a month posted to YouTube Shorts, TikTok, and Instagram Reels, with captions, titles, and a monthly report.",
   path: "/packages/clip-and-ship",
 });
 

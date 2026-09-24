@@ -2,9 +2,9 @@ const steps = [
   { n: "01", title: "Drop", body: "Hours recorded", icon: "drop" },
   { n: "02", title: "Find moments", body: "Best peaks", icon: "moments" },
   { n: "03", title: "Auto-clip", body: "9:16 + captions", icon: "clip" },
-  { n: "04", title: "SEO titles", body: "Hooks + meta", icon: "seo" },
-  { n: "05", title: "Post", body: "4 platforms", icon: "post" },
-  { n: "06", title: "Report", body: "Double down", icon: "report" },
+  { n: "04", title: "Titles", body: "Hooks + titles", icon: "seo" },
+  { n: "05", title: "Post", body: "Your accounts", icon: "post" },
+  { n: "06", title: "Report", body: "What shipped", icon: "report" },
 ] as const;
 
 function StepIcon({ kind }: { kind: (typeof steps)[number]["icon"] }) {
@@ -80,8 +80,8 @@ export function PipelineDiagram() {
       <div className="winners">
         <span className="winners-orb" aria-hidden="true" />
         <p>
-          <strong>Feed winners back</strong>
-          <span>Analytics → clipper taste → next batch</span>
+          <strong>What held attention</strong>
+          <span>The report shapes the next batch</span>
         </p>
       </div>
     </div>
