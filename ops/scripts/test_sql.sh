@@ -23,8 +23,10 @@ else
   TEST_URL="dbname=${DB_NAME}"
 fi
 
-psql "$TEST_URL" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/migrations/0001_core.sql"
-psql "$TEST_URL" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/migrations/0002_proof.sql"
+shopt -s nullglob
+for f in "$ROOT"/supabase/migrations/*.sql; do
+  psql "$TEST_URL" -v ON_ERROR_STOP=1 -f "$f"
+done
 psql "$TEST_URL" -v ON_ERROR_STOP=1 -f "$ROOT/supabase/tests/00_helpers.sql"
 
 shopt -s nullglob

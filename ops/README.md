@@ -33,9 +33,18 @@ metadata    prompts/metadata_v1.md, claims cite sentence ids inside the clip
         |
         v
 QA gate     B1 B2 B3 B4 B5 B6 B7 B9 B11 -> needs_review or qa_failed
+        |
+        v
+operator review (apps/app /review) then client magic link (/a/<token>)
+        |
+        v
+posting adapter   dry-run by default; a mock provider in tests
+        |
+        v
+proof export      ops/docs/proof-mapping.md
 ```
 
-Postgres is the queue and the gate. A post can reach `queued`, `scheduled`, or `publishing` only when the clip is approved, source rights are attested, the latest QA run has no failed blocking check, and the latest approval is `approve`. `published` is allowed only from `publishing`. Campaigns cannot go `active` unless `brand_safe` was set by an operator. Submissions are allowed only against active campaigns. Client members cannot forge auto-approvals or read operator tables.
+Postgres is the queue and the gate. A clip can reach `approved` only when the latest operator decision and the latest client decision are both `approve`. A post can reach `queued`, `scheduled`, or `publishing` only when the clip is approved, source rights are attested, the latest QA run has no failed blocking check, and both of those decisions are still `approve`. `published` is allowed only from `publishing`. Client decisions require an unused, unexpired magic link for that client and batch; `evv.consume_approval_link` marks the link used after the batch is stored. Campaigns cannot go `active` unless `brand_safe` was set by an operator. Submissions are allowed only against active campaigns. Client members cannot forge auto-approvals, read operator tables, or read magic links.
 
 `post_metrics` leaves unknown measurements NULL. The margin view does not treat a missing revenue figure as zero.
 
@@ -77,9 +86,24 @@ The demo exits non-zero if any blocking QA check fails.
 | Object storage | moto S3 API and an in-memory store | R2 when `S3_*` env is set |
 | Postgres | local Postgres 16 | same |
 | ffmpeg / ffprobe | real binaries | real binaries |
+| Posting provider | `MockProvider`, dry-run default | no live provider is configured |
+| Approval links | HMAC with `APPROVAL_LINK_SECRET` from the environment; tests use a fixture secret | same signing, real secret required |
 
 Prices in `workers/prices.yaml` are limited to rates checked on 2026-09-24. Speaker diarization is requested from AssemblyAI and is not billed here, because that add-on rate was not verified.
 
-## Not in this tree yet
+## Operator review and client links
 
-Operator review UI, client magic-link approval, the posting aggregator, Stripe, and deploy. The upload app is the HTTP front for source intake. Auth is a later Supabase magic link.
+`/review` lists clips in `needs_review` whose latest QA run has no failed blocking check. The clip page shows the storage key as the preview, a transcript excerpt, metadata, and the QA rows. Approve, reject, and request-edit each insert an `approvals` row; the database writes the audit row and rejects a reject or request-edit that has no reason. Reject and request-edit also require that reason in the `approvals` check constraint.
+
+Issuing a client link stores only the SHA-256 of the token. The token is `linkId.base64url(hmac)`. The default lifetime is 7 days (`DEFAULT_LINK_TTL_MS`) until a policy replaces it. The client opens `/a/<token>` with no account. One submit covers the batch, then the link is consumed. Email delivery is not wired.
+
+Posting goes through `PostingService`. `dry_run` defaults to true and rolls the gate probe back. A live call records `platform_post_id` and will not call the provider again for that post.
+
+`export_proof_snapshot` writes the site `/proof` JSON from `v_proof_clipping` only. See `docs/proof-mapping.md`. An empty database exports `{ "kpis": [] }`.
+
+## Still needs a decision
+
+- `APPROVAL_LINK_SECRET` must be set before a real link is issued. Operator identity is an id that must exist in `operators`; session auth is not wired.
+- No posting provider is selected. The live path in tests is `MockProvider`.
+- The proof JSON is not copied into the site repo. `platform_post_id` is stored on the proof view and is not a site KPI.
+- Stripe and deploy of this app are not in this tree.

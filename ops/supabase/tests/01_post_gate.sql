@@ -60,14 +60,18 @@ BEGIN
   VALUES (s.clip_id, 2, 'B7', true, 'human');
   INSERT INTO posts (clip_id, status) VALUES (s.clip_id, 'queued');
 
-  -- Break: latest approval is not approve.
-  INSERT INTO approvals (clip_id, decision, decided_by, is_auto, created_at)
-  VALUES (s.clip_id, 'reject', s.member_id, false, now() + interval '1 second');
+  -- Break: latest client decision is not approve. Operator approval stays.
+  INSERT INTO approval_links (client_id, batch_id, token_hash, expires_at)
+  VALUES (s.client_id, s.batch_id, 'reject-' || s.clip_id::text, now() + interval '1 day');
+  INSERT INTO approvals (clip_id, decision, decided_by, is_auto, actor_role, link_id, reason, created_at)
+  SELECT s.clip_id, 'reject', s.member_id, false, 'client', id, 'not this cut', now() + interval '1 second'
+  FROM approval_links
+  WHERE token_hash = 'reject-' || s.clip_id::text;
   BEGIN
     INSERT INTO posts (clip_id, status) VALUES (s.clip_id, 'queued');
     RAISE EXCEPTION 'expected approval failure';
   EXCEPTION WHEN OTHERS THEN
-    IF SQLERRM NOT LIKE '%post gate: latest approval decision is not approve%' THEN
+    IF SQLERRM NOT LIKE '%post gate: client approval is required%' THEN
       RAISE;
     END IF;
   END;
@@ -77,8 +81,17 @@ BEGIN
   VALUES (gen_random_uuid(), s.client_id, s.asset_id)
   RETURNING id INTO other_clip;
   INSERT INTO clips (id, batch_id, status, qa_run)
-  VALUES (gen_random_uuid(), other_clip, 'approved', 0)
+  VALUES (gen_random_uuid(), other_clip, 'needs_review', 0)
   RETURNING id INTO other_clip;
+  INSERT INTO approvals (clip_id, decision, decided_by, is_auto, actor_role)
+  VALUES (other_clip, 'approve', s.operator_id, false, 'operator');
+  INSERT INTO approval_links (client_id, batch_id, token_hash, expires_at)
+  SELECT s.client_id, c.batch_id, 'noqa-' || other_clip::text, now() + interval '1 day'
+  FROM clips c WHERE c.id = other_clip;
+  INSERT INTO approvals (clip_id, decision, decided_by, is_auto, actor_role, link_id)
+  SELECT other_clip, 'approve', s.member_id, false, 'client', id
+  FROM approval_links WHERE token_hash = 'noqa-' || other_clip::text;
+  UPDATE clips SET status = 'approved' WHERE id = other_clip;
   BEGIN
     INSERT INTO posts (clip_id, status) VALUES (other_clip, 'queued');
     RAISE EXCEPTION 'expected missing QA failure';

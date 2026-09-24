@@ -60,8 +60,10 @@ beforeAll(async () => {
   await admin.query(`CREATE DATABASE "${dbName}"`);
   await admin.end();
   database = databaseUrl(dbName);
-  await psql(database, ["-f", path.join(root, "supabase/migrations/0001_core.sql")]);
-  await psql(database, ["-f", path.join(root, "supabase/migrations/0002_proof.sql")]);
+  const migrations = ["0001_core.sql", "0002_proof.sql", "0003_review_posting.sql"];
+  for (const file of migrations) {
+    await psql(database, ["-f", path.join(root, "supabase/migrations", file)]);
+  }
 }, 60_000);
 
 afterAll(async () => {

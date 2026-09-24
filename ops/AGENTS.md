@@ -17,9 +17,10 @@ Public brand is `eevolvv`. This tree is the clipping pipeline, isolated from the
 
 | Path | Role |
 | --- | --- |
-| `apps/app` | Next.js 15 upload app |
+| `apps/app` | Next.js 15 upload, operator review, client approval links |
 | `workers` | Python 3.12 package `evv_workers` |
-| `supabase/migrations` | Schema `0001_core.sql`, `0002_proof.sql` |
+| `supabase/migrations` | Schema `0001_core.sql`, `0002_proof.sql`, `0003_review_posting.sql` |
+| `docs/proof-mapping.md` | Site `/proof` JSON mapping |
 | `supabase/tests` | SQL invariant tests |
 | `fixtures` | Transcript, mocked model output, CC-licensed detection clip |
 

@@ -27,9 +27,9 @@ def database_url() -> Iterator[str]:
     test_info = conninfo_to_dict(admin_url)
     test_info["dbname"] = name
     url = make_conninfo(**{key: value for key, value in test_info.items() if value is not None})
-    for filename in ("0001_core.sql", "0002_proof.sql"):
+    for migration in sorted(MIGRATIONS.glob("*.sql")):
         subprocess.run(
-            ["psql", url, "-v", "ON_ERROR_STOP=1", "-q", "-f", str(MIGRATIONS / filename)],
+            ["psql", url, "-v", "ON_ERROR_STOP=1", "-q", "-f", str(migration)],
             check=True,
             capture_output=True,
             text=True,

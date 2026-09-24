@@ -50,11 +50,18 @@ BEGIN
     'Start here', 'how_to', 'process', 8, 'fixture', 0.8
   );
   INSERT INTO clips (id, batch_id, moment_id, status, qa_run, duration_ms)
-  VALUES (v_clip, v_batch, v_moment, 'approved', 1, 24000);
+  VALUES (v_clip, v_batch, v_moment, 'needs_review', 1, 24000);
   INSERT INTO qa_results (clip_id, qa_run, check_code, blocking, status)
   VALUES (v_clip, 1, 'B1', true, 'pass');
-  INSERT INTO approvals (clip_id, decision, decided_by, is_auto, created_at)
-  VALUES (v_clip, 'approve', v_member, false, now());
+  INSERT INTO approvals (clip_id, decision, decided_by, is_auto, actor_role, created_at)
+  VALUES (v_clip, 'approve', v_operator, false, 'operator', now());
+  INSERT INTO approval_links (client_id, batch_id, token_hash, expires_at)
+  VALUES (v_client, v_batch, 'seed-' || v_clip::text, now() + interval '1 day');
+  INSERT INTO approvals (clip_id, decision, decided_by, is_auto, actor_role, link_id, created_at)
+  SELECT v_clip, 'approve', v_member, false, 'client', id, now()
+  FROM approval_links
+  WHERE token_hash = 'seed-' || v_clip::text;
+  UPDATE clips SET status = 'approved' WHERE id = v_clip;
 
   client_id := v_client;
   asset_id := v_asset;

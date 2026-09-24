@@ -32,13 +32,16 @@ BEGIN
   END;
 
   -- A real member decision is allowed at the trigger. RLS is checked below.
-  INSERT INTO approvals (clip_id, decision, decided_by, is_auto)
-  VALUES (s.clip_id, 'approve', s.member_id, false);
+  INSERT INTO approval_links (client_id, batch_id, token_hash, expires_at)
+  VALUES (s.client_id, s.batch_id, 'member-ok-' || s.clip_id::text, now() + interval '1 day');
+  INSERT INTO approvals (clip_id, decision, decided_by, is_auto, actor_role, link_id)
+  SELECT s.clip_id, 'approve', s.member_id, false, 'client', id
+  FROM approval_links WHERE token_hash = 'member-ok-' || s.clip_id::text;
 
   -- Operator may record an auto approval.
   PERFORM set_config('request.jwt.claim.sub', s.operator_id::text, true);
-  INSERT INTO approvals (clip_id, decision, decided_by, is_auto)
-  VALUES (s.clip_id, 'approve', s.operator_id, true);
+  INSERT INTO approvals (clip_id, decision, decided_by, is_auto, actor_role)
+  VALUES (s.clip_id, 'approve', s.operator_id, true, 'operator');
 
   -- Ops tables are not readable by a client member.
   INSERT INTO jobs (kind, idempotency_key) VALUES ('transcribe', 'idem-' || s.clip_id::text);
