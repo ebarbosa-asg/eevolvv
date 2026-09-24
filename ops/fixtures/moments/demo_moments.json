@@ -1,0 +1,58 @@
+{
+  "moments": [
+    {
+      "start_sentence_id": "s01",
+      "end_sentence_id": "s06",
+      "hook_line": "Send the episode",
+      "hook_archetype": "how_to",
+      "topic": "intake",
+      "standalone_score": 9,
+      "rationale": "Fixture moment 1 for intake."
+    },
+    {
+      "start_sentence_id": "s01",
+      "end_sentence_id": "s06",
+      "hook_line": "Send the episode",
+      "hook_archetype": "how_to",
+      "topic": "intake",
+      "standalone_score": 4,
+      "rationale": "Fixture moment 2 for intake."
+    },
+    {
+      "start_sentence_id": "s07",
+      "end_sentence_id": "s12",
+      "hook_line": "Client approves",
+      "hook_archetype": "confession",
+      "topic": "approval",
+      "standalone_score": 9,
+      "rationale": "Fixture moment 1 for approval."
+    },
+    {
+      "start_sentence_id": "s07",
+      "end_sentence_id": "s12",
+      "hook_line": "Client approves",
+      "hook_archetype": "confession",
+      "topic": "approval",
+      "standalone_score": 4,
+      "rationale": "Fixture moment 2 for approval."
+    },
+    {
+      "start_sentence_id": "s13",
+      "end_sentence_id": "s18",
+      "hook_line": "Cite the sentence",
+      "hook_archetype": "how_to",
+      "topic": "metadata",
+      "standalone_score": 9,
+      "rationale": "Fixture moment 1 for metadata."
+    },
+    {
+      "start_sentence_id": "s13",
+      "end_sentence_id": "s18",
+      "hook_line": "Cite the sentence",
+      "hook_archetype": "how_to",
+      "topic": "metadata",
+      "standalone_score": 4,
+      "rationale": "Fixture moment 2 for metadata."
+    }
+  ]
+}

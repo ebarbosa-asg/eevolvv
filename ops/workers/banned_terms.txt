@@ -1,0 +1,6 @@
+# Case-insensitive substrings. A hit blocks metadata and sends QA B7 to a human.
+guaranteed viral
+we guarantee
+100% guaranteed
+guaranteed views
+risk-free
