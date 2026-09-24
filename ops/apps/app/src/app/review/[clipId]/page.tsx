@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { operatorPage } from "@/lib/operator-page";
 import { loadClipReview, metadataLabel, previewLabel, reviewPoolFromEnv } from "@/lib/review";
 
 export const dynamic = "force-dynamic";
@@ -13,12 +14,23 @@ export default async function ClipReviewPage({
 }) {
   const { clipId } = await params;
   const query = await searchParams;
-  if (!process.env.DATABASE_URL) {
+  const operator = await operatorPage();
+  if (operator.state === "unconfigured") {
     return (
       <main>
         <p className="kicker">ops · review</p>
         <h1>Clip</h1>
-        <p>Database is not configured.</p>
+        <p>Operator auth is not configured.</p>
+      </main>
+    );
+  }
+  if (operator.state !== "ok") {
+    return (
+      <main>
+        <p className="kicker">ops · review</p>
+        <h1>Clip</h1>
+        <p>{operator.state === "denied" ? "This account is not an operator." : "Sign in to review clips."}</p>
+        {operator.state === "anonymous" ? <p><Link href="/login">Sign in</Link></p> : null}
       </main>
     );
   }
@@ -69,34 +81,29 @@ export default async function ClipReviewPage({
           ))}
         </ul>
       </section>
-      <p className="note">Operator id is checked against the operators table. Session auth is not wired yet.</p>
       <form method="post" action={`/api/review/${clip.clipId}`}>
+        <input type="hidden" name="csrf" value={operator.csrf} />
         <input type="hidden" name="decision" value="approve" />
-        <label htmlFor="approve-operator">Operator id</label>
-        <input id="approve-operator" name="operatorId" required />
         <button type="submit">Approve</button>
       </form>
       <form method="post" action={`/api/review/${clip.clipId}`}>
+        <input type="hidden" name="csrf" value={operator.csrf} />
         <input type="hidden" name="decision" value="reject" />
-        <label htmlFor="reject-operator">Operator id</label>
-        <input id="reject-operator" name="operatorId" required />
         <label htmlFor="reject-reason">Reason</label>
         <textarea id="reject-reason" name="reason" required />
         <button type="submit">Reject</button>
       </form>
       <form method="post" action={`/api/review/${clip.clipId}`}>
+        <input type="hidden" name="csrf" value={operator.csrf} />
         <input type="hidden" name="decision" value="changes_requested" />
-        <label htmlFor="edit-operator">Operator id</label>
-        <input id="edit-operator" name="operatorId" required />
         <label htmlFor="edit-reason">What should change</label>
         <textarea id="edit-reason" name="reason" required />
         <button type="submit">Request edit</button>
       </form>
       <form method="post" action="/api/review/links">
+        <input type="hidden" name="csrf" value={operator.csrf} />
         <input type="hidden" name="clientId" value={clip.clientId} />
         <input type="hidden" name="batchId" value={clip.batchId} />
-        <label htmlFor="link-operator">Operator id for the client link</label>
-        <input id="link-operator" name="operatorId" required />
         <button type="submit">Issue client link</button>
       </form>
     </main>

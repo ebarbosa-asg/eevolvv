@@ -59,6 +59,8 @@ make test
 
 `make test` applies the migrations to a throwaway database, runs the SQL invariant tests, then ruff, mypy `--strict`, pytest, eslint, `tsc --noEmit`, and vitest.
 
+`make e2e` is the offline smoke: upload, fixture transcript, moments, reframe, captions, render, QA, operator approval, client link, dry-run post, and an empty proof export. It does not call AssemblyAI, Anthropic, or a posting provider.
+
 ## Local demo
 
 No API keys. Moments and metadata come from fixtures. The source picture is an ffmpeg `testsrc` with a sine tone. Face boxes are a recorded track so the crop does not depend on a detector guess. Face detection itself is tested against the CC BY 2.5 clip in `fixtures/media/` (see `fixtures/LICENSE.md`).
@@ -88,6 +90,7 @@ The demo exits non-zero if any blocking QA check fails.
 | ffmpeg / ffprobe | real binaries | real binaries |
 | Posting provider | `MockProvider`, dry-run default | no live provider is configured |
 | Approval links | HMAC with `APPROVAL_LINK_SECRET` from the environment; tests use a fixture secret | same signing, real secret required |
+| Operator sign-in | Supabase Auth OTP shape, `MockOtpProvider` in tests, no email sent | `SUPABASE_URL` and `SUPABASE_ANON_KEY`; missing env denies access |
 
 Prices in `workers/prices.yaml` are limited to rates checked on 2026-09-24. Speaker diarization is requested from AssemblyAI and is not billed here, because that add-on rate was not verified.
 
@@ -101,9 +104,13 @@ Posting goes through `PostingService`. `dry_run` defaults to true and rolls the 
 
 `export_proof_snapshot` writes the site `/proof` JSON from `v_proof_clipping` only. See `docs/proof-mapping.md`. An empty database exports `{ "kpis": [] }`.
 
+Operator sign-in is a Supabase Auth email OTP. The ops app then sets an expiring HttpOnly session cookie. Review actions require that cookie, a matching CSRF token, and a row in `operators`. If `OPERATOR_SESSION_SECRET`, `SUPABASE_URL`, or `SUPABASE_ANON_KEY` is missing, review and sign-in deny access. Tests use `MockOtpProvider` and do not send email.
+
 ## Still needs a decision
 
-- `APPROVAL_LINK_SECRET` must be set before a real link is issued. Operator identity is an id that must exist in `operators`; session auth is not wired.
-- No posting provider is selected. The live path in tests is `MockProvider`.
+The go-live list, including which accounts E must open and which pricing pages to check, is `RUNBOOK.md`.
+
+- No posting provider is selected. The live path in tests is `MockProvider`. Dry-run stays the default.
 - The proof JSON is not copied into the site repo. `platform_post_id` is stored on the proof view and is not a site KPI.
+- Client-link email is not wired.
 - Stripe and deploy of this app are not in this tree.

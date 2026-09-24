@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { operatorPage } from "@/lib/operator-page";
 import { listReviewQueue, previewLabel, reviewPoolFromEnv } from "@/lib/review";
 
 export const dynamic = "force-dynamic";
@@ -10,12 +11,33 @@ export default async function ReviewQueuePage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const query = await searchParams;
-  if (!process.env.DATABASE_URL) {
+  const operator = await operatorPage();
+  if (operator.state === "unconfigured") {
     return (
       <main>
         <p className="kicker">ops · review</p>
         <h1>Operator review</h1>
-        <p>Database is not configured.</p>
+        <p>Operator auth is not configured.</p>
+      </main>
+    );
+  }
+  if (operator.state === "anonymous") {
+    return (
+      <main>
+        <p className="kicker">ops · review</p>
+        <h1>Operator review</h1>
+        <p>
+          <Link href="/login">Sign in</Link>
+        </p>
+      </main>
+    );
+  }
+  if (operator.state === "denied") {
+    return (
+      <main>
+        <p className="kicker">ops · review</p>
+        <h1>Operator review</h1>
+        <p>This account is not an operator.</p>
       </main>
     );
   }

@@ -1,7 +1,7 @@
 # eevolvv ops. Run from this directory: make test
 ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
-.PHONY: test sql py ts demo
+.PHONY: test sql py ts demo e2e
 
 test: sql py ts
 
@@ -16,3 +16,6 @@ ts:
 
 demo:
 	cd $(ROOT)/workers && uv run python -m evv_workers.demo
+
+e2e:
+	cd $(ROOT)/workers && uv run python -m evv_workers.e2e

@@ -28,6 +28,7 @@ Public brand is `eevolvv`. This tree is the clipping pipeline, isolated from the
 
 ```bash
 make test    # SQL + ruff + mypy --strict + pytest + eslint + tsc + vitest
+make e2e     # offline upload-to-proof smoke
 make demo    # fixture video -> mocked moments -> three rendered clips -> QA
 ```
 

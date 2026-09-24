@@ -7,7 +7,7 @@ export default function HomePage() {
       <h1>eevolvv</h1>
       <p>Source upload for client-owned episodes. A file is accepted only after rights are confirmed and ffprobe finds a video stream.</p>
       <p>
-        <Link href="/review">Operator review</Link>
+        <Link href="/login">Operator sign in</Link>
       </p>
     </main>
   );

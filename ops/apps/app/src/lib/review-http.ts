@@ -1,4 +1,5 @@
 import { json } from "./http";
+import { AuthError } from "./session";
 import { ReviewError, parseDecision, type Decision } from "./review";
 
 export function reviewJson(body: unknown, status = 200): Response {
@@ -13,7 +14,7 @@ export async function handleReview(request: Request, fn: () => Promise<unknown>,
     }
     return reviewJson(body);
   } catch (error) {
-    const review = error instanceof ReviewError ? error : new ReviewError(error instanceof Error ? error.message : "review failed", 500);
+    const review = asReviewError(error);
     if (wantsHtml(request)) {
       const url = new URL(okPath, request.url);
       url.search = "";
@@ -29,9 +30,9 @@ export function wantsHtml(request: Request): boolean {
   return contentType.includes("application/x-www-form-urlencoded") || contentType.includes("multipart/form-data");
 }
 
-export async function readOperatorAction(request: Request): Promise<{ operatorId: string; decision: Decision; reason: string | null }> {
+export async function readOperatorAction(request: Request): Promise<{ csrf: string; decision: Decision; reason: string | null }> {
   const contentType = request.headers.get("content-type") ?? "";
-  let operatorId = request.headers.get("x-operator-id") ?? "";
+  let csrf = request.headers.get("x-csrf-token") ?? "";
   let decision = "";
   let reason: string | null = null;
   if (contentType.includes("application/json")) {
@@ -40,8 +41,8 @@ export async function readOperatorAction(request: Request): Promise<{ operatorId
       throw new ReviewError("json object required", 400);
     }
     const body = payload as Record<string, unknown>;
-    if (!operatorId && typeof body.operatorId === "string") {
-      operatorId = body.operatorId;
+    if (!csrf && typeof body.csrf === "string") {
+      csrf = body.csrf;
     }
     if (typeof body.decision === "string") {
       decision = body.decision;
@@ -51,14 +52,24 @@ export async function readOperatorAction(request: Request): Promise<{ operatorId
     }
   } else {
     const form = await request.formData();
-    if (!operatorId) {
-      operatorId = String(form.get("operatorId") ?? "");
+    if (!csrf) {
+      csrf = String(form.get("csrf") ?? "");
     }
     decision = String(form.get("decision") ?? "");
     const raw = form.get("reason");
     reason = typeof raw === "string" && raw.trim().length > 0 ? raw : null;
   }
-  return { operatorId, decision: parseDecision(decision), reason };
+  return { csrf, decision: parseDecision(decision), reason };
+}
+
+function asReviewError(error: unknown): ReviewError {
+  if (error instanceof ReviewError) {
+    return error;
+  }
+  if (error instanceof AuthError) {
+    return new ReviewError(error.message, error.status);
+  }
+  return new ReviewError(error instanceof Error ? error.message : "review failed", 500);
 }
 
 export async function readClientDecisions(

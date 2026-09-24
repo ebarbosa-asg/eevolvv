@@ -32,6 +32,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "tests/**/*.ts",
+    "e2e/**/*.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

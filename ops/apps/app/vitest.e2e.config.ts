@@ -10,7 +10,7 @@ export default defineConfig({
   css: { postcss: { plugins: [] } },
   test: {
     environment: "node",
-    include: ["tests/**/*.test.ts"],
+    include: ["e2e/**/*.test.ts"],
     fileParallelism: false,
   },
 });

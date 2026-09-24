@@ -100,6 +100,14 @@ export function reviewPoolFromEnv(): Pool {
   return singleton;
 }
 
+export async function closeReviewPool(): Promise<void> {
+  if (singleton) {
+    const current = singleton;
+    singleton = undefined;
+    await current.end();
+  }
+}
+
 export function parseDecision(value: unknown): Decision {
   if (value === "approve" || value === "reject" || value === "changes_requested") {
     return value;
