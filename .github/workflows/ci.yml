@@ -37,6 +37,8 @@ jobs:
       - run: pnpm brand:check
       - run: pnpm size:check
       - name: axe and lighthouse
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
         run: |
           pnpm exec next start --port 3456 &
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:3456/ >/dev/null && break; sleep 1; done

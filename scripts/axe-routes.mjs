@@ -8,6 +8,10 @@ const base = process.env.AXE_BASE_URL || "http://127.0.0.1:3456";
 const routes = ["/", "/proof", "/packages/clip-and-ship", "/packages/clip-and-dominate", "/niches/podcasts"];
 const chromeCandidates = [
   process.env.CHROME_PATH,
+  "/usr/bin/google-chrome",
+  "/usr/bin/google-chrome-stable",
+  "/usr/bin/chromium",
+  "/usr/bin/chromium-browser",
   "/home/ubuntu/.cache/ms-playwright/chromium-1223/chrome-linux64/chrome",
 ].filter(Boolean);
 const executablePath = chromeCandidates.find((candidate) => existsSync(candidate));

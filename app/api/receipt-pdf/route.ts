@@ -5,7 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const FROM_EMAIL = 'eevolvv <reports@eevolvv.com>';
 
@@ -80,7 +80,10 @@ export async function POST(request: Request) {
         if (error) console.error('Supabase insert error:', error);
       });
 
-    // Send email
+    if (!resend) {
+      return NextResponse.json({ success: false, message: 'Email is not configured.' }, { status: 500 });
+    }
+
     const { error: emailError } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [email],
