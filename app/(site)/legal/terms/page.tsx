@@ -20,7 +20,7 @@ export default function TermsPage() {
         </p>
         <h2>The service</h2>
         <p>
-          Clip & Ship is {packages.ship.clips} vertical clips a month posted to your YouTube Shorts, TikTok, and Instagram Reels. Clip & Dominate is {packages.dominate.clips} clips a month, adds LinkedIn, hook tests, and a capped network boost. We do not guarantee virality, follower counts, or revenue.
+          Clip & Ship is {packages.ship.clips} clips a month posted to your YouTube Shorts, TikTok, and Instagram Reels. Clip & Dominate is {packages.dominate.clips} clips a month and adds LinkedIn, hook tests, SEO metadata, and a biweekly strategy call. We do not guarantee virality, follower counts, or revenue.
         </p>
         <h2>Your accounts and content</h2>
         <p>
@@ -28,7 +28,8 @@ export default function TermsPage() {
         </p>
         <h2>Approvals and the soft goal</h2>
         <p>
-          Review happens in a shared folder. 48 hours of silence counts as approval, as written into the contract. On Clip & Dominate: {packages.dominate.softGuarantee}
+          You approve everything before it posts. On Clip & Dominate: {packages.dominate.softGuarantee}{" "}
+          {packages.dominate.boostDetail}
         </p>
         <h2>Fees</h2>
         <p>Retainers are monthly. Fees are not refunded because a clip underperformed. Either party can end a month-to-month engagement as the contract states.</p>

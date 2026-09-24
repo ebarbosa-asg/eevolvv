@@ -34,7 +34,7 @@ export function FinalCTA() {
               </h2>
 
               <p className="text-xl text-gray-400 mb-8 max-w-xl mx-auto">
-                We'll watch your business for free. If we can't save you at least{' '}
+                We&apos;ll watch your business for free. If we can&apos;t save you at least{' '}
                 <span className="text-cyan-500 font-bold">$2,000/month</span>,{' '}
                 you pay nothing.
               </p>

@@ -8,7 +8,7 @@ import { LogoMark } from "@/components/site/art";
 const links = [
   { href: "/#how", label: "How it works" },
   { href: "/#packages", label: "Packages" },
-  { href: "/#honest", label: "No B*llsh*t", aria: "No bullshit" },
+  { href: "/#honest", label: "Audience" },
 ];
 
 export function SiteHeader() {
@@ -47,9 +47,7 @@ export function SiteHeader() {
         <ul className={open ? "nav-links open" : "nav-links"} id="site-nav">
           {links.map((link) => (
             <li key={link.href}>
-              <Link href={link.href} aria-label={"aria" in link ? link.aria : undefined}>
-                {link.label}
-              </Link>
+              <Link href={link.href}>{link.label}</Link>
             </li>
           ))}
           <li className="nav-cta-mobile">

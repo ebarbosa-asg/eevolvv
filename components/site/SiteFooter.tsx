@@ -25,6 +25,7 @@ export function SiteFooter() {
           <Link href="/blog">Blog</Link>
           <Link href="/about">About</Link>
           <Link href="/sample">Sample</Link>
+          <Link href="/proof">Proof</Link>
           <a href={`mailto:${email}`}>{email}</a>
           <Link href="/legal/privacy">Privacy</Link>
           <Link href="/legal/terms">Terms</Link>

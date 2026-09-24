@@ -8,11 +8,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://eevolvv.com'),
-  title: 'eevolvv — clipping for creators who record but never post enough',
-  description: 'Done-for-you Shorts, TikToks, and Reels. Your content is the place to stand; our automation is the lever. Clip & Ship $1,497/mo · Clip & Dominate $3,497/mo.',
+  title: 'eevolvv — your show is the place to stand',
+  description: 'Daily Shorts, TikToks, Reels, and LinkedIn clips cut from the episodes you already record. Posted on your accounts, after you approve. Clip & Ship $1,497/mo · Clip & Dominate $3,497/mo.',
   openGraph: {
-    title: 'eevolvv — clipping for creators who record but never post enough',
-    description: 'Your content is the place to stand. Our automation is the lever.',
+    title: 'eevolvv — your show is the place to stand',
+    description: 'Daily Shorts, TikToks, Reels, and LinkedIn clips cut from the episodes you already record. Posted on your accounts, after you approve.',
     type: 'website',
     url: 'https://eevolvv.com',
     siteName: 'eevolvv',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'eevolvv — clipping for creators who record but never post enough',
+    title: 'eevolvv — your show is the place to stand',
     description: 'Clip & Ship $1,497/mo · Clip & Dominate $3,497/mo.',
     images: ['/opengraph-image'],
   },

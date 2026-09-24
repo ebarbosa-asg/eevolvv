@@ -3,7 +3,7 @@ import Script from "next/script";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { SiteHeader, StickyBook } from "@/components/site/chrome";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { jsonLdScript, organizationGraph, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { jsonLdScript, organizationGraph, plausibleDomain, SITE_NAME, SITE_URL } from "@/lib/seo";
 import "../site.css";
 
 const sans = IBM_Plex_Sans({
@@ -23,10 +23,10 @@ const mono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    absolute: `${SITE_NAME} — clipping for creators who record but never post enough`,
+    absolute: `${SITE_NAME} — your show is the place to stand`,
   },
   description:
-    "Done-for-you Shorts, TikToks, and Reels. Your content is the place to stand; our automation is the lever. Clip & Ship $1,497/mo · Clip & Dominate $3,497/mo.",
+    "Daily Shorts, TikToks, Reels, and LinkedIn clips cut from the episodes you already record. Posted on your accounts, after you approve. Clip & Ship $1,497/mo · Clip & Dominate $3,497/mo.",
   applicationName: SITE_NAME,
   openGraph: {
     siteName: SITE_NAME,
@@ -48,10 +48,10 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <SiteFooter />
       <StickyBook />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationGraph()) }} />
-      {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN ? (
+      {plausibleDomain() ? (
         <Script
           defer
-          data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
+          data-domain={plausibleDomain()}
           src="https://plausible.io/js/script.js"
           strategy="afterInteractive"
         />

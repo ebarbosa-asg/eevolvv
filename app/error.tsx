@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect } from 'react'
-import * as Sentry from '@sentry/nextjs'
 
 /**
  * Route-level error boundary (App Router). Catches errors in segments below the root layout.
@@ -10,7 +9,7 @@ import * as Sentry from '@sentry/nextjs'
  */
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    Sentry.captureException(error)
+    void import('@sentry/nextjs').then((Sentry) => Sentry.captureException(error))
   }, [error])
 
   return (

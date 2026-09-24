@@ -72,7 +72,7 @@ export function HeroSection() {
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             No setup. No tech knowledge. Just tell us what you do all day,
-            and we'll show you exactly what we can automate.
+            and we&apos;ll show you exactly what we can automate.
           </p>
         </motion.div>
 

@@ -8,6 +8,7 @@ export function PackageCards() {
         const dominate = pack.id === "dominate";
         return (
           <article key={pack.id} className={dominate ? "package-card dominate" : "package-card ship"}>
+            {"badge" in pack && pack.badge ? <span className="badge">{pack.badge}</span> : null}
             <span className={dominate ? "orb orb-red" : "orb orb-blue"} aria-hidden="true" />
             <p className={dominate ? "pill-kicker red" : "pill-kicker blue"}>{dominate ? "Red pill" : "Blue pill"}</p>
             <h3>{pack.name}</h3>

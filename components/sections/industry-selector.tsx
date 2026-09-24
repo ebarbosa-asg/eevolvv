@@ -199,7 +199,7 @@ export function IndustrySelector() {
             <span className="text-cyan-500">{industry.label}</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Click an industry to see exactly what we'd automate for your business.
+            Click an industry to see exactly what we&apos;d automate for your business.
           </p>
         </motion.div>
 

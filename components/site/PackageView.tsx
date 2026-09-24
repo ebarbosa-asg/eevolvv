@@ -67,12 +67,12 @@ export function PackageView({ id }: { id: PackageId }) {
                   <td>{pack.platforms.join(", ")}</td>
                 </tr>
                 <tr>
-                  <th scope="row">Source</th>
-                  <td>Up to {pack.sourceHours} hours / month</td>
-                </tr>
-                <tr>
                   <th scope="row">Report</th>
                   <td>{pack.report}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Approval</th>
+                  <td>You approve everything</td>
                 </tr>
               </tbody>
             </table>
@@ -101,9 +101,14 @@ export function PackageView({ id }: { id: PackageId }) {
               {pack.notIncluded.join(", ")}.
             </p>
           ) : null}
+          {"boostDetail" in pack && pack.boostDetail ? (
+            <p className="honesty" style={{ marginTop: 16 }}>
+              {pack.boostDetail}
+            </p>
+          ) : null}
           {"softGuarantee" in pack && pack.softGuarantee ? (
             <div className="guarantee-badge" style={{ marginTop: 16 }}>
-              <strong>Soft view goal — extra week of work, not a refund. </strong>
+              <strong>Soft view guarantee. </strong>
               {pack.softGuarantee}
             </div>
           ) : null}

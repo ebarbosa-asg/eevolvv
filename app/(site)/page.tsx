@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { CaptureMark, LeverArt, PhoneWall, PillDuo } from "@/components/site/art";
+import { CaptureMark, LeverArt, PhoneWall } from "@/components/site/art";
 import { LeverUpgrade } from "@/components/site/LeverUpgrade";
 import { BookPanel } from "@/components/site/BookPanel";
 import { FaqList } from "@/components/site/FaqList";
-import { PackageCards } from "@/components/site/PackageCards";
+import { PillChooser } from "@/components/site/PillChooser";
 import { PipelineDiagram } from "@/components/site/PipelineDiagram";
 import { homeFaqs } from "@/lib/packages";
 import { faqGraph, jsonLdScript } from "@/lib/seo";
@@ -16,14 +16,14 @@ export default function HomePage() {
     <>
       <section className="wrap hero">
         <div className="hero-copy">
-          <ul className="hero-chips">
-            <li>No bots</li>
-            <li>No fake views</li>
-          </ul>
+          <p className="typed-line">
+            &gt; give me a lever and a place to stand, and i&apos;ll move the world
+            <span className="caret">_</span>
+          </p>
           <h1>
-            Hack the algorithm.
+            Your show is the place to stand.
             <br />
-            Move the world.
+            We&apos;re the lever.
           </h1>
           <div className="hero-art">
             <LeverArt />
@@ -35,37 +35,34 @@ export default function HomePage() {
             </div>
           </div>
           <p className="lead">
-            Your long-form is the place to stand.
-            <br />
-            Our pipeline is the lever.
+            Daily Shorts, TikToks, Reels, and LinkedIn clips cut from the episodes you already record. Posted on your accounts, after you approve.
           </p>
           <div className="btn-row">
-            <a className="btn btn-primary btn-lg" href="#book">
-              Book a call
-            </a>
-            <a className="btn btn-secondary btn-lg hero-secondary" href="#packages">
-              See packages
+            <Link className="btn btn-primary btn-lg" href="/sample">
+              Get 3 free clips
+            </Link>
+            <a className="btn btn-secondary btn-lg" href="#packages">
+              Pick your pill
             </a>
           </div>
-          <p className="hero-domain">eevolvv.com</p>
+          <p className="microline">No bots. No fake views. No B*llsh*t.</p>
         </div>
       </section>
 
       <section className="section" id="packages">
         <div className="wrap">
           <div className="section-head center">
-            <p className="kicker">// Packages</p>
+            <p className="kicker">Packages</p>
             <h2>Pick your pill.</h2>
-            <PillDuo />
           </div>
-          <PackageCards />
+          <PillChooser />
         </div>
       </section>
 
       <section className="section" id="how">
         <div className="wrap">
           <div className="section-head center">
-            <p className="kicker">// How it works</p>
+            <p className="kicker">How it works</p>
             <h2>Long-form in. Feed-ready out.</h2>
           </div>
           <PipelineDiagram />
@@ -75,8 +72,8 @@ export default function HomePage() {
       <section className="section" id="honest">
         <div className="wrap">
           <div className="section-head center">
-            <p className="kicker kicker-red">// No B*llsh*t</p>
-            <h2>Clicks alone won’t make anyone viral.</h2>
+            <p className="kicker">Audience</p>
+            <h2>Views are motion. Audience is the move.</h2>
             <p className="lead">
               Volume + consistency gets you seen.
               <br />
@@ -105,7 +102,7 @@ export default function HomePage() {
       <section className="section quiet" id="niches">
         <div className="wrap">
           <div className="section-head">
-            <p className="kicker">// Niches</p>
+            <p className="kicker">Niches</p>
             <h2>Three niches we start with</h2>
           </div>
           <div className="niche-grid">
@@ -123,9 +120,10 @@ export default function HomePage() {
       <section className="section quiet" id="samples">
         <div className="wrap">
           <div className="section-head">
-            <p className="kicker">// Samples</p>
-            <h2>Clips ship here. Real samples are still coming.</h2>
-            <p className="lead">No borrowed logos and no invented view counts. These frames stay illustrated until real vertical clips exist.</p>
+            <p className="kicker">Samples</p>
+            <h2>Clips from our own channel.</h2>
+            <p className="lead">Client work shows up here only with written permission.</p>
+            <p className="proof-empty">Real clips land here soon.</p>
           </div>
           <PhoneWall />
           <div className="btn-row">
@@ -139,7 +137,7 @@ export default function HomePage() {
       <section className="section quiet" id="faq">
         <div className="wrap">
           <div className="section-head">
-            <p className="kicker">// FAQ</p>
+            <p className="kicker">FAQ</p>
             <h2>Straight answers</h2>
           </div>
           <FaqList items={homeFaqs} />

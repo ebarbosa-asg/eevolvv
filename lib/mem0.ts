@@ -18,7 +18,6 @@ export async function addMemory(clientId: string, content: string): Promise<void
   if (!client) return
   try {
     // AddMemoryOptions extends EntityOptions which has user_id
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await client.add([{ role: 'user', content }], { user_id: clientId } as any)
   } catch {
     // never throw — memory must not break agent runs

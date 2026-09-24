@@ -35,7 +35,6 @@ export async function createClientRecord(
       : (session.customer as Stripe.Customer | null)?.id ?? ''
 
   // Derive tier from metadata (set by T03) or fall back to price ID
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawSession = session as Record<string, any>
   let tier: Tier = (rawSession.metadata?.tier as Tier) ?? null
   if (!tier) {
@@ -422,7 +421,6 @@ export async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
 ): Promise<void> {
   // Route by product type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const product = (session as Record<string, any>).metadata?.product
 
   // Pilot products — create client record + build + kickoff email
@@ -474,7 +472,6 @@ export async function handleInvoicePaymentSucceeded(
 ): Promise<void> {
   if (!supabase) return
   // Access subscription ID — Stripe 2026 API shape may vary
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawInvoice = invoice as Record<string, any>
   const subscriptionId: string | undefined =
     rawInvoice.subscription_id ??
@@ -496,7 +493,6 @@ export async function handleInvoicePaymentFailed(
 ): Promise<void> {
   if (!supabase) { console.error('[webhook-handlers] Supabase not configured'); return }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawInvoice = invoice as Record<string, any>
   const subscriptionId: string =
     rawInvoice.subscription_id ??
@@ -583,7 +579,6 @@ export async function handleSubscriptionUpdated(
   subscription: Stripe.Subscription
 ): Promise<void> {
   if (!supabase) return
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawSub = subscription as Record<string, any>
   const periodEnd = rawSub.current_period_end
   const periodEndIso =

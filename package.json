@@ -7,6 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "types": "tsc --noEmit",
+    "brand:check": "node scripts/check-brand.mjs",
+    "copy:check": "node scripts/check-hack-footnote.mjs",
+    "proof:check": "tsx scripts/check-proof.ts",
+    "size:check": "node scripts/check-size.mjs",
+    "axe": "node scripts/axe-routes.mjs",
+    "lhci": "lhci autorun",
     "test:agents": "tsx tests/agents/runner.ts"
   },
   "dependencies": {
@@ -51,11 +58,13 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/three": "0.169.0",
     "autoprefixer": "^10.0.1",
+    "axe-core": "^4.13.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",

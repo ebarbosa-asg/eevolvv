@@ -1,7 +1,0 @@
-User-agent: *
-Disallow: /
-# Draft site: disallow all until domain + go-live.
-# When live, replace with:
-# User-agent: *
-# Allow: /
-# Sitemap: https://EXAMPLE-TODO.com/sitemap.xml

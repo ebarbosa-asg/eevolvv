@@ -81,14 +81,14 @@ export function PainCalendar() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            You're losing{' '}
+            You&apos;re losing{' '}
             <span className="text-red-500">
               <CountingNumber value={totalHours} format={(n) => n.toFixed(1)} /> hours/week
             </span>{' '}
             to work a machine could do.
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Here's what a typical week looks like for a dental practice with 20+ employees.
+            Here&apos;s what a typical week looks like for a dental practice with 20+ employees.
             Every colored block is time your team spends on tasks that could be automated.
           </p>
         </motion.div>
@@ -187,7 +187,7 @@ export function PainCalendar() {
               href="/contact"
               className="inline-block bg-cyan-500 text-black px-8 py-4 rounded-lg font-bold hover:bg-cyan-400 transition-all"
             >
-              Show Me What You'd Automate →
+              Show Me What You&apos;d Automate →
             </a>
           </motion.div>
         </div>

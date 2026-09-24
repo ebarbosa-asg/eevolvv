@@ -13,12 +13,18 @@ export function contactEmail() {
   return process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "hello@eevolvv.com";
 }
 
+function configuredEnv(value: string | undefined) {
+  const trimmed = value?.trim();
+  if (!trimmed || /^todo\b/i.test(trimmed)) return "";
+  return trimmed;
+}
+
 export function bookingUrl() {
-  return (
-    process.env.NEXT_PUBLIC_CAL_URL?.trim() ||
-    process.env.NEXT_PUBLIC_CALENDLY_URL?.trim() ||
-    ""
-  );
+  return configuredEnv(process.env.NEXT_PUBLIC_CAL_URL) || configuredEnv(process.env.NEXT_PUBLIC_CALENDLY_URL);
+}
+
+export function plausibleDomain() {
+  return configuredEnv(process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN);
 }
 
 export function bookingEmbedSrc(url: string) {
@@ -81,22 +87,14 @@ export function organizationGraph() {
         serviceType: "Short-form video clipping and distribution",
         areaServed: "Worldwide",
         provider: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-        offers: [
-          {
-            "@type": "Offer",
-            name: packages.ship.name,
-            price: String(packages.ship.price),
-            priceCurrency: "USD",
-            url: absoluteUrl("/packages/clip-and-ship"),
-          },
-          {
-            "@type": "Offer",
-            name: packages.dominate.name,
-            price: String(packages.dominate.price),
-            priceCurrency: "USD",
-            url: absoluteUrl("/packages/clip-and-dominate"),
-          },
-        ],
+        offers: [packages.ship, packages.dominate].map((pack) => ({
+          "@type": "Offer",
+          name: pack.name,
+          description: pack.lead,
+          price: String(pack.price),
+          priceCurrency: "USD",
+          url: absoluteUrl(`/packages/${pack.slug}`),
+        })),
       },
     ],
   };

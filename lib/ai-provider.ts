@@ -24,7 +24,6 @@ function getAnthropic(): import('@anthropic-ai/sdk').default | null {
   if (_anthropic) return _anthropic
   if (!process.env.ANTHROPIC_API_KEY) return null
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const Anthropic = require('@anthropic-ai/sdk')
     _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
     return _anthropic

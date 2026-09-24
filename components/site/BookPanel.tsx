@@ -6,7 +6,7 @@ export function BookPanel() {
 
   return (
     <div className="book-band" id="book">
-      <p className="kicker">// Book</p>
+      <p className="kicker">Book</p>
       <h2>Book a 20-minute fit call</h2>
       <p className="lead">
         We’ll look at one episode and tell you straight whether Clip & Ship or Clip & Dominate makes sense.

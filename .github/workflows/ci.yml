@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      SUPABASE_URL: https://example.supabase.co
+      SUPABASE_ANON_KEY: dummy
+      SUPABASE_SERVICE_ROLE_KEY: dummy
+      NEXT_PUBLIC_SITE_URL: https://eevolvv.com
+      NEXT_PUBLIC_CAL_URL: TODO
+      NEXT_PUBLIC_PLAUSIBLE_DOMAIN: TODO
+      NEXT_PUBLIC_STRIPE_LINK_SHIP: TODO
+      NEXT_PUBLIC_STRIPE_LINK_DOMINATE: TODO
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm types
+      - run: pnpm brand:check
+      - run: pnpm copy:check
+      - run: pnpm proof:check
+      - run: pnpm build
+      - run: pnpm brand:check
+      - run: pnpm size:check
+      - name: axe and lighthouse
+        run: |
+          pnpm exec next start --port 3456 &
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:3456/ >/dev/null && break; sleep 1; done
+          pnpm axe
+          pnpm lhci
