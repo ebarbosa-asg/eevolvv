@@ -1,0 +1,238 @@
+export function LogoMark() {
+  return (
+    <svg className="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+      <rect width="32" height="32" rx="8" fill="#102117" />
+      <path d="M6 23 L26 9" stroke="#3DFF8A" strokeWidth="2.2" strokeLinecap="round" />
+      <circle cx="7" cy="23" r="2.4" fill="#FF5D6C" />
+      <path d="M16 16 L19 23 H13 Z" fill="#3DFF8A" />
+      <circle cx="25" cy="9" r="3.2" fill="none" stroke="#3DFF8A" strokeWidth="1.4" />
+    </svg>
+  );
+}
+
+export function LeverArt() {
+  return (
+    <svg className="lever" viewBox="0 0 760 560" role="img" aria-label="A lever on a fulcrum. Long-form content is the weight. A globe of short-form clips rises at the other end.">
+      <defs>
+        <linearGradient id="beam" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stopColor="#1A9F52" />
+          <stop offset="1" stopColor="#3DFF8A" />
+        </linearGradient>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stopColor="#3DFF8A" stopOpacity="0.45" />
+          <stop offset="1" stopColor="#3DFF8A" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx="560" cy="150" r="120" fill="url(#glow)" />
+      <line x1="70" y1="470" x2="690" y2="470" stroke="#243028" strokeWidth="2" />
+      <path d="M300 470 L380 470 L340 400 Z" fill="#0E1612" stroke="#3DFF8A" strokeWidth="3" />
+      <circle cx="340" cy="392" r="8" fill="#FFD166" />
+      <path d="M120 430 L610 150" stroke="url(#beam)" strokeWidth="10" strokeLinecap="round" />
+      <circle cx="120" cy="430" r="28" fill="#FF5D6C" />
+      <circle cx="120" cy="430" r="40" fill="none" stroke="#FF5D6C" strokeOpacity="0.45" />
+      <g transform="translate(500 90)">
+        <circle r="62" fill="#07140F" stroke="#3DFF8A" strokeWidth="3" />
+        <ellipse rx="26" ry="62" fill="none" stroke="#1A9F52" strokeWidth="2" />
+        <ellipse rx="62" ry="22" fill="none" stroke="#1A9F52" strokeWidth="2" />
+        <path d="M20 -40 A70 70 0 0 1 48 -10" fill="none" stroke="#FFD166" strokeWidth="3" strokeLinecap="round" />
+      </g>
+      {[0, 1, 2, 3].map((i) => (
+        <g key={i} transform={`translate(${230 + i * 62} ${360 - i * 48}) rotate(-28)`}>
+          <rect x="-16" y="-26" width="32" height="52" rx="6" fill="#0A0C0B" stroke="#3DFF8A" strokeWidth="2" />
+          <path d="M-4 -4 L8 4 L-4 12 Z" fill="#3DFF8A" />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+export function TerminalStrip() {
+  return (
+    <p className="terminal" aria-hidden="true">
+      <span className="prompt">eevolvv@ops:~$</span>
+      <span className="cmd">clip --ship episode.mp4</span>
+    </p>
+  );
+}
+
+const triad = [
+  {
+    title: "Place to stand",
+    body: "The hard creative work is done. Episodes, demos, and webinars sit unused in a folder.",
+    icon: "stand",
+  },
+  {
+    title: "Lever",
+    body: "Selection, captions, titles, and posting. Humans stay for taste and brand safety.",
+    icon: "lever",
+  },
+  {
+    title: "World",
+    body: "Not guaranteed virality. Your best moments leave the archive and meet the feed.",
+    icon: "world",
+  },
+] as const;
+
+function TriadIcon({ kind }: { kind: (typeof triad)[number]["icon"] }) {
+  if (kind === "stand") {
+    return (
+      <svg className="card-icon" viewBox="0 0 72 72" aria-hidden="true">
+        <rect x="16" y="18" width="40" height="30" rx="6" fill="none" stroke="#3DFF8A" strokeWidth="2" />
+        <path d="M24 54 h24" stroke="#3DFF8A" strokeWidth="2" />
+        <circle cx="36" cy="33" r="6" fill="#FF5D6C" />
+      </svg>
+    );
+  }
+  if (kind === "lever") {
+    return (
+      <svg className="card-icon" viewBox="0 0 72 72" aria-hidden="true">
+        <path d="M14 50 L58 22" stroke="#3DFF8A" strokeWidth="3" strokeLinecap="round" />
+        <path d="M30 52 L42 52 L36 40 Z" fill="#3DFF8A" />
+        <circle cx="14" cy="50" r="5" fill="#FF5D6C" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="card-icon" viewBox="0 0 72 72" aria-hidden="true">
+      <circle cx="36" cy="36" r="16" fill="none" stroke="#3DFF8A" strokeWidth="2" />
+      <ellipse cx="36" cy="36" rx="7" ry="16" fill="none" stroke="#1A9F52" strokeWidth="2" />
+      <path d="M20 36 h32" stroke="#1A9F52" strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function LeverTriad() {
+  return (
+    <div className="triad">
+      {triad.map((item) => (
+        <article className="card" key={item.title}>
+          <TriadIcon kind={item.icon} />
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+export function FunnelGraphic() {
+  const bands = [
+    { y: 10, w: 420, label: "Viewers", fill: "#3DFF8A" },
+    { y: 78, w: 320, label: "Followers", fill: "#3DDCB0" },
+    { y: 146, w: 230, label: "Sub / email", fill: "#FFD166" },
+    { y: 214, w: 150, label: "Customers", fill: "#FF5D6C" },
+  ];
+  return (
+    <svg className="funnel-svg" viewBox="0 0 520 340" role="img" aria-label="Audience capture funnel: viewers, followers, subscribers, customers.">
+      {bands.map((band) => {
+        const x = (520 - band.w) / 2;
+        return (
+          <g key={band.label}>
+            <path
+              d={`M${x} ${band.y} H${x + band.w} L${x + band.w - 28} ${band.y + 52} H${x + 28} Z`}
+              fill={band.fill}
+              opacity="0.9"
+            />
+            <text x="260" y={band.y + 32} textAnchor="middle" fill="#07140c" fontFamily="IBM Plex Sans, sans-serif" fontSize="16" fontWeight="700">
+              {band.label}
+            </text>
+          </g>
+        );
+      })}
+      <circle cx="260" cy="300" r="10" fill="#3DFF8A" />
+    </svg>
+  );
+}
+
+const phones = [
+  { rim: "#3DFF8A", tilt: "-6deg" },
+  { rim: "#5AA2FF", tilt: "-2deg" },
+  { rim: "#FFD166", tilt: "1deg" },
+  { rim: "#C084FC", tilt: "3deg" },
+  { rim: "#FF5D6C", tilt: "6deg" },
+];
+
+export function PhoneWall() {
+  return (
+    <div className="phone-wall" aria-hidden="true">
+      {phones.map((phone) => (
+        <div
+          key={phone.rim}
+          className="phone"
+          style={{ ["--rim" as string]: phone.rim, ["--tilt" as string]: phone.tilt }}
+        >
+          <div className="phone-screen">
+            <b />
+            <i />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M5 12.5 l4.2 4.2 L19 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function NicheArt({ slug }: { slug: "podcasts" | "saas" | "coaches" }) {
+  return (
+    <svg viewBox="0 0 640 420" role="img" aria-label="Illustration of long-form source becoming short clips.">
+      <rect width="640" height="420" rx="28" fill="#101612" />
+      {slug === "podcasts" && (
+        <g>
+          <rect x="70" y="90" width="150" height="240" rx="75" fill="none" stroke="#3DFF8A" strokeWidth="8" />
+          <path d="M40 180 q-30 30 0 70" fill="none" stroke="#5AA2FF" strokeWidth="6" />
+          <path d="M250 180 q30 30 0 70" fill="none" stroke="#5AA2FF" strokeWidth="6" />
+        </g>
+      )}
+      {slug === "saas" && (
+        <g>
+          <rect x="48" y="80" width="220" height="160" rx="16" fill="none" stroke="#3DFF8A" strokeWidth="4" />
+          <path d="M70 190 L110 150 L150 170 L210 110" fill="none" stroke="#3DFF8A" strokeWidth="4" />
+        </g>
+      )}
+      {slug === "coaches" && (
+        <g>
+          <circle cx="140" cy="180" r="70" fill="none" stroke="#FFD166" strokeWidth="6" />
+          <path d="M128 160 L170 180 L128 200 Z" fill="#FFD166" />
+        </g>
+      )}
+      {[0, 1, 2].map((i) => (
+        <g key={i} transform={`translate(${340 + i * 70} ${80 + i * 18})`}>
+          <rect width="86" height="160" rx="16" fill="#0A0C0B" stroke="#3DFF8A" strokeWidth="3" />
+          <path d="M34 70 L58 84 L34 98 Z" fill="#3DFF8A" />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+export function FlowDiagram({ steps }: { steps: readonly { label: string; caption: string }[] }) {
+  return (
+    <ol className="pipeline is-drawn" aria-label={steps.map((step) => step.label).join(", ")}>
+      {steps.map((step, index) => (
+        <li key={step.label}>
+          <span className="step-no">0{index + 1}</span>
+          <h3>{step.label}</h3>
+          <p className="muted">{step.caption}</p>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+export function BlogArt() {
+  return (
+    <svg viewBox="0 0 640 280" role="img" aria-label="Abstract lever and clip frames.">
+      <rect width="640" height="280" fill="#101612" />
+      <path d="M80 200 L520 70" stroke="#3DFF8A" strokeWidth="8" strokeLinecap="round" />
+      <circle cx="80" cy="200" r="16" fill="#FF5D6C" />
+      <circle cx="520" cy="70" r="28" fill="none" stroke="#3DFF8A" strokeWidth="3" />
+    </svg>
+  );
+}

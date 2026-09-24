@@ -14,16 +14,54 @@ const CLIENT_PAGE_PATHS = new Map(CLIENT_AGENT_PAGES.map((page) => [`/os/${page.
 const REDIRECTS: Record<string, string> = {
   '/recovery': '/',
   '/marketing/vision': '/',
-  '/marketing': '/pricing',
-  '/legal': '/law-firms',
+  '/marketing': '/',
+  '/legal': '/legal/privacy',
+  '/pricing': '/#packages',
+  '/privacy': '/legal/privacy',
+  '/terms': '/legal/terms',
+  '/contact': '/#book',
+  '/buy': '/packages/clip-and-dominate',
+  '/extract': '/',
+  '/diagnostic': '/',
+  '/intake': '/sample',
+  '/textback': '/',
+  '/partners': '/',
+  '/referral': '/',
+  '/revenue-calculator': '/',
+  '/ghost-work-receipt': '/',
+  '/restaurant': '/',
+  '/salon': '/',
+  '/real-estate': '/',
+  '/contractors': '/',
+  '/chiro': '/',
+  '/childcare': '/',
+  '/medspa': '/',
+  '/ecommerce': '/',
+  '/dental': '/',
+  '/missed-lead-follow-up': '/',
+  '/fitness': '/',
+  '/cleaning': '/',
+  '/auto-shop': '/',
+  '/local-business-automation': '/',
+  '/law-firms': '/',
+  '/accounting': '/',
+  '/agency': '/',
+  '/ai-agents-for-small-business': '/',
+  '/ai-receptionist-small-business': '/',
+  '/website-and-automation': '/',
 }
 
 export default auth(function middleware(req) {
   // 301 redirects for deleted/renamed routes
   const pathname = req.nextUrl.pathname
-  if (REDIRECTS[pathname]) {
+  const retiredPrefix = ['/diagnostic/', '/marketing/']
+  const destination = REDIRECTS[pathname] || (retiredPrefix.some((prefix) => pathname.startsWith(prefix)) ? '/' : undefined)
+  if (destination) {
     const url = req.nextUrl.clone()
-    url.pathname = REDIRECTS[pathname]
+    const hashIndex = destination.indexOf('#')
+    url.pathname = hashIndex === -1 ? destination : destination.slice(0, hashIndex) || '/'
+    url.hash = hashIndex === -1 ? '' : destination.slice(hashIndex)
+    url.search = ''
     return NextResponse.redirect(url, { status: 301 })
   }
 

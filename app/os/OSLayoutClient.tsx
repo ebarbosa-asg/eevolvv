@@ -12,6 +12,16 @@ export const OS_SIDEBAR_W = 240
 
 export default function OSLayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+
+  useEffect(() => {
+    const id = "eevolvv-legacy-fonts"
+    if (document.getElementById(id)) return
+    const link = document.createElement("link")
+    link.id = id
+    link.rel = "stylesheet"
+    link.href = "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Instrument+Serif:ital@0;1&display=swap"
+    document.head.appendChild(link)
+  }, [])
   const [collapsed, setCollapsed] = useState(false)
   const [isNarrow, setIsNarrow] = useState(false)
   const internalRoutes = new Set([

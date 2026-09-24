@@ -38,7 +38,11 @@ const nextConfig = {
     return [
       // /extract was a half-built page; route all visitors to /pricing
       // (config-level redirect — Vercel-cache-safe).
-      { source: '/extract', destination: '/pricing', permanent: false },
+      { source: '/extract', destination: '/', permanent: false },
+      { source: '/pricing', destination: '/#packages', permanent: false },
+      { source: '/privacy', destination: '/legal/privacy', permanent: false },
+      { source: '/terms', destination: '/legal/terms', permanent: false },
+      { source: '/contact', destination: '/#book', permanent: false },
     ]
   },
   async rewrites() {
