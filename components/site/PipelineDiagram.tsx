@@ -1,36 +1,55 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-
 const steps = [
-  { n: "01", title: "Drop", body: "Drive folder or unlisted link.", art: "drop" },
-  { n: "02", title: "Hook", body: "Moments that stand alone.", art: "hook" },
-  { n: "03", title: "Title", body: "Readable titles. SEO on Pro.", art: "title" },
-  { n: "04", title: "Post", body: "Shorts, TikTok, Reels. LinkedIn on Pro.", art: "post" },
-  { n: "05", title: "Report", body: "Loom, then double down.", art: "report" },
+  { n: "01", title: "Drop", body: "Hours recorded", icon: "drop" },
+  { n: "02", title: "Find moments", body: "Best peaks", icon: "moments" },
+  { n: "03", title: "Auto-clip", body: "9:16 + captions", icon: "clip" },
+  { n: "04", title: "SEO titles", body: "Hooks + meta", icon: "seo" },
+  { n: "05", title: "Post", body: "4 platforms", icon: "post" },
+  { n: "06", title: "Report", body: "Double down", icon: "report" },
 ] as const;
 
-function StepArt({ kind }: { kind: (typeof steps)[number]["art"] }) {
-  const common = { fill: "none", stroke: "#3DFF8A", strokeWidth: 2 } as const;
+function StepIcon({ kind }: { kind: (typeof steps)[number]["icon"] }) {
+  const stroke = { fill: "none", stroke: "#3DFF8A", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   return (
-    <svg className="pipe-art" viewBox="0 0 120 84" aria-hidden="true">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
       {kind === "drop" && (
         <>
-          <rect x="34" y="16" width="52" height="40" rx="6" {...common} />
-          <path d="M48 56 v12 M72 56 v12 M40 68 h40" {...common} />
+          <path d="M16 6 v12" {...stroke} />
+          <path d="M11 14 l5 5 5-5" {...stroke} />
+          <path d="M8 22 h16 v4 H8 Z" {...stroke} />
         </>
       )}
-      {kind === "hook" && <path d="M30 58 C30 20 90 20 90 48" {...common} strokeLinecap="round" />}
-      {kind === "title" && (
+      {kind === "moments" && (
         <>
-          <path d="M28 28 h64 M28 42 h48 M28 56 h40" {...common} strokeLinecap="round" />
+          <circle cx="13" cy="15" r="6" {...stroke} />
+          <circle cx="20" cy="18" r="5" {...stroke} />
         </>
       )}
-      {kind === "post" && <path d="M30 54 L60 24 L90 54 M60 24 v40" {...common} strokeLinecap="round" strokeLinejoin="round" />}
+      {kind === "clip" && (
+        <>
+          <rect x="11" y="5" width="10" height="22" rx="2" {...stroke} />
+          <path d="M14 14 l5 3-5 3 Z" fill="#3DFF8A" stroke="none" />
+        </>
+      )}
+      {kind === "seo" && (
+        <>
+          <path d="M10 6 h8 l4 4 v16 H10 Z" {...stroke} />
+          <path d="M18 6 v4 h4" {...stroke} />
+          <path d="M13 16 h6 M13 20 h4" {...stroke} />
+        </>
+      )}
+      {kind === "post" && (
+        <>
+          <rect x="7" y="8" width="7" height="7" rx="1.5" fill="#3DFF8A" />
+          <rect x="18" y="8" width="7" height="7" rx="1.5" fill="#5AA2FF" />
+          <rect x="7" y="18" width="7" height="7" rx="1.5" fill="#C084FC" />
+          <rect x="18" y="18" width="7" height="7" rx="1.5" fill="#FF5D6C" />
+        </>
+      )}
       {kind === "report" && (
         <>
-          <path d="M28 58 L48 40 L64 50 L92 24" {...common} strokeLinecap="round" />
-          <path d="M28 64 h64" {...common} />
+          <path d="M7 24 V10" {...stroke} />
+          <path d="M7 24 H26" {...stroke} />
+          <path d="M10 20 v-4 M16 20 V12 M22 20 v-6" {...stroke} />
         </>
       )}
     </svg>
@@ -38,39 +57,27 @@ function StepArt({ kind }: { kind: (typeof steps)[number]["art"] }) {
 }
 
 export function PipelineDiagram() {
-  const ref = useRef<HTMLOListElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (media.matches || window.innerWidth < 980) {
-      el.classList.add("is-drawn");
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          el.classList.add("is-drawn");
-          io.disconnect();
-        }
-      },
-      { threshold: 0.35 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
   return (
-    <ol ref={ref} className="pipeline" aria-label="Five steps. Drop the recording, cut the hook, title it, post it, report it.">
-      {steps.map((step) => (
-        <li key={step.n}>
-          <StepArt kind={step.art} />
-          <span className="step-no">{step.n}</span>
-          <h3>{step.title}</h3>
-          <p className="muted">{step.body}</p>
-        </li>
-      ))}
-    </ol>
+    <div className="how-block">
+      <ol className="how-steps" aria-label="Six steps from a long-form recording to a feed-ready batch.">
+        {steps.map((step) => (
+          <li key={step.n}>
+            <span className="how-node">
+              <StepIcon kind={step.icon} />
+            </span>
+            <span className="step-no">{step.n}</span>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </li>
+        ))}
+      </ol>
+      <div className="winners">
+        <span className="winners-orb" aria-hidden="true" />
+        <p>
+          <strong>Feed winners back</strong>
+          <span>Analytics → clipper taste → next batch</span>
+        </p>
+      </div>
+    </div>
   );
 }

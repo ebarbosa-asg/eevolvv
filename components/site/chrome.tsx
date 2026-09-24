@@ -6,13 +6,9 @@ import { usePathname } from "next/navigation";
 import { LogoMark } from "@/components/site/art";
 
 const links = [
-  { href: "/packages/clip-and-ship", label: "Clip & Ship" },
-  { href: "/packages/clip-and-dominate", label: "Clip & Dominate" },
-  { href: "/niches/podcasts", label: "Podcasts" },
-  { href: "/niches/saas", label: "SaaS" },
-  { href: "/niches/coaches", label: "Coaches" },
-  { href: "/case-studies", label: "Case studies" },
-  { href: "/blog", label: "Blog" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#packages", label: "Packages" },
+  { href: "/#honest", label: "No B*llsh*t", aria: "No bullshit" },
 ];
 
 export function SiteHeader() {
@@ -43,24 +39,28 @@ export function SiteHeader() {
           type="button"
           aria-expanded={open}
           aria-controls="site-nav"
+          aria-label={open ? "Close menu" : "Open menu"}
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? "Close" : "Menu"}
+          <span className={open ? "burger open" : "burger"} />
         </button>
         <ul className={open ? "nav-links open" : "nav-links"} id="site-nav">
           {links.map((link) => (
             <li key={link.href}>
-              <Link href={link.href} aria-current={pathname === link.href ? "page" : undefined}>
+              <Link href={link.href} aria-label={"aria" in link ? link.aria : undefined}>
                 {link.label}
               </Link>
             </li>
           ))}
-          <li>
+          <li className="nav-cta-mobile">
             <Link className="btn btn-primary" href="/#book">
               Book a call
             </Link>
           </li>
         </ul>
+        <Link className="btn btn-primary nav-cta" href="/#book">
+          Book a call
+        </Link>
       </div>
     </header>
   );

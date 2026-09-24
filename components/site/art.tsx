@@ -1,45 +1,94 @@
 export function LogoMark() {
   return (
     <svg className="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="8" fill="#102117" />
-      <path d="M6 23 L26 9" stroke="#3DFF8A" strokeWidth="2.2" strokeLinecap="round" />
-      <circle cx="7" cy="23" r="2.4" fill="#FF5D6C" />
-      <path d="M16 16 L19 23 H13 Z" fill="#3DFF8A" />
-      <circle cx="25" cy="9" r="3.2" fill="none" stroke="#3DFF8A" strokeWidth="1.4" />
+      <rect width="32" height="32" rx="8" fill="#3DFF8A" />
+      <text
+        x="16"
+        y="22.5"
+        textAnchor="middle"
+        fill="#06210f"
+        fontFamily="IBM Plex Sans, sans-serif"
+        fontSize="18"
+        fontWeight="700"
+      >
+        e
+      </text>
+    </svg>
+  );
+}
+
+export function PillDuo() {
+  return (
+    <svg className="pill-duo" viewBox="0 0 56 40" aria-hidden="true">
+      <rect x="4" y="4" width="20" height="32" rx="10" fill="#3B82F6" />
+      <rect x="28" y="4" width="20" height="32" rx="10" fill="#FF4D6A" />
+    </svg>
+  );
+}
+
+export function CaptureMark() {
+  return (
+    <svg className="capture-mark" viewBox="0 0 48 64" aria-hidden="true">
+      <path d="M6 4h36L34 18H14Z" fill="#3DFF8A" />
+      <path d="M14 20h20l-6 14H20Z" fill="#8BFFB8" />
+      <path d="M20 36h8l-4 10Z" fill="#FF5D6C" />
     </svg>
   );
 }
 
 export function LeverArt() {
   return (
-    <svg className="lever" viewBox="0 0 760 560" role="img" aria-label="A lever on a fulcrum. Long-form content is the weight. A globe of short-form clips rises at the other end.">
+    <svg
+      className="lever"
+      viewBox="0 0 760 560"
+      role="img"
+      aria-label="A lever. Long-form content sits low on the left. The pipeline fulcrum tips a wall of phones up toward the feed."
+    >
       <defs>
-        <linearGradient id="beam" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0" stopColor="#1A9F52" />
+        <linearGradient id="lever-beam" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stopColor="#14c964" />
+          <stop offset="0.45" stopColor="#7dffb0" />
           <stop offset="1" stopColor="#3DFF8A" />
         </linearGradient>
-        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0" stopColor="#3DFF8A" stopOpacity="0.45" />
-          <stop offset="1" stopColor="#3DFF8A" stopOpacity="0" />
+        <radialGradient id="lever-disc" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stopColor="#0f2a1c" />
+          <stop offset="70%" stopColor="#0c1c14" />
+          <stop offset="100%" stopColor="#0c1c14" stopOpacity="0" />
         </radialGradient>
+        <filter id="lever-glow" x="-30%" y="-80%" width="160%" height="260%">
+          <feGaussianBlur stdDeviation="7" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
-      <circle cx="560" cy="150" r="120" fill="url(#glow)" />
-      <line x1="70" y1="470" x2="690" y2="470" stroke="#243028" strokeWidth="2" />
-      <path d="M300 470 L380 470 L340 400 Z" fill="#0E1612" stroke="#3DFF8A" strokeWidth="3" />
-      <circle cx="340" cy="392" r="8" fill="#FFD166" />
-      <path d="M120 430 L610 150" stroke="url(#beam)" strokeWidth="10" strokeLinecap="round" />
-      <circle cx="120" cy="430" r="28" fill="#FF5D6C" />
-      <circle cx="120" cy="430" r="40" fill="none" stroke="#FF5D6C" strokeOpacity="0.45" />
-      <g transform="translate(500 90)">
-        <circle r="62" fill="#07140F" stroke="#3DFF8A" strokeWidth="3" />
-        <ellipse rx="26" ry="62" fill="none" stroke="#1A9F52" strokeWidth="2" />
-        <ellipse rx="62" ry="22" fill="none" stroke="#1A9F52" strokeWidth="2" />
-        <path d="M20 -40 A70 70 0 0 1 48 -10" fill="none" stroke="#FFD166" strokeWidth="3" strokeLinecap="round" />
-      </g>
-      {[0, 1, 2, 3].map((i) => (
-        <g key={i} transform={`translate(${230 + i * 62} ${360 - i * 48}) rotate(-28)`}>
-          <rect x="-16" y="-26" width="32" height="52" rx="6" fill="#0A0C0B" stroke="#3DFF8A" strokeWidth="2" />
-          <path d="M-4 -4 L8 4 L-4 12 Z" fill="#3DFF8A" />
+      <circle cx="455" cy="318" r="168" fill="url(#lever-disc)" />
+      <text x="612" y="62" textAnchor="middle" fill="#E6C36A" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="13" letterSpacing="2.4">
+        THE FEED
+      </text>
+      <circle cx="612" cy="132" r="58" fill="none" stroke="#3DFF8A" strokeWidth="3" />
+      <circle cx="612" cy="132" r="34" fill="none" stroke="#3DFF8A" strokeWidth="3" />
+      <circle cx="612" cy="132" r="10" fill="#07140c" stroke="#3DFF8A" strokeWidth="3" />
+      <path d="M128 448 L700 268" stroke="url(#lever-beam)" strokeWidth="18" strokeLinecap="round" filter="url(#lever-glow)" />
+      <circle cx="118" cy="456" r="34" fill="#FF4D6D" opacity="0.22" />
+      <circle cx="118" cy="456" r="16" fill="#FF4D6D" />
+      <text x="118" y="512" textAnchor="middle" fill="#FF5D73" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="12" letterSpacing="1.6">
+        CONTENT
+      </text>
+      <path d="M468 332 L512 418 H424 Z" fill="#3DFF8A" />
+      <text x="548" y="448" textAnchor="middle" fill="#3DFF8A" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="12" letterSpacing="1.6">
+        PIPELINE
+      </text>
+      {[
+        { x: 548, y: 236, r: -16 },
+        { x: 612, y: 198, r: -12 },
+        { x: 676, y: 168, r: -8 },
+      ].map((phone) => (
+        <g key={phone.x} transform={`translate(${phone.x} ${phone.y}) rotate(${phone.r})`}>
+          <rect x="-26" y="-46" width="52" height="92" rx="10" fill="#070a08" stroke="#3DFF8A" strokeWidth="2.4" />
+          <rect x="-16" y="-30" width="32" height="48" rx="3" fill="none" stroke="#1A9F52" strokeWidth="1.4" />
+          <path d="M-4 -10 L8 -2 L-4 6 Z" fill="#3DFF8A" />
         </g>
       ))}
     </svg>

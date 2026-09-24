@@ -1,98 +1,111 @@
 import Link from "next/link";
-import { FunnelGraphic, LeverArt, LeverTriad, PhoneWall, TerminalStrip } from "@/components/site/art";
+import { CaptureMark, LeverArt, PhoneWall, PillDuo } from "@/components/site/art";
 import { LeverUpgrade } from "@/components/site/LeverUpgrade";
 import { BookPanel } from "@/components/site/BookPanel";
 import { FaqList } from "@/components/site/FaqList";
-import { MatrixCanvas } from "@/components/site/MatrixCanvas";
-import { PackageCards, PillChooser } from "@/components/site/PackageCards";
+import { PackageCards } from "@/components/site/PackageCards";
 import { PipelineDiagram } from "@/components/site/PipelineDiagram";
 import { homeFaqs } from "@/lib/packages";
 import { faqGraph, jsonLdScript } from "@/lib/seo";
 import { niches } from "@/lib/niches";
 
+const captureTools = ["Hooks", "Series", "CTAs", "Pinned comments", "Link-in-bio", "Retarget winners"];
+
 export default function HomePage() {
   return (
     <>
       <section className="wrap hero">
-        <div>
-          <p className="eyebrow">eevolvv 2.0</p>
-          <h1>The clipping team for creators who record plenty but never post enough</h1>
-          <blockquote className="quote">
-            “Give me a lever and a place to stand, and I’ll move the world.”
-            <p>Your content is the place to stand. Our automation is the lever.</p>
-          </blockquote>
+        <div className="hero-copy">
+          <ul className="hero-chips">
+            <li>No bots</li>
+            <li>No fake views</li>
+          </ul>
+          <h1>
+            Hack the algorithm.
+            <br />
+            Move the world.
+          </h1>
+          <div className="hero-art">
+            <LeverArt />
+            <LeverUpgrade />
+            <div className="lever-labels" aria-hidden="true">
+              <span className="lbl-content">Content</span>
+              <span className="lbl-pipeline">Pipeline</span>
+              <span className="lbl-feed">The feed</span>
+            </div>
+          </div>
+          <p className="lead">
+            Your long-form is the place to stand.
+            <br />
+            Our pipeline is the lever.
+          </p>
           <div className="btn-row">
-            <a className="btn btn-primary" href="#book">
+            <a className="btn btn-primary btn-lg" href="#book">
               Book a call
             </a>
-            <a className="btn btn-secondary" href="#packages">
+            <a className="btn btn-secondary btn-lg hero-secondary" href="#packages">
               See packages
             </a>
           </div>
-        </div>
-        <div className="hero-art">
-          <MatrixCanvas />
-          <LeverArt />
-          <LeverUpgrade />
-          <TerminalStrip />
+          <p className="hero-domain">eevolvv.com</p>
         </div>
       </section>
 
-      <section className="section" id="lever">
+      <section className="section" id="packages">
         <div className="wrap">
-          <div className="section-head">
-            <p className="eyebrow">The lever</p>
-            <h2>A small force, applied well, moves more than raw effort</h2>
-          </div>
-          <LeverTriad />
-        </div>
-      </section>
-
-      <section className="section" id="pipeline" style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <div className="section-head">
-            <p className="eyebrow">The pipeline</p>
-            <h2>Five steps. One finished result.</h2>
-          </div>
-          <PipelineDiagram />
-        </div>
-      </section>
-
-      <section className="section" id="packages" style={{ paddingTop: 0 }}>
-        <div className="wrap">
-          <div className="section-head">
-            <p className="eyebrow">Two packages · published prices</p>
-            <h2>Pick a finished offer. Not a quote call.</h2>
+          <div className="section-head center">
+            <p className="kicker">// Packages</p>
+            <h2>Pick your pill.</h2>
+            <PillDuo />
           </div>
           <PackageCards />
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section" id="how">
         <div className="wrap">
-          <div className="section-head">
-            <p className="eyebrow">Choose</p>
-            <h2>Pick your lever length</h2>
+          <div className="section-head center">
+            <p className="kicker">// How it works</p>
+            <h2>Long-form in. Feed-ready out.</h2>
           </div>
-          <PillChooser />
+          <PipelineDiagram />
         </div>
       </section>
 
-      <section className="section" id="capture" style={{ paddingTop: 0 }}>
-        <div className="wrap funnel-wrap">
-          <FunnelGraphic />
-          <div>
-            <p className="eyebrow">Audience capture</p>
+      <section className="section" id="honest">
+        <div className="wrap">
+          <div className="section-head center">
+            <p className="kicker kicker-red">// No B*llsh*t</p>
             <h2>Clicks alone won’t make anyone viral.</h2>
-            <p className="lead">Volume and consistency get you seen. The system turns viewers into followers, subscribers, and customers.</p>
+            <p className="lead">
+              Volume + consistency gets you seen.
+              <br />
+              The premium extras are about audience capture.
+            </p>
+          </div>
+          <div className="audience">
+            <ol className="audience-bars">
+              <li className="viewer">Viewer</li>
+              <li className="follower">Follower</li>
+              <li className="sub">Sub / email</li>
+              <li className="customer">Customer</li>
+            </ol>
+            <div className="capture-side">
+              <CaptureMark />
+              <ul className="tool-chips">
+                {captureTools.map((tool) => (
+                  <li key={tool}>{tool}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="section" id="niches" style={{ paddingTop: 0 }}>
+      <section className="section quiet" id="niches">
         <div className="wrap">
           <div className="section-head">
-            <p className="eyebrow">Built for</p>
+            <p className="kicker">// Niches</p>
             <h2>Three niches we start with</h2>
           </div>
           <div className="niche-grid">
@@ -107,10 +120,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section" id="samples" style={{ paddingTop: 0 }}>
+      <section className="section quiet" id="samples">
         <div className="wrap">
           <div className="section-head">
-            <p className="eyebrow">Sample output</p>
+            <p className="kicker">// Samples</p>
             <h2>Clips ship here. Real samples are still coming.</h2>
             <p className="lead">No borrowed logos and no invented view counts. These frames stay illustrated until real vertical clips exist.</p>
           </div>
@@ -123,17 +136,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section" id="faq" style={{ paddingTop: 0 }}>
+      <section className="section quiet" id="faq">
         <div className="wrap">
           <div className="section-head">
-            <p className="eyebrow">FAQ</p>
+            <p className="kicker">// FAQ</p>
             <h2>Straight answers</h2>
           </div>
           <FaqList items={homeFaqs} />
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section book-section">
         <div className="wrap">
           <BookPanel />
         </div>

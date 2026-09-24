@@ -15,6 +15,7 @@ export type PackageFact = {
   who: string;
   instead: string;
   bullets: readonly string[];
+  homeBullets: readonly string[];
   included: readonly { title: string; detail: string }[];
   notIncluded?: readonly string[];
   softGuarantee?: string;
@@ -44,6 +45,7 @@ export const packages = {
       "Monthly Loom + spreadsheet report",
       "Up to 4 hours of source video",
     ],
+    homeBullets: ["24 clips / mo", "3 platforms", "Captions + titles", "Monthly report"],
     included: [
       { title: "24 vertical clips / month", detail: "Roughly 6 per weekly episode × 4 weeks" },
       { title: "Posting", detail: "YouTube Shorts, TikTok, and Instagram Reels on your accounts" },
@@ -83,6 +85,15 @@ export const packages = {
       "Hook A/B tests on top moments",
       "SEO titles & descriptions",
       "Biweekly strategy + up to $500 network boost",
+    ],
+    homeBullets: [
+      "48 clips / mo",
+      "+LinkedIn",
+      "Hook A/B tests",
+      "SEO metadata",
+      "Biweekly strategy",
+      "Up to $500 clipper boost",
+      "Soft view guarantee = extra work",
     ],
     included: [
       { title: "48 vertical clips / month", detail: "Double the Ship volume on the same source library" },
