@@ -10,6 +10,12 @@ node_modules/
 .next/
 /out/
 
+# Retired draft site. It still uses names the public brand check rejects.
+/reference/
+
+# Lighthouse CI output
+.lighthouseci/
+
 # production
 /build
 
