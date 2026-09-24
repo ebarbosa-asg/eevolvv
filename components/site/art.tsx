@@ -20,8 +20,8 @@ export function LogoMark() {
 export function PillDuo() {
   return (
     <svg className="pill-duo" viewBox="0 0 56 40" aria-hidden="true">
-      <rect x="4" y="4" width="20" height="32" rx="10" fill="#3B82F6" />
-      <rect x="28" y="4" width="20" height="32" rx="10" fill="#FF4D6A" />
+      <rect x="4" y="4" width="20" height="32" rx="10" fill="#4D8DFF" />
+      <rect x="28" y="4" width="20" height="32" rx="10" fill="#FF4D5E" />
     </svg>
   );
 }
@@ -36,6 +36,7 @@ export function CaptureMark() {
   );
 }
 
+/** TODO: swap this SVG poster for a Rive state machine at public/rive/lever.riv (idle → hover lift → click pulse). */
 export function LeverArt() {
   return (
     <svg
@@ -70,9 +71,22 @@ export function LeverArt() {
       <circle cx="702" cy="108" r="46" fill="none" stroke="#3DFF8A" strokeWidth="3" />
       <circle cx="702" cy="108" r="27" fill="none" stroke="#3DFF8A" strokeWidth="3" />
       <circle cx="702" cy="108" r="8" fill="#07140c" stroke="#3DFF8A" strokeWidth="3" />
-      <path d="M118 438 L610 248" stroke="url(#lever-beam)" strokeWidth="18" strokeLinecap="round" filter="url(#lever-glow)" />
-      <circle cx="108" cy="448" r="34" fill="#FF4D6D" opacity="0.22" />
-      <circle cx="108" cy="448" r="16" fill="#FF4D6D" />
+      <g className="lever-arm">
+        <path d="M118 438 L610 248" stroke="url(#lever-beam)" strokeWidth="18" strokeLinecap="round" filter="url(#lever-glow)" />
+        <circle cx="108" cy="448" r="34" fill="#FF4D6D" opacity="0.22" />
+        <circle cx="108" cy="448" r="16" fill="#FF4D6D" />
+        {[
+          { x: 456, y: 278, r: -18 },
+          { x: 518, y: 236, r: -14 },
+          { x: 576, y: 198, r: -10 },
+        ].map((phone) => (
+          <g key={phone.x} transform={`translate(${phone.x} ${phone.y}) rotate(${phone.r})`}>
+            <rect x="-26" y="-46" width="52" height="92" rx="10" fill="#070a08" stroke="#3DFF8A" strokeWidth="2.4" />
+            <rect x="-16" y="-30" width="32" height="48" rx="3" fill="none" stroke="#1A9F52" strokeWidth="1.4" />
+            <path d="M-4 -10 L8 -2 L-4 6 Z" fill="#3DFF8A" />
+          </g>
+        ))}
+      </g>
       <text x="108" y="508" textAnchor="middle" fill="#FF5D73" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="12" letterSpacing="1.6">
         CONTENT
       </text>
@@ -80,17 +94,6 @@ export function LeverArt() {
       <text x="470" y="428" textAnchor="middle" fill="#3DFF8A" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="12" letterSpacing="1.6">
         PIPELINE
       </text>
-      {[
-        { x: 456, y: 278, r: -18 },
-        { x: 518, y: 236, r: -14 },
-        { x: 576, y: 198, r: -10 },
-      ].map((phone) => (
-        <g key={phone.x} transform={`translate(${phone.x} ${phone.y}) rotate(${phone.r})`}>
-          <rect x="-26" y="-46" width="52" height="92" rx="10" fill="#070a08" stroke="#3DFF8A" strokeWidth="2.4" />
-          <rect x="-16" y="-30" width="32" height="48" rx="3" fill="none" stroke="#1A9F52" strokeWidth="1.4" />
-          <path d="M-4 -10 L8 -2 L-4 6 Z" fill="#3DFF8A" />
-        </g>
-      ))}
     </svg>
   );
 }

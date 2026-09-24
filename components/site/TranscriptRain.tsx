@@ -2,229 +2,111 @@
 
 import { useEffect, useRef } from "react";
 
-type Cue = { tc: string; text: string };
-type Glyph = { ch: string; x: number; y: number; layer: number; id: number };
+const MAX_DPR = 1.5;
+const FRAME_MS = 1000 / 30;
 
-function parseCues(source: string): Cue[] {
-  return source
-    .split("\n")
-    .map((line) => {
-      const match = line.match(/^(\d{2}:\d{2}:\d{2}\.\d{3})\s+(.+)$/);
-      return match ? { tc: match[1], text: match[2] } : null;
-    })
-    .filter((cue): cue is Cue => Boolean(cue));
-}
-
-function layoutGlyphs(cues: Cue[]): { glyphs: Glyph[]; alphabet: string[] } {
-  const alphabet: string[] = [];
-  const indexOf = (ch: string) => {
-    let id = alphabet.indexOf(ch);
-    if (id === -1) {
-      alphabet.push(ch);
-      id = alphabet.length - 1;
+function tokensFrom(source: string) {
+  const tokens: string[] = [];
+  for (const line of source.split("\n")) {
+    const match = line.match(/^(\d{2}:\d{2}:\d{2}\.\d{3})\s+(.+)$/);
+    if (!match) continue;
+    tokens.push(match[1].slice(3, 8));
+    for (const word of match[2].split(/\s+/)) {
+      if (word.length > 1 && word.length < 16) tokens.push(word.replace(/[.,]/g, ""));
     }
-    return id;
-  };
-  const glyphs: Glyph[] = [];
-  cues.forEach((cue, line) => {
-    const layer = line % 3;
-    const col = line % 3;
-    const text = `${cue.tc} ${cue.text}`;
-    let x = 16 + col * 280;
-    const y = 40 + Math.floor(line / 3) * 72;
-    for (const ch of text) {
-      glyphs.push({ ch, x, y, layer, id: indexOf(ch) });
-      x += ch === " " ? 7 : 10 - layer;
-    }
-  });
-  return { glyphs, alphabet };
-}
-
-function StaticField({ cues }: { cues: Cue[] }) {
-  return (
-    <svg className="rain-static" viewBox="0 0 840 280" aria-hidden="true">
-      {cues.slice(0, 9).map((cue, index) => (
-        <text key={cue.tc} x={16 + (index % 3) * 270} y={36 + Math.floor(index / 3) * 88} fill="#6F8076" fontSize="12" fontFamily="ui-monospace, monospace">
-          {`${cue.tc} ${cue.text}`.slice(0, 34)}
-        </text>
-      ))}
-    </svg>
-  );
+  }
+  return tokens.length ? tokens : ["00:04", "hook", "caption", "eevolvv"];
 }
 
 export function TranscriptRain({ source }: { source: string }) {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const cues = parseCues(source);
+  const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const host = hostRef.current;
-    const parsed = parseCues(source);
-    if (!host || parsed.length === 0) return;
+    const canvas = ref.current;
+    if (!canvas) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    const { glyphs, alphabet } = layoutGlyphs(parsed);
-    const canvas = document.createElement("canvas");
-    canvas.className = "rain-canvas";
-    host.appendChild(canvas);
-    const gl = canvas.getContext("webgl2", { antialias: false, alpha: true, premultipliedAlpha: false });
-    const ctx2d = gl ? null : canvas.getContext("2d");
+    const glyphs = tokensFrom(source);
+    const mono = getComputedStyle(canvas).getPropertyValue("--font-mono").trim() || "ui-monospace";
+    let width = 0;
+    let height = 0;
+    let columns: { y: number; speed: number; token: string }[] = [];
     let raf = 0;
-    let visible = true;
+    let running = false;
+    let inView = false;
     let last = 0;
+    const fontSize = 13;
 
     const resize = () => {
-      const rect = host.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      const rect = parent.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+      width = Math.max(1, rect.width);
+      height = Math.max(1, rect.height);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const count = Math.max(6, Math.floor(width / 88));
+      columns = Array.from({ length: count }, (_, index) => ({
+        y: Math.random() * height,
+        speed: 18 + (index % 3) * 10,
+        token: glyphs[index % glyphs.length],
+      }));
     };
-    resize();
 
-    let frame: (time: number) => void = () => {};
-
-    if (gl) {
-      const cell = 32;
-      const cols = 16;
-      const atlas = document.createElement("canvas");
-      atlas.width = cols * cell;
-      atlas.height = Math.ceil(alphabet.length / cols) * cell;
-      const actx = atlas.getContext("2d");
-      if (actx) {
-        actx.clearRect(0, 0, atlas.width, atlas.height);
-        actx.fillStyle = "#E8F0EA";
-        actx.font = "20px ui-monospace, monospace";
-        actx.textBaseline = "middle";
-        alphabet.forEach((ch, index) => {
-          const cx = (index % cols) * cell + 6;
-          const cy = Math.floor(index / cols) * cell + cell / 2;
-          actx.fillText(ch, cx, cy);
-        });
-      }
-      const texture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
-
-      const vs = `#version 300 es
-        in vec2 aPos;
-        in vec4 aInst;
-        uniform vec2 uRes;
-        uniform float uTime;
-        uniform vec2 uAtlas;
-        out vec2 vUv;
-        void main() {
-          float layer = aInst.z;
-          float speed = 20.0 + layer * 18.0;
-          float y = mod(aInst.y - uTime * speed, uRes.y + 60.0) - 20.0;
-          vec2 pos = vec2(aInst.x * (uRes.x / 840.0), y) + (aPos - 0.5) * (16.0 - layer * 2.0);
-          vec2 clip = (pos / uRes) * 2.0 - 1.0;
-          gl_Position = vec4(clip.x, -clip.y, layer / 10.0, 1.0);
-          float id = aInst.w;
-          float col = mod(id, uAtlas.x);
-          float row = floor(id / uAtlas.x);
-          vUv = (vec2(col, row) + aPos) / uAtlas;
-        }`;
-      const fs = `#version 300 es
-        precision mediump float;
-        in vec2 vUv;
-        uniform sampler2D uTex;
-        out vec4 outColor;
-        void main() {
-          vec4 tex = texture(uTex, vUv);
-          outColor = vec4(tex.rgb, tex.a * 0.72);
-        }`;
-      const compile = (type: number, src: string) => {
-        const shader = gl.createShader(type)!;
-        gl.shaderSource(shader, src);
-        gl.compileShader(shader);
-        return shader;
-      };
-      const program = gl.createProgram()!;
-      gl.attachShader(program, compile(gl.VERTEX_SHADER, vs));
-      gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fs));
-      gl.linkProgram(program);
-      gl.useProgram(program);
-      const quad = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, quad);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), gl.STATIC_DRAW);
-      gl.enableVertexAttribArray(0);
-      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-      const data = new Float32Array(glyphs.length * 4);
-      glyphs.forEach((glyph, index) => {
-        data[index * 4] = glyph.x;
-        data[index * 4 + 1] = glyph.y + glyph.layer * 18;
-        data[index * 4 + 2] = glyph.layer;
-        data[index * 4 + 3] = glyph.id;
-      });
-      const instances = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, instances);
-      gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-      gl.enableVertexAttribArray(1);
-      gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 0, 0);
-      gl.vertexAttribDivisor(1, 1);
-      const uRes = gl.getUniformLocation(program, "uRes");
-      const uTime = gl.getUniformLocation(program, "uTime");
-      const uAtlas = gl.getUniformLocation(program, "uAtlas");
-      gl.enable(gl.BLEND);
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-      frame = (time) => {
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.uniform2f(uRes, canvas.width, canvas.height);
-        gl.uniform1f(uTime, time / 1000);
-        gl.uniform2f(uAtlas, cols, Math.max(1, Math.ceil(alphabet.length / cols)));
-        gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, glyphs.length);
-      };
-    } else if (ctx2d) {
-      frame = (time) => {
-        ctx2d.clearRect(0, 0, canvas.width, canvas.height);
-        ctx2d.fillStyle = "#6F8076";
-        ctx2d.font = `${12 * Math.min(window.devicePixelRatio || 1, 1.5)}px ui-monospace, monospace`;
-        for (const glyph of glyphs) {
-          const speed = 20 + glyph.layer * 18;
-          const y = ((glyph.y - (time / 1000) * speed) % (canvas.height + 40) + canvas.height + 40) % (canvas.height + 40);
-          ctx2d.globalAlpha = 0.45 + glyph.layer * 0.12;
-          ctx2d.fillText(glyph.ch, glyph.x, y);
+    const draw = (time: number) => {
+      const dt = Math.min(0.05, (time - last) / 1000 || 0.016);
+      ctx.fillStyle = "rgba(10, 12, 11, 0.18)";
+      ctx.fillRect(0, 0, width, height);
+      ctx.font = `500 ${fontSize}px ${mono}, ui-monospace, monospace`;
+      ctx.textBaseline = "top";
+      columns.forEach((column, index) => {
+        column.y += column.speed * dt;
+        if (column.y > height) {
+          column.y = -18;
+          column.token = glyphs[Math.floor(Math.random() * glyphs.length)];
         }
-      };
-    }
+        ctx.fillStyle = index % 3 === 0 ? "rgba(61, 255, 138, 0.55)" : "rgba(111, 128, 118, 0.85)";
+        ctx.fillText(column.token, 12 + index * ((width - 24) / columns.length), column.y);
+      });
+    };
 
     const loop = (time: number) => {
-      if (!visible) return;
+      if (!running) return;
       raf = requestAnimationFrame(loop);
-      if (time - last < 1000 / 30) return;
+      if (time - last < FRAME_MS) return;
       last = time;
-      frame(time);
+      draw(time);
     };
-    const setVisible = (next: boolean) => {
-      visible = next && document.visibilityState === "visible";
+
+    const sync = () => {
+      const next = inView && document.visibilityState === "visible";
+      if (next === running) return;
+      running = next;
       cancelAnimationFrame(raf);
-      if (visible) raf = requestAnimationFrame(loop);
+      if (running) raf = requestAnimationFrame(loop);
     };
-    const observer = new IntersectionObserver((entries) => setVisible(entries.some((entry) => entry.isIntersecting)));
-    observer.observe(host);
-    const onVisibility = () => setVisible(document.visibilityState === "visible");
-    document.addEventListener("visibilitychange", onVisibility);
+
+    resize();
+    const observer = new IntersectionObserver((entries) => {
+      inView = entries.some((entry) => entry.isIntersecting);
+      sync();
+    });
+    observer.observe(canvas);
+    document.addEventListener("visibilitychange", sync);
     window.addEventListener("resize", resize);
-    raf = requestAnimationFrame(loop);
 
     return () => {
-      visible = false;
+      running = false;
       cancelAnimationFrame(raf);
       observer.disconnect();
-      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("visibilitychange", sync);
       window.removeEventListener("resize", resize);
-      canvas.remove();
     };
   }, [source]);
 
-  return (
-    <div className="rain" ref={hostRef} aria-hidden="true">
-      <StaticField cues={cues} />
-    </div>
-  );
+  return <canvas ref={ref} className="rain-canvas" aria-hidden="true" />;
 }

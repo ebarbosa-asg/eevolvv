@@ -1,12 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
-import { CaptureMark, PhoneWall } from "@/components/site/art";
+import { CaptureMark, LeverArt, PhoneWall, PillDuo } from "@/components/site/art";
 import { BookPanel } from "@/components/site/BookPanel";
 import { FaqList } from "@/components/site/FaqList";
-import { FigureFrame } from "@/components/site/FigureFrame";
-import { HackSection } from "@/components/site/HackSection";
-import { HeroStage } from "@/components/site/HeroStage";
+import { HeroRain } from "@/components/site/HeroRain";
 import { PillChooser } from "@/components/site/PillChooser";
 import { PipelineDiagram } from "@/components/site/PipelineDiagram";
 import { homeFaqs } from "@/lib/packages";
@@ -14,20 +12,66 @@ import { faqGraph, jsonLdScript } from "@/lib/seo";
 import { niches } from "@/lib/niches";
 
 const transcript = fs.readFileSync(path.join(process.cwd(), "content/rain/episode-01.txt"), "utf8");
+const FOOTNOTE =
+  "Legally. There's no secret setting. The hack is showing up every day with clips worth watching, then turning viewers into people you can reach again.";
 
 const captureTools = ["Hooks", "Series", "CTAs", "Pinned comments", "Link-in-bio", "Retarget winners"];
 
 export default function HomePage() {
   return (
     <>
-      <HeroStage transcript={transcript} />
-      <HackSection />
+      <section className="hero">
+        <div className="rain" aria-hidden="true">
+          <div className="rain-poster">
+            {transcript
+              .split("\n")
+              .slice(0, 9)
+              .map((line) => (
+                <span key={line}>{line.slice(0, 42)}</span>
+              ))}
+          </div>
+          <HeroRain source={transcript} />
+        </div>
+        <div className="wrap hero-copy">
+          <ul className="hero-chips">
+            <li>No bots</li>
+            <li>No fake views</li>
+          </ul>
+          <h1 id="hack-title">
+            Hack the algorithm*
+            <br />
+            Move the world.
+          </h1>
+          <p className="lead">
+            Your long-form is the place to stand.
+            <br />
+            Our pipeline is the lever.
+          </p>
+          <p id="hack-note" className="hack-note">
+            *{FOOTNOTE}
+          </p>
+          <div className="btn-row">
+            <Link className="btn btn-primary btn-lg" href="/#book">
+              Book a call
+            </Link>
+            <a className="btn btn-secondary btn-lg" href="#packages">
+              See packages
+            </a>
+          </div>
+          <p className="hero-domain">eevolvv.com</p>
+          {/* TODO: swap LeverArt for a Rive state machine at public/rive/lever.riv (idle, hover lift, click pulse). The SVG is the poster until that file exists. */}
+          <div className="hero-art">
+            <LeverArt />
+          </div>
+        </div>
+      </section>
 
       <section className="section" id="packages">
         <div className="wrap">
           <div className="section-head center">
             <p className="kicker">Packages</p>
             <h2>Pick your pill.</h2>
+            <PillDuo />
           </div>
           <PillChooser />
         </div>
@@ -39,9 +83,7 @@ export default function HomePage() {
             <p className="kicker">How it works</p>
             <h2>Long-form in. Feed-ready out.</h2>
           </div>
-          <FigureFrame n="02">
-            <PipelineDiagram />
-          </FigureFrame>
+          <PipelineDiagram />
         </div>
       </section>
 
@@ -101,9 +143,7 @@ export default function HomePage() {
             <p className="lead">Client work shows up here only with written permission.</p>
             <p className="proof-empty">Real clips land here soon.</p>
           </div>
-          <FigureFrame n="03">
-            <PhoneWall />
-          </FigureFrame>
+          <PhoneWall />
           <div className="btn-row">
             <Link className="btn btn-secondary" href="/sample">
               Send an episode

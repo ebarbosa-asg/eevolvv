@@ -8,7 +8,7 @@ import { Wordmark } from "@/components/site/Wordmark";
 const links = [
   { href: "/#how", label: "How it works" },
   { href: "/#packages", label: "Packages" },
-  { href: "/#honest", label: "Audience" },
+  { href: "/#faq", label: "No B*llsh*t" },
 ];
 
 export function SiteHeader() {
