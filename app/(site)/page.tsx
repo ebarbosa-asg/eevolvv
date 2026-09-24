@@ -1,53 +1,27 @@
+import fs from "node:fs";
+import path from "node:path";
 import Link from "next/link";
-import { CaptureMark, LeverArt, PhoneWall } from "@/components/site/art";
-import { LeverUpgrade } from "@/components/site/LeverUpgrade";
+import { CaptureMark, PhoneWall } from "@/components/site/art";
 import { BookPanel } from "@/components/site/BookPanel";
 import { FaqList } from "@/components/site/FaqList";
+import { FigureFrame } from "@/components/site/FigureFrame";
+import { HackSection } from "@/components/site/HackSection";
+import { HeroStage } from "@/components/site/HeroStage";
 import { PillChooser } from "@/components/site/PillChooser";
 import { PipelineDiagram } from "@/components/site/PipelineDiagram";
 import { homeFaqs } from "@/lib/packages";
 import { faqGraph, jsonLdScript } from "@/lib/seo";
 import { niches } from "@/lib/niches";
 
+const transcript = fs.readFileSync(path.join(process.cwd(), "content/rain/episode-01.txt"), "utf8");
+
 const captureTools = ["Hooks", "Series", "CTAs", "Pinned comments", "Link-in-bio", "Retarget winners"];
 
 export default function HomePage() {
   return (
     <>
-      <section className="wrap hero">
-        <div className="hero-copy">
-          <p className="typed-line">
-            &gt; give me a lever and a place to stand, and i&apos;ll move the world
-            <span className="caret">_</span>
-          </p>
-          <h1>
-            Your show is the place to stand.
-            <br />
-            We&apos;re the lever.
-          </h1>
-          <div className="hero-art">
-            <LeverArt />
-            <LeverUpgrade />
-            <div className="lever-labels" aria-hidden="true">
-              <span className="lbl-content">Content</span>
-              <span className="lbl-pipeline">Pipeline</span>
-              <span className="lbl-feed">The feed</span>
-            </div>
-          </div>
-          <p className="lead">
-            Daily Shorts, TikToks, Reels, and LinkedIn clips cut from the episodes you already record. Posted on your accounts, after you approve.
-          </p>
-          <div className="btn-row">
-            <Link className="btn btn-primary btn-lg" href="/sample">
-              Get 3 free clips
-            </Link>
-            <a className="btn btn-secondary btn-lg" href="#packages">
-              Pick your pill
-            </a>
-          </div>
-          <p className="microline">No bots. No fake views. No B*llsh*t.</p>
-        </div>
-      </section>
+      <HeroStage transcript={transcript} />
+      <HackSection />
 
       <section className="section" id="packages">
         <div className="wrap">
@@ -65,7 +39,9 @@ export default function HomePage() {
             <p className="kicker">How it works</p>
             <h2>Long-form in. Feed-ready out.</h2>
           </div>
-          <PipelineDiagram />
+          <FigureFrame n="02">
+            <PipelineDiagram />
+          </FigureFrame>
         </div>
       </section>
 
@@ -125,7 +101,9 @@ export default function HomePage() {
             <p className="lead">Client work shows up here only with written permission.</p>
             <p className="proof-empty">Real clips land here soon.</p>
           </div>
-          <PhoneWall />
+          <FigureFrame n="03">
+            <PhoneWall />
+          </FigureFrame>
           <div className="btn-row">
             <Link className="btn btn-secondary" href="/sample">
               Send an episode

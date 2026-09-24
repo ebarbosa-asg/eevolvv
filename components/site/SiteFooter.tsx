@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogoMark } from "@/components/site/art";
+import { Wordmark } from "@/components/site/Wordmark";
 import { contactEmail } from "@/lib/seo";
 
 export function SiteFooter() {
@@ -7,9 +7,8 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="wrap footer-brand">
-        <Link className="logo" href="/">
-          <LogoMark />
-          eevolvv
+        <Link className="logo" href="/" aria-label="eevolvv home">
+          <Wordmark />
         </Link>
         <span className="footer-domain">eevolvv.com</span>
       </div>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { LogoMark } from "@/components/site/art";
+import { Wordmark } from "@/components/site/Wordmark";
 
 const links = [
   { href: "/#how", label: "How it works" },
@@ -31,8 +31,7 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="wrap nav">
         <Link className="logo" href="/" aria-label="eevolvv home">
-          <LogoMark />
-          eevolvv
+          <Wordmark />
         </Link>
         <button
           className="nav-toggle"
