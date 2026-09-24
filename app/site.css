@@ -102,7 +102,8 @@ body:has(.eevolvv-site) {
 }
 
 .nav {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 20px;
   min-height: 72px;
@@ -128,7 +129,7 @@ body:has(.eevolvv-site) {
   display: flex;
   align-items: center;
   gap: 28px;
-  margin-left: auto;
+  margin: 0;
   list-style: none;
   padding: 0;
   font-size: 14px;
@@ -140,7 +141,8 @@ body:has(.eevolvv-site) {
 }
 
 .nav-cta {
-  margin-left: 28px;
+  justify-self: end;
+  margin-left: 0;
   padding: 10px 16px;
 }
 
@@ -248,7 +250,7 @@ body:has(.eevolvv-site) {
 
 .btn-ship {
   width: 100%;
-  margin-top: 8px;
+  margin-top: auto;
   padding: 14px 18px;
   border: 1.5px solid #3d7eff;
   background: transparent;
@@ -261,7 +263,7 @@ body:has(.eevolvv-site) {
 
 .btn-gold {
   width: 100%;
-  margin-top: 8px;
+  margin-top: auto;
   padding: 14px 18px;
   background: #f0c14a;
   color: #1a1404;
@@ -331,6 +333,7 @@ body:has(.eevolvv-site) {
 
 .hero h1 {
   grid-area: title;
+  font-size: clamp(40px, 4.2vw, 60px);
 }
 
 .hero .lead {
@@ -605,9 +608,10 @@ h1,
   border-radius: 28px;
   border: 1px solid #243028;
   background: #121614;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   gap: 10px;
-  align-content: start;
 }
 
 .package-card.ship {
@@ -1485,6 +1489,10 @@ h1,
 
   .pipeline::before {
     display: none;
+  }
+
+  .nav {
+    display: flex;
   }
 
   .hero {

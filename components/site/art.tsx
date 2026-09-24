@@ -63,27 +63,27 @@ export function LeverArt() {
           </feMerge>
         </filter>
       </defs>
-      <circle cx="455" cy="318" r="168" fill="url(#lever-disc)" />
-      <text x="612" y="62" textAnchor="middle" fill="#E6C36A" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="13" letterSpacing="2.4">
+      <circle cx="400" cy="310" r="158" fill="url(#lever-disc)" />
+      <text x="702" y="42" textAnchor="middle" fill="#E6C36A" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="13" letterSpacing="2.4">
         THE FEED
       </text>
-      <circle cx="612" cy="132" r="58" fill="none" stroke="#3DFF8A" strokeWidth="3" />
-      <circle cx="612" cy="132" r="34" fill="none" stroke="#3DFF8A" strokeWidth="3" />
-      <circle cx="612" cy="132" r="10" fill="#07140c" stroke="#3DFF8A" strokeWidth="3" />
-      <path d="M128 448 L700 268" stroke="url(#lever-beam)" strokeWidth="18" strokeLinecap="round" filter="url(#lever-glow)" />
-      <circle cx="118" cy="456" r="34" fill="#FF4D6D" opacity="0.22" />
-      <circle cx="118" cy="456" r="16" fill="#FF4D6D" />
-      <text x="118" y="512" textAnchor="middle" fill="#FF5D73" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="12" letterSpacing="1.6">
+      <circle cx="702" cy="108" r="46" fill="none" stroke="#3DFF8A" strokeWidth="3" />
+      <circle cx="702" cy="108" r="27" fill="none" stroke="#3DFF8A" strokeWidth="3" />
+      <circle cx="702" cy="108" r="8" fill="#07140c" stroke="#3DFF8A" strokeWidth="3" />
+      <path d="M118 438 L610 248" stroke="url(#lever-beam)" strokeWidth="18" strokeLinecap="round" filter="url(#lever-glow)" />
+      <circle cx="108" cy="448" r="34" fill="#FF4D6D" opacity="0.22" />
+      <circle cx="108" cy="448" r="16" fill="#FF4D6D" />
+      <text x="108" y="508" textAnchor="middle" fill="#FF5D73" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="12" letterSpacing="1.6">
         CONTENT
       </text>
-      <path d="M468 332 L512 418 H424 Z" fill="#3DFF8A" />
-      <text x="548" y="448" textAnchor="middle" fill="#3DFF8A" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="12" letterSpacing="1.6">
+      <path d="M392 300 L440 392 H344 Z" fill="#3DFF8A" />
+      <text x="470" y="428" textAnchor="middle" fill="#3DFF8A" fontFamily="IBM Plex Mono, ui-monospace, monospace" fontSize="12" letterSpacing="1.6">
         PIPELINE
       </text>
       {[
-        { x: 548, y: 236, r: -16 },
-        { x: 612, y: 198, r: -12 },
-        { x: 676, y: 168, r: -8 },
+        { x: 456, y: 278, r: -18 },
+        { x: 518, y: 236, r: -14 },
+        { x: 576, y: 198, r: -10 },
       ].map((phone) => (
         <g key={phone.x} transform={`translate(${phone.x} ${phone.y}) rotate(${phone.r})`}>
           <rect x="-26" y="-46" width="52" height="92" rx="10" fill="#070a08" stroke="#3DFF8A" strokeWidth="2.4" />
